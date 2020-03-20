@@ -22,7 +22,7 @@ public class EmbeddedOneToOne {
 		
 		ProjectionIndex index = new ProjectionIndex();
 		index.add(scanner.scan(TestProjectionAA.class));
-		index.add(scanner.scan(TestProjectionA.class));
+		index.add(scanner.scan(TestProjectionAI.class));
 		
 		projection = new ProjectionFactory(index);
 	}
@@ -31,13 +31,10 @@ public class EmbeddedOneToOne {
     public void testComposition() throws ProjectionError, InvertibleFunctionError {
     	
     	TestObjectA oa = new TestObjectA();
-    	oa.booleanValue = true;
-    	oa.doubleValue = 123.456d;
-    	oa.instantValue = Instant.now();
     	oa.longValue = 123456l;
-    	oa.stringValue = "ABCDEF";
 
     	TestObjectAA oaa = new TestObjectAA();
+    	oaa.stringValue = "inherit me";
     	oaa.objectA = oa;
 
     	TestProjectionAA pa = projection.compose(TestProjectionAA.class, oaa);
@@ -45,22 +42,16 @@ public class EmbeddedOneToOne {
     	Assert.assertNotNull(pa);
     	Assert.assertNotNull(pa.a);
     	
-    	Assert.assertEquals(oa.stringValue, pa.a.projectedString);
-    	Assert.assertEquals(oa.booleanValue, pa.a.projectedBoolean);
-    	Assert.assertEquals(oa.doubleValue, pa.a.projectedDouble);
-    	Assert.assertEquals(oa.instantValue, pa.a.projectedInstant);
     	Assert.assertEquals(oa.longValue, pa.a.projectedLong);
+    	Assert.assertEquals(oaa.stringValue, pa.a.inheritedValue);
     }
     
     @Test
     public void testDecomposition() throws ProjectionError, InvertibleFunctionError {
     	
-    	TestProjectionA pa = new TestProjectionA();
-    	pa.projectedBoolean = true;
-    	pa.projectedDouble = 123.456d;
-    	pa.projectedInstant = Instant.now();
+    	TestProjectionAI pa = new TestProjectionAI();
     	pa.projectedLong = 123456l;
-    	pa.projectedString = "ABCDEF";
+    	pa.inheritedValue = "inherit me";
 
     	TestProjectionAA paa = new TestProjectionAA();
     	paa.a = pa;
@@ -74,10 +65,8 @@ public class EmbeddedOneToOne {
     	TestObjectAA oaa = (TestObjectAA)oo[0];
     	Assert.assertNotNull(oaa.objectA);
 
-    	Assert.assertEquals(paa.a.projectedString, oaa.objectA.stringValue);
-    	Assert.assertEquals(paa.a.projectedBoolean, oaa.objectA.booleanValue);
-    	Assert.assertEquals(paa.a.projectedDouble, oaa.objectA.doubleValue);
-    	Assert.assertEquals(paa.a.projectedInstant, oaa.objectA.instantValue);
     	Assert.assertEquals(paa.a.projectedLong, oaa.objectA.longValue);
+    	Assert.assertEquals(paa.a.inheritedValue, oaa.stringValue);
     }
 }
+

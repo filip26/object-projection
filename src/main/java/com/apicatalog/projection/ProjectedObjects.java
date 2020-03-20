@@ -55,5 +55,12 @@ public class ProjectedObjects {
 	public Object[] getValues() {
 		return index.values().toArray(new Object[0]);
 	}
+
+	public void merge(Object object, String qualifier) {
+		
+		Object orig = index.get(ProjectedObjectKey.of(object.getClass(), qualifier));
+		//FIXME
+		index.put(ProjectedObjectKey.of(object.getClass(), qualifier), object);
+	}
 		
 }

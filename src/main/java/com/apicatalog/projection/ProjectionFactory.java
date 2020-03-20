@@ -3,6 +3,7 @@ package com.apicatalog.projection;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -53,7 +54,12 @@ public class ProjectionFactory {
 			if (value != null) {
 
 				if (index.get(metaProperty.getTargetClass()) != null) {	//TODO better
-					value = compose(metaProperty.getTargetClass(), value);
+					
+					List<Object> o = new ArrayList<>();
+					o.addAll(Arrays.asList(objects));	// ?!?!?! FIXME
+					o.add(value);
+					
+					value = compose(metaProperty.getTargetClass(),  o.toArray(new Object[0]));
 				}
 				
 				setPropertyValue(projection, metaProperty.getName(), value);	
@@ -139,8 +145,19 @@ public class ProjectionFactory {
 			}
 			
 			if (index.get(metaProperty.getTargetClass()) != null) {	//TODO better
+				
+//				List<Object> o = new ArrayList<>();
+//				o.addAll(Arrays.asList(objects));	// ?!?!?! FIXME
+//				o.add(value);
+//				
+
+				
 				Object[] v = decompose(value);
-				value = (v.length == 1) ? v[0] : v;
+				
+				value = v[0];			//FIXME hack!
+				if (v.length > 1) {	
+					sources.merge(v[1], null);	// ?!?!?!?
+				}
 			}
 			
 			decompose(metaProperty, sources, value);
@@ -204,7 +221,6 @@ public class ProjectionFactory {
 		if (StringUtils.isBlank(property)) {
 			throw new IllegalArgumentException();
 		}
-
 		try {
 			final Field field = object.getClass().getDeclaredField(property);
 			field.setAccessible(true);

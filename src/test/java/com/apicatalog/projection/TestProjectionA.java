@@ -24,6 +24,6 @@ public class TestProjectionA {
 	Double projectedDouble;
 	
 	@Provider(type=TestObjectA.class)
-	String sameNameValue;
+	String sameNameValue;	
 
 }

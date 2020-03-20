@@ -7,6 +7,6 @@ import com.apicatalog.projection.annotation.Provider;
 public class TestProjectionAA {
 
 	@Provider(type=TestObjectAA.class, property = "objectA")
-	TestProjectionA a;
+	TestProjectionAI a;
 	
 }
