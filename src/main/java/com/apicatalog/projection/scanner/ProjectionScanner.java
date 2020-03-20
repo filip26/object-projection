@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionProperty;
-import com.apicatalog.projection.ValueProvider;
 import com.apicatalog.projection.annotation.ObjectProjection;
 import com.apicatalog.projection.annotation.Provider;
 
@@ -37,16 +36,10 @@ public class ProjectionScanner {
            }
 			
 			final Provider provider = field.getAnnotation(Provider.class);
-
-			ValueProvider valueProvider = new ValueProvider();
-			
-			valueProvider.setSourceClass(provider.type());
-			valueProvider.setSourcePropertyName(provider.property());
-			valueProvider.setQualifier(provider.qualifier());
-						
+								
 			final ProjectionProperty property = new ProjectionProperty(field.getName());
 
-			property.setProviders(new ValueProvider[] {valueProvider});
+			property.setProviders(new Provider[] {provider});
 			
 			projection.add(property);
 		}

@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.apicatalog.projection.fnc.InvertibleFunctionError;
 import com.apicatalog.projection.scanner.ProjectionScanner;
 
 @RunWith(JUnit4.class)
@@ -26,7 +27,7 @@ public class OneToOneTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError {
+    public void testComposition() throws ProjectionError, InvertibleFunctionError {
     	
     	TestObjectA oa = new TestObjectA();
     	oa.booleanValue = true;
@@ -47,7 +48,7 @@ public class OneToOneTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError {
+    public void testDecomposition() throws ProjectionError, InvertibleFunctionError {
     	
     	TestProjectionA pa = new TestProjectionA();
     	pa.projectedBoolean = true;

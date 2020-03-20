@@ -4,8 +4,8 @@ import com.apicatalog.projection.Value;
 
 public interface InvertibleFunction {
 
-	Object compute(Value...values);
+	Object compute(ContextValue ctx, Value...values) throws InvertibleFunctionError;
 	
-	Object[] inverse(Value value);
+	Object[] inverse(ContextValue ctx, Value value) throws InvertibleFunctionError;
 	
 }

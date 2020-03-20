@@ -2,18 +2,18 @@ package com.apicatalog.projection;
 
 import java.util.Objects;
 
-public class SourceKey {
+public class ProjectedObjectKey {
 
 	final Class<?> clazz;
 	final String qualifier;
 	
-	SourceKey(Class<?> clazz, String qualifier) {
+	ProjectedObjectKey(Class<?> clazz, String qualifier) {
 		this.clazz = clazz;
 		this.qualifier = qualifier;
 	}
 	
-	public static SourceKey of(Class<?> clazz, String qualifier) {
-		return new SourceKey(clazz, qualifier == null ? "" : qualifier);
+	public static ProjectedObjectKey of(Class<?> clazz, String qualifier) {
+		return new ProjectedObjectKey(clazz, qualifier == null ? "" : qualifier);
 	}
 
 	@Override
@@ -32,7 +32,7 @@ public class SourceKey {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		SourceKey other = (SourceKey) obj;
+		ProjectedObjectKey other = (ProjectedObjectKey) obj;
 		return Objects.equals(clazz, other.clazz) && Objects.equals(qualifier, other.qualifier);
 	}	
 }

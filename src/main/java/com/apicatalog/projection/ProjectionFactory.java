@@ -9,7 +9,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apicatalog.projection.annotation.Function;
+import com.apicatalog.projection.annotation.Provider;
+import com.apicatalog.projection.fnc.ContextValue;
 import com.apicatalog.projection.fnc.InvertibleFunction;
+import com.apicatalog.projection.fnc.InvertibleFunctionError;
 
 public class ProjectionFactory {
 
@@ -21,7 +25,7 @@ public class ProjectionFactory {
 		this.index = index;
 	}
 	
-	public <P> P compose(Class<? extends P> projectionClass, Object...objects) throws ProjectionError {
+	public <P> P compose(Class<? extends P> projectionClass, Object...objects) throws ProjectionError, InvertibleFunctionError {
 		if (projectionClass == null) {
 			throw new IllegalArgumentException();
 		}
@@ -33,7 +37,7 @@ public class ProjectionFactory {
 			throw new ProjectionError("The projection for " + projectionClass + " is not present.");
 		}
 				
-		final Sources sources = Sources.of(objects);
+		final ProjectedObjects sources = ProjectedObjects.of(objects);
 		if (sources == null) {
 			throw new IllegalStateException();
 		}
@@ -53,34 +57,34 @@ public class ProjectionFactory {
 		return projection;
 	}
 	
-	Object compose(ProjectionProperty property, Sources sources) throws ProjectionError {
+	Object compose(ProjectionProperty property, ProjectedObjects sources) throws ProjectionError, InvertibleFunctionError {
 		
 		final List<Value> values = new ArrayList<>();
 		
-		for (ValueProvider valueProvider : property.getProviders()) {
+		for (Provider valueProvider : property.getProviders()) {
 						
-			final Object source = sources.get(valueProvider.getSourceClass(), valueProvider.getQualifier());
+			final Object source = sources.get(valueProvider.type(), valueProvider.qualifier());
 			
 			if (source == null) {
-				throw new ProjectionError("Source object " + valueProvider.getSourceClass() + ", qualifier=" + valueProvider.getQualifier() + ",  is no present.");
+				throw new ProjectionError("Source " + valueProvider.type() + ", qualifier=" + valueProvider.qualifier() + ",  is no present.");
 			}
 
-//			MetaObject metaObject = metaObjects.get(source.getClass());
+			Object rawValue = getPropertyValue(source, valueProvider.property());
 			
-//			MetaObjectProperty metaObjectProperty = metaObject.getProperty(valueProvider.getSourcePropertyName());
+			logger.trace("value {} of property {}, {}", rawValue, valueProvider.property(), valueProvider.type());
 			
-			Object rawValue = getPropertyValue(source, valueProvider.getSourcePropertyName());
+			Value value = Value.of(rawValue, valueProvider.id());
 			
-			logger.trace("have value {} of property {}, {}", rawValue, valueProvider.getSourcePropertyName(), valueProvider.getSourceClass());
+			final Function[] functions = valueProvider.map();
 			
-			Value value = Value.of(rawValue, valueProvider.getValueId());
-			
-			final InvertibleFunction[] functions = valueProvider.getFunctions();
-			
-			if (functions != null) {
-				for (InvertibleFunction converter : functions) {
-					value.setObject(converter.compute(value));
-				}
+			for (Function fnc : functions) {
+				
+				InvertibleFunction ifnc = newInstance(fnc.type());
+				
+				ContextValue ctx = new ContextValue();
+				ctx.setValues(fnc.value());
+				
+				value.setObject(ifnc.compute(ctx, value));
 			}
 
 			values.add(value);
@@ -88,8 +92,7 @@ public class ProjectionFactory {
 		
 		Object value = values;
 
-		final InvertibleFunction[] functions = property.getFunctions();
-		
+//		final InvertibleFunction[] functions = property.getFunctions();	
 //		if (converters != null) {
 ////			for (InvertibleFunction converter : converters) {
 ////FIXME				value.setObject(converter.compute(value));
@@ -114,7 +117,7 @@ public class ProjectionFactory {
 		return value;
 	}
 	
-	public Object[] decompose(Object projection) throws ProjectionError {
+	public Object[] decompose(Object projection) throws ProjectionError, InvertibleFunctionError {
 		if (projection == null) {
 			throw new IllegalArgumentException();
 		}
@@ -126,7 +129,7 @@ public class ProjectionFactory {
 			throw new ProjectionError("The projection for " + projection.getClass() + " is not present.");
 		}
 				
-		final Sources sources = Sources.from(metaProjection);
+		final ProjectedObjects sources = ProjectedObjects.from(metaProjection);
 
 		if (sources == null) {
 			throw new IllegalStateException();
@@ -142,29 +145,37 @@ public class ProjectionFactory {
 			}
 			
 			decompose(metaProperty, sources, rawValue);
-//			
-//			logger.trace("set value {} to property {} of {}", value, metaProperty.getName(), metaProjection.getProjectionClass());
-//			if (value != null) {
-//				setPropertyValue(projection, metaProperty.getName(), value);
-//			}
 		}
 
 		return sources.getValues();
 	}
 
-	void decompose(ProjectionProperty property, Sources sources, Object rawValue) throws ProjectionError {
+	void decompose(ProjectionProperty property, ProjectedObjects sources, Object rawValue) throws ProjectionError, InvertibleFunctionError {
 		
 		logger.trace("decompose {} of {} ", rawValue, property.getName());
 		
-		for (ValueProvider valueProvider : property.getProviders()) {
+		for (Provider provider : property.getProviders()) {
 						
-			final Object source = sources.get(valueProvider.getSourceClass(), valueProvider.getQualifier());
+			final Object source = sources.get(provider.type(), provider.qualifier());
 			
 			if (source == null) {
-				throw new ProjectionError("Source object " + valueProvider.getSourceClass() + ", qualifier=" + valueProvider.getQualifier() + ",  is no present.");
+				throw new ProjectionError("Source " + provider.type() + ", qualifier=" + provider.qualifier() + ",  is no present.");
+			}
+			
+			Value value = Value.of(rawValue, null);
+			
+			for (Function fnc : provider.map()) {
+				
+				InvertibleFunction ifnc = newInstance(fnc.type());
+				
+				ContextValue ctx = new ContextValue();
+				ctx.setValues(fnc.value());
+				
+				value.setObject(ifnc.inverse(ctx, value)[0]);	//FIXME
 			}
 
-			setPropertyValue(source, valueProvider.getSourcePropertyName(), rawValue);
+
+			setPropertyValue(source, provider.property(), value.getObject());
 			
 		}		
 	}

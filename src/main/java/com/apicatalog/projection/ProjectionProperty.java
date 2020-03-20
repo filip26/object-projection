@@ -1,12 +1,13 @@
 package com.apicatalog.projection;
 
+import com.apicatalog.projection.annotation.Provider;
 import com.apicatalog.projection.fnc.InvertibleFunction;
 
 public class ProjectionProperty {
 
 	final String name;
 	
-	ValueProvider[] providers;
+	Provider[] providers;
 	
 	public ProjectionProperty(String name) {
 		this.name = name;
@@ -16,11 +17,11 @@ public class ProjectionProperty {
 		return name;
 	}
 
-	public ValueProvider[] getProviders() {
+	public Provider[] getProviders() {
 		return providers;
 	}
 	
-	public void setProviders(ValueProvider[] providers) {
+	public void setProviders(Provider[] providers) {
 		this.providers = providers;
 	}
 
