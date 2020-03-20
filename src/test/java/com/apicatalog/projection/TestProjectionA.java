@@ -22,5 +22,8 @@ public class TestProjectionA {
 	
 	@Provider(type=TestObjectA.class, property = "doubleValue")
 	Double projectedDouble;
+	
+	@Provider(type=TestObjectA.class)
+	String sameNameValue;
 
 }

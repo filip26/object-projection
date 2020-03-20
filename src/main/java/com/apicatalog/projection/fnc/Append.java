@@ -40,7 +40,4 @@ public class Append implements InvertibleFunction {
 		
 		return new Object[] {value.getObject()};
 	}
-
-	
-	
 }

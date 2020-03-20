@@ -35,6 +35,7 @@ public class OneToOneTest {
     	oa.instantValue = Instant.now();
     	oa.longValue = 123456l;
     	oa.stringValue = "ABCDEF";
+    	oa.sameNameValue = "QWERTYUIOP";
     	
     	TestProjectionA pa = projection.compose(TestProjectionA.class, oa);
     	
@@ -45,6 +46,7 @@ public class OneToOneTest {
     	Assert.assertEquals(oa.doubleValue, pa.projectedDouble);
     	Assert.assertEquals(oa.instantValue, pa.projectedInstant);
     	Assert.assertEquals(oa.longValue, pa.projectedLong);
+    	Assert.assertEquals(oa.sameNameValue, pa.sameNameValue);
     }
     
     @Test
@@ -56,6 +58,7 @@ public class OneToOneTest {
     	pa.projectedInstant = Instant.now();
     	pa.projectedLong = 123456l;
     	pa.projectedString = "ABCDEF";
+    	pa.sameNameValue = "QWERTYUIOP";
     	
     	Object[] oo = projection.decompose(pa);
     	
@@ -70,5 +73,6 @@ public class OneToOneTest {
     	Assert.assertEquals(pa.projectedDouble, oa.doubleValue);
     	Assert.assertEquals(pa.projectedInstant, oa.instantValue);
     	Assert.assertEquals(pa.projectedLong, oa.longValue);
+    	Assert.assertEquals(pa.sameNameValue, oa.sameNameValue);
     }
 }

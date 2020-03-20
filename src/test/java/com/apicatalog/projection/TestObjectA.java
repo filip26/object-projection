@@ -10,4 +10,6 @@ public class TestObjectA {
 	Instant instantValue;
 	Double doubleValue;
 	
+	String sameNameValue;
+	
 }

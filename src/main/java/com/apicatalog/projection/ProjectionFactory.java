@@ -66,21 +66,28 @@ public class ProjectionFactory {
 		
 		final List<Value> values = new ArrayList<>();
 		
-		for (Provider valueProvider : property.getProviders()) {
+		for (Provider provider : property.getProviders()) {
 						
-			final Object source = sources.get(valueProvider.type(), valueProvider.qualifier());
+			final Object source = sources.get(provider.type(), provider.qualifier());
 			
 			if (source == null) {
-				throw new ProjectionError("Source " + valueProvider.type() + ", qualifier=" + valueProvider.qualifier() + ",  is no present.");
+				throw new ProjectionError("Source " + provider.type() + ", qualifier=" + provider.qualifier() + ",  is no present.");
+			}
+			
+			String sourcePropertyName = provider.property();
+			
+			// same name property - no property() declaration
+			if (StringUtils.isBlank(sourcePropertyName)) {
+				sourcePropertyName = property.getName();
 			}
 
-			Object rawValue = getPropertyValue(source, valueProvider.property());
+			Object rawValue = getPropertyValue(source, sourcePropertyName);
 			
-			logger.trace("value {} of property {}, {}", rawValue, valueProvider.property(), valueProvider.type());
+			logger.trace("value {} of property {}, {}", rawValue, sourcePropertyName, provider.type());
 			
-			Value value = Value.of(rawValue, valueProvider.id());
+			Value value = Value.of(rawValue, provider.id());
 			
-			final Function[] functions = valueProvider.map();
+			final Function[] functions = provider.map();
 			
 			for (Function fnc : functions) {
 				
@@ -166,7 +173,7 @@ public class ProjectionFactory {
 				value.setObject(ifnc.inverse(ctx, value)[0]);	//FIXME
 			}
 
-			setPropertyValue(source, provider.property(), value.getObject());
+			setPropertyValue(source, StringUtils.isBlank(provider.property()) ? property.getName() : provider.property(), value.getObject());
 			
 		}		
 	}
