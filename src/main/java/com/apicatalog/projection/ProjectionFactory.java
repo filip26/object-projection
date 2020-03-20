@@ -38,8 +38,7 @@ public class ProjectionFactory {
 			throw new IllegalStateException();
 		}
 
-		P projection = null;
-		
+		P projection = newInstance(projectionClass);
 		
 		for (ProjectionProperty metaProperty : metaProjection.getProperties()) {
 			logger.trace("process property {} of {}", metaProperty.getName(), metaProjection.getProjectionClass());
