@@ -189,6 +189,7 @@ public class ProjectionFactory {
 		try {
 			
 			final Field field = object.getClass().getDeclaredField(property);
+			field.setAccessible(true);
 			return field.get(object);
 			
 		} catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {
@@ -206,6 +207,7 @@ public class ProjectionFactory {
 
 		try {
 			final Field field = object.getClass().getDeclaredField(property);
+			field.setAccessible(true);
 			field.set(object, value);
 			
 		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
