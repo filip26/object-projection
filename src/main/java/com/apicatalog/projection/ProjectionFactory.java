@@ -47,11 +47,16 @@ public class ProjectionFactory {
 		for (ProjectionProperty metaProperty : metaProjection.getProperties()) {
 			logger.trace("process property {} of {}", metaProperty.getName(), metaProjection.getProjectionClass());
 			
-			final Object value = compose(metaProperty, sources);
+			Object value = compose(metaProperty, sources);
 			
 			logger.trace("set value {} to property {} of {}", value, metaProperty.getName(), metaProjection.getProjectionClass());
 			if (value != null) {
-				setPropertyValue(projection, metaProperty.getName(), value);
+
+				if (index.get(metaProperty.getTargetClass()) != null) {	//TODO better
+					value = compose(metaProperty.getTargetClass(), value);
+				}
+				
+				setPropertyValue(projection, metaProperty.getName(), value);	
 			}
 		}
 		return projection;
@@ -92,27 +97,9 @@ public class ProjectionFactory {
 		
 		Object value = values;
 
-//		final InvertibleFunction[] functions = property.getFunctions();	
-//		if (converters != null) {
-////			for (InvertibleFunction converter : converters) {
-////FIXME				value.setObject(converter.compute(value));
-//			}
-//		}
-
-//		final Composer composer = property.getConverters();
-//		
-//		if (composer != null) {
-//			value = composer.compose(values);
-//			
-//		} else
 		if (values.size() == 1) {
 			value = values.iterator().next().getObject();
 		}
-		
-//		final Converter<Object, Object> converter = property.getConverters();
-//		if (converter != null) {
-//			return converter.compose(value);
-//		}
 		
 		return value;
 	}
@@ -138,13 +125,18 @@ public class ProjectionFactory {
 		for (ProjectionProperty metaProperty : metaProjection.getProperties()) {
 			logger.trace("process property {} of {}", metaProperty.getName(), metaProjection.getProjectionClass());
 
-			final Object rawValue = getPropertyValue(projection, metaProperty.getName());
+			Object value = getPropertyValue(projection, metaProperty.getName());
 			
-			if (rawValue == null) {
+			if (value == null) {
 				continue;
 			}
 			
-			decompose(metaProperty, sources, rawValue);
+			if (index.get(metaProperty.getTargetClass()) != null) {	//TODO better
+				Object[] v = decompose(value);
+				value = (v.length == 1) ? v[0] : v;
+			}
+			
+			decompose(metaProperty, sources, value);
 		}
 
 		return sources.getValues();
@@ -173,7 +165,6 @@ public class ProjectionFactory {
 				
 				value.setObject(ifnc.inverse(ctx, value)[0]);	//FIXME
 			}
-
 
 			setPropertyValue(source, provider.property(), value.getObject());
 			

@@ -38,7 +38,8 @@ public class ProjectionScanner {
 			final Provider provider = field.getAnnotation(Provider.class);
 								
 			final ProjectionProperty property = new ProjectionProperty(field.getName());
-
+			
+			property.setTargetClass(field.getType());
 			property.setProviders(new Provider[] {provider});
 			
 			projection.add(property);

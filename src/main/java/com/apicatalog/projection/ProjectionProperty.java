@@ -7,6 +7,8 @@ public class ProjectionProperty {
 
 	final String name;
 	
+	Class<?> targetClass;
+	
 	Provider[] providers;
 	
 	public ProjectionProperty(String name) {
@@ -27,9 +29,14 @@ public class ProjectionProperty {
 
 	public InvertibleFunction[] getFunctions() {
 		// TODO Auto-generated method stub
-		return null;
+		return new InvertibleFunction[0];
 	}
 
+	public Class<?> getTargetClass() {
+		return targetClass;
+	}
 
-
+	public void setTargetClass(Class<?> targetClass) {
+		this.targetClass = targetClass;
+	}
 }
