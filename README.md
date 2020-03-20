@@ -1,2 +1,2 @@
 # Object Projection
-Experimental Declarative and Reversible Object Projection for Java
+Experimental Declarative and Invertible Object Projection for Java
