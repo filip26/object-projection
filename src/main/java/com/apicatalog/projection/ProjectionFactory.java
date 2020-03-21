@@ -97,12 +97,14 @@ public class ProjectionFactory {
 			
 			for (Function fnc : functions) {
 				
-				InvertibleFunction ifnc = newInstance(fnc.type());
-				
+				final InvertibleFunction ifnc = newInstance(fnc.type());	//TODO re-use preconstructed instances
+
 				ContextValue ctx = new ContextValue();
 				ctx.setValues(fnc.value());
+
+				ifnc.init(ctx);
 				
-				value.setObject(ifnc.compute(ctx, value));
+				value.setObject(ifnc.compute(value));
 			}
 
 			values.add(value);
@@ -182,12 +184,14 @@ public class ProjectionFactory {
 			
 			for (Function fnc : provider.map()) {
 				
-				InvertibleFunction ifnc = newInstance(fnc.type());
+				final InvertibleFunction ifnc = newInstance(fnc.type());
 				
 				ContextValue ctx = new ContextValue();
 				ctx.setValues(fnc.value());
 				
-				value.setObject(ifnc.inverse(ctx, value)[0]);	//FIXME
+				ifnc.init(ctx);
+				
+				value.setObject(ifnc.inverse(value)[0]);	//FIXME
 			}
 
 			setPropertyValue(source, StringUtils.isBlank(provider.property()) ? property.getName() : provider.property(), value.getObject());
