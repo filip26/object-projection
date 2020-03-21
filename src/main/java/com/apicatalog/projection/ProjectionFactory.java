@@ -10,6 +10,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apicatalog.projection.adapter.TypeAdapter;
+import com.apicatalog.projection.adapter.TypeAdapterError;
+import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.annotation.Function;
 import com.apicatalog.projection.annotation.Provider;
 import com.apicatalog.projection.fnc.ContextValue;
@@ -21,9 +24,15 @@ public class ProjectionFactory {
 	final Logger logger = LoggerFactory.getLogger(ProjectionFactory.class);
 	
 	final ProjectionIndex index;
+	final TypeAdapters adapters;
 	
 	public ProjectionFactory(ProjectionIndex index) {
+		this(index, new TypeAdapters());
+	}
+	
+	public ProjectionFactory(ProjectionIndex index, TypeAdapters adapters) {
 		this.index = index;
+		this.adapters = adapters;
 	}
 	
 	public <P> P compose(Class<? extends P> projectionClass, Object...objects) throws ProjectionError, InvertibleFunctionError {
@@ -199,7 +208,7 @@ public class ProjectionFactory {
 		}		
 	}
 	
-	protected static Object getPropertyValue(Object object, String property) throws ProjectionError {
+	protected Object getPropertyValue(Object object, String property) throws ProjectionError {
 		if (object == null) {
 			throw new IllegalArgumentException();
 		}
@@ -218,16 +227,22 @@ public class ProjectionFactory {
 		}
 	}
 
-	protected static void setPropertyValue(Object object, String property, Object value) throws ProjectionError {
+	protected void setPropertyValue(Object object, String property, Object value) throws ProjectionError {
 		if (object == null) {
 			throw new IllegalArgumentException();
 		}
 		if (StringUtils.isBlank(property)) {
 			throw new IllegalArgumentException();
 		}
+	
 		try {
 			final Field field = object.getClass().getDeclaredField(property);
 			field.setAccessible(true);
+			
+			if (!field.getType().isInstance(value)) {
+				value = adapt(field.getType(), value);
+			}
+			
 			field.set(object, value);
 			
 		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
@@ -244,6 +259,20 @@ public class ProjectionFactory {
 				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			
 			throw new ProjectionError("Can not instantiate " + clazz + ".", e);
+		}
+	}
+	
+	protected <T> T adapt(Class<? extends T> targetClass, Object object) throws ProjectionError {
+		
+		final TypeAdapter<T, Object> adapter = adapters.get(targetClass, object.getClass());
+		
+		if (adapter == null) {
+			throw new ProjectionError("Can not convert " + object.getClass() + " to " + targetClass + ".");
+		}
+		try {
+			return adapter.convert(object);
+		} catch (TypeAdapterError e) {
+			throw new ProjectionError(e);
 		}
 	}
 }
