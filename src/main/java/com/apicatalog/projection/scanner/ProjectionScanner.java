@@ -1,6 +1,8 @@
 package com.apicatalog.projection.scanner;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +41,11 @@ public class ProjectionScanner {
 								
 			final ProjectionProperty property = new ProjectionProperty(field.getName());
 			
-			property.setTargetClass(field.getType());
+			if (Collection.class.equals(field.getType())) {
+				property.setItemClass((Class<?>)((ParameterizedType)field.getGenericType()).getActualTypeArguments()[0]);
+			}
+			property.setTargetClass(field.getType());			
+			
 			property.setProviders(new Provider[] {provider});
 			
 			projection.add(property);

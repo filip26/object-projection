@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -57,12 +58,31 @@ public class ProjectionFactory {
 		for (ProjectionProperty metaProperty : metaProjection.getProperties()) {
 			logger.trace("process property {} of {}", metaProperty.getName(), metaProjection.getProjectionClass());
 			
-			Object value = compose(metaProperty, sources);
+			Object value = null;
+			
+				 value = compose(metaProperty, sources);
+
 			
 			logger.trace("set value {} to property {} of {}", value, metaProperty.getName(), metaProjection.getProjectionClass());
 			if (value != null) {
 
-				if (index.get(metaProperty.getTargetClass()) != null) {	//TODO better
+				if (metaProperty.isCollection()) {
+					
+					Collection<Object> collection = new ArrayList<Object>();
+						 for (Object item : ((Collection<Object>)value)) {
+								List<Object> o = new ArrayList<>();
+								o.addAll(Arrays.asList(objects));	// ?!?!?! FIXME
+								o.add(item);
+							 
+							 
+							 value = compose(metaProperty.getItemClass(), o.toArray(new Object[0]));
+							 collection.add(value);
+						 }
+							
+					value = collection;
+
+				// embedded projection?
+				} else if (index.get(metaProperty.getTargetClass()) != null) {	//TODO better
 					
 					List<Object> o = new ArrayList<>();
 					o.addAll(Arrays.asList(objects));	// ?!?!?! FIXME
@@ -154,8 +174,27 @@ public class ProjectionFactory {
 			if (value == null) {
 				continue;
 			}
-			
-			if (index.get(metaProperty.getTargetClass()) != null) {	//TODO better
+
+			if (metaProperty.isCollection()) {
+				
+				Collection<Object> collection = new ArrayList<Object>();
+				 for (Object item : ((Collection<Object>)value)) {
+					 
+					 
+						Object[] v = decompose(item);
+						value = v[0];			//FIXME hack!
+//						if (v.length > 1) {	
+//							sources.merge(v[1], null);	// ?!?!?!?
+//						}
+
+					 collection.add(value);
+				 }
+					
+			value = collection;
+ 
+				
+				
+			} else if (index.get(metaProperty.getTargetClass()) != null) {	//TODO better
 				
 //				List<Object> o = new ArrayList<>();
 //				o.addAll(Arrays.asList(objects));	// ?!?!?! FIXME

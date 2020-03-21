@@ -8,6 +8,7 @@ public class ProjectionProperty {
 	final String name;
 	
 	Class<?> targetClass;
+	Class<?> itemClass;
 	
 	Provider[] providers;
 	
@@ -38,5 +39,17 @@ public class ProjectionProperty {
 
 	public void setTargetClass(Class<?> targetClass) {
 		this.targetClass = targetClass;
+	}
+
+	public void setItemClass(Class<?> itemClass) {
+		this.itemClass = itemClass;
+	}
+	
+	public Class<?> getItemClass() {
+		return itemClass;
+	}
+	
+	public boolean isCollection() {
+		return itemClass != null;
 	}
 }
