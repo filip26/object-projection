@@ -19,29 +19,30 @@ public class ProjectionScanner {
 
 	final Logger logger = LoggerFactory.getLogger(ProjectionScanner.class);
 	
-	public Projection scan(final Class<?> annotatedClass) {
-		logger.trace("scan {}", annotatedClass);
+	public Projection scan(final Class<?> targetProjectionClass) {
+		logger.trace("scan {}", targetProjectionClass);
 		
-		if (annotatedClass == null) {
+		if (targetProjectionClass == null) {
 			throw new IllegalArgumentException();
 		}
 		
 		// ignore unannotated classes
-		if (!annotatedClass.isAnnotationPresent(ObjectProjection.class)) {
+		if (!targetProjectionClass.isAnnotationPresent(ObjectProjection.class)) {
 			return null;
 		}
 		
-		final ObjectProjection objectProjection = annotatedClass.getAnnotation(ObjectProjection.class);
+		final ObjectProjection objectProjection = targetProjectionClass.getAnnotation(ObjectProjection.class);
 		
-		final Projection projection = new Projection(annotatedClass);
+		final Projection projection = new Projection(targetProjectionClass);
 		
 		// check all declared fields
-		for (Field field : annotatedClass.getDeclaredFields()) {
+		for (Field field : targetProjectionClass.getDeclaredFields()) {
 			
 			// skip static and transient fields
 			if (Modifier.isStatic(field.getModifiers())
 					|| Modifier.isTransient(field.getModifiers())
 					) {
+					logger.trace("Skipping roperty {} of {} because is transient or static", field.getName(), targetProjectionClass);
 					continue;
 			}
 
@@ -84,6 +85,12 @@ public class ProjectionScanner {
 				//TODO optional/nullable?
 								
 			}
+
+			if (mapping.getObjectClass() == null) {
+				logger.warn("Source class of property {} of {} is ignored. Use @ObjectProjection(value=...) or @Source(value=...).", field.getName(), targetProjectionClass.getCanonicalName());
+				continue;
+			}
+			
 			property.setMapping(new PropertyMapping[] {mapping});
 			
 			if (Collection.class.equals(field.getType())) {
