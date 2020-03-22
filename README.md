@@ -7,15 +7,15 @@ public class TestProjection {
 
   @Sources(
       value = {
-              @Source(type=TestObjectA.class, value = "longValue"),
-              @Source(type=TestObjectAA.class, value = "stringValue")
+              @Source(type=User.class, value = "username"),
+              @Source(type=Repository.class, value = "id"),
               },
       map = @IFunction(
               type = UrlPatternFnc.class,
-              value="https://www.example.org/{longValue}/{stringValue}"
+              value="https://www.example.org/{username}/{repositoryId}"
               )
       )
-  String href;
+  String href;  // e.g. https://www.example.org/filip26/R1234
 
   ...
 }
