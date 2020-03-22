@@ -4,7 +4,7 @@ package com.apicatalog.projection.ifnc;
 @Deprecated
 public interface InvertibleFunction<T> {
 
-	void init(ContextValue ctx);
+	void init(ContextValue ctx) throws InvertibleFunctionError;
 	
 	T compute(Object...values) throws InvertibleFunctionError;
 	

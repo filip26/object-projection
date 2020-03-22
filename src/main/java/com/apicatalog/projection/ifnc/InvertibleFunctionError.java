@@ -8,4 +8,8 @@ public class InvertibleFunctionError extends Exception {
 		super(message);
 	}
 	
+	public InvertibleFunctionError(Throwable cause) {
+		super(cause);
+	}
+	
 }

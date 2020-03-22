@@ -4,25 +4,17 @@ import com.apicatalog.projection.annotation.IFunction;
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
-import com.apicatalog.projection.ifnc.std.ConcatFnc;
+import com.apicatalog.projection.ifnc.std.UrlPatternFnc;
 
 @Projection
-public class TestProjectionMS {
+public class TestProjectionUrl {
 
 	@Sources(value =  {
 					@Source(type=TestObjectA.class, value = "longValue"),
 					@Source(type=TestObjectAA.class, value = "stringValue")
 				},
-			map = @IFunction(type = ConcatFnc.class, value="!@#")
+			map = @IFunction(type = UrlPatternFnc.class, value="https://www.example.org/{longValue}/{stringValue}")
 		)
-	String longstring;
+	String href;
 		
-
-	@Sources(value =  {
-					@Source(type=TestObjectAA.class, value = "stringValue"),
-					@Source(type=TestObjectA.class, value = "longValue")
-				},
-			map = @IFunction(type = ConcatFnc.class)
-		)
-	String stringlong;	
 }
