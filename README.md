@@ -3,7 +3,7 @@
 
 ```java
 @Projection
-public class TestProjectionUrl {
+public class TestProjection {
 
   @Sources(
       value = {
