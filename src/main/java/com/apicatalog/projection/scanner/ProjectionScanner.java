@@ -20,11 +20,12 @@ public class ProjectionScanner {
 	final Logger logger = LoggerFactory.getLogger(ProjectionScanner.class);
 	
 	public Projection scan(final Class<?> targetProjectionClass) {
-		logger.trace("scan {}", targetProjectionClass);
-		
+
 		if (targetProjectionClass == null) {
 			throw new IllegalArgumentException();
 		}
+		
+		logger.debug("Scan {}", targetProjectionClass.getCanonicalName());
 		
 		// ignore unannotated classes
 		if (!targetProjectionClass.isAnnotationPresent(ObjectProjection.class)) {
@@ -42,7 +43,7 @@ public class ProjectionScanner {
 			if (Modifier.isStatic(field.getModifiers())
 					|| Modifier.isTransient(field.getModifiers())
 					) {
-					logger.trace("Skipping roperty {} of {} because is transient or static", field.getName(), targetProjectionClass);
+					logger.trace("  skipping property {} of {} because is transient or static", field.getName(), targetProjectionClass.getCanonicalName());
 					continue;
 			}
 
@@ -94,7 +95,7 @@ public class ProjectionScanner {
 			}
 			property.setTargetClass(field.getType());			
 			
-
+			logger.trace("  found property {}: {}", property.getName(), property.getTargetClass().getCanonicalName());
 			projection.add(property);
 		}
 		

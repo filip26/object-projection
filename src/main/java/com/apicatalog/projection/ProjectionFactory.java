@@ -40,7 +40,7 @@ public class ProjectionFactory {
 		if (projectionClass == null) {
 			throw new IllegalArgumentException();
 		}
-		logger.trace("compose projection {} of {} ", projectionClass, objects);
+		logger.debug("Compose {} of {}", projectionClass.getCanonicalName(), objects);
 		
 		final Projection metaProjection = index.get(projectionClass);
 		
@@ -56,14 +56,11 @@ public class ProjectionFactory {
 		P projection = newInstance(projectionClass);
 		
 		for (ProjectionProperty metaProperty : metaProjection.getProperties()) {
-			logger.trace("process property {} of {}", metaProperty.getName(), metaProjection.getProjectionClass());
 			
-			Object value = null;
+			Object value = compose(metaProperty, sources);
 			
-				 value = compose(metaProperty, sources);
-
+			logger.trace("  set {} to {}.{}: {}", value, metaProjection.getProjectionClass().getSimpleName(), metaProperty.getName(), metaProperty.getTargetClass().getCanonicalName());
 			
-			logger.trace("set value {} to property {} of {}", value, metaProperty.getName(), metaProjection.getProjectionClass());
 			if (value != null) {
 
 				if (metaProperty.isCollection()) {
@@ -99,6 +96,8 @@ public class ProjectionFactory {
 	
 	Object compose(ProjectionProperty property, ProjectedObjects sources) throws ProjectionError, InvertibleFunctionError {
 		
+		logger.debug("Compose property {}: {}", property.getName(), property.getTargetClass().getCanonicalName());
+		
 		final List<Object> values = new ArrayList<>();
 		
 		for (PropertyMapping mapping : property.getMapping()) {
@@ -123,7 +122,7 @@ public class ProjectionFactory {
 
 			Object value = getPropertyValue(source, sourcePropertyName);
 			
-			logger.trace("value {} of property {}, {}", value, sourcePropertyName, mapping.getObjectClass());
+			logger.trace("  {}.{} = {}: {}", mapping.getObjectClass().getSimpleName(), sourcePropertyName, value, value.getClass().getCanonicalName());
 			
 			final Function[] functions = mapping.getFunctions();
 			
@@ -153,11 +152,13 @@ public class ProjectionFactory {
 		return value;
 	}
 	
-	public Object[] decompose(Object projection) throws ProjectionError, InvertibleFunctionError {
+	public Object[] decompose(final Object projection) throws ProjectionError, InvertibleFunctionError {
+		
 		if (projection == null) {
 			throw new IllegalArgumentException();
 		}
-		logger.trace("decompose projection {}. ", projection);
+		
+		logger.debug("Decompose {}", projection.getClass().getCanonicalName());
 		
 		final Projection metaProjection = index.get(projection.getClass());
 
@@ -172,7 +173,6 @@ public class ProjectionFactory {
 		}
 
 		for (ProjectionProperty metaProperty : metaProjection.getProperties()) {
-			logger.trace("process property {} of {}", metaProperty.getName(), metaProjection.getProjectionClass());
 
 			Object value = getPropertyValue(projection, metaProperty.getName());
 			
@@ -223,7 +223,7 @@ public class ProjectionFactory {
 
 	void decompose(ProjectionProperty property, ProjectedObjects sources, Object value) throws ProjectionError, InvertibleFunctionError {
 		
-		logger.trace("decompose {} of {} ", value, property.getName());
+		logger.trace("Decompose {} = {}: {}", property.getName(), value, property.getTargetClass());
 		
 		for (PropertyMapping mapping : property.getMapping()) {
 						
@@ -236,7 +236,7 @@ public class ProjectionFactory {
 			if (mapping.getFunctions() != null) {
 				for (Function fnc : mapping.getFunctions()) {
 					
-					final InvertibleFunction ifnc = newInstance(fnc.type());
+					final InvertibleFunction<Object> ifnc = newInstance(fnc.type());
 					
 					ContextValue ctx = new ContextValue();
 					ctx.setValues(fnc.value());
