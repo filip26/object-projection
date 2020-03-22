@@ -3,12 +3,12 @@ package com.apicatalog.projection.adapter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.apicatalog.projection.adapter.builtin.Bool2String;
-import com.apicatalog.projection.adapter.builtin.Instant2Long;
-import com.apicatalog.projection.adapter.builtin.Long2Instant;
-import com.apicatalog.projection.adapter.builtin.Long2String;
-import com.apicatalog.projection.adapter.builtin.String2Bool;
-import com.apicatalog.projection.adapter.builtin.String2Long;
+import com.apicatalog.projection.adapter.std.Bool2String;
+import com.apicatalog.projection.adapter.std.Instant2Long;
+import com.apicatalog.projection.adapter.std.Long2Instant;
+import com.apicatalog.projection.adapter.std.Long2String;
+import com.apicatalog.projection.adapter.std.String2Bool;
+import com.apicatalog.projection.adapter.std.String2Long;
 
 public class TypeAdapters {
 

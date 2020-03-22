@@ -1,9 +1,15 @@
-package com.apicatalog.projection;
+package com.apicatalog.projection.objects;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import com.apicatalog.projection.Projection;
+import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionProperty;
+import com.apicatalog.projection.PropertyMapping;
 
 public class ProjectedObjects {
 

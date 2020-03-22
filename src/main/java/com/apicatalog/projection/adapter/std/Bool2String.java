@@ -1,12 +1,12 @@
-package com.apicatalog.projection.adapter.builtin;
+package com.apicatalog.projection.adapter.std;
 
 import com.apicatalog.projection.adapter.TypeAdapter;
 
-public class Long2String implements TypeAdapter<String, Long> {
+public class Bool2String implements TypeAdapter<String, Boolean> {
 
 	@Override
-	public Class<Long> source() {
-		return Long.class;
+	public Class<Boolean> source() {
+		return Boolean.class;
 	}
 
 	@Override
@@ -15,7 +15,7 @@ public class Long2String implements TypeAdapter<String, Long> {
 	}
 
 	@Override
-	public String convert(Long object) {
+	public String convert(Boolean object) {
 		if (object == null) {
 			return null;
 		}

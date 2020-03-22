@@ -18,6 +18,7 @@ import com.apicatalog.projection.annotation.Function;
 import com.apicatalog.projection.fnc.ContextValue;
 import com.apicatalog.projection.fnc.InvertibleFunction;
 import com.apicatalog.projection.fnc.InvertibleFunctionError;
+import com.apicatalog.projection.objects.ProjectedObjects;
 
 public class ProjectionFactory {
 
@@ -98,7 +99,7 @@ public class ProjectionFactory {
 	
 	Object compose(ProjectionProperty property, ProjectedObjects sources) throws ProjectionError, InvertibleFunctionError {
 		
-		final List<Value> values = new ArrayList<>();
+		final List<Object> values = new ArrayList<>();
 		
 		for (PropertyMapping mapping : property.getMapping()) {
 						
@@ -120,11 +121,9 @@ public class ProjectionFactory {
 				sourcePropertyName = property.getName();
 			}
 
-			Object rawValue = getPropertyValue(source, sourcePropertyName);
+			Object value = getPropertyValue(source, sourcePropertyName);
 			
-			logger.trace("value {} of property {}, {}", rawValue, sourcePropertyName, mapping.getObjectClass());
-			
-			Value value = Value.of(rawValue, mapping.getId());
+			logger.trace("value {} of property {}, {}", value, sourcePropertyName, mapping.getObjectClass());
 			
 			final Function[] functions = mapping.getFunctions();
 			
@@ -138,7 +137,7 @@ public class ProjectionFactory {
 	
 					ifnc.init(ctx);
 					
-					value.setObject(ifnc.compute(value));
+					value = ifnc.compute(value);
 				}
 			}
 
@@ -148,7 +147,7 @@ public class ProjectionFactory {
 		Object value = values;
 
 		if (values.size() == 1) {
-			value = values.iterator().next().getObject();
+			value = values.iterator().next();
 		}
 		
 		return value;
@@ -222,9 +221,9 @@ public class ProjectionFactory {
 		return sources.getValues();
 	}
 
-	void decompose(ProjectionProperty property, ProjectedObjects sources, Object rawValue) throws ProjectionError, InvertibleFunctionError {
+	void decompose(ProjectionProperty property, ProjectedObjects sources, Object value) throws ProjectionError, InvertibleFunctionError {
 		
-		logger.trace("decompose {} of {} ", rawValue, property.getName());
+		logger.trace("decompose {} of {} ", value, property.getName());
 		
 		for (PropertyMapping mapping : property.getMapping()) {
 						
@@ -233,8 +232,6 @@ public class ProjectionFactory {
 			if (source == null) {
 				throw new ProjectionError("Source " + mapping.getObjectClass() + ", qualifier=" + mapping.getQualifier() + ",  is no present.");
 			}
-			
-			Value value = Value.of(rawValue, null);
 			
 			if (mapping.getFunctions() != null) {
 				for (Function fnc : mapping.getFunctions()) {
@@ -246,11 +243,11 @@ public class ProjectionFactory {
 					
 					ifnc.init(ctx);
 					
-					value.setObject(ifnc.inverse(value)[0]);	//FIXME
+					value = ifnc.inverse(value)[0];	//FIXME
 				}
 			}
 
-			setPropertyValue(source, StringUtils.isBlank(mapping.getPropertyName()) ? property.getName() : mapping.getPropertyName(), value.getObject());
+			setPropertyValue(source, StringUtils.isBlank(mapping.getPropertyName()) ? property.getName() : mapping.getPropertyName(), value);
 			
 		}		
 	}
@@ -297,7 +294,7 @@ public class ProjectionFactory {
 		}
 	}
 	
-	protected static <T> T newInstance(Class<? extends T> clazz) throws ProjectionError {
+	public static <T> T newInstance(Class<? extends T> clazz) throws ProjectionError {
 		try {
 			
 			return clazz.getDeclaredConstructor().newInstance();

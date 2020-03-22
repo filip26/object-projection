@@ -75,10 +75,6 @@ public class ProjectionScanner {
 				if (StringUtils.isNotBlank(source.qualifier())) {
 					mapping.setQualifier(source.qualifier());
 				}
-				// set value id to reference
-				if (StringUtils.isNotBlank(source.id())) {
-					mapping.setId(source.id());
-				}
 				// set conversions to apply
 				mapping.setFunctions(source.map());
 				

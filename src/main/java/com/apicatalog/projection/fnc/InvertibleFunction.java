@@ -1,13 +1,11 @@
 package com.apicatalog.projection.fnc;
 
-import com.apicatalog.projection.Value;
-
-public interface InvertibleFunction {
+public interface InvertibleFunction<T> {
 
 	void init(ContextValue ctx);
 	
-	Object compute(Value...values) throws InvertibleFunctionError;
+	T compute(Object...values) throws InvertibleFunctionError;
 	
-	Object[] inverse(Value value) throws InvertibleFunctionError;
+	Object[] inverse(T value) throws InvertibleFunctionError;
 	
 }

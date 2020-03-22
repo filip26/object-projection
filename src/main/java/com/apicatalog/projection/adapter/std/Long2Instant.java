@@ -1,4 +1,4 @@
-package com.apicatalog.projection.adapter.builtin;
+package com.apicatalog.projection.adapter.std;
 
 import java.time.Instant;
 

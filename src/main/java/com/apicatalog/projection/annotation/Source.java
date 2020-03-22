@@ -17,8 +17,6 @@ public @interface Source {
 	
 	String qualifier() default "";
 	
-	String id() default "";
-	
 	Function[] map() default {};
 
 	boolean optional() default false;

@@ -1,4 +1,4 @@
-package com.apicatalog.projection;
+package com.apicatalog.projection.objects;
 
 import java.util.Objects;
 

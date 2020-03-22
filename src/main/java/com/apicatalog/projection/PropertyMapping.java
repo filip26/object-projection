@@ -10,8 +10,6 @@ public class PropertyMapping {
 	
 	String qualifier;
 	
-	String id;
-	
 	Function[] functions;
 
 	boolean optional;
@@ -38,14 +36,6 @@ public class PropertyMapping {
 
 	public void setQualifier(String qualifier) {
 		this.qualifier = qualifier;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public Function[] getFunctions() {

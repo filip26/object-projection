@@ -1,4 +1,4 @@
-package com.apicatalog.projection.adapter.builtin;
+package com.apicatalog.projection.adapter.std;
 
 import com.apicatalog.projection.adapter.TypeAdapter;
 import com.apicatalog.projection.adapter.TypeAdapterError;

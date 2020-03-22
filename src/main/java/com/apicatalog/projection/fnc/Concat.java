@@ -2,9 +2,7 @@ package com.apicatalog.projection.fnc;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.apicatalog.projection.Value;
-
-public class Concat implements InvertibleFunction {
+public class Concat implements InvertibleFunction<String> {
 
 	String suffix;
 	
@@ -24,12 +22,12 @@ public class Concat implements InvertibleFunction {
 	}
 	
 	@Override
-	public Object compute(Value... values) {
+	public String compute(Object... objects) {
 
 		StringBuilder builder = new StringBuilder();
 
-		for (Value v : values) {
-			builder.append(v.getObject().toString());
+		for (Object v : objects) {
+			builder.append(v.toString());
 		}
 		if (StringUtils.isNotBlank(suffix)) {
 			builder.append(suffix);
@@ -39,16 +37,14 @@ public class Concat implements InvertibleFunction {
 	}
 
 	@Override
-	public Object[] inverse(Value value) {
-
-		final String string = value.getObject().toString();
+	public Object[] inverse(String value) {
 
 		int lengthToCut = (suffix != null ? suffix.length() : 0);
 				
 		if (lengthToCut > 0) {
-			return new Object[] {string.substring(0, string.length() - lengthToCut)};
+			return new Object[] {value.substring(0, value.length() - lengthToCut)};
 		}
 		
-		return new Object[] {value.getObject()};
+		return new Object[] {value};
 	}
 }
