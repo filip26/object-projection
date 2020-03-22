@@ -1,5 +1,5 @@
 # Object Projection
-Experimental Declarative Invertible Object Projection for Java. 
+
 
 ```java
 @Projection
