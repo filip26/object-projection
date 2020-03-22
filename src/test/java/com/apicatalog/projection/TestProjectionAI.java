@@ -1,15 +1,15 @@
 package com.apicatalog.projection;
 
 import com.apicatalog.projection.annotation.ObjectProjection;
-import com.apicatalog.projection.annotation.Provider;
+import com.apicatalog.projection.annotation.Source;
 
 @ObjectProjection
 public class TestProjectionAI {
 
-	@Provider(type=TestObjectA.class, property = "longValue")
+	@Source(type=TestObjectA.class, value = "longValue")
 	Long projectedLong;
 		
-	@Provider(type=TestObjectAA.class, property = "stringValue")
+	@Source(type=TestObjectAA.class, value = "stringValue")
 	String inheritedValue;
 
 }

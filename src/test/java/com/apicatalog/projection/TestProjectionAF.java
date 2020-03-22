@@ -2,31 +2,26 @@ package com.apicatalog.projection;
 
 import com.apicatalog.projection.annotation.Function;
 import com.apicatalog.projection.annotation.ObjectProjection;
-import com.apicatalog.projection.annotation.Provider;
-import com.apicatalog.projection.fnc.Append;
+import com.apicatalog.projection.annotation.Source;
+import com.apicatalog.projection.fnc.Concat;
 
-@ObjectProjection
+@ObjectProjection(TestObjectA.class)
 public class TestProjectionAF {
 
-	@Provider(
-			type=TestObjectA.class,
-			property = "stringValue"
-			)
+	@Source( "stringValue")
 	String originString;
 	
-	@Provider(
-			type=TestObjectA.class,
-			property = "stringValue",
-			map = @Function(type = Append.class, value="GHIJKL")
+	@Source(
+			value = "stringValue",
+			map = @Function(type = Concat.class, value="GHIJKL")
 			)
 	String modifiedString;
 
-	@Provider(
-			type=TestObjectA.class,
-			property = "stringValue",
+	@Source(
+			value = "stringValue",
 			map = {
-				@Function(type = Append.class, value="GHIJKL"),
-				@Function(type = Append.class, value="MNOPQR")
+				@Function(type = Concat.class, value="GHIJKL"),
+				@Function(type = Concat.class, value="MNOPQR")
 			}
 			)
 	String modified2xString;

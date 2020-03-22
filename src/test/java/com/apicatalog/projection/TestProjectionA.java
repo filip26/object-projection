@@ -2,28 +2,24 @@ package com.apicatalog.projection;
 
 import java.time.Instant;
 
+import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.ObjectProjection;
-import com.apicatalog.projection.annotation.Provider;
 
-@ObjectProjection
+@ObjectProjection(TestObjectA.class)
 public class TestProjectionA {
 
-	@Provider(type=TestObjectA.class, property = "longValue")
+	@Source("longValue")
 	Long projectedLong;
 	
-	@Provider(type=TestObjectA.class, property = "stringValue")
+	@Source("stringValue")
 	String projectedString;
 	
-	@Provider(type=TestObjectA.class, property = "booleanValue")
+	@Source("booleanValue")
 	Boolean projectedBoolean;
 	
-	@Provider(type=TestObjectA.class, property = "instantValue")
+	@Source("instantValue")
 	Instant projectedInstant;
 	
-	@Provider(type=TestObjectA.class, property = "doubleValue")
+	@Source("doubleValue")
 	Double projectedDouble;
-	
-	@Provider(type=TestObjectA.class)
-	String sameNameValue;	
-
 }

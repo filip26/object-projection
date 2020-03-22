@@ -8,17 +8,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.CLASS)
 @Target(ElementType.FIELD)
-public @interface Provider {
+public @interface Sources {
 
-	Class<?> type();
-	String property() default "";
-	
-	String qualifier() default "";
-	
-	String id() default "";
+	Source[] value();
 	
 	Function[] map() default {};
-	
+		
 }

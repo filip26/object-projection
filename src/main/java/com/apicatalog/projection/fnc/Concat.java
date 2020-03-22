@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.apicatalog.projection.Value;
 
-public class Append implements InvertibleFunction {
+public class Concat implements InvertibleFunction {
 
 	String suffix;
 	

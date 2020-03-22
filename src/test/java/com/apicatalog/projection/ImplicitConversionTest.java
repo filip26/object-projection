@@ -12,7 +12,7 @@ import com.apicatalog.projection.fnc.InvertibleFunctionError;
 import com.apicatalog.projection.scanner.ProjectionScanner;
 
 @RunWith(JUnit4.class)
-public class AutoConversionTest {
+public class ImplicitConversionTest {
 
 	ProjectionFactory projection;
 	

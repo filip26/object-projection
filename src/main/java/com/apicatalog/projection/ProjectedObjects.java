@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.apicatalog.projection.annotation.Provider;
-
 public class ProjectedObjects {
 
 	final Map<ProjectedObjectKey, Object> index;
@@ -28,21 +26,23 @@ public class ProjectedObjects {
 		return index.get(ProjectedObjectKey.of(clazz, qualifier));
 	}
 	
+	//TODO use scanner to get a list of objects at initialization time 
+	@Deprecated
 	public static ProjectedObjects from(Projection projection) throws ProjectionError {
 		
 		final Map<ProjectedObjectKey, Object> index = new LinkedHashMap<>();
 		
 		for (ProjectionProperty property : projection.getProperties()) {
 			
-			for (Provider provider : property.getProviders()) {
+			for (PropertyMapping mapping : property.getMapping()) {
 				
-				final ProjectedObjectKey key = ProjectedObjectKey.of(provider.type(), provider.qualifier());
+				final ProjectedObjectKey key = ProjectedObjectKey.of(mapping.getObjectClass(), mapping.getQualifier());
 				
 				if (index.containsKey(key)) {
 					continue;
 				}
 			
-				final Object object = ProjectionFactory.newInstance(provider.type());
+				final Object object = ProjectionFactory.newInstance(mapping.getObjectClass());
 				if (object != null) {
 					index.put(key, object);
 				}

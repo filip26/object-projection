@@ -1,12 +1,12 @@
 package com.apicatalog.projection;
 
 import com.apicatalog.projection.annotation.ObjectProjection;
-import com.apicatalog.projection.annotation.Provider;
+import com.apicatalog.projection.annotation.Source;
 
-@ObjectProjection
+@ObjectProjection(TestObjectAA.class)
 public class TestProjectionAA {
 
-	@Provider(type=TestObjectAA.class, property = "objectA")
+	@Source(value = "objectA")
 	TestProjectionAI a;
 	
 }

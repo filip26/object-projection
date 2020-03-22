@@ -15,7 +15,6 @@ import com.apicatalog.projection.adapter.TypeAdapter;
 import com.apicatalog.projection.adapter.TypeAdapterError;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.annotation.Function;
-import com.apicatalog.projection.annotation.Provider;
 import com.apicatalog.projection.fnc.ContextValue;
 import com.apicatalog.projection.fnc.InvertibleFunction;
 import com.apicatalog.projection.fnc.InvertibleFunctionError;
@@ -101,39 +100,46 @@ public class ProjectionFactory {
 		
 		final List<Value> values = new ArrayList<>();
 		
-		for (Provider provider : property.getProviders()) {
+		for (PropertyMapping mapping : property.getMapping()) {
 						
-			final Object source = sources.get(provider.type(), provider.qualifier());
+			final Object source = sources.get(mapping.getObjectClass(), mapping.getQualifier());
 			
 			if (source == null) {
-				throw new ProjectionError("Source " + provider.type() + ", qualifier=" + provider.qualifier() + ",  is no present.");
+				if (mapping.isOptional()) {
+					return null;
+				}
+				
+				throw new ProjectionError("Source " + mapping.getObjectClass() + ", qualifier=" + mapping.getQualifier() + ",  is no present.");
 			}
 			
-			String sourcePropertyName = provider.property();
+			String sourcePropertyName = mapping.getPropertyName();
 			
 			// same name property - no property() declaration
 			if (StringUtils.isBlank(sourcePropertyName)) {
+				// user projection's property name
 				sourcePropertyName = property.getName();
 			}
 
 			Object rawValue = getPropertyValue(source, sourcePropertyName);
 			
-			logger.trace("value {} of property {}, {}", rawValue, sourcePropertyName, provider.type());
+			logger.trace("value {} of property {}, {}", rawValue, sourcePropertyName, mapping.getObjectClass());
 			
-			Value value = Value.of(rawValue, provider.id());
+			Value value = Value.of(rawValue, mapping.getId());
 			
-			final Function[] functions = provider.map();
+			final Function[] functions = mapping.getFunctions();
 			
-			for (Function fnc : functions) {
-				
-				final InvertibleFunction ifnc = newInstance(fnc.type());	//TODO re-use preconstructed instances
-
-				ContextValue ctx = new ContextValue();
-				ctx.setValues(fnc.value());
-
-				ifnc.init(ctx);
-				
-				value.setObject(ifnc.compute(value));
+			if (functions != null) {
+				for (Function fnc : functions) {
+					
+					final InvertibleFunction ifnc = newInstance(fnc.type());	//TODO re-use preconstructed instances
+	
+					ContextValue ctx = new ContextValue();
+					ctx.setValues(fnc.value());
+	
+					ifnc.init(ctx);
+					
+					value.setObject(ifnc.compute(value));
+				}
 			}
 
 			values.add(value);
@@ -220,29 +226,31 @@ public class ProjectionFactory {
 		
 		logger.trace("decompose {} of {} ", rawValue, property.getName());
 		
-		for (Provider provider : property.getProviders()) {
+		for (PropertyMapping mapping : property.getMapping()) {
 						
-			final Object source = sources.get(provider.type(), provider.qualifier());
+			final Object source = sources.get(mapping.getObjectClass(), mapping.getQualifier());
 			
 			if (source == null) {
-				throw new ProjectionError("Source " + provider.type() + ", qualifier=" + provider.qualifier() + ",  is no present.");
+				throw new ProjectionError("Source " + mapping.getObjectClass() + ", qualifier=" + mapping.getQualifier() + ",  is no present.");
 			}
 			
 			Value value = Value.of(rawValue, null);
 			
-			for (Function fnc : provider.map()) {
-				
-				final InvertibleFunction ifnc = newInstance(fnc.type());
-				
-				ContextValue ctx = new ContextValue();
-				ctx.setValues(fnc.value());
-				
-				ifnc.init(ctx);
-				
-				value.setObject(ifnc.inverse(value)[0]);	//FIXME
+			if (mapping.getFunctions() != null) {
+				for (Function fnc : mapping.getFunctions()) {
+					
+					final InvertibleFunction ifnc = newInstance(fnc.type());
+					
+					ContextValue ctx = new ContextValue();
+					ctx.setValues(fnc.value());
+					
+					ifnc.init(ctx);
+					
+					value.setObject(ifnc.inverse(value)[0]);	//FIXME
+				}
 			}
 
-			setPropertyValue(source, StringUtils.isBlank(provider.property()) ? property.getName() : provider.property(), value.getObject());
+			setPropertyValue(source, StringUtils.isBlank(mapping.getPropertyName()) ? property.getName() : mapping.getPropertyName(), value.getObject());
 			
 		}		
 	}

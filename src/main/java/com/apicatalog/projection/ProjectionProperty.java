@@ -1,6 +1,5 @@
 package com.apicatalog.projection;
 
-import com.apicatalog.projection.annotation.Provider;
 import com.apicatalog.projection.fnc.InvertibleFunction;
 
 public class ProjectionProperty {
@@ -10,7 +9,7 @@ public class ProjectionProperty {
 	Class<?> targetClass;
 	Class<?> itemClass;
 	
-	Provider[] providers;
+	PropertyMapping[] mapping;
 	
 	public ProjectionProperty(String name) {
 		this.name = name;
@@ -20,12 +19,12 @@ public class ProjectionProperty {
 		return name;
 	}
 
-	public Provider[] getProviders() {
-		return providers;
+	public PropertyMapping[] getMapping() {
+		return mapping;
 	}
-	
-	public void setProviders(Provider[] providers) {
-		this.providers = providers;
+
+	public void setMapping(PropertyMapping[] mapping) {
+		this.mapping = mapping;
 	}
 
 	public InvertibleFunction[] getFunctions() {

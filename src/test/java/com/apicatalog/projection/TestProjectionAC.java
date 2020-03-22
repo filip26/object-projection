@@ -1,18 +1,18 @@
 package com.apicatalog.projection;
 
 import com.apicatalog.projection.annotation.ObjectProjection;
-import com.apicatalog.projection.annotation.Provider;
+import com.apicatalog.projection.annotation.Source;
 
-@ObjectProjection
+@ObjectProjection(TestObjectA.class)
 public class TestProjectionAC {
 
-	@Provider(type=TestObjectA.class, property = "instantValue")
+	@Source("instantValue")
 	Long projectedLong;
 	
-	@Provider(type=TestObjectA.class, property = "longValue")
+	@Source("longValue")
 	String projectedString;
 	
-	@Provider(type=TestObjectA.class, property = "stringValue")
+	@Source("stringValue")
 	Boolean projectedBoolean;
 	
 }
