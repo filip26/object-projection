@@ -20,3 +20,17 @@ public class TestProjection {
   ...
 }
 ```
+
+```java
+
+  @Source(type=[...].class, value = "prices"
+      map = {
+        @IFunction(type = FlatFnc.class),
+        @IFunction(type = SumFnc.class)
+        }
+      )
+  Long total;
+
+  ...
+}
+```
