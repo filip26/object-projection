@@ -12,7 +12,7 @@ public class DoubleAdapter implements TypeAdapter<Double> {
 
 	@Override
 	public Class<?>[] targets() {
-		return new Class[] {String.class, Integer.class, Short.class, Byte.class, Long.class, Float.class};
+		return new Class[] {String.class, Integer.class, Short.class, Byte.class, Long.class, Float.class, Boolean.class};
 	}
 
 	@SuppressWarnings("unchecked")
@@ -37,6 +37,9 @@ public class DoubleAdapter implements TypeAdapter<Double> {
 		if (targetClass.isAssignableFrom(Float.class)) {
 			return (T)Float.valueOf(object.floatValue());
 		}
+		if (targetClass.isAssignableFrom(Boolean.class)) {
+			return (T)(object == 1 ? Boolean.TRUE : Boolean.FALSE);
+		}				
 		
 		throw new TypeAdapterError("Can not convert " + object.getClass().getCanonicalName() + " to " + targetClass.getCanonicalName() + ".");
 	}

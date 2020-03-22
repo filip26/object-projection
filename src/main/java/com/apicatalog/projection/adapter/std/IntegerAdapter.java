@@ -5,27 +5,27 @@ import java.time.Instant;
 import com.apicatalog.projection.adapter.TypeAdapter;
 import com.apicatalog.projection.adapter.TypeAdapterError;
 
-public class LongAdapter implements TypeAdapter<Long> {
+public class IntegerAdapter implements TypeAdapter<Integer> {
 
 	@Override
-	public Class<Long> source() {
-		return Long.class;
+	public Class<Integer> source() {
+		return Integer.class;
 	}
 
 	@Override
 	public Class<?>[] targets() {
-		return new Class[] {String.class, Integer.class, Short.class, Byte.class, Double.class, Float.class, Instant.class, Boolean.class};
+		return new Class[] {String.class, Long.class, Short.class, Byte.class, Double.class, Float.class, Instant.class, Boolean.class};
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T convert(Class<? extends T> targetClass, Long object) throws TypeAdapterError {
+	public <T> T convert(Class<? extends T> targetClass, Integer object) throws TypeAdapterError {
 		
 		if (targetClass.isAssignableFrom(String.class)) {
 			return (T)object.toString();
 		}
-		if (targetClass.isAssignableFrom(Integer.class)) {
-			return (T)Integer.valueOf(object.intValue());
+		if (targetClass.isAssignableFrom(Long.class)) {
+			return (T)Long.valueOf(object.longValue());
 		}		
 		if (targetClass.isAssignableFrom(Short.class)) {
 			return (T)Short.valueOf(object.shortValue());
@@ -44,8 +44,8 @@ public class LongAdapter implements TypeAdapter<Long> {
 		}
 		if (targetClass.isAssignableFrom(Boolean.class)) {
 			return (T)(object == 1 ? Boolean.TRUE : Boolean.FALSE);
-		}		
-		
+		}				
+				
 		throw new TypeAdapterError("Can not convert " + object.getClass().getCanonicalName() + " to " + targetClass.getCanonicalName() + ".");
 	}
 
