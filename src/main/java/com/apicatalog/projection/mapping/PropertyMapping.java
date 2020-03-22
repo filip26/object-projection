@@ -1,17 +1,19 @@
-package com.apicatalog.projection;
+package com.apicatalog.projection.mapping;
 
 import com.apicatalog.projection.ifnc.InvertibleFunction;
 
-public class ProjectionProperty {
+public class PropertyMapping {
 
 	final String name;
 	
 	Class<?> targetClass;
 	Class<?> itemClass;
 	
-	PropertyMapping[] mapping;
+	SourceMapping[] sources;
 	
-	public ProjectionProperty(String name) {
+	InvertibleFunction<?>[] functions;
+	
+	public PropertyMapping(String name) {
 		this.name = name;
 	}
 
@@ -19,17 +21,20 @@ public class ProjectionProperty {
 		return name;
 	}
 
-	public PropertyMapping[] getMapping() {
-		return mapping;
+	public SourceMapping[] getSources() {
+		return sources;
 	}
 
-	public void setMapping(PropertyMapping[] mapping) {
-		this.mapping = mapping;
+	public void setSources(SourceMapping[] mapping) {
+		this.sources = mapping;
 	}
 
-	public InvertibleFunction[] getFunctions() {
-		// TODO Auto-generated method stub
-		return new InvertibleFunction[0];
+	public InvertibleFunction<?>[] getFunctions() {
+		return functions;
+	}
+	
+	public void setFunctions(InvertibleFunction<?>[] functions) {
+		this.functions = functions;
 	}
 
 	public Class<?> getTargetClass() {

@@ -1,20 +1,20 @@
-package com.apicatalog.projection;
+package com.apicatalog.projection.mapping;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class MetaProjection {
+public class ProjectionMapping {
 
 	final Class<?> projectionClass;
 	
-	final Collection<ProjectionProperty> properties;
+	final Collection<PropertyMapping> properties;
 
-	public MetaProjection(Class<?> projectionClass) {
+	public ProjectionMapping(Class<?> projectionClass) {
 		this.projectionClass = projectionClass;
 		this.properties = new ArrayList<>();
 	}
 
-	public Collection<ProjectionProperty> getProperties() {
+	public Collection<PropertyMapping> getProperties() {
 		return properties;
 	}
 
@@ -22,7 +22,7 @@ public class MetaProjection {
 		return projectionClass;
 	}
 
-	public void add(ProjectionProperty property) {
+	public void add(PropertyMapping property) {
 		this.properties.add(property);
 	}
 }

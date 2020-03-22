@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.apicatalog.projection.adapter.std.BooleanAdapter;
+import com.apicatalog.projection.adapter.std.DoubleAdapter;
 import com.apicatalog.projection.adapter.std.InstantAdapter;
 import com.apicatalog.projection.adapter.std.LongAdapter;
 import com.apicatalog.projection.adapter.std.StringAdapter;
@@ -16,12 +17,13 @@ public class TypeAdapters {
 		this.adapters = new LinkedHashMap<>();
 
 		add(new StringAdapter())
-		.add(new BooleanAdapter())
-		.add(new LongAdapter())
-		.add(new InstantAdapter())
-		;
+			.add(new BooleanAdapter())
+			.add(new LongAdapter())
+			.add(new InstantAdapter())
+			.add(new DoubleAdapter())
+			;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public <S> TypeAdapter<S> get(Class<? extends S> sourceClass) {
 		return (TypeAdapter<S>) adapters.get(sourceClass);

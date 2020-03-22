@@ -1,8 +1,8 @@
-package com.apicatalog.projection;
+package com.apicatalog.projection.mapping;
 
 import com.apicatalog.projection.annotation.IFunction;
 
-public class PropertyMapping {
+public class SourceMapping {
 
 	Class<?> objectClass;
 	

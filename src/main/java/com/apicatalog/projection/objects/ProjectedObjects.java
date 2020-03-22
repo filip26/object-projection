@@ -5,11 +5,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.apicatalog.projection.MetaProjection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
-import com.apicatalog.projection.ProjectionProperty;
-import com.apicatalog.projection.PropertyMapping;
+import com.apicatalog.projection.mapping.ProjectionMapping;
+import com.apicatalog.projection.mapping.PropertyMapping;
+import com.apicatalog.projection.mapping.SourceMapping;
 
 public class ProjectedObjects {
 
@@ -34,13 +34,13 @@ public class ProjectedObjects {
 	
 	//TODO use scanner to get a list of objects at initialization time 
 	@Deprecated
-	public static ProjectedObjects from(MetaProjection projection) throws ProjectionError {
+	public static ProjectedObjects from(ProjectionMapping projection) throws ProjectionError {
 		
 		final Map<ProjectedObjectKey, Object> index = new LinkedHashMap<>();
 		
-		for (ProjectionProperty property : projection.getProperties()) {
+		for (PropertyMapping property : projection.getProperties()) {
 			
-			for (PropertyMapping mapping : property.getMapping()) {
+			for (SourceMapping mapping : property.getSources()) {
 				
 				final ProjectedObjectKey key = ProjectedObjectKey.of(mapping.getObjectClass(), mapping.getQualifier());
 				

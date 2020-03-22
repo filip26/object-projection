@@ -18,20 +18,24 @@ import com.apicatalog.projection.annotation.IFunction;
 import com.apicatalog.projection.ifnc.ContextValue;
 import com.apicatalog.projection.ifnc.InvertibleFunction;
 import com.apicatalog.projection.ifnc.InvertibleFunctionError;
+import com.apicatalog.projection.mapping.ProjectionMapping;
+import com.apicatalog.projection.mapping.MappingIndex;
+import com.apicatalog.projection.mapping.PropertyMapping;
+import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.objects.ProjectedObjects;
 
 public class ProjectionFactory {
 
 	final Logger logger = LoggerFactory.getLogger(ProjectionFactory.class);
 	
-	final MetaProjectionIndex index;
+	final MappingIndex index;
 	final TypeAdapters adapters;
 	
-	public ProjectionFactory(MetaProjectionIndex index) {
+	public ProjectionFactory(MappingIndex index) {
 		this(index, new TypeAdapters());
 	}
 	
-	public ProjectionFactory(MetaProjectionIndex index, TypeAdapters adapters) {
+	public ProjectionFactory(MappingIndex index, TypeAdapters adapters) {
 		this.index = index;
 		this.adapters = adapters;
 	}
@@ -42,7 +46,7 @@ public class ProjectionFactory {
 		}
 		logger.debug("Compose {} of {}", projectionClass.getCanonicalName(), objects);
 		
-		final MetaProjection metaProjection = index.get(projectionClass);
+		final ProjectionMapping metaProjection = index.get(projectionClass);
 		
 		if (metaProjection == null) {
 			throw new ProjectionError("The projection for " + projectionClass + " is not present.");
@@ -55,7 +59,7 @@ public class ProjectionFactory {
 
 		P projection = newInstance(projectionClass);
 		
-		for (ProjectionProperty metaProperty : metaProjection.getProperties()) {
+		for (PropertyMapping metaProperty : metaProjection.getProperties()) {
 			
 			Object value = compose(metaProperty, sources);
 			
@@ -94,13 +98,13 @@ public class ProjectionFactory {
 		return projection;
 	}
 	
-	Object compose(ProjectionProperty property, ProjectedObjects sources) throws ProjectionError, InvertibleFunctionError {
+	Object compose(PropertyMapping property, ProjectedObjects sources) throws ProjectionError, InvertibleFunctionError {
 		
 		logger.debug("Compose property {}: {}", property.getName(), property.getTargetClass().getCanonicalName());
 		
 		final List<Object> values = new ArrayList<>();
 		
-		for (PropertyMapping mapping : property.getMapping()) {
+		for (SourceMapping mapping : property.getSources()) {
 						
 			final Object source = sources.get(mapping.getObjectClass(), mapping.getQualifier());
 			
@@ -160,7 +164,7 @@ public class ProjectionFactory {
 		
 		logger.debug("Decompose {}", projection.getClass().getCanonicalName());
 		
-		final MetaProjection metaProjection = index.get(projection.getClass());
+		final ProjectionMapping metaProjection = index.get(projection.getClass());
 
 		if (metaProjection == null) {
 			throw new ProjectionError("The projection for " + projection.getClass() + " is not present.");
@@ -172,7 +176,7 @@ public class ProjectionFactory {
 			throw new IllegalStateException();
 		}
 
-		for (ProjectionProperty metaProperty : metaProjection.getProperties()) {
+		for (PropertyMapping metaProperty : metaProjection.getProperties()) {
 
 			Object value = getPropertyValue(projection, metaProperty.getName());
 			
@@ -221,11 +225,11 @@ public class ProjectionFactory {
 		return sources.getValues();
 	}
 
-	void decompose(ProjectionProperty property, ProjectedObjects sources, Object value) throws ProjectionError, InvertibleFunctionError {
+	void decompose(PropertyMapping property, ProjectedObjects sources, Object value) throws ProjectionError, InvertibleFunctionError {
 		
 		logger.trace("Decompose {} = {}: {}", property.getName(), value, property.getTargetClass());
 		
-		for (PropertyMapping mapping : property.getMapping()) {
+		for (SourceMapping mapping : property.getSources()) {
 						
 			final Object source = sources.get(mapping.getObjectClass(), mapping.getQualifier());
 			

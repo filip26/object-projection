@@ -9,17 +9,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.MetaProjection;
-import com.apicatalog.projection.ProjectionProperty;
-import com.apicatalog.projection.PropertyMapping;
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Source;
+import com.apicatalog.projection.mapping.ProjectionMapping;
+import com.apicatalog.projection.mapping.PropertyMapping;
+import com.apicatalog.projection.mapping.SourceMapping;
 
 public class ProjectionScanner {
 
 	final Logger logger = LoggerFactory.getLogger(ProjectionScanner.class);
 	
-	public MetaProjection scan(final Class<?> targetProjectionClass) {
+	public ProjectionMapping scan(final Class<?> targetProjectionClass) {
 
 		if (targetProjectionClass == null) {
 			throw new IllegalArgumentException();
@@ -34,7 +34,7 @@ public class ProjectionScanner {
 		
 		final Projection objectProjection = targetProjectionClass.getAnnotation(Projection.class);
 		
-		final MetaProjection metaProjection = new MetaProjection(targetProjectionClass);
+		final ProjectionMapping metaProjection = new ProjectionMapping(targetProjectionClass);
 		
 		// check all declared fields
 		for (Field field : targetProjectionClass.getDeclaredFields()) {
@@ -47,9 +47,9 @@ public class ProjectionScanner {
 					continue;
 			}
 
-			final ProjectionProperty property = new ProjectionProperty(field.getName());
+			final PropertyMapping property = new PropertyMapping(field.getName());
 			
-			final PropertyMapping mapping = new PropertyMapping();
+			final SourceMapping mapping = new SourceMapping();
 			
 			// set default source object class
 			if (!Class.class.equals(objectProjection.value())) {
@@ -88,7 +88,7 @@ public class ProjectionScanner {
 				continue;
 			}
 			
-			property.setMapping(new PropertyMapping[] {mapping});
+			property.setSources(new SourceMapping[] {mapping});
 			
 			if (Collection.class.equals(field.getType())) {
 				property.setItemClass((Class<?>)((ParameterizedType)field.getGenericType()).getActualTypeArguments()[0]);

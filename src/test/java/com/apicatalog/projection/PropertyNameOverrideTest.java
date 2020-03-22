@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import com.apicatalog.projection.ifnc.InvertibleFunctionError;
+import com.apicatalog.projection.mapping.MappingIndex;
 import com.apicatalog.projection.scanner.ProjectionScanner;
 
 @RunWith(JUnit4.class)
@@ -20,7 +21,7 @@ public class PropertyNameOverrideTest {
 	public void setup() {
 		ProjectionScanner scanner = new ProjectionScanner();
 		
-		MetaProjectionIndex index = new MetaProjectionIndex();
+		MappingIndex index = new MappingIndex();
 		index.add(scanner.scan(TestProjectionA.class));
 		
 		projection = new ProjectionFactory(index);
