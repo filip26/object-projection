@@ -1,11 +1,11 @@
 package com.apicatalog.projection;
 
-import com.apicatalog.projection.annotation.Function;
-import com.apicatalog.projection.annotation.ObjectProjection;
+import com.apicatalog.projection.annotation.IFunction;
+import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Source;
-import com.apicatalog.projection.fnc.Concat;
+import com.apicatalog.projection.ifnc.Concat;
 
-@ObjectProjection(TestObjectA.class)
+@Projection(TestObjectA.class)
 public class TestProjectionAF {
 
 	@Source( "stringValue")
@@ -13,15 +13,15 @@ public class TestProjectionAF {
 	
 	@Source(
 			value = "stringValue",
-			map = @Function(type = Concat.class, value="GHIJKL")
+			map = @IFunction(type = Concat.class, value="GHIJKL")
 			)
 	String modifiedString;
 
 	@Source(
 			value = "stringValue",
 			map = {
-				@Function(type = Concat.class, value="GHIJKL"),
-				@Function(type = Concat.class, value="MNOPQR")
+				@IFunction(type = Concat.class, value="GHIJKL"),
+				@IFunction(type = Concat.class, value="MNOPQR")
 			}
 			)
 	String modified2xString;

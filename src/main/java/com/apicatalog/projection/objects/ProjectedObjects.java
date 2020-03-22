@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.apicatalog.projection.Projection;
+import com.apicatalog.projection.MetaProjection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.ProjectionProperty;
@@ -34,7 +34,7 @@ public class ProjectedObjects {
 	
 	//TODO use scanner to get a list of objects at initialization time 
 	@Deprecated
-	public static ProjectedObjects from(Projection projection) throws ProjectionError {
+	public static ProjectedObjects from(MetaProjection projection) throws ProjectionError {
 		
 		final Map<ProjectedObjectKey, Object> index = new LinkedHashMap<>();
 		

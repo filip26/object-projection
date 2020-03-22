@@ -1,19 +1,19 @@
 package com.apicatalog.projection;
 
-import com.apicatalog.projection.annotation.Function;
-import com.apicatalog.projection.annotation.ObjectProjection;
+import com.apicatalog.projection.annotation.IFunction;
+import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
-import com.apicatalog.projection.fnc.Concat;
+import com.apicatalog.projection.ifnc.Concat;
 
-@ObjectProjection
+@Projection
 public class TestProjectionMS {
 
 	@Sources(value =  {
 					@Source(type=TestObjectA.class, value = "longValue"),
 					@Source(type=TestObjectAA.class, value = "stringValue")
 				},
-			map = @Function(type = Concat.class)
+			map = @IFunction(type = Concat.class)
 		)
 	Long projectedLong;
 		
@@ -22,7 +22,7 @@ public class TestProjectionMS {
 					@Source(type=TestObjectAA.class, value = "stringValue"),
 					@Source(type=TestObjectA.class, value = "longValue")
 				},
-			map = @Function(type = Concat.class)
+			map = @IFunction(type = Concat.class)
 		)
 	String inheritedValue;
 

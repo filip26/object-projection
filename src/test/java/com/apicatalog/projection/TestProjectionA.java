@@ -3,9 +3,9 @@ package com.apicatalog.projection;
 import java.time.Instant;
 
 import com.apicatalog.projection.annotation.Source;
-import com.apicatalog.projection.annotation.ObjectProjection;
+import com.apicatalog.projection.annotation.Projection;
 
-@ObjectProjection(TestObjectA.class)
+@Projection(TestObjectA.class)
 public class TestProjectionA {
 
 	@Source("longValue")

@@ -1,4 +1,4 @@
-package com.apicatalog.projection.fnc;
+package com.apicatalog.projection.ifnc;
 
 public class ContextValue {
 

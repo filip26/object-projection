@@ -17,7 +17,7 @@ public @interface Source {
 	
 	String qualifier() default "";
 	
-	Function[] map() default {};
+	IFunction[] map() default {};
 
 	boolean optional() default false;
 	

@@ -1,9 +1,9 @@
 package com.apicatalog.projection;
 
-import com.apicatalog.projection.annotation.ObjectProjection;
+import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Source;
 
-@ObjectProjection
+@Projection
 public class TestProjectionAI {
 
 	@Source(type=TestObjectA.class, value = "longValue")

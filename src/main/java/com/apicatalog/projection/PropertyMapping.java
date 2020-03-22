@@ -1,6 +1,6 @@
 package com.apicatalog.projection;
 
-import com.apicatalog.projection.annotation.Function;
+import com.apicatalog.projection.annotation.IFunction;
 
 public class PropertyMapping {
 
@@ -10,7 +10,7 @@ public class PropertyMapping {
 	
 	String qualifier;
 	
-	Function[] functions;
+	IFunction[] functions;
 
 	boolean optional;
 
@@ -38,11 +38,11 @@ public class PropertyMapping {
 		this.qualifier = qualifier;
 	}
 
-	public Function[] getFunctions() {
+	public IFunction[] getFunctions() {
 		return functions;
 	}
 
-	public void setFunctions(Function[] functions) {
+	public void setFunctions(IFunction[] functions) {
 		this.functions = functions;
 	}
 

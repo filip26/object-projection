@@ -14,6 +14,6 @@ public @interface Sources {
 
 	Source[] value();
 	
-	Function[] map() default {};
+	IFunction[] map() default {};
 		
 }

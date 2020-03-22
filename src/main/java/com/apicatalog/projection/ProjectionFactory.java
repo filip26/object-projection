@@ -14,24 +14,24 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.adapter.TypeAdapter;
 import com.apicatalog.projection.adapter.TypeAdapterError;
 import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.annotation.Function;
-import com.apicatalog.projection.fnc.ContextValue;
-import com.apicatalog.projection.fnc.InvertibleFunction;
-import com.apicatalog.projection.fnc.InvertibleFunctionError;
+import com.apicatalog.projection.annotation.IFunction;
+import com.apicatalog.projection.ifnc.ContextValue;
+import com.apicatalog.projection.ifnc.InvertibleFunction;
+import com.apicatalog.projection.ifnc.InvertibleFunctionError;
 import com.apicatalog.projection.objects.ProjectedObjects;
 
 public class ProjectionFactory {
 
 	final Logger logger = LoggerFactory.getLogger(ProjectionFactory.class);
 	
-	final ProjectionIndex index;
+	final MetaProjectionIndex index;
 	final TypeAdapters adapters;
 	
-	public ProjectionFactory(ProjectionIndex index) {
+	public ProjectionFactory(MetaProjectionIndex index) {
 		this(index, new TypeAdapters());
 	}
 	
-	public ProjectionFactory(ProjectionIndex index, TypeAdapters adapters) {
+	public ProjectionFactory(MetaProjectionIndex index, TypeAdapters adapters) {
 		this.index = index;
 		this.adapters = adapters;
 	}
@@ -42,7 +42,7 @@ public class ProjectionFactory {
 		}
 		logger.debug("Compose {} of {}", projectionClass.getCanonicalName(), objects);
 		
-		final Projection metaProjection = index.get(projectionClass);
+		final MetaProjection metaProjection = index.get(projectionClass);
 		
 		if (metaProjection == null) {
 			throw new ProjectionError("The projection for " + projectionClass + " is not present.");
@@ -122,12 +122,12 @@ public class ProjectionFactory {
 
 			Object value = getPropertyValue(source, sourcePropertyName);
 			
-			logger.trace("  {}.{} = {}: {}", mapping.getObjectClass().getSimpleName(), sourcePropertyName, value, value.getClass().getCanonicalName());
+			logger.trace("  {}.{} = {}: {}", mapping.getObjectClass().getSimpleName(), sourcePropertyName, value, (value != null ? value.getClass().getCanonicalName() : ""));
 			
-			final Function[] functions = mapping.getFunctions();
+			final IFunction[] functions = mapping.getFunctions();
 			
 			if (functions != null) {
-				for (Function fnc : functions) {
+				for (IFunction fnc : functions) {
 					
 					final InvertibleFunction ifnc = newInstance(fnc.type());	//TODO re-use preconstructed instances
 	
@@ -160,7 +160,7 @@ public class ProjectionFactory {
 		
 		logger.debug("Decompose {}", projection.getClass().getCanonicalName());
 		
-		final Projection metaProjection = index.get(projection.getClass());
+		final MetaProjection metaProjection = index.get(projection.getClass());
 
 		if (metaProjection == null) {
 			throw new ProjectionError("The projection for " + projection.getClass() + " is not present.");
@@ -234,9 +234,9 @@ public class ProjectionFactory {
 			}
 			
 			if (mapping.getFunctions() != null) {
-				for (Function fnc : mapping.getFunctions()) {
+				for (IFunction fnc : mapping.getFunctions()) {
 					
-					final InvertibleFunction<Object> ifnc = newInstance(fnc.type());
+					final InvertibleFunction<Object> ifnc = (InvertibleFunction<Object>) newInstance(fnc.type());
 					
 					ContextValue ctx = new ContextValue();
 					ctx.setValues(fnc.value());
@@ -308,13 +308,15 @@ public class ProjectionFactory {
 	
 	protected <T> T adapt(Class<? extends T> targetClass, Object object) throws ProjectionError {
 		
-		final TypeAdapter<T, Object> adapter = adapters.get(targetClass, object.getClass());
+		final TypeAdapter<Object> adapter = adapters.get(object.getClass());
 		
 		if (adapter == null) {
 			throw new ProjectionError("Can not convert " + object.getClass() + " to " + targetClass + ".");
 		}
+		
 		try {
-			return adapter.convert(object);
+			return adapter.convert(targetClass, object);
+			
 		} catch (TypeAdapterError e) {
 			throw new ProjectionError(e);
 		}

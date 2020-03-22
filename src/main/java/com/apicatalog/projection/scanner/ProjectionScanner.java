@@ -9,17 +9,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.Projection;
+import com.apicatalog.projection.MetaProjection;
 import com.apicatalog.projection.ProjectionProperty;
 import com.apicatalog.projection.PropertyMapping;
-import com.apicatalog.projection.annotation.ObjectProjection;
+import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Source;
 
 public class ProjectionScanner {
 
 	final Logger logger = LoggerFactory.getLogger(ProjectionScanner.class);
 	
-	public Projection scan(final Class<?> targetProjectionClass) {
+	public MetaProjection scan(final Class<?> targetProjectionClass) {
 
 		if (targetProjectionClass == null) {
 			throw new IllegalArgumentException();
@@ -28,13 +28,13 @@ public class ProjectionScanner {
 		logger.debug("Scan {}", targetProjectionClass.getCanonicalName());
 		
 		// ignore unannotated classes
-		if (!targetProjectionClass.isAnnotationPresent(ObjectProjection.class)) {
+		if (!targetProjectionClass.isAnnotationPresent(Projection.class)) {
 			return null;
 		}
 		
-		final ObjectProjection objectProjection = targetProjectionClass.getAnnotation(ObjectProjection.class);
+		final Projection objectProjection = targetProjectionClass.getAnnotation(Projection.class);
 		
-		final Projection projection = new Projection(targetProjectionClass);
+		final MetaProjection metaProjection = new MetaProjection(targetProjectionClass);
 		
 		// check all declared fields
 		for (Field field : targetProjectionClass.getDeclaredFields()) {
@@ -96,10 +96,10 @@ public class ProjectionScanner {
 			property.setTargetClass(field.getType());			
 			
 			logger.trace("  found property {}: {}", property.getName(), property.getTargetClass().getCanonicalName());
-			projection.add(property);
+			metaProjection.add(property);
 		}
 		
-		return projection;
+		return metaProjection;
 	}
 	
 }

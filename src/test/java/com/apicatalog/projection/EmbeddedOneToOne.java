@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.apicatalog.projection.fnc.InvertibleFunctionError;
+import com.apicatalog.projection.ifnc.InvertibleFunctionError;
 import com.apicatalog.projection.scanner.ProjectionScanner;
 
 @RunWith(JUnit4.class)
@@ -18,7 +18,7 @@ public class EmbeddedOneToOne {
 	public void setup() {
 		ProjectionScanner scanner = new ProjectionScanner();
 		
-		ProjectionIndex index = new ProjectionIndex();
+		MetaProjectionIndex index = new MetaProjectionIndex();
 		index.add(scanner.scan(TestProjectionAA.class));
 		index.add(scanner.scan(TestProjectionAI.class));
 		

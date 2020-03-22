@@ -1,10 +1,11 @@
 package com.apicatalog.projection.adapter;
 
-public interface TypeAdapter<T, S> {
+public interface TypeAdapter<S> {
 
 	Class<S> source();
-	Class<T> target();
 	
-	T convert(S object) throws TypeAdapterError;
+	Class<?>[] targets();
+	
+	<T> T convert(Class<? extends T> targetClass, S object) throws TypeAdapterError;
 	
 }

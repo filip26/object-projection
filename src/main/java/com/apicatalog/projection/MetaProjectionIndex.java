@@ -3,20 +3,20 @@ package com.apicatalog.projection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class ProjectionIndex {
+public class MetaProjectionIndex {
 
-	final Map<Class<?>, Projection> projections;
+	final Map<Class<?>, MetaProjection> projections;
 	
-	public ProjectionIndex() {
+	public MetaProjectionIndex() {
 		this(new LinkedHashMap<>());
 	}
 	
-	public ProjectionIndex(final Map<Class<?>, Projection> projections) {
+	public MetaProjectionIndex(final Map<Class<?>, MetaProjection> projections) {
 		this.projections = projections;
 	}
 
 	
-	public void add(final Projection projection) {
+	public void add(final MetaProjection projection) {
 		if (projection == null) {
 			throw new IllegalArgumentException();
 		}
@@ -25,7 +25,7 @@ public class ProjectionIndex {
 		
 	}
 
-	public Projection get(final Class<?> projectionClass) {
+	public MetaProjection get(final Class<?> projectionClass) {
 		return projections.get(projectionClass);
 	}
 }

@@ -1,6 +1,6 @@
 package com.apicatalog.projection;
 
-import com.apicatalog.projection.fnc.InvertibleFunction;
+import com.apicatalog.projection.ifnc.InvertibleFunction;
 
 public class ProjectionProperty {
 

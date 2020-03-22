@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface ObjectProjection {
+public @interface Projection {
 
 	Class<?> value() default Class.class;
 

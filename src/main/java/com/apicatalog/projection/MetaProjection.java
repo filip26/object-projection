@@ -3,13 +3,13 @@ package com.apicatalog.projection;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class Projection {
+public class MetaProjection {
 
 	final Class<?> projectionClass;
 	
 	final Collection<ProjectionProperty> properties;
 
-	public Projection(Class<?> projectionClass) {
+	public MetaProjection(Class<?> projectionClass) {
 		this.projectionClass = projectionClass;
 		this.properties = new ArrayList<>();
 	}
