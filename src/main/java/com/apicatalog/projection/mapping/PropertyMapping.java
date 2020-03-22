@@ -1,6 +1,6 @@
 package com.apicatalog.projection.mapping;
 
-import com.apicatalog.projection.ifnc.InvertibleFunction;
+import com.apicatalog.projection.annotation.IFunction;
 
 public class PropertyMapping {
 
@@ -11,7 +11,7 @@ public class PropertyMapping {
 	
 	SourceMapping[] sources;
 	
-	InvertibleFunction<?>[] functions;
+	IFunction[] functions;
 	
 	public PropertyMapping(String name) {
 		this.name = name;
@@ -27,14 +27,6 @@ public class PropertyMapping {
 
 	public void setSources(SourceMapping[] mapping) {
 		this.sources = mapping;
-	}
-
-	public InvertibleFunction<?>[] getFunctions() {
-		return functions;
-	}
-	
-	public void setFunctions(InvertibleFunction<?>[] functions) {
-		this.functions = functions;
 	}
 
 	public Class<?> getTargetClass() {
@@ -55,5 +47,13 @@ public class PropertyMapping {
 	
 	public boolean isCollection() {
 		return itemClass != null;
+	}
+
+	public IFunction[] getFunctions() {
+		return functions;
+	}
+
+	public void setFunctions(IFunction[] functions) {
+		this.functions = functions;
 	}
 }

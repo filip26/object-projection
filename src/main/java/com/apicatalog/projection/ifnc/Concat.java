@@ -25,7 +25,6 @@ public class Concat implements InvertibleFunction<String> {
 	public String compute(Object... objects) {
 
 		StringBuilder builder = new StringBuilder();
-
 		for (Object v : objects) {
 			builder.append(v.toString());
 		}
@@ -46,5 +45,10 @@ public class Concat implements InvertibleFunction<String> {
 		}
 		
 		return new Object[] {value};
+	}
+
+	@Override
+	public boolean isReverseable() {
+		return false;
 	}
 }

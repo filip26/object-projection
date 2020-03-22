@@ -13,9 +13,9 @@ public class TestProjectionMS {
 					@Source(type=TestObjectA.class, value = "longValue"),
 					@Source(type=TestObjectAA.class, value = "stringValue")
 				},
-			map = @IFunction(type = Concat.class)
+			map = @IFunction(type = Concat.class, value="!@#")
 		)
-	Long projectedLong;
+	String longstring;
 		
 
 	@Sources(value =  {
@@ -24,7 +24,5 @@ public class TestProjectionMS {
 				},
 			map = @IFunction(type = Concat.class)
 		)
-	String inheritedValue;
-
-	
+	String stringlong;	
 }
