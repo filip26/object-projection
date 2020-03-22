@@ -19,8 +19,8 @@ import com.apicatalog.projection.annotation.IFunction;
 import com.apicatalog.projection.ifnc.ContextValue;
 import com.apicatalog.projection.ifnc.InvertibleFunction;
 import com.apicatalog.projection.ifnc.InvertibleFunctionError;
-import com.apicatalog.projection.mapping.ProjectionMapping;
 import com.apicatalog.projection.mapping.MappingIndex;
+import com.apicatalog.projection.mapping.ProjectionMapping;
 import com.apicatalog.projection.mapping.PropertyMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.objects.ProjectedObjects;
@@ -66,7 +66,7 @@ public class ProjectionFactory {
 			
 			if (values != null) {
 
-				if (propertyMapping.isCollection()) {
+				if (propertyMapping.getTarget().isCollection()) {
 					
 					Collection<Object> collection = new ArrayList<>();
 					 for (Object item : (Collection)values[0]) {	//FIXME hacky hack
@@ -76,20 +76,20 @@ public class ProjectionFactory {
 							o.add(item);
 							 
 							 
-						 Object value = compose(propertyMapping.getItemClass(), o.toArray(new Object[0]));
+						 Object value = compose(propertyMapping.getTarget().getItemClass(), o.toArray(new Object[0]));
 						 collection.add(value);
 					 }
 							
 					values = new Object[] {collection};
 
 				// embedded projection?
-				} else if (index.get(propertyMapping.getTargetClass()) != null) {	//TODO better
+				} else if (propertyMapping.getTarget().isReference()) {
 					
 					List<Object> o = new ArrayList<>();
 					o.addAll(Arrays.asList(objects));	// ?!?!?! FIXME
 					o.addAll(Arrays.asList(values));
 					
-					values = new Object[] {compose(propertyMapping.getTargetClass(),  o.toArray(new Object[0])) };
+					values = new Object[] {compose(propertyMapping.getTarget().getTargetClass(), o.toArray(new Object[0])) };
 				}
 
 				Object value = values;
@@ -102,7 +102,7 @@ public class ProjectionFactory {
 					value = values[0];
 				}
 				
-				logger.trace("  set {} to {}.{}: {}", value, projectionMapping.getProjectionClass().getSimpleName(), propertyMapping.getName(), propertyMapping.getTargetClass().getCanonicalName());
+				logger.trace("  set {} to {}.{}: {}", value, projectionMapping.getProjectionClass().getSimpleName(), propertyMapping.getName(), propertyMapping.getTarget().getTargetClass().getCanonicalName());
 
 				setPropertyValue(projection, propertyMapping.getName(), value);	
 			}
@@ -112,7 +112,7 @@ public class ProjectionFactory {
 	
 	Object[] compose(PropertyMapping property, ProjectedObjects sources) throws ProjectionError, InvertibleFunctionError {
 		
-		logger.debug("Compose property {}: {}", property.getName(), property.getTargetClass().getCanonicalName());
+		logger.debug("Compose property {}: {}", property.getName(), property.getTarget().getTargetClass().getCanonicalName());
 		
 		final List<Object> values = new ArrayList<>();
 		
@@ -122,7 +122,7 @@ public class ProjectionFactory {
 			
 			if (source == null) {
 				if (sourceMapping.isOptional()) {
-					return null;
+					return new Object[0];
 				}
 				
 				throw new ProjectionError("Source " + sourceMapping.getObjectClass() + ", qualifier=" + sourceMapping.getQualifier() + ",  is no present.");
@@ -175,9 +175,9 @@ public class ProjectionFactory {
 				continue;
 			}
 
-			if (propertyMapping.isCollection()) {
+			if (propertyMapping.getTarget().isCollection()) {
 				
-				Collection<Object> collection = new ArrayList<Object>();
+				Collection<Object> collection = new ArrayList<>();
 				for (Object item : ((Collection<Object>)value)) {
 					Object[] v = decompose(item);
 					value = v[0];			//FIXME hack!
@@ -187,7 +187,7 @@ public class ProjectionFactory {
 				value = collection;
  				
 			// detect embedded projection
-			} else if (index.get(propertyMapping.getTargetClass()) != null) {	//TODO better
+			} else if (propertyMapping.getTarget().isReference()) {
 
 				Object[] v = decompose(value);
 				
@@ -203,14 +203,14 @@ public class ProjectionFactory {
 
 	void decompose(PropertyMapping propertyMapping, ProjectedObjects sources, Object value) throws ProjectionError, InvertibleFunctionError {
 		
-		logger.trace("Decompose {} = {}: {}", propertyMapping.getName(), value, propertyMapping.getTargetClass());
+		logger.trace("Decompose {} = {}: {}", propertyMapping.getName(), value, propertyMapping.getTarget().getTargetClass());
 		
 		
 		
 		if (propertyMapping.getFunctions() != null && propertyMapping.getFunctions().length > 0) {
 			
 			// reverse order
-			final ArrayList<IFunction> ifncs = new ArrayList<IFunction>(Arrays.asList(propertyMapping.getFunctions()));
+			final ArrayList<IFunction> ifncs = new ArrayList<>(Arrays.asList(propertyMapping.getFunctions()));
 			Collections.reverse(ifncs);
 			
 			for (IFunction fnc : ifncs) {	
@@ -299,13 +299,13 @@ public class ProjectionFactory {
 		if (StringUtils.isBlank(property)) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		try {
 			
 			final Field field = object.getClass().getDeclaredField(property);
 			field.setAccessible(true);
 			return field.get(object);
-			
+
 		} catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {
 			throw new ProjectionError("Can not get property=" + property + " value of " + object.getClass() + ".", e);
 		}
@@ -351,7 +351,7 @@ public class ProjectionFactory {
 		final TypeAdapter<Object> adapter = adapters.get(object.getClass());
 		
 		if (adapter == null) {
-			throw new ProjectionError("Can not convert " + object.getClass() + " to " + targetClass + ".");
+			throw new ProjectionError("Can not convert " + object.getClass().getCanonicalName() + " to " + targetClass.getCanonicalName() + ".");
 		}
 		
 		try {

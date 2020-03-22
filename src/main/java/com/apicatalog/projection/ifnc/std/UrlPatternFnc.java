@@ -37,7 +37,7 @@ public class UrlPatternFnc implements InvertibleFunction<String> {
 	@Override
 	public Object[] inverse(String value) throws InvertibleFunctionError {
 		// TODO Auto-generated method stub
-		return null;
+		return new Object[] {value};
 	}
 
 	@Override

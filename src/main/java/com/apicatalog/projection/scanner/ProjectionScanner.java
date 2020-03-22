@@ -17,6 +17,7 @@ import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.mapping.ProjectionMapping;
 import com.apicatalog.projection.mapping.PropertyMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
+import com.apicatalog.projection.mapping.TargetMapping;
 
 public class ProjectionScanner {
 
@@ -53,7 +54,7 @@ public class ProjectionScanner {
 			final PropertyMapping propertyMapping = newPropertyMapping(projectionAnnotation, field, targetProjectionClass);
 			
 			if (propertyMapping != null) {
-				logger.trace("  found property {}: {}", propertyMapping.getName(), propertyMapping.getTargetClass().getCanonicalName());
+				logger.trace("  found property {}: {}", propertyMapping.getName(), propertyMapping.getTarget().getTargetClass().getCanonicalName());
 				projectionMapping.add(propertyMapping);
 			}
 		}
@@ -61,7 +62,12 @@ public class ProjectionScanner {
 	}
 	
 	PropertyMapping newPropertyMapping(final Projection projectionAnnotation, final Field field, final Class<?> targetProjectionClass) {
+		
 		final PropertyMapping propertyMapping = new PropertyMapping(field.getName());
+		
+		final TargetMapping targetMapping = new TargetMapping();
+		
+		propertyMapping.setTarget(targetMapping);
 		
 		// is the property annotated? 
 		if (field.isAnnotationPresent(Source.class)) {
@@ -122,12 +128,17 @@ public class ProjectionScanner {
 			propertyMapping.setSources(new SourceMapping[] {sourceMapping});
 		}
 
+		targetMapping.setTargetClass(field.getType());
+
 		// a collection?
-		if (Collection.class.equals(field.getType())) {
-			propertyMapping.setItemClass((Class<?>)((ParameterizedType)field.getGenericType()).getActualTypeArguments()[0]);
+		if (Collection.class.isAssignableFrom(field.getType())) {
+			targetMapping.setItemClass((Class<?>)((ParameterizedType)field.getGenericType()).getActualTypeArguments()[0]);
+			targetMapping.setReference(targetMapping.getItemClass().isAnnotationPresent(Projection.class));
+			
+		} else {
+			targetMapping.setReference(targetMapping.getTargetClass().isAnnotationPresent(Projection.class));
 		}
 		
-		propertyMapping.setTargetClass(field.getType());			
 		return propertyMapping;
 	}
 	
