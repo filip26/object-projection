@@ -7,6 +7,8 @@ import com.apicatalog.projection.annotation.Source;
 public class TestProjectionAA {
 
 	@Source(value = "objectA")
-	TestProjectionAI a;
+	TestProjectionAI ai;
+	
+	TestProjectionA aa;
 	
 }

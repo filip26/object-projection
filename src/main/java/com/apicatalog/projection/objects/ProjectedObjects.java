@@ -19,6 +19,10 @@ public class ProjectedObjects {
 		this.index = index;
 	}
 	
+	public ProjectedObjects(ProjectedObjects sources) {
+		this.index = new LinkedHashMap<>(sources.index);
+	}
+	
 	public static ProjectedObjects of(Object[] objects) {		
 		return new ProjectedObjects(Stream
 							.of(objects)
@@ -39,6 +43,10 @@ public class ProjectedObjects {
 		final Map<ProjectedObjectKey, Object> index = new LinkedHashMap<>();
 		
 		for (PropertyMapping property : projection.getProperties()) {
+			
+			if (property.getSources() == null) {
+				continue;
+			}
 			
 			for (SourceMapping mapping : property.getSources()) {
 				
@@ -61,11 +69,8 @@ public class ProjectedObjects {
 	public Object[] getValues() {
 		return index.values().toArray(new Object[0]);
 	}
-
-	public void merge(Object object, String qualifier) {
-		
-		Object orig = index.get(ProjectedObjectKey.of(object.getClass(), qualifier));
-		//FIXME
+	
+	public void addOrReplace(Object object, String qualifier) {
 		index.put(ProjectedObjectKey.of(object.getClass(), qualifier), object);
 	}
 		

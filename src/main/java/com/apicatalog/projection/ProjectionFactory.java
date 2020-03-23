@@ -43,27 +43,39 @@ public class ProjectionFactory {
 	}
 	
 	public <P> P compose(Class<? extends P> projectionClass, Object...objects) throws ProjectionError, InvertibleFunctionError {
+				
+		final ProjectedObjects sources = 
+				Optional.ofNullable(ProjectedObjects.of(objects))
+						.orElseThrow(IllegalStateException::new); 				
+
+		return compose(projectionClass, sources, 0);
+	}
+
+	<P> P compose(Class<? extends P> projectionClass, final ProjectedObjects sources, int depth) throws ProjectionError, InvertibleFunctionError {
+
+		if (depth > 1) {
+			return null;
+		}
+		
+
 		
 		if (projectionClass == null) {
 			throw new IllegalArgumentException();
 		}
 		
-		logger.debug("Compose {} of {}", projectionClass.getCanonicalName(), objects);
+		logger.debug("Compose {} of {}", projectionClass.getCanonicalName(), sources);
 		
 		final ProjectionMapping projectionMapping = 
 				Optional.ofNullable(index.get(projectionClass))
 						.orElseThrow(() -> new ProjectionError("The projection for " + projectionClass + " is not present."));
 						
 				
-		final ProjectedObjects sources = 
-				Optional.ofNullable(ProjectedObjects.of(objects))
-						.orElseThrow(IllegalStateException::new); 				
-
 		final P projection = newInstance(projectionClass);
 		
 		for (final PropertyMapping propertyMapping : projectionMapping.getProperties()) {
 
-			Optional<Object> value = Optional.ofNullable(compose(propertyMapping, sources, objects));
+			Optional<Object> value = Optional.ofNullable(composeProperty(propertyMapping, sources, depth));
+			
 			if (value.isPresent()) {
 				logger.trace("  set {} to {}.{}: {}", value.get(), projectionMapping.getProjectionClass().getSimpleName(), propertyMapping.getName(), propertyMapping.getTarget().getTargetClass().getCanonicalName());
 				setPropertyValue(projection, propertyMapping.getName(), value.get());	
@@ -71,13 +83,14 @@ public class ProjectionFactory {
 		}
 		return projection;
 	}
+
 	
-	Object compose(final PropertyMapping propertyMapping, final ProjectedObjects sources, Object...objects) throws ProjectionError, InvertibleFunctionError {
+	Object composeProperty(final PropertyMapping propertyMapping, final ProjectedObjects sources, int depth) throws ProjectionError, InvertibleFunctionError {
 		
 		Object[] values = null;
 		
 		if (propertyMapping.getTarget().isCollection()) {
-
+			
 			values = compose(propertyMapping, sources);
 			if (values == null) {
 				return null;
@@ -86,12 +99,11 @@ public class ProjectionFactory {
 			Collection<Object> collection = new ArrayList<>();
 			 for (Object item : (Collection)values[0]) {	//FIXME hacky hack
 
-					List<Object> o = new ArrayList<>();
-					o.addAll(Arrays.asList(objects));	// ?!?!?! FIXME
-					o.add(item);
-					 
-					 
-				 Object value = compose(propertyMapping.getTarget().getItemClass(), o.toArray(new Object[0]));
+				 final ProjectedObjects itemSources = new ProjectedObjects(sources);
+				 itemSources.addOrReplace(item, null);
+				 
+				 final Object value = compose(propertyMapping.getTarget().getItemClass(), itemSources, depth + 1);
+
 				 collection.add(value);
 			 }
 					
@@ -100,19 +112,27 @@ public class ProjectionFactory {
 		// embedded projection?
 		} else if (propertyMapping.getTarget().isReference()) {
 
+			if (depth > 1) {
+				return null;
+			}
+			
 			if (propertyMapping.getSources() != null) { 
+				
 				values = compose(propertyMapping, sources);
 				if (values == null) {
 					return null;
 				}
 
-				List<Object> o = new ArrayList<>();
-				o.addAll(Arrays.asList(objects));	// ?!?!?! FIXME
-				o.addAll(Arrays.asList(values));
+				final ProjectedObjects embeddedSources = new ProjectedObjects(sources);
 				
-				values = new Object[] {compose(propertyMapping.getTarget().getTargetClass(), o.toArray(new Object[0])) };
+				for (Object v : values) {
+					embeddedSources.addOrReplace(v, null);
+				}				
+				
+				values = new Object[] {compose(propertyMapping.getTarget().getTargetClass(), embeddedSources, depth + 1)};
+				
 			} else {
-				values = new Object[] {compose(propertyMapping.getTarget().getTargetClass(), objects)};
+				values = new Object[] {compose(propertyMapping.getTarget().getTargetClass(), sources, depth + 1)};
 			}
 			
 		} else {
@@ -220,7 +240,7 @@ public class ProjectionFactory {
 				
 				value = v[0];			//FIXME hack!
 				if (v.length > 1) {	
-					sources.merge(v[1], null);	// ?!?!?!?
+					sources.addOrReplace(v[1], null);
 				}
 			}
 			decompose(propertyMapping, sources, value);

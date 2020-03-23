@@ -15,5 +15,7 @@ public @interface Sources {
 	Source[] value();
 	
 	IFunction[] map() default {};
+	
+	int maxDepth() default 1;
 		
 }

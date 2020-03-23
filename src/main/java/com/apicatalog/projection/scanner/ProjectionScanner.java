@@ -121,31 +121,30 @@ public class ProjectionScanner {
 		} else {
 			
 			final SourceMapping sourceMapping = new SourceMapping();
-			
-			if (!field.getType().isAnnotationPresent(Projection.class)) {
-				if (Class.class.equals(projectionAnnotation.value())) {
-					logger.warn("Source class is missing. Property {} of {} is ignored. Use @Projection(...) or @Source(...) annotations.", field.getName(), targetProjectionClass.getCanonicalName());
-					return null;		
-				}
-				
-			} 
 				
 			// set default source object class
 			sourceMapping.setObjectClass(projectionAnnotation.value());
 
 			// set default source object property name -> use the same name
 			sourceMapping.setPropertyName(field.getName());
+			
+			if (Class.class.equals(projectionAnnotation.value())) {
+				// do not warn about missing source(s) for references
+				if (!field.getType().isAnnotationPresent(Projection.class)) {
+					logger.warn("Source class is missing. Property {} of {} is ignored. Use @Projection(...) or @Source(...) annotations.", field.getName(), targetProjectionClass.getCanonicalName());
+					return null;
+				}
 
-			// do not warn about missing source(s) for references
-			if (!field.getType().isAnnotationPresent(Projection.class)) {
-				if (!isFieldPresent(sourceMapping.getObjectClass(), sourceMapping.getPropertyName())) {
+			} else if (!isFieldPresent(sourceMapping.getObjectClass(), sourceMapping.getPropertyName())) {
+				// do not warn about missing source(s) for references
+				if (!field.getType().isAnnotationPresent(Projection.class)) {
 					logger.warn("Property {} is not accessible or does not exist in {} and is ignored. Use @Source(value=...) to set source property name.", field.getName(), sourceMapping.getObjectClass());
 					return null;
 				}
-			}
+				
+			} else {
 				propertyMapping.setSources(new SourceMapping[] {sourceMapping});
-			
-			
+			}			
 		}
 
 		propertyMapping.setTarget(mapTarget(field));
@@ -220,7 +219,7 @@ public class ProjectionScanner {
 		
 		// check is source field does exist
 		if (!isFieldPresent(sourceMapping.getObjectClass(), sourceMapping.getPropertyName())) {
-			logger.warn("Property {} is not accessible or does not exist in {} and is ignored. Use @Source(value=...) to set source property name.", field.getName(), sourceMapping.getObjectClass());
+			logger.warn("Property {} is not accessible or does not exist in {} and is ignored. Use @Source(value=...) to set source property name.", sourceMapping.getPropertyName(), sourceMapping.getObjectClass());
 			return null;
 		}
 

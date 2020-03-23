@@ -21,4 +21,5 @@ public @interface Source {
 
 	boolean optional() default false;
 	
+	int maxDepth() default 1;
 }

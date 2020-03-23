@@ -22,6 +22,7 @@ public class EmbeddedOneToOne {
 		MappingIndex index = new MappingIndex();
 		index.add(scanner.scan(TestProjectionAA.class));
 		index.add(scanner.scan(TestProjectionAI.class));
+		index.add(scanner.scan(TestProjectionA.class));
 		
 		projection = new ProjectionFactory(index);
 	}
@@ -32,17 +33,20 @@ public class EmbeddedOneToOne {
     	TestObjectA oa = new TestObjectA();
     	oa.longValue = 123456l;
 
+    	TestObjectA oa2 = new TestObjectA();
+    	oa2.longValue = 987654l;
+
     	TestObjectAA oaa = new TestObjectAA();
     	oaa.stringValue = "inherit me";
     	oaa.objectA = oa;
 
-    	TestProjectionAA pa = projection.compose(TestProjectionAA.class, oaa);
+    	TestProjectionAA pa = projection.compose(TestProjectionAA.class, oaa, oa2);
     	
     	Assert.assertNotNull(pa);
-    	Assert.assertNotNull(pa.a);
+    	Assert.assertNotNull(pa.ai);
     	
-    	Assert.assertEquals(oa.longValue, pa.a.projectedLong);
-    	Assert.assertEquals(oaa.stringValue, pa.a.inheritedValue);
+    	Assert.assertEquals(oa.longValue, pa.ai.projectedLong);
+    	Assert.assertEquals(oaa.stringValue, pa.ai.inheritedValue);
     }
     
     @Test
@@ -53,7 +57,7 @@ public class EmbeddedOneToOne {
     	pa.inheritedValue = "inherit me";
 
     	TestProjectionAA paa = new TestProjectionAA();
-    	paa.a = pa;
+    	paa.ai = pa;
 
     	Object[] oo = projection.decompose(paa);
     	
@@ -64,8 +68,8 @@ public class EmbeddedOneToOne {
     	TestObjectAA oaa = (TestObjectAA)oo[0];
     	Assert.assertNotNull(oaa.objectA);
 
-    	Assert.assertEquals(paa.a.projectedLong, oaa.objectA.longValue);
-    	Assert.assertEquals(paa.a.inheritedValue, oaa.stringValue);
+    	Assert.assertEquals(paa.ai.projectedLong, oaa.objectA.longValue);
+    	Assert.assertEquals(paa.ai.inheritedValue, oaa.stringValue);
     }
 }
 
