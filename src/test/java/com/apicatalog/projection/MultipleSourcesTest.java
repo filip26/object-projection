@@ -56,8 +56,5 @@ public class MultipleSourcesTest {
     	Assert.assertEquals(TestObjectA.class, oo[0].getClass());
     	Assert.assertNotNull(oo[1]);
     	Assert.assertEquals(TestObjectAA.class, oo[1].getClass());
-    	
-    	TestObjectA oa = (TestObjectA)oo[0];
-    	//TODO
     }
 }

@@ -10,9 +10,9 @@ public class SourceMapping {
 	
 	String qualifier;
 	
+	Boolean optional;
+	
 	IFunction[] functions;
-
-	boolean optional;
 
 	public Class<?> getObjectClass() {
 		return objectClass;
@@ -47,10 +47,10 @@ public class SourceMapping {
 	}
 
 	public boolean isOptional() {
-		return optional;
+		return optional != null && optional;
 	}
-
-	public void setOptional(boolean optional) {
+	
+	public void setOptional(Boolean optional) {
 		this.optional = optional;
 	}
 }

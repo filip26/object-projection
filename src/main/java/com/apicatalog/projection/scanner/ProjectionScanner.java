@@ -188,18 +188,30 @@ public class ProjectionScanner {
 			sourceMapping.setObjectClass(projectionAnnotation.value());
 		}
 		
-		// set default source object property name -> use the same name
-		sourceMapping.setPropertyName(field.getName());
-
-		
 		// override source property class
 		if (!Class.class.equals(source.type())) {
 			sourceMapping.setObjectClass(source.type());
 		}
+		
+		if (sourceMapping.getObjectClass() == null) {
+			logger.warn("Source class is missing. Property {} of {} is ignored. Use @Projection(value=...) or @Source(type=...).", field.getName(), targetProjectionClass.getCanonicalName());
+			return null;
+		}
+
+		// set default source object property name -> use the same name
+		sourceMapping.setPropertyName(field.getName());
+		
 		// override source property name
 		if (StringUtils.isNotBlank(source.value())) {
 			sourceMapping.setPropertyName(source.value());
 		}
+		
+		// check is source field does exist
+		if (!isFieldPresent(sourceMapping.getObjectClass(), sourceMapping.getPropertyName())) {
+			logger.warn("Property {} is not accessible or does not exist in {} and is ignored. Use @Source(value=...) to set source property name.", field.getName(), sourceMapping.getObjectClass());
+			return null;
+		}
+
 		// set source object qualifier
 		if (StringUtils.isNotBlank(source.qualifier())) {
 			sourceMapping.setQualifier(source.qualifier());
@@ -208,19 +220,9 @@ public class ProjectionScanner {
 		if (source.map() != null && source.map().length > 0) {
 			sourceMapping.setFunctions(source.map());
 		}
-		
-		if (sourceMapping.getObjectClass() == null) {
-			logger.warn("Source class is missing. Property {} of {} is ignored. Use @Projection(value=...) or @Source(type=...).", field.getName(), targetProjectionClass.getCanonicalName());
-			return null;
-		}
-		
-		// check is source field does exist
-		if (!isFieldPresent(sourceMapping.getObjectClass(), sourceMapping.getPropertyName())) {
-			logger.warn("Property {} is not accessible or does not exist in {} and is ignored. Use @Source(value=...) to set source property name.", field.getName(), sourceMapping.getObjectClass());
-			return null;
-		}
+		// set optional 
+		sourceMapping.setOptional(source.optional());
 				
-		//TODO optional/nullable?
 		return sourceMapping;
 	}
 	
