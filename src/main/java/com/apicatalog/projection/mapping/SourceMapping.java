@@ -14,11 +14,11 @@ public class SourceMapping {
 	
 	IFunction[] functions;
 
-	public Class<?> getObjectClass() {
+	public Class<?> getSourceClass() {
 		return objectClass;
 	}
 
-	public void setObjectClass(Class<?> objectClass) {
+	public void setSourceClass(Class<?> objectClass) {
 		this.objectClass = objectClass;
 	}
 

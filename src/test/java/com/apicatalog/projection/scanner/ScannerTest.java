@@ -47,7 +47,7 @@ public class ScannerTest {
     	Assert.assertNotNull(pm1.getTarget());
     	Assert.assertEquals(1, pm1.getSources().length);
     	Assert.assertEquals("stringValue", pm1.getSources()[0].getPropertyName());
-    	Assert.assertEquals(TestObjectA.class, pm1.getSources()[0].getObjectClass());
+    	Assert.assertEquals(TestObjectA.class, pm1.getSources()[0].getSourceClass());
     	Assert.assertNull(pm1.getSources()[0].getFunctions());
 
     	final PropertyMapping pm2 = it.next();
@@ -58,7 +58,7 @@ public class ScannerTest {
     	Assert.assertNotNull(pm2.getTarget());
     	Assert.assertEquals(1, pm2.getSources().length);
     	Assert.assertEquals("stringValue", pm2.getSources()[0].getPropertyName());
-    	Assert.assertEquals(TestObjectA.class, pm2.getSources()[0].getObjectClass());
+    	Assert.assertEquals(TestObjectA.class, pm2.getSources()[0].getSourceClass());
     	Assert.assertNotNull(pm2.getSources()[0].getFunctions());
     	Assert.assertEquals(1, pm2.getSources()[0].getFunctions().length);
     	
@@ -70,7 +70,7 @@ public class ScannerTest {
     	Assert.assertNotNull(pm3.getTarget());
     	Assert.assertEquals(1, pm3.getSources().length);
     	Assert.assertEquals("stringValue", pm3.getSources()[0].getPropertyName());
-    	Assert.assertEquals(TestObjectA.class, pm3.getSources()[0].getObjectClass());
+    	Assert.assertEquals(TestObjectA.class, pm3.getSources()[0].getSourceClass());
     	Assert.assertNotNull(pm3.getSources()[0].getFunctions());
     	Assert.assertEquals(2, pm3.getSources()[0].getFunctions().length);
     }

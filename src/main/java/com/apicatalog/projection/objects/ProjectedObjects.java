@@ -50,13 +50,13 @@ public class ProjectedObjects {
 			
 			for (SourceMapping mapping : property.getSources()) {
 				
-				final ProjectedObjectKey key = ProjectedObjectKey.of(mapping.getObjectClass(), mapping.getQualifier());
+				final ProjectedObjectKey key = ProjectedObjectKey.of(mapping.getSourceClass(), mapping.getQualifier());
 				
 				if (index.containsKey(key)) {
 					continue;
 				}
 			
-				final Object object = ProjectionFactory.newInstance(mapping.getObjectClass());
+				final Object object = ProjectionFactory.newInstance(mapping.getSourceClass());
 				if (object != null) {
 					index.put(key, object);
 				}

@@ -56,9 +56,7 @@ public class ProjectionFactory {
 		if (depth > 1) {
 			return null;
 		}
-		
 
-		
 		if (projectionClass == null) {
 			throw new IllegalArgumentException();
 		}
@@ -67,7 +65,7 @@ public class ProjectionFactory {
 		
 		final ProjectionMapping projectionMapping = 
 				Optional.ofNullable(index.get(projectionClass))
-						.orElseThrow(() -> new ProjectionError("The projection for " + projectionClass + " is not present."));
+						.orElseThrow(() -> new ProjectionError("The projection for " + projectionClass.getCanonicalName() + " is not present."));
 						
 				
 		final P projection = newInstance(projectionClass);
@@ -165,12 +163,12 @@ public class ProjectionFactory {
 						
 			final Optional<Object> source = 
 					Optional.ofNullable(
-						sources.get(sourceMapping.getObjectClass(), sourceMapping.getQualifier())
+						sources.get(sourceMapping.getSourceClass(), sourceMapping.getQualifier())
 					);
 			
 			if (source.isEmpty()) {
 				if (!sourceMapping.isOptional()) {
-					throw new ProjectionError("Source instance of " + sourceMapping.getObjectClass().getCanonicalName() + ", qualifier=" + sourceMapping.getQualifier() + ",  is not present.");
+					throw new ProjectionError("Source instance of " + sourceMapping.getSourceClass().getCanonicalName() + ", qualifier=" + sourceMapping.getQualifier() + ",  is not present.");
 				}
 				return null;
 			}
@@ -184,7 +182,7 @@ public class ProjectionFactory {
 				value = applyFunctions(new Object[] {value}, sourceMapping.getFunctions());
 			}
 
-			logger.trace("  {}.{} = {}: {}", sourceMapping.getObjectClass().getSimpleName(), sourcePropertyName, value, (value != null ? value.getClass().getCanonicalName() : ""));
+			logger.trace("  {}.{} = {}: {}", sourceMapping.getSourceClass().getSimpleName(), sourcePropertyName, value, (value != null ? value.getClass().getCanonicalName() : ""));
 			
 			if (value != null) {
 				values.add(value);
@@ -281,10 +279,10 @@ public class ProjectionFactory {
 
 			final Object source = 
 					Optional.ofNullable(
-						sources.get(sourceMapping.getObjectClass(), sourceMapping.getQualifier())
+						sources.get(sourceMapping.getSourceClass(), sourceMapping.getQualifier())
 					)
 					.orElseThrow(
-						() -> new ProjectionError("Source instance of " + sourceMapping.getObjectClass().getCanonicalName() + ", qualifier=" + sourceMapping.getQualifier() + ",  is not present.")
+						() -> new ProjectionError("Source instance of " + sourceMapping.getSourceClass().getCanonicalName() + ", qualifier=" + sourceMapping.getQualifier() + ",  is not present.")
 					);
 			
 			if (sourceMapping.getFunctions() != null && sourceMapping.getFunctions().length > 0) {

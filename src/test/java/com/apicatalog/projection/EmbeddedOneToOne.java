@@ -47,6 +47,9 @@ public class EmbeddedOneToOne {
     	
     	Assert.assertEquals(oa.longValue, pa.ai.projectedLong);
     	Assert.assertEquals(oaa.stringValue, pa.ai.inheritedValue);
+    	
+    	Assert.assertNotNull(pa.aa);
+    	Assert.assertEquals(oa2.longValue, pa.aa.projectedLong);
     }
     
     @Test
