@@ -52,7 +52,7 @@ public class ProjectionScanner {
 					continue;
 			}
 			
-			Optional.ofNullable(newPropertyMapping(projectionAnnotation, field, targetProjectionClass))
+			Optional.ofNullable(mapProperty(projectionAnnotation, field, targetProjectionClass))
 					.ifPresent(
 							mapping -> {
 									logger.trace("  found property {}: {}", mapping.getName(), mapping.getTarget().getTargetClass().getCanonicalName());
@@ -63,20 +63,16 @@ public class ProjectionScanner {
 		return projectionMapping;
 	}
 	
-	PropertyMapping newPropertyMapping(final Projection projectionAnnotation, final Field field, final Class<?> targetProjectionClass) {
+	PropertyMapping mapProperty(final Projection projectionAnnotation, final Field field, final Class<?> targetProjectionClass) {
 		
 		final PropertyMapping propertyMapping = new PropertyMapping(field.getName());
-		
-		final TargetMapping targetMapping = new TargetMapping();
-		
-		propertyMapping.setTarget(targetMapping);
 		
 		// is the property annotated? 
 		if (field.isAnnotationPresent(Source.class)) {
 
 			final Optional<SourceMapping> sourceMapping = 
 					Optional.ofNullable(
-								newSourceMapping(
+								mapSource(
 											field.getAnnotation(Source.class), 
 											projectionAnnotation, 
 											field,
@@ -95,31 +91,27 @@ public class ProjectionScanner {
 			
 			final Sources sources = field.getAnnotation(Sources.class);
 			
-			final List<SourceMapping> sourceMappings = new ArrayList<>();
-			
-			for (Source source : sources.value()) {
-				
-				final Optional<SourceMapping> sourceMapping = 
-						Optional.ofNullable(
-									newSourceMapping(source, projectionAnnotation, field, targetProjectionClass)
-									);
-
-				if (sourceMapping.isEmpty()) {
-					continue;
-				}
-				
-				sourceMapping.ifPresent(sourceMappings::add);
-			}
+			final Optional<SourceMapping[]> sourceMappings = 
+						Optional.ofNullable( 
+									mapSources(
+											sources, 
+											projectionAnnotation, 
+											field, 
+											targetProjectionClass
+											)
+										);
 			
 			if (sourceMappings.isEmpty()) {
 				return null;				
 			}
-			
-			// set sources
-			propertyMapping.setSources(sourceMappings.toArray(new SourceMapping[0]));
 
+			// set sources
+			sourceMappings.ifPresent(propertyMapping::setSources);
+			
 			// set conversions to apply
-			propertyMapping.setFunctions(sources.map());
+			if (sources.map() != null && sources.map().length > 0) {
+				propertyMapping.setFunctions(sources.map());
+			}
 			
 		} else {
 			
@@ -144,6 +136,14 @@ public class ProjectionScanner {
 			propertyMapping.setSources(new SourceMapping[] {sourceMapping});
 		}
 
+		propertyMapping.setTarget(mapTarget(field));
+		
+		return propertyMapping;
+	}
+	
+	TargetMapping mapTarget(Field field) {
+		final TargetMapping targetMapping = new TargetMapping();
+
 		targetMapping.setTargetClass(field.getType());
 
 		// a collection?
@@ -155,10 +155,31 @@ public class ProjectionScanner {
 			targetMapping.setReference(targetMapping.getTargetClass().isAnnotationPresent(Projection.class));
 		}
 		
-		return propertyMapping;
+		return targetMapping;
 	}
 	
-	SourceMapping newSourceMapping(final Source source, final Projection projectionAnnotation, final Field field, final Class<?> targetProjectionClass) {
+	SourceMapping[] mapSources(final Sources sources, final Projection projectionAnnotation, final Field field, final Class<?> targetProjectionClass) {
+		
+		final List<SourceMapping> sourceMappings = new ArrayList<>();
+		
+		for (Source source : sources.value()) {
+			
+			final Optional<SourceMapping> sourceMapping = 
+					Optional.ofNullable(
+								mapSource(source, projectionAnnotation, field, targetProjectionClass)
+								);
+
+			if (sourceMapping.isEmpty()) {
+				continue;
+			}
+			
+			sourceMapping.ifPresent(sourceMappings::add);
+		}
+		
+		return sourceMappings.isEmpty() ? null : sourceMappings.toArray(new SourceMapping[0]);
+	}
+	
+	SourceMapping mapSource(final Source source, final Projection projectionAnnotation, final Field field, final Class<?> targetProjectionClass) {
 		
 		final SourceMapping sourceMapping = new SourceMapping();
 		
@@ -211,9 +232,8 @@ public class ProjectionScanner {
 					&& !Modifier.isTransient(field.getModifiers())
 					;
 			
-		} catch (NoSuchFieldException | SecurityException e) {
-
-		}
+		} catch (NoSuchFieldException | SecurityException e) {/* ignore */}
+		
 		return false;
 	}
 }
