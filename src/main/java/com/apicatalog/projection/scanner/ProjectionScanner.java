@@ -115,7 +115,6 @@ public class ProjectionScanner {
 			}
 			
 		} else if (field.isAnnotationPresent(Provided.class) ) {
-			
 			logger.trace("  skipping property {} of {} because is marked as provided", field.getName(), targetProjectionClass.getCanonicalName());
 			return null;
 			
@@ -123,23 +122,30 @@ public class ProjectionScanner {
 			
 			final SourceMapping sourceMapping = new SourceMapping();
 			
+			if (!field.getType().isAnnotationPresent(Projection.class)) {
+				if (Class.class.equals(projectionAnnotation.value())) {
+					logger.warn("Source class is missing. Property {} of {} is ignored. Use @Projection(...) or @Source(...) annotations.", field.getName(), targetProjectionClass.getCanonicalName());
+					return null;		
+				}
+				
+			} 
+				
 			// set default source object class
-			if (Class.class.equals(projectionAnnotation.value())) {
-				logger.warn("Source class is missing. Property {} of {} is ignored. Use @Projection(...) or @Source(...) annotations.", field.getName(), targetProjectionClass.getCanonicalName());
-				return null;		
-			}
-			
 			sourceMapping.setObjectClass(projectionAnnotation.value());
 
 			// set default source object property name -> use the same name
 			sourceMapping.setPropertyName(field.getName());
 
-			if (!isFieldPresent(sourceMapping.getObjectClass(), sourceMapping.getPropertyName())) {
-				logger.warn("Property {} is not accessible or does not exist in {} and is ignored. Use @Source(value=...) to set source property name.", field.getName(), sourceMapping.getObjectClass());
-				return null;
+			// do not warn about missing source(s) for references
+			if (!field.getType().isAnnotationPresent(Projection.class)) {
+				if (!isFieldPresent(sourceMapping.getObjectClass(), sourceMapping.getPropertyName())) {
+					logger.warn("Property {} is not accessible or does not exist in {} and is ignored. Use @Source(value=...) to set source property name.", field.getName(), sourceMapping.getObjectClass());
+					return null;
+				}
 			}
-						
-			propertyMapping.setSources(new SourceMapping[] {sourceMapping});
+				propertyMapping.setSources(new SourceMapping[] {sourceMapping});
+			
+			
 		}
 
 		propertyMapping.setTarget(mapTarget(field));

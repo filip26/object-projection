@@ -18,4 +18,6 @@ public class TestProjectionDA {
 	Double doubleValue;
 	
 	transient String doNotMapMe;
+	
+	static Integer staticDoNotCount;
 }
