@@ -6,6 +6,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -50,13 +51,14 @@ public class ProjectionScanner {
 					logger.trace("  skipping property {} of {} because is transient or static", field.getName(), targetProjectionClass.getCanonicalName());
 					continue;
 			}
-
-			final PropertyMapping propertyMapping = newPropertyMapping(projectionAnnotation, field, targetProjectionClass);
 			
-			if (propertyMapping != null) {
-				logger.trace("  found property {}: {}", propertyMapping.getName(), propertyMapping.getTarget().getTargetClass().getCanonicalName());
-				projectionMapping.add(propertyMapping);
-			}
+			Optional.ofNullable(newPropertyMapping(projectionAnnotation, field, targetProjectionClass))
+					.ifPresent(
+							mapping -> {
+									logger.trace("  found property {}: {}", mapping.getName(), mapping.getTarget().getTargetClass().getCanonicalName());
+									projectionMapping.add(mapping);
+								}
+							);				
 		}
 		return projectionMapping;
 	}
@@ -71,17 +73,23 @@ public class ProjectionScanner {
 		
 		// is the property annotated? 
 		if (field.isAnnotationPresent(Source.class)) {
-			
-			final Source source = field.getAnnotation(Source.class);
-			
-			final SourceMapping sourceMapping = newSourceMapping(source, projectionAnnotation, field);
 
-			if (sourceMapping.getObjectClass() == null) {
-				logger.warn("Source class is missing. Property {} of {} is ignored. Use @Projection(value=...) or @Source(type=...).", field.getName(), targetProjectionClass.getCanonicalName());
+			final Optional<SourceMapping> sourceMapping = 
+					Optional.ofNullable(
+								newSourceMapping(
+											field.getAnnotation(Source.class), 
+											projectionAnnotation, 
+											field,
+											targetProjectionClass
+										));
+			
+			if (sourceMapping.isEmpty()) {
 				return null;
 			}
 			
-			propertyMapping.setSources(new SourceMapping[] {sourceMapping});
+			sourceMapping
+				.map(mapping -> new SourceMapping[] {mapping})
+				.ifPresent(propertyMapping::setSources);			
 
 		} else if (field.isAnnotationPresent(Sources.class) ) {
 			
@@ -91,13 +99,16 @@ public class ProjectionScanner {
 			
 			for (Source source : sources.value()) {
 				
-				final SourceMapping sourceMapping = newSourceMapping(source, projectionAnnotation, field);
-				
-				if (sourceMapping.getObjectClass() == null) {
-					logger.warn("Source class is missing. Property {} of {} is ignored. Use @Projection(value=...) or @Source(type=...).", field.getName(), targetProjectionClass.getCanonicalName());
+				final Optional<SourceMapping> sourceMapping = 
+						Optional.ofNullable(
+									newSourceMapping(source, projectionAnnotation, field, targetProjectionClass)
+									);
+
+				if (sourceMapping.isEmpty()) {
 					continue;
 				}
-				sourceMappings.add(sourceMapping);
+				
+				sourceMapping.ifPresent(sourceMappings::add);
 			}
 			
 			if (sourceMappings.isEmpty()) {
@@ -116,15 +127,20 @@ public class ProjectionScanner {
 			
 			// set default source object class
 			if (Class.class.equals(projectionAnnotation.value())) {
-				logger.warn("Source class is missing. Property {} of {} is ignored. Use @Source(...) or @Sources(...) annotations..", field.getName(), targetProjectionClass.getCanonicalName());
+				logger.warn("Source class is missing. Property {} of {} is ignored. Use @Projection(...) or @Source(...) annotations.", field.getName(), targetProjectionClass.getCanonicalName());
 				return null;		
 			}
 			
 			sourceMapping.setObjectClass(projectionAnnotation.value());
-			
+
 			// set default source object property name -> use the same name
 			sourceMapping.setPropertyName(field.getName());
-			
+
+			if (!isFieldPresent(sourceMapping.getObjectClass(), sourceMapping.getPropertyName())) {
+				logger.warn("Property {} is not accessible or does not exist in {} and is ignored. Use @Source(value=...) to set source property name.", field.getName(), sourceMapping.getObjectClass());
+				return null;
+			}
+						
 			propertyMapping.setSources(new SourceMapping[] {sourceMapping});
 		}
 
@@ -142,7 +158,7 @@ public class ProjectionScanner {
 		return propertyMapping;
 	}
 	
-	SourceMapping newSourceMapping(final Source source, final Projection projectionAnnotation, final Field field) {
+	SourceMapping newSourceMapping(final Source source, final Projection projectionAnnotation, final Field field, final Class<?> targetProjectionClass) {
 		
 		final SourceMapping sourceMapping = new SourceMapping();
 		
@@ -168,10 +184,36 @@ public class ProjectionScanner {
 			sourceMapping.setQualifier(source.qualifier());
 		}
 		// set conversions to apply
-		sourceMapping.setFunctions(source.map());
+		if (source.map() != null && source.map().length > 0) {
+			sourceMapping.setFunctions(source.map());
+		}
 		
+		if (sourceMapping.getObjectClass() == null) {
+			logger.warn("Source class is missing. Property {} of {} is ignored. Use @Projection(value=...) or @Source(type=...).", field.getName(), targetProjectionClass.getCanonicalName());
+			return null;
+		}
+		
+		// check is source field does exist
+		if (!isFieldPresent(sourceMapping.getObjectClass(), sourceMapping.getPropertyName())) {
+			logger.warn("Property {} is not accessible or does not exist in {} and is ignored. Use @Source(value=...) to set source property name.", field.getName(), sourceMapping.getObjectClass());
+			return null;
+		}
+				
 		//TODO optional/nullable?
 		return sourceMapping;
 	}
 	
+	static boolean isFieldPresent(final Class<?> clazz, final String fieldName) {
+		try {
+			Field field = clazz.getDeclaredField(fieldName);
+
+			return  !Modifier.isStatic(field.getModifiers())
+					&& !Modifier.isTransient(field.getModifiers())
+					;
+			
+		} catch (NoSuchFieldException | SecurityException e) {
+
+		}
+		return false;
+	}
 }
