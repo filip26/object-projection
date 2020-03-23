@@ -53,9 +53,9 @@ public class ProjectionFactory {
 
 	<P> P compose(Class<? extends P> projectionClass, final ProjectedObjects sources, int depth) throws ProjectionError, InvertibleFunctionError {
 
-		if (depth > 1) {
-			return null;
-		}
+//		if (depth > 1) {
+//			return null;
+//		}
 
 		if (projectionClass == null) {
 			throw new IllegalArgumentException();

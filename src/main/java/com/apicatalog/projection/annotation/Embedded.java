@@ -12,5 +12,5 @@ public @interface Embedded {
 	boolean optional() default false;
 	
 	String qualifier() default "";
-	
+
 }
