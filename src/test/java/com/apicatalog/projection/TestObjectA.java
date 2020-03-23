@@ -9,5 +9,5 @@ public class TestObjectA {
 	Boolean booleanValue;
 	Instant instantValue;
 	Double doubleValue;
-		
+	
 }

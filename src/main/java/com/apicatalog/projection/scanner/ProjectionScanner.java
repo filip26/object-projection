@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.annotation.Projection;
+import com.apicatalog.projection.annotation.Provided;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.mapping.ProjectionMapping;
@@ -112,6 +113,11 @@ public class ProjectionScanner {
 			if (sources.map() != null && sources.map().length > 0) {
 				propertyMapping.setFunctions(sources.map());
 			}
+			
+		} else if (field.isAnnotationPresent(Provided.class) ) {
+			
+			logger.trace("  skipping property {} of {} because is marked as provided", field.getName(), targetProjectionClass.getCanonicalName());
+			return null;
 			
 		} else {
 			
