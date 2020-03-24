@@ -3,26 +3,28 @@ package com.apicatalog.projection;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import com.apicatalog.projection.ifnc.InvertibleFunctionError;
+import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.mapping.MappingIndex;
-import com.apicatalog.projection.scanner.ProjectionScanner;
+import com.apicatalog.projection.objects.ObjectBasicTypes;
+import com.apicatalog.projection.objects.ObjectReference;
+import com.apicatalog.projection.projections.ProjectionBasicTypesNameOverride;
+import com.apicatalog.projection.projections.TestProjectionAA;
+import com.apicatalog.projection.projections.TestProjectionAI;
 
-@RunWith(JUnit4.class)
-public class EmbeddedOneToOne {
+public class EmbeddedOneToOneTest {
 
 	ProjectionFactory projection;
 	
 	@Before
 	public void setup() {
-		ProjectionScanner scanner = new ProjectionScanner();
+		ProjectionMapper scanner = new ProjectionMapper();
 		
 		MappingIndex index = new MappingIndex();
-		index.add(scanner.scan(TestProjectionAA.class));
-		index.add(scanner.scan(TestProjectionAI.class));
-		index.add(scanner.scan(TestProjectionA.class));
+		index.add(scanner.getMapping(TestProjectionAA.class));
+		index.add(scanner.getMapping(TestProjectionAI.class));
+		index.add(scanner.getMapping(ProjectionBasicTypesNameOverride.class));
 		
 		projection = new ProjectionFactory(index);
 	}
@@ -30,13 +32,13 @@ public class EmbeddedOneToOne {
     @Test
     public void testComposition() throws ProjectionError, InvertibleFunctionError {
     	
-    	TestObjectA oa = new TestObjectA();
+    	ObjectBasicTypes oa = new ObjectBasicTypes();
     	oa.longValue = 123456l;
 
-    	TestObjectA oa2 = new TestObjectA();
+    	ObjectBasicTypes oa2 = new ObjectBasicTypes();
     	oa2.longValue = 987654l;
 
-    	TestObjectAA oaa = new TestObjectAA();
+    	ObjectReference oaa = new ObjectReference();
     	oaa.stringValue = "inherit me";
     	oaa.objectA = oa;
 
@@ -66,9 +68,9 @@ public class EmbeddedOneToOne {
     	
     	Assert.assertNotNull(oo);
     	Assert.assertEquals(1, oo.length);
-    	Assert.assertEquals(TestObjectAA.class, oo[0].getClass());
+    	Assert.assertEquals(ObjectReference.class, oo[0].getClass());
     	
-    	TestObjectAA oaa = (TestObjectAA)oo[0];
+    	ObjectReference oaa = (ObjectReference)oo[0];
     	Assert.assertNotNull(oaa.objectA);
 
     	Assert.assertEquals(paa.ai.projectedLong, oaa.objectA.longValue);

@@ -10,5 +10,7 @@ import java.lang.annotation.Target;
 public @interface Projection {
 
 	Class<?> value() default Class.class;
+	
+	int propertyMaxLevel() default 1;
 
 }

@@ -6,25 +6,26 @@ import java.util.Iterator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import com.apicatalog.projection.ifnc.InvertibleFunctionError;
+import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.mapping.MappingIndex;
-import com.apicatalog.projection.scanner.ProjectionScanner;
+import com.apicatalog.projection.objects.ObjectBasicTypes;
+import com.apicatalog.projection.objects.TestCollectionObject;
+import com.apicatalog.projection.projections.ProjectionBasicTypesNameOverride;
+import com.apicatalog.projection.projections.TestProjectionC1;
 
-@RunWith(JUnit4.class)
 public class CollectionTest {
 
 	ProjectionFactory projection;
 	
 	@Before
 	public void setup() {
-		ProjectionScanner scanner = new ProjectionScanner();
+		ProjectionMapper scanner = new ProjectionMapper();
 		
 		MappingIndex index = new MappingIndex();
-		index.add(scanner.scan(TestProjectionC1.class));
-		index.add(scanner.scan(TestProjectionA.class));
+		index.add(scanner.getMapping(TestProjectionC1.class));
+		index.add(scanner.getMapping(ProjectionBasicTypesNameOverride.class));
 		
 		projection = new ProjectionFactory(index);
 	}
@@ -32,7 +33,7 @@ public class CollectionTest {
     @Test
     public void testComposition() throws ProjectionError, InvertibleFunctionError {
     	
-    	TestObjectA oa = new TestObjectA();
+    	ObjectBasicTypes oa = new ObjectBasicTypes();
     	oa.booleanValue = true;
     	oa.doubleValue = 123.456d;
     	
@@ -46,7 +47,7 @@ public class CollectionTest {
     	Assert.assertNotNull(ca.items);    	
     	Assert.assertEquals(1, ca.items.size());
     	
-    	TestProjectionA pa = ca.items.iterator().next();
+    	ProjectionBasicTypesNameOverride pa = ca.items.iterator().next();
     	
     	Assert.assertEquals(oa.booleanValue, pa.projectedBoolean);
     	Assert.assertEquals(oa.doubleValue, pa.projectedDouble);
@@ -58,10 +59,10 @@ public class CollectionTest {
     	TestProjectionC1 ca = new TestProjectionC1();
     	ca.items = new ArrayList<>();
     	
-    	TestProjectionA pa1 = new TestProjectionA();
+    	ProjectionBasicTypesNameOverride pa1 = new ProjectionBasicTypesNameOverride();
     	pa1.projectedString = "ABC";
 
-    	TestProjectionA pa2 = new TestProjectionA();
+    	ProjectionBasicTypesNameOverride pa2 = new ProjectionBasicTypesNameOverride();
     	pa2.projectedString = "XYZ";
     	
     	ca.items.add(pa1);
@@ -77,13 +78,13 @@ public class CollectionTest {
     	Assert.assertNotNull(oc.items);
     	Assert.assertEquals(2, oc.items.size());
     	
-    	Iterator<TestObjectA> it = oc.items.iterator();
+    	Iterator<ObjectBasicTypes> it = oc.items.iterator();
     	
-    	TestObjectA oa1 = it.next();
+    	ObjectBasicTypes oa1 = it.next();
     	
     	Assert.assertEquals(pa1.projectedString, oa1.stringValue);
     	    	
-    	TestObjectA oa2 = it.next();
+    	ObjectBasicTypes oa2 = it.next();
     	
     	Assert.assertEquals(pa2.projectedString, oa2.stringValue);
     			

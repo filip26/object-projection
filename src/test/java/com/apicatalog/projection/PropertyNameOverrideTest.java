@@ -5,24 +5,24 @@ import java.time.Instant;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import com.apicatalog.projection.ifnc.InvertibleFunctionError;
+import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.mapping.MappingIndex;
-import com.apicatalog.projection.scanner.ProjectionScanner;
+import com.apicatalog.projection.objects.ObjectBasicTypes;
+import com.apicatalog.projection.projections.ProjectionBasicTypesNameOverride;
 
-@RunWith(JUnit4.class)
+
 public class PropertyNameOverrideTest {
 
 	ProjectionFactory projection;
 	
 	@Before
 	public void setup() {
-		ProjectionScanner scanner = new ProjectionScanner();
+		ProjectionMapper scanner = new ProjectionMapper();
 		
 		MappingIndex index = new MappingIndex();
-		index.add(scanner.scan(TestProjectionA.class));
+		index.add(scanner.getMapping(ProjectionBasicTypesNameOverride.class));
 		
 		projection = new ProjectionFactory(index);
 	}
@@ -30,14 +30,14 @@ public class PropertyNameOverrideTest {
     @Test
     public void testComposition() throws ProjectionError, InvertibleFunctionError {
     	
-    	TestObjectA oa = new TestObjectA();
+    	ObjectBasicTypes oa = new ObjectBasicTypes();
     	oa.booleanValue = true;
     	oa.doubleValue = 123.456d;
     	oa.instantValue = Instant.now();
     	oa.longValue = 123456l;
     	oa.stringValue = "ABCDEF";
     	
-    	TestProjectionA pa = projection.compose(TestProjectionA.class, oa);
+    	ProjectionBasicTypesNameOverride pa = projection.compose(ProjectionBasicTypesNameOverride.class, oa);
     	
     	Assert.assertNotNull(pa);
     	
@@ -51,7 +51,7 @@ public class PropertyNameOverrideTest {
     @Test
     public void testDecomposition() throws ProjectionError, InvertibleFunctionError {
     	
-    	TestProjectionA pa = new TestProjectionA();
+    	ProjectionBasicTypesNameOverride pa = new ProjectionBasicTypesNameOverride();
     	pa.projectedBoolean = true;
     	pa.projectedDouble = 123.456d;
     	pa.projectedInstant = Instant.now();
@@ -62,9 +62,9 @@ public class PropertyNameOverrideTest {
     	
     	Assert.assertNotNull(oo);
     	Assert.assertEquals(1, oo.length);
-    	Assert.assertEquals(TestObjectA.class, oo[0].getClass());
+    	Assert.assertEquals(ObjectBasicTypes.class, oo[0].getClass());
     	
-    	TestObjectA oa = (TestObjectA)oo[0];
+    	ObjectBasicTypes oa = (ObjectBasicTypes)oo[0];
 
     	Assert.assertEquals(pa.projectedString, oa.stringValue);
     	Assert.assertEquals(pa.projectedBoolean, oa.booleanValue);

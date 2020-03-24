@@ -1,16 +1,17 @@
-package com.apicatalog.projection;
+package com.apicatalog.projection.projections;
 
 import com.apicatalog.projection.annotation.Embedded;
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Source;
+import com.apicatalog.projection.objects.ObjectReference;
 
-@Projection(TestObjectAA.class)
+@Projection(ObjectReference.class)
 public class TestProjectionAA {
 
 	@Source(value = "objectA")
-	TestProjectionAI ai;
+	public TestProjectionAI ai;
 	
 	@Embedded
-	TestProjectionA aa;
+	public ProjectionBasicTypesNameOverride aa;
 	
 }

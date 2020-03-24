@@ -3,24 +3,24 @@ package com.apicatalog.projection;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import com.apicatalog.projection.ifnc.InvertibleFunctionError;
+import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.mapping.MappingIndex;
-import com.apicatalog.projection.scanner.ProjectionScanner;
+import com.apicatalog.projection.objects.ObjectBasicTypes;
+import com.apicatalog.projection.objects.ObjectReference;
+import com.apicatalog.projection.projections.ProjectionSourcesAndFunction;
 
-@RunWith(JUnit4.class)
 public class MultipleSourcesTest {
 
 	ProjectionFactory projection;
 	
 	@Before
 	public void setup() {
-		ProjectionScanner scanner = new ProjectionScanner();
+		ProjectionMapper scanner = new ProjectionMapper();
 		
 		MappingIndex index = new MappingIndex();
-		index.add(scanner.scan(TestProjectionMS.class));
+		index.add(scanner.getMapping(ProjectionSourcesAndFunction.class));
 		
 		projection = new ProjectionFactory(index);
 	}
@@ -28,13 +28,13 @@ public class MultipleSourcesTest {
     @Test
     public void testComposition() throws ProjectionError, InvertibleFunctionError {
     	
-    	TestObjectA oa = new TestObjectA();
+    	ObjectBasicTypes oa = new ObjectBasicTypes();
     	oa.longValue = 123l;
 
-    	TestObjectAA oaa = new TestObjectAA();
+    	ObjectReference oaa = new ObjectReference();
     	oaa.stringValue = "ABC"; 
 
-    	TestProjectionMS pa = projection.compose(TestProjectionMS.class, oa, oaa);
+    	ProjectionSourcesAndFunction pa = projection.compose(ProjectionSourcesAndFunction.class, oa, oaa);
     	
     	Assert.assertNotNull(pa);
     	Assert.assertEquals(oa.longValue + oaa.stringValue + "!@#", pa.longstring);
@@ -44,7 +44,7 @@ public class MultipleSourcesTest {
     @Test
     public void testDecomposition() throws ProjectionError, InvertibleFunctionError {
     	
-    	TestProjectionMS pa = new TestProjectionMS();
+    	ProjectionSourcesAndFunction pa = new ProjectionSourcesAndFunction();
     	pa.longstring = "123ABC";
     	pa.stringlong = "ABC123";
     	
@@ -53,8 +53,8 @@ public class MultipleSourcesTest {
     	Assert.assertNotNull(oo);
     	Assert.assertEquals(2, oo.length);
     	Assert.assertNotNull(oo[0]);
-    	Assert.assertEquals(TestObjectA.class, oo[0].getClass());
+    	Assert.assertEquals(ObjectBasicTypes.class, oo[0].getClass());
     	Assert.assertNotNull(oo[1]);
-    	Assert.assertEquals(TestObjectAA.class, oo[1].getClass());
+    	Assert.assertEquals(ObjectReference.class, oo[1].getClass());
     }
 }

@@ -1,4 +1,4 @@
-package com.apicatalog.projection.scanner;
+package com.apicatalog.projection.mapper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -22,11 +22,11 @@ import com.apicatalog.projection.mapping.PropertyMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.mapping.TargetMapping;
 
-public class ProjectionScanner {
+public class ProjectionMapper {
 
-	final Logger logger = LoggerFactory.getLogger(ProjectionScanner.class);
+	final Logger logger = LoggerFactory.getLogger(ProjectionMapper.class);
 	
-	public ProjectionMapping scan(final Class<?> targetProjectionClass) {
+	public ProjectionMapping getMapping(final Class<?> targetProjectionClass) {
 
 		if (targetProjectionClass == null) {
 			throw new IllegalArgumentException();
@@ -56,7 +56,7 @@ public class ProjectionScanner {
 					continue;
 			}
 			
-			Optional.ofNullable(mapProperty(projectionMapping, field, defaultSourceClass))
+			Optional.ofNullable(getPropertyMapping(projectionMapping, field, defaultSourceClass))
 					.ifPresent(
 							mapping -> {
 									logger.trace("  found property {}: {}", mapping.getName(), mapping.getTarget().getTargetClass().getCanonicalName());
@@ -67,17 +67,17 @@ public class ProjectionScanner {
 		return projectionMapping;
 	}
 	
-	PropertyMapping mapProperty(final ProjectionMapping projectionMapping, final Field field, final Class<?> defaultSourceClass) {
+	PropertyMapping getPropertyMapping(final ProjectionMapping projectionMapping, final Field field, final Class<?> defaultSourceClass) {
 		
 		final PropertyMapping propertyMapping = new PropertyMapping(field.getName());
-		propertyMapping.setTarget(mapTarget(field));
+		propertyMapping.setTarget(getTargetMapping(field));
 		
 		// single source? 
 		if (field.isAnnotationPresent(Source.class)) {
 
 			final Optional<SourceMapping> sourceMapping = 
 					Optional.ofNullable(
-								mapSource(
+								getSourceMapping(
 											projectionMapping,
 											field.getAnnotation(Source.class), 
 											field,
@@ -99,7 +99,7 @@ public class ProjectionScanner {
 			
 			final Optional<SourceMapping[]> sourceMappings = 
 						Optional.ofNullable( 
-									mapSources(
+									getSourcesMapping(
 											projectionMapping,
 											sources,  
 											field,
@@ -131,7 +131,7 @@ public class ProjectionScanner {
 		} else {
 
 			if (defaultSourceClass == null) {
-				logger.warn("Source class is missing. Property {} of {} is ignored. Use @Projection(...) or @Source(...) annotations.", field.getName(), projectionMapping.getProjectionClass().getCanonicalName());
+				logger.warn("Source class is missing. Property {} of {} is ignored.", field.getName(), projectionMapping.getProjectionClass().getCanonicalName());
 				return null;				
 			}
 
@@ -145,7 +145,7 @@ public class ProjectionScanner {
 			
 			// check if field exists and is accessible
 			if (!isFieldPresent(sourceMapping.getSourceClass(), sourceMapping.getPropertyName())) {
-				logger.warn("Property {} is not accessible or does not exist in {} and is ignored. Use @Source(value=...) to set source property name.", field.getName(), sourceMapping.getSourceClass());
+				logger.warn("Property {} is not accessible or does not exist in {} and is ignored.", field.getName(), sourceMapping.getSourceClass().getCanonicalName());
 				return null;
 			}				
 
@@ -154,7 +154,7 @@ public class ProjectionScanner {
 		return propertyMapping;
 	}
 	
-	TargetMapping mapTarget(Field field) {
+	TargetMapping getTargetMapping(Field field) {
 		final TargetMapping targetMapping = new TargetMapping();
 
 		targetMapping.setTargetClass(field.getType());
@@ -171,7 +171,7 @@ public class ProjectionScanner {
 		return targetMapping;
 	}
 	
-	SourceMapping[] mapSources(final ProjectionMapping projectionMapping, final Sources sources, final Field field, final Class<?> defaultSourceClass) {
+	SourceMapping[] getSourcesMapping(final ProjectionMapping projectionMapping, final Sources sources, final Field field, final Class<?> defaultSourceClass) {
 		
 		final List<SourceMapping> sourceMappings = new ArrayList<>();
 		
@@ -179,7 +179,7 @@ public class ProjectionScanner {
 			
 			final Optional<SourceMapping> sourceMapping = 
 					Optional.ofNullable(
-								mapSource(projectionMapping, source, field, defaultSourceClass)
+								getSourceMapping(projectionMapping, source, field, defaultSourceClass)
 								);
 
 			if (sourceMapping.isEmpty()) {
@@ -192,7 +192,7 @@ public class ProjectionScanner {
 		return sourceMappings.isEmpty() ? null : sourceMappings.toArray(new SourceMapping[0]);
 	}
 	
-	SourceMapping mapSource(final ProjectionMapping projectionMapping, final Source source, final Field field, final Class<?> defaultSourceClass) {
+	SourceMapping getSourceMapping(final ProjectionMapping projectionMapping, final Source source, final Field field, final Class<?> defaultSourceClass) {
 		
 		final SourceMapping sourceMapping = new SourceMapping();
 		
@@ -207,7 +207,7 @@ public class ProjectionScanner {
 		}
 		
 		if (sourceMapping.getSourceClass() == null) {
-			logger.warn("Source class is missing. Property {} of {} is ignored. Use @Projection(value=...) or @Source(type=...).", field.getName(), projectionMapping.getProjectionClass().getCanonicalName());
+			logger.warn("Source class is missing. Property {} of {} is ignored.", field.getName(), projectionMapping.getProjectionClass().getCanonicalName());
 			return null;
 		}
 
@@ -221,7 +221,7 @@ public class ProjectionScanner {
 		
 		// check is source field does exist
 		if (!isFieldPresent(sourceMapping.getSourceClass(), sourceMapping.getPropertyName())) {
-			logger.warn("Property {} is not accessible or does not exist in {} and is ignored. Use @Source(value=...) to set source property name.", sourceMapping.getPropertyName(), sourceMapping.getSourceClass());
+			logger.warn("Property {} is not accessible or does not exist in {} and is ignored.", sourceMapping.getPropertyName(), sourceMapping.getSourceClass().getCanonicalName());
 			return null;
 		}
 

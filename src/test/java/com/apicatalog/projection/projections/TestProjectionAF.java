@@ -1,21 +1,22 @@
-package com.apicatalog.projection;
+package com.apicatalog.projection.projections;
 
 import com.apicatalog.projection.annotation.IFunction;
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.ifnc.std.ConcatFnc;
+import com.apicatalog.projection.objects.ObjectBasicTypes;
 
-@Projection(TestObjectA.class)
+@Projection(ObjectBasicTypes.class)
 public class TestProjectionAF {
 
 	@Source( "stringValue")
-	String originString;
+	public String originString;
 	
 	@Source(
 			value = "stringValue",
 			map = @IFunction(type = ConcatFnc.class, value="GHIJKL")
 			)
-	String modifiedString;
+	public String modifiedString;
 
 	@Source(
 			value = "stringValue",
@@ -24,8 +25,8 @@ public class TestProjectionAF {
 				@IFunction(type = ConcatFnc.class, value="MNOPQR")
 			}
 			)
-	String modified2xString;
+	public String modified2xString;
 
-	String nodirectmappingtosourceproperty;
+	public String nodirectmappingtosourceproperty;
 	
 }
