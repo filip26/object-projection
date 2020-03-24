@@ -10,7 +10,7 @@ public class TestProjection {
               @Source(type=User.class, value = "username"),
               @Source(type=Repository.class, value = "id"),
               },
-      map = @IFunction(
+      map = @Conversion(
               type = UrlPatternFnc.class,
               value="https://www.example.org/{username}/{repositoryId}"
               )
@@ -25,8 +25,8 @@ public class TestProjection {
 
   @Source(value = "prices"
       map = {
-        @IFunction(type = FlatFnc.class),
-        @IFunction(type = SumFnc.class)
+        @Conversion(type = FlatFnc.class),
+        @Conversion(type = SumFnc.class)
         }
       )
   Long total;
