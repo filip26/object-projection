@@ -12,9 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.annotation.Embedded;
-import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Provided;
+import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.mapping.ProjectionMapping;
@@ -56,7 +55,7 @@ public class ProjectionMapper {
 					continue;
 			}
 			
-			Optional.ofNullable(getPropertyMapping(projectionMapping, field, defaultSourceClass))
+			Optional.ofNullable(getPropertyMapping(field, defaultSourceClass))
 					.ifPresent(
 							mapping -> {
 									logger.trace("  found property {}: {}", mapping.getName(), mapping.getTarget().getTargetClass().getSimpleName());
@@ -67,7 +66,7 @@ public class ProjectionMapper {
 		return projectionMapping;
 	}
 	
-	PropertyMapping getPropertyMapping(final ProjectionMapping projectionMapping, final Field field, final Class<?> defaultSourceClass) {
+	PropertyMapping getPropertyMapping(final Field field, final Class<?> defaultSourceClass) {
 				
 		// single source? 
 		if (field.isAnnotationPresent(Source.class)) {
@@ -77,17 +76,11 @@ public class ProjectionMapper {
 		} else if (field.isAnnotationPresent(Sources.class) ) {
 			return getSourcesPropertyMapping(field, defaultSourceClass);
 
-		// embedded projection uses global source
-		} else if (field.isAnnotationPresent(Embedded.class)) {
+		// provided -> global source
+		} else if (field.isAnnotationPresent(Provided.class)) {
 			final PropertyMapping propertyMapping = new PropertyMapping(field.getName());
 			propertyMapping.setTarget(getTargetMapping(field));
 			return propertyMapping;
-
-		// no action needed?
-		} else if (field.isAnnotationPresent(Provided.class) ) {
-			logger.trace("  skipping property {} because is marked as provided", field.getName());
-			return null;
-			
 		}
 		
 		// direct mapping or a reference
@@ -250,7 +243,7 @@ public class ProjectionMapper {
 			sourceMapping.setQualifier(source.qualifier());
 		}
 		// set conversions to apply
-		if (source.map() != null && source.map().length > 0) {
+		if (source.map().length > 0) {
 			sourceMapping.setFunctions(source.map());
 		}
 		// set optional 

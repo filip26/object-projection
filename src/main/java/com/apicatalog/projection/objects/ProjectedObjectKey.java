@@ -2,6 +2,8 @@ package com.apicatalog.projection.objects;
 
 import java.util.Objects;
 
+import com.apicatalog.projection.NamedObject;
+
 public class ProjectedObjectKey {
 
 	final Class<?> clazz;
@@ -16,6 +18,16 @@ public class ProjectedObjectKey {
 		return new ProjectedObjectKey(clazz, qualifier == null ? "" : qualifier);
 	}
 
+	public static ProjectedObjectKey of(Object object) {
+		if (object instanceof NamedObject) {
+			NamedObject<?> namedObject = (NamedObject<?>)object;
+			
+			return new ProjectedObjectKey(namedObject.getObject().getClass(), namedObject.getName()) ;	
+		}
+		return of(object.getClass(), null);
+	}
+
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(clazz, qualifier);

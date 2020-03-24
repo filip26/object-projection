@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.apicatalog.projection.annotation;
 
 import java.lang.annotation.ElementType;
@@ -12,5 +9,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface Provided {
 
+	boolean optional() default false;
 	
+	String name() default "";
+
 }

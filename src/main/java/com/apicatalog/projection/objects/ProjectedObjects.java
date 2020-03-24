@@ -27,13 +27,13 @@ public class ProjectedObjects {
 		return new ProjectedObjects(Stream
 							.of(objects)
 							.collect(Collectors.toMap(
-										o -> ProjectedObjectKey.of(o.getClass(), null),
+										ProjectedObjectKey::of,
 										o -> o
 									)));		
 	}
 	
-	public Object get(Class<?> clazz, String qualifier) {
-		return index.get(ProjectedObjectKey.of(clazz, qualifier));
+	public Object get(Class<?> clazz, String name) {
+		return index.get(ProjectedObjectKey.of(clazz, name));
 	}
 	
 	//TODO use scanner to get a list of objects at initialization time 
@@ -70,8 +70,8 @@ public class ProjectedObjects {
 		return index.values().toArray(new Object[0]);
 	}
 	
-	public void addOrReplace(Object object, String qualifier) {
-		index.put(ProjectedObjectKey.of(object.getClass(), qualifier), object);
+	public void addOrReplace(Object object) {
+		index.put(ProjectedObjectKey.of(object), object);
 	}
 		
 }

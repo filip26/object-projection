@@ -98,7 +98,7 @@ public class ProjectionFactory {
 			 for (Object item : (Collection)values[0]) {	//FIXME hacky hack
 
 				 final ProjectedObjects itemSources = new ProjectedObjects(sources);
-				 itemSources.addOrReplace(item, null);
+				 itemSources.addOrReplace(item);
 				 
 				 final Object value = compose(propertyMapping.getTarget().getItemClass(), itemSources, depth + 1);
 
@@ -124,7 +124,7 @@ public class ProjectionFactory {
 				final ProjectedObjects embeddedSources = new ProjectedObjects(sources);
 				
 				for (Object v : values) {
-					embeddedSources.addOrReplace(v, null);
+					embeddedSources.addOrReplace(v);
 				}				
 				
 				values = new Object[] {compose(propertyMapping.getTarget().getTargetClass(), embeddedSources, depth + 1)};
@@ -238,7 +238,7 @@ public class ProjectionFactory {
 				
 				value = v[0];			//FIXME hack!
 				if (v.length > 1) {	
-					sources.addOrReplace(v[1], null);
+					sources.addOrReplace(v[1]);
 				}
 			}
 			decompose(propertyMapping, sources, value);
