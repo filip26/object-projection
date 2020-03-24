@@ -68,89 +68,113 @@ public class ProjectionMapper {
 	}
 	
 	PropertyMapping getPropertyMapping(final ProjectionMapping projectionMapping, final Field field, final Class<?> defaultSourceClass) {
-		
-		final PropertyMapping propertyMapping = new PropertyMapping(field.getName());
-		propertyMapping.setTarget(getTargetMapping(field));
-		
+				
 		// single source? 
 		if (field.isAnnotationPresent(Source.class)) {
-
-			final Optional<SourceMapping> sourceMapping = 
-					Optional.ofNullable(
-								getSourceMapping(
-											projectionMapping,
-											field.getAnnotation(Source.class), 
-											field,
-											defaultSourceClass
-										));
-			
-			if (sourceMapping.isEmpty()) {
-				return null;
-			}
-			
-			sourceMapping
-				.map(mapping -> new SourceMapping[] {mapping})
-				.ifPresent(propertyMapping::setSources);			
+			return getSourcePropertyMapping(projectionMapping, field, defaultSourceClass);
 
 		// multiple sources?
 		} else if (field.isAnnotationPresent(Sources.class) ) {
-			
-			final Sources sources = field.getAnnotation(Sources.class);
-			
-			final Optional<SourceMapping[]> sourceMappings = 
-						Optional.ofNullable( 
-									getSourcesMapping(
-											projectionMapping,
-											sources,  
-											field,
-											defaultSourceClass
-											)
-										);
-			
-			if (sourceMappings.isEmpty()) {
-				return null;				
-			}
-
-			// set sources
-			sourceMappings.ifPresent(propertyMapping::setSources);
-			
-			// set conversions to apply
-			if (sources.map() != null && sources.map().length > 0) {
-				propertyMapping.setFunctions(sources.map());
-			}
+			return getSourcesPropertyMapping(projectionMapping, field, defaultSourceClass);
 
 		// embedded projection uses global source
 		} else if (field.isAnnotationPresent(Embedded.class)) {
+			final PropertyMapping propertyMapping = new PropertyMapping(field.getName());
+			propertyMapping.setTarget(getTargetMapping(field));
+			return propertyMapping;
 
 		// no action needed?
 		} else if (field.isAnnotationPresent(Provided.class) ) {
 			logger.trace("  skipping property {} of {} because is marked as provided", field.getName(), projectionMapping.getProjectionClass().getCanonicalName());
 			return null;
 			
-		// direct mapping or a reference 
-		} else {
-
-			if (defaultSourceClass == null) {
-				logger.warn("Source class is missing. Property {} of {} is ignored.", field.getName(), projectionMapping.getProjectionClass().getCanonicalName());
-				return null;				
-			}
-
-			final SourceMapping sourceMapping = new SourceMapping();
-				
-			// set default source object class
-			sourceMapping.setSourceClass(defaultSourceClass);
-
-			// set default source object property name -> use the same name
-			sourceMapping.setPropertyName(field.getName());
-			
-			// check if field exists and is accessible
-			if (!isFieldPresent(sourceMapping.getSourceClass(), sourceMapping.getPropertyName())) {
-				logger.warn("Property {} is not accessible or does not exist in {} and is ignored.", field.getName(), sourceMapping.getSourceClass().getCanonicalName());
-				return null;
-			}				
-
-			propertyMapping.setSources(new SourceMapping[] {sourceMapping});			
 		}
+		
+		// direct mapping or a reference
+		return getDefaultPropertyMapping(projectionMapping, field, defaultSourceClass);
+	}
+	
+	PropertyMapping getSourcesPropertyMapping(final ProjectionMapping projectionMapping, final Field field, final Class<?> defaultSourceClass) {
+		
+		final PropertyMapping propertyMapping = new PropertyMapping(field.getName());
+		propertyMapping.setTarget(getTargetMapping(field));
+
+		final Sources sources = field.getAnnotation(Sources.class);
+		
+		final Optional<SourceMapping[]> sourceMappings = 
+					Optional.ofNullable( 
+								getSourcesMapping(
+										projectionMapping,
+										sources,  
+										field,
+										defaultSourceClass
+										)
+									);
+		
+		if (sourceMappings.isEmpty()) {
+			return null;				
+		}
+
+		// set sources
+		sourceMappings.ifPresent(propertyMapping::setSources);
+		
+		// set conversions to apply
+		if (sources.map() != null && sources.map().length > 0) {
+			propertyMapping.setFunctions(sources.map());
+		}
+		
+		return propertyMapping;
+	}
+	
+	PropertyMapping getSourcePropertyMapping(final ProjectionMapping projectionMapping, final Field field, final Class<?> defaultSourceClass) {
+		
+		final PropertyMapping propertyMapping = new PropertyMapping(field.getName());
+		propertyMapping.setTarget(getTargetMapping(field));
+
+		final Optional<SourceMapping> sourceMapping = 
+				Optional.ofNullable(
+							getSourceMapping(
+										projectionMapping,
+										field.getAnnotation(Source.class), 
+										field,
+										defaultSourceClass
+									));
+		
+		if (sourceMapping.isEmpty()) {
+			return null;
+		}
+		
+		sourceMapping
+			.map(mapping -> new SourceMapping[] {mapping})
+			.ifPresent(propertyMapping::setSources);			
+
+		return propertyMapping;
+	}
+
+	PropertyMapping getDefaultPropertyMapping(final ProjectionMapping projectionMapping, final Field field, final Class<?> defaultSourceClass) {
+		final PropertyMapping propertyMapping = new PropertyMapping(field.getName());
+		propertyMapping.setTarget(getTargetMapping(field));
+
+		if (defaultSourceClass == null) {
+			logger.warn("Source class is missing. Property {} of {} is ignored.", field.getName(), projectionMapping.getProjectionClass().getCanonicalName());
+			return null;				
+		}
+
+		final SourceMapping sourceMapping = new SourceMapping();
+			
+		// set default source object class
+		sourceMapping.setSourceClass(defaultSourceClass);
+
+		// set default source object property name -> use the same name
+		sourceMapping.setPropertyName(field.getName());
+		
+		// check if field exists and is accessible
+		if (!isFieldPresent(sourceMapping.getSourceClass(), sourceMapping.getPropertyName())) {
+			logger.warn("Property {} is not accessible or does not exist in {} and is ignored.", field.getName(), sourceMapping.getSourceClass().getCanonicalName());
+			return null;
+		}				
+
+		propertyMapping.setSources(new SourceMapping[] {sourceMapping});
 		return propertyMapping;
 	}
 	
