@@ -31,7 +31,7 @@ public class TestProjection {
       )
   Long total;
   ...
-  @Provided(name="context", optional=true)
+  @Provided(optional=true)
   String context;
   ...
 }
