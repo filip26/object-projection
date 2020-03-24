@@ -1,4 +1,4 @@
-package com.apicatalog.projection.ifnc;
+package com.apicatalog.projection.converter;
 
 //TODO use annotations
 @Deprecated

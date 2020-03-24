@@ -7,7 +7,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.apicatalog.projection.ifnc.InvertibleFunctionError;
+import com.apicatalog.projection.converter.InvertibleFunctionError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.mapping.MappingIndex;
 import com.apicatalog.projection.objects.ObjectBasicTypes;

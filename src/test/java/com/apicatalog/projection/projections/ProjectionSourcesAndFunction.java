@@ -1,10 +1,10 @@
 package com.apicatalog.projection.projections;
 
-import com.apicatalog.projection.annotation.IFunction;
+import com.apicatalog.projection.annotation.Conversion;
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
-import com.apicatalog.projection.ifnc.std.ConcatFnc;
+import com.apicatalog.projection.converter.implicit.Concat;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 import com.apicatalog.projection.objects.ObjectReference;
 
@@ -15,7 +15,7 @@ public class ProjectionSourcesAndFunction {
 					@Source(value = "longValue"),
 					@Source(type=ObjectReference.class, value = "stringValue")
 				},
-			map = @IFunction(type = ConcatFnc.class, value="!@#")
+			map = @Conversion(type = Concat.class, value="!@#")
 		)
 	public String longstring;
 		
@@ -24,7 +24,7 @@ public class ProjectionSourcesAndFunction {
 					@Source(type=ObjectReference.class, value = "stringValue"),
 					@Source("longValue")
 				},
-			map = @IFunction(type = ConcatFnc.class)
+			map = @Conversion(type = Concat.class)
 		)
 	public String stringlong;	
 }

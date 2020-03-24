@@ -16,10 +16,10 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.adapter.TypeAdapter;
 import com.apicatalog.projection.adapter.TypeAdapterError;
 import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.annotation.IFunction;
-import com.apicatalog.projection.ifnc.ContextValue;
-import com.apicatalog.projection.ifnc.InvertibleFunction;
-import com.apicatalog.projection.ifnc.InvertibleFunctionError;
+import com.apicatalog.projection.annotation.Conversion;
+import com.apicatalog.projection.converter.ContextValue;
+import com.apicatalog.projection.converter.InvertibleFunction;
+import com.apicatalog.projection.converter.InvertibleFunctionError;
 import com.apicatalog.projection.mapping.MappingIndex;
 import com.apicatalog.projection.mapping.ProjectionMapping;
 import com.apicatalog.projection.mapping.PropertyMapping;
@@ -255,10 +255,10 @@ public class ProjectionFactory {
 		if (propertyMapping.getFunctions() != null && propertyMapping.getFunctions().length > 0) {
 			
 			// reverse order
-			final ArrayList<IFunction> ifncs = new ArrayList<>(Arrays.asList(propertyMapping.getFunctions()));
+			final ArrayList<Conversion> ifncs = new ArrayList<>(Arrays.asList(propertyMapping.getFunctions()));
 			Collections.reverse(ifncs);
 			
-			for (IFunction fnc : ifncs) {	
+			for (Conversion fnc : ifncs) {	
 				
 				final InvertibleFunction<Object> ifnc = (InvertibleFunction<Object>) newInstance(fnc.type());
 				if (!ifnc.isReverseable()) {
@@ -288,10 +288,10 @@ public class ProjectionFactory {
 			if (sourceMapping.getFunctions() != null && sourceMapping.getFunctions().length > 0) {
 				
 				// reverse order
-				final ArrayList<IFunction> ifncs = new ArrayList<>(Arrays.asList(sourceMapping.getFunctions()));
+				final ArrayList<Conversion> ifncs = new ArrayList<>(Arrays.asList(sourceMapping.getFunctions()));
 				Collections.reverse(ifncs);
 				
-				for (IFunction fnc : ifncs) { 
+				for (Conversion fnc : ifncs) { 
 					
 					final InvertibleFunction<Object> ifnc = (InvertibleFunction<Object>) newInstance(fnc.type());
 					if (!ifnc.isReverseable()) {
@@ -312,7 +312,7 @@ public class ProjectionFactory {
 		}		
 	}
 	
-	Object applyFunctions(Object[] values, final IFunction[] functions) throws ProjectionError, InvertibleFunctionError {
+	Object applyFunctions(Object[] values, final Conversion[] functions) throws ProjectionError, InvertibleFunctionError {
 		
 		if (functions == null || functions.length == 0) {
 			return values;
@@ -320,7 +320,7 @@ public class ProjectionFactory {
 		
 		Object value = null;
 		
-		for (final IFunction fnc : functions) {
+		for (final Conversion fnc : functions) {
 			
 			final InvertibleFunction<?> ifnc = newInstance(fnc.type());	//TODO re-use preconstructed instances
 

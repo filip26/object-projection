@@ -1,11 +1,11 @@
-package com.apicatalog.projection.ifnc.std;
+package com.apicatalog.projection.converter.implicit;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.apicatalog.projection.ifnc.ContextValue;
-import com.apicatalog.projection.ifnc.InvertibleFunction;
+import com.apicatalog.projection.converter.ContextValue;
+import com.apicatalog.projection.converter.InvertibleFunction;
 
-public class ConcatFnc implements InvertibleFunction<String> {
+public class Concat implements InvertibleFunction<String> {
 
 	String suffix;
 	

@@ -1,9 +1,9 @@
 package com.apicatalog.projection.projections;
 
-import com.apicatalog.projection.annotation.IFunction;
+import com.apicatalog.projection.annotation.Conversion;
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Source;
-import com.apicatalog.projection.ifnc.std.ConcatFnc;
+import com.apicatalog.projection.converter.implicit.Concat;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 
 @Projection(ObjectBasicTypes.class)
@@ -14,15 +14,15 @@ public class TestProjectionAF {
 	
 	@Source(
 			value = "stringValue",
-			map = @IFunction(type = ConcatFnc.class, value="GHIJKL")
+			map = @Conversion(type = Concat.class, value="GHIJKL")
 			)
 	public String modifiedString;
 
 	@Source(
 			value = "stringValue",
 			map = {
-				@IFunction(type = ConcatFnc.class, value="GHIJKL"),
-				@IFunction(type = ConcatFnc.class, value="MNOPQR")
+				@Conversion(type = Concat.class, value="GHIJKL"),
+				@Conversion(type = Concat.class, value="MNOPQR")
 			}
 			)
 	public String modified2xString;

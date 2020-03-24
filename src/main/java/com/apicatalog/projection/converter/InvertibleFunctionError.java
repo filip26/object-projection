@@ -1,4 +1,4 @@
-package com.apicatalog.projection.ifnc;
+package com.apicatalog.projection.converter;
 
 public class InvertibleFunctionError extends Exception {
 

@@ -1,6 +1,6 @@
 package com.apicatalog.projection.mapping;
 
-import com.apicatalog.projection.annotation.IFunction;
+import com.apicatalog.projection.annotation.Conversion;
 
 public class PropertyMapping {
 
@@ -10,7 +10,7 @@ public class PropertyMapping {
 	
 	TargetMapping target;
 	
-	IFunction[] functions;
+	Conversion[] functions;
 	
 	public PropertyMapping(String name) {
 		this.name = name;
@@ -28,11 +28,11 @@ public class PropertyMapping {
 		this.sources = mapping;
 	}
 
-	public IFunction[] getFunctions() {
+	public Conversion[] getFunctions() {
 		return functions;
 	}
 
-	public void setFunctions(IFunction[] functions) {
+	public void setFunctions(Conversion[] functions) {
 		this.functions = functions;
 	}
 

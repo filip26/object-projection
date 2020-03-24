@@ -1,6 +1,6 @@
 package com.apicatalog.projection.mapping;
 
-import com.apicatalog.projection.annotation.IFunction;
+import com.apicatalog.projection.annotation.Conversion;
 
 public class SourceMapping {
 
@@ -12,7 +12,7 @@ public class SourceMapping {
 	
 	Boolean optional;
 	
-	IFunction[] functions;
+	Conversion[] functions;
 
 	public Class<?> getSourceClass() {
 		return objectClass;
@@ -38,11 +38,11 @@ public class SourceMapping {
 		this.qualifier = qualifier;
 	}
 
-	public IFunction[] getFunctions() {
+	public Conversion[] getFunctions() {
 		return functions;
 	}
 
-	public void setFunctions(IFunction[] functions) {
+	public void setFunctions(Conversion[] functions) {
 		this.functions = functions;
 	}
 

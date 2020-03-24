@@ -1,10 +1,10 @@
 package com.apicatalog.projection.projections;
 
-import com.apicatalog.projection.annotation.IFunction;
+import com.apicatalog.projection.annotation.Conversion;
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
-import com.apicatalog.projection.ifnc.std.UrlPatternFnc;
+import com.apicatalog.projection.converter.implicit.UrlPatternFnc;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 import com.apicatalog.projection.objects.ObjectReference;
 
@@ -15,7 +15,7 @@ public class ProjectionUrlPatternFnc {
 					@Source(type=ObjectBasicTypes.class, value = "longValue"),
 					@Source(type=ObjectReference.class, value = "stringValue")
 				},
-			map = @IFunction(type = UrlPatternFnc.class, value="https://www.example.org/{longValue}/{stringValue}")
+			map = @Conversion(type = UrlPatternFnc.class, value="https://www.example.org/{longValue}/{stringValue}")
 		)
 	public String href;
 		

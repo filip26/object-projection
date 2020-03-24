@@ -1,12 +1,12 @@
-package com.apicatalog.projection.ifnc.std;
+package com.apicatalog.projection.converter.implicit;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.apicatalog.projection.ifnc.ContextValue;
-import com.apicatalog.projection.ifnc.InvertibleFunction;
-import com.apicatalog.projection.ifnc.InvertibleFunctionError;
+import com.apicatalog.projection.converter.ContextValue;
+import com.apicatalog.projection.converter.InvertibleFunction;
+import com.apicatalog.projection.converter.InvertibleFunctionError;
 import com.apicatalog.urlpattern.MalformedUrlPattern;
 import com.apicatalog.urlpattern.UrlPattern;
 

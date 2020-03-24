@@ -5,11 +5,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.apicatalog.projection.ifnc.InvertibleFunction;
+import com.apicatalog.projection.converter.InvertibleFunction;
 
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.FIELD)
-public @interface IFunction {
+public @interface Conversion {
 
 	Class<? extends InvertibleFunction<?>> type();
 	String[] value() default {};

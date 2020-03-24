@@ -5,7 +5,7 @@ import java.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.apicatalog.projection.ifnc.InvertibleFunctionError;
+import com.apicatalog.projection.converter.InvertibleFunctionError;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 
 public class ImplicitConversionTest {
