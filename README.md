@@ -23,14 +23,16 @@ public class TestProjection {
 
 ```java
 
-  @Source(type=[...].class, value = "prices"
+  @Source(value = "prices"
       map = {
         @IFunction(type = FlatFnc.class),
         @IFunction(type = SumFnc.class)
         }
       )
   Long total;
-
+  ...
+  @Provided(name="context", optional=true)
+  String context;
   ...
 }
 ```
