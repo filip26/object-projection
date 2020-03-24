@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
   
 	<name>Object Projection</name>  
-	<description>Experimental Declarative and Reversible Object Projection</description>
+	<description>Experimental Declarative Object Projection</description>
 
 	<properties>
 		<maven.compiler.target>11</maven.compiler.target>
@@ -29,45 +29,53 @@
         <license>
             <name>Apache License, Version 2.0</name>
             <url>http://apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
         </license>
     </licenses>   
 
-<scm>
-        <connection>scm:git:git://github.com/filip26/base32id.git</connection>
-        <developerConnection>scm:git:git://github.com/filip26/base32id.git</developerConnection>
-        <url>https://github.com/filip26/base32id</url>
+	<scm>
+        <connection>scm:git:git://github.com/filip26/object-projection.git</connection>
+        <developerConnection>scm:git:git://github.com/filip26/object-projection.git</developerConnection>
+        <url>https://github.com/filip26/object-projection</url>
     </scm>
 
+  	<developers>
+  		<developer>
+  			<id>filip26</id>
+  			<name>Filip Kolarik</name>
+  			<email>filip26@gmail.com</email>
+  			<roles><role>author</role></roles>
+  		</developer>
+  	</developers>
   	
-    	<dependencies>
+   	<dependencies>
 	    <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
             <version>${apache.commons-text.version}</version>
-    </dependency>
-<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
-<dependency>
-    <groupId>org.slf4j</groupId>
-    <artifactId>slf4j-api</artifactId>
-    <version>2.0.0-alpha1</version>
-</dependency>
-    <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-log4j12</artifactId>
-        <version>2.0.0-alpha1</version>
-    </dependency>
-<dependency>
-    <groupId>org.apache.logging.log4j</groupId>
-    <artifactId>log4j-core</artifactId>
-    <version>2.13.1</version>
-</dependency>
-      <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-	    <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-</dependencies>
+    	</dependency>
+		<dependency>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-api</artifactId>
+		    <version>2.0.0-alpha1</version>
+		</dependency>
+	    <dependency>
+	        <groupId>org.slf4j</groupId>
+	        <artifactId>slf4j-log4j12</artifactId>
+	        <version>2.0.0-alpha1</version>
+	    </dependency>
+		<dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-core</artifactId>
+		    <version>2.13.1</version>
+		</dependency>
+	    <dependency>
+			<groupId>junit</groupId>
+	        <artifactId>junit</artifactId>
+		    <version>${junit.version}</version>
+	        <scope>test</scope>
+		</dependency>
+	</dependencies>
 	
 	<build>		
 		<plugins>
@@ -83,8 +91,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>             
-
-        </plugins>
-      </build>
+            </plugin>
+		</plugins>
+    </build>
 </project>
