@@ -11,7 +11,7 @@ public class TestProjectionAA {
 	@Source(value = "objectA")
 	public TestProjectionAI ai;
 	
-	@Provided
-	public ProjectionBasicTypesNameOverride aa;
+//	@Provided
+//	public ProjectionBasicTypesNameOverride aa;
 	
 }

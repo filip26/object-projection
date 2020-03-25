@@ -1,4 +1,6 @@
-package com.apicatalog.projection.converter.implicit;
+package com.apicatalog.projection.converter.std;
+
+import java.util.Collection;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -29,7 +31,15 @@ public class Concat implements InvertibleFunction<String> {
 
 		StringBuilder builder = new StringBuilder();
 		for (Object v : objects) {
-			builder.append(v.toString());
+			//TODO use implicit conversion -> flatMap
+			if (v instanceof Collection) {
+				for (Object vi : (Collection<Object>)v) {
+					builder.append(vi.toString());
+				}
+			} else {
+			
+				builder.append(v.toString());
+			}
 		}
 		if (StringUtils.isNotBlank(suffix)) {
 			builder.append(suffix);

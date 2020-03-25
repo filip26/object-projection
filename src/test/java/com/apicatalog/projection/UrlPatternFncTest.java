@@ -4,29 +4,27 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.apicatalog.projection.converter.InvertibleFunctionError;
+import com.apicatalog.projection.converter.ConvertorError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
-import com.apicatalog.projection.mapping.MappingIndex;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 import com.apicatalog.projection.objects.ObjectReference;
 import com.apicatalog.projection.projections.ProjectionUrlPatternFnc;
 
 public class UrlPatternFncTest {
 
-	ProjectionFactory projection;
+	ProjectionFactory projections;
+	ProjectionMapper mapper;
 	
 	@Before
 	public void setup() {
-		ProjectionMapper scanner = new ProjectionMapper();
+		projections = new ProjectionFactory();
+		mapper = new ProjectionMapper(projections);	
 		
-		MappingIndex index = new MappingIndex();
-		index.add(scanner.getMapping(ProjectionUrlPatternFnc.class));
-		
-		projection = new ProjectionFactory(index);
+		projections.add(mapper.getMapping(ProjectionUrlPatternFnc.class));
 	}
-	
+		
     @Test
-    public void testComposition() throws ProjectionError, InvertibleFunctionError {
+    public void testComposition() throws ProjectionError, ConvertorError {
     	
     	ObjectBasicTypes oa = new ObjectBasicTypes();
     	oa.longValue = 123l;
@@ -34,7 +32,7 @@ public class UrlPatternFncTest {
     	ObjectReference oaa = new ObjectReference();
     	oaa.stringValue = "ABC"; 
 
-    	ProjectionUrlPatternFnc pa = projection.compose(ProjectionUrlPatternFnc.class, oa, oaa);
+    	ProjectionUrlPatternFnc pa = projections.compose(ProjectionUrlPatternFnc.class, oa, oaa);
     	
     	Assert.assertNotNull(pa);
     	Assert.assertEquals("https://www.example.org/" + oa.longValue + "/" + oaa.stringValue, pa.href);    	

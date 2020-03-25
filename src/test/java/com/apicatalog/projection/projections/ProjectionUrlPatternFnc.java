@@ -4,7 +4,7 @@ import com.apicatalog.projection.annotation.Conversion;
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
-import com.apicatalog.projection.converter.implicit.UrlPatternFnc;
+import com.apicatalog.projection.converter.std.UrlPatternFnc;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 import com.apicatalog.projection.objects.ObjectReference;
 

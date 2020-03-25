@@ -4,11 +4,11 @@ package com.apicatalog.projection.converter;
 @Deprecated
 public interface InvertibleFunction<T> {
 
-	void init(ContextValue ctx) throws InvertibleFunctionError;
+	void init(ContextValue ctx) throws ConvertorError;
 	
-	T compute(Object...values) throws InvertibleFunctionError;
+	T compute(Object...values) throws ConvertorError;
 	
-	Object[] inverse(T value) throws InvertibleFunctionError;
+	Object[] inverse(T value) throws ConvertorError;
 	
 	boolean isReverseable();
 	

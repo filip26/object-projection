@@ -11,6 +11,6 @@ public @interface Provided {
 
 	boolean optional() default false;
 	
-	String name() default "";
+	String qualifier() default "";
 
 }

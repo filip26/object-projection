@@ -1,34 +1,33 @@
 package com.apicatalog.projection;
 
 import java.time.Instant;
+import java.util.stream.Stream;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.apicatalog.projection.converter.InvertibleFunctionError;
+import com.apicatalog.projection.converter.ConvertorError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
-import com.apicatalog.projection.mapping.MappingIndex;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 import com.apicatalog.projection.projections.ProjectionBasicTypes;
 
 
 public class DirectMappingTest {
 
-	ProjectionFactory projection;
+	ProjectionFactory projections;
+	ProjectionMapper mapper;
 	
 	@Before
 	public void setup() {
-		ProjectionMapper scanner = new ProjectionMapper();
+		projections = new ProjectionFactory();
+		mapper = new ProjectionMapper(projections);	
 		
-		MappingIndex index = new MappingIndex();
-		index.add(scanner.getMapping(ProjectionBasicTypes.class));
-		
-		projection = new ProjectionFactory(index);
+		projections.add(mapper.getMapping(ProjectionBasicTypes.class));
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, InvertibleFunctionError {
+    public void testComposition() throws ProjectionError, ConvertorError {
     	
     	ObjectBasicTypes oa = new ObjectBasicTypes();
     	oa.booleanValue = true;
@@ -36,8 +35,8 @@ public class DirectMappingTest {
     	oa.instantValue = Instant.now();
     	oa.longValue = 123456l;
     	oa.stringValue = "ABCDEF";
-    	
-    	ProjectionBasicTypes pa = projection.compose(ProjectionBasicTypes.class, oa);
+
+    	ProjectionBasicTypes pa = projections.compose(ProjectionBasicTypes.class, oa);
     	
     	Assert.assertNotNull(pa);
     	
@@ -49,7 +48,7 @@ public class DirectMappingTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError, InvertibleFunctionError {
+    public void testDecomposition() throws ProjectionError, ConvertorError {
     	
     	ProjectionBasicTypes pa = new ProjectionBasicTypes();
     	pa.booleanValue = true;
@@ -58,9 +57,13 @@ public class DirectMappingTest {
     	pa.longValue = 123456l;
     	pa.stringValue = "ABCDEF";
     	
-    	Object[] oo = projection.decompose(pa);
+    	Object[] oo = projections.decompose(pa);
     	
     	Assert.assertNotNull(oo);
+    	
+    	Stream.of(oo).forEach(System.out::println);
+    	Stream.of(oo).map(Object::getClass).forEach(System.out::println);
+    	
     	Assert.assertEquals(1, oo.length);
     	Assert.assertEquals(ObjectBasicTypes.class, oo[0].getClass());
     	

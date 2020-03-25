@@ -1,28 +1,33 @@
 package com.apicatalog.projection.mapping;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
-public class ProjectionMapping {
+import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.converter.ConvertorError;
 
-	final Class<?> projectionClass;
+public interface ProjectionMapping<P> {
+
+	Collection<PropertyMapping> getProperties();
 	
-	final Collection<PropertyMapping> properties;
-
-	public ProjectionMapping(Class<?> projectionClass) {
-		this.projectionClass = projectionClass;
-		this.properties = new ArrayList<>();
-	}
-
-	public Collection<PropertyMapping> getProperties() {
-		return properties;
-	}
-
-	public Class<?> getProjectionClass() {
-		return projectionClass;
-	}
-
-	public void add(PropertyMapping property) {
-		this.properties.add(property);
-	}
+	Class<P> getProjectionClass();
+	
+	/**
+	 * Compose a projection from the given source values
+	 * 
+	 * @param values values used to compose a projection
+	 * @return a projection
+	 * @throws ProjectionError
+	 * @throws ConvertorError
+	 */
+	P compose(Object...values) throws ProjectionError, ConvertorError;
+	
+	/**
+	 * Decompose a projection into source values
+	 * 
+	 * @param projection a projection to decompose
+	 * @return values extracted from the projection
+	 * @throws ProjectionError
+	 * @throws ConvertorError
+	 */
+	Object[] decompose(P projection) throws ProjectionError, ConvertorError;
 }

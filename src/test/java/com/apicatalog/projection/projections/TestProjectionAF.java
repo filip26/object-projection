@@ -3,7 +3,7 @@ package com.apicatalog.projection.projections;
 import com.apicatalog.projection.annotation.Conversion;
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Source;
-import com.apicatalog.projection.converter.implicit.Concat;
+import com.apicatalog.projection.converter.std.Concat;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 
 @Projection(ObjectBasicTypes.class)

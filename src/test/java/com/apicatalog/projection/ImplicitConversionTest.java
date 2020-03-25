@@ -5,32 +5,32 @@ import java.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.apicatalog.projection.converter.InvertibleFunctionError;
+import com.apicatalog.projection.converter.ConvertorError;
+import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 
 public class ImplicitConversionTest {
 
-	ProjectionFactory projection;
+	ProjectionFactory projections;
+	ProjectionMapper mapper;
 	
 	@Before
 	public void setup() {
-//		ProjectionScanner scanner = new ProjectionScanner();
-//		
-//		MappingIndex index = new MappingIndex();
-//		index.add(scanner.scan(TestProjectionAC.class));
-//		
-//		projection = new ProjectionFactory(index);
+		projections = new ProjectionFactory();
+		mapper = new ProjectionMapper(projections);		
+		
+//		projections.add(mapper.getMapping(TestProjectionAC.class));
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, InvertibleFunctionError {
+    public void testComposition() throws ProjectionError, ConvertorError {
     	
     	ObjectBasicTypes oa = new ObjectBasicTypes();
     	oa.instantValue = Instant.now();
     	oa.longValue = 123456l;
     	oa.stringValue = "true";
     	
-//    	TestProjectionAC pa = projection.compose(TestProjectionAC.class, oa);
+//FIXME    	TestProjectionAC pa = projection.compose(TestProjectionAC.class, oa);
 //    	
 //    	Assert.assertNotNull(pa);
 //    	
@@ -40,9 +40,9 @@ public class ImplicitConversionTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError, InvertibleFunctionError {
+    public void testDecomposition() throws ProjectionError, ConvertorError {
     	
-//    	TestProjectionAC pa = new TestProjectionAC();
+//FIXME    	TestProjectionAC pa = new TestProjectionAC();
 //    	pa.projectedBoolean = true;
 //    	pa.projectedLong = Instant.now().toEpochMilli();
 //    	pa.projectedString = "789";

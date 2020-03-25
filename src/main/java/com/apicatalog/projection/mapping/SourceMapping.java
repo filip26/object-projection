@@ -1,56 +1,12 @@
 package com.apicatalog.projection.mapping;
 
-import com.apicatalog.projection.annotation.Conversion;
+import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.converter.ConvertorError;
+import com.apicatalog.projection.objects.SourceObjects;
 
-public class SourceMapping {
+public interface SourceMapping {
 
-	Class<?> objectClass;
-	
-	String propertyName;
-	
-	String qualifier;
-	
-	Boolean optional;
-	
-	Conversion[] functions;
+	Object compose(SourceObjects sources) throws ProjectionError, ConvertorError;
 
-	public Class<?> getSourceClass() {
-		return objectClass;
-	}
-
-	public void setSourceClass(Class<?> objectClass) {
-		this.objectClass = objectClass;
-	}
-
-	public String getPropertyName() {
-		return propertyName;
-	}
-
-	public void setPropertyName(String propertyName) {
-		this.propertyName = propertyName;
-	}
-
-	public String getQualifier() {
-		return qualifier;
-	}
-
-	public void setQualifier(String qualifier) {
-		this.qualifier = qualifier;
-	}
-
-	public Conversion[] getFunctions() {
-		return functions;
-	}
-
-	public void setFunctions(Conversion[] functions) {
-		this.functions = functions;
-	}
-
-	public boolean isOptional() {
-		return optional != null && optional;
-	}
-	
-	public void setOptional(Boolean optional) {
-		this.optional = optional;
-	}
+	void decompose(Object object, SourceObjects sources) throws ProjectionError, ConvertorError;
 }

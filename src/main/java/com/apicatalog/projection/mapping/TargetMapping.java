@@ -1,37 +1,18 @@
 package com.apicatalog.projection.mapping;
 
-public class TargetMapping {
+import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.converter.ConvertorError;
+import com.apicatalog.projection.objects.SourceObjects;
 
-	Class<?> targetClass;
-	Class<?> itemClass;
+public interface TargetMapping {
 
-	boolean reference;
+	Class<?> getTargetClass();
+	Class<?> getItemClass();
 	
-	public Class<?> getTargetClass() {
-		return targetClass;
-	}
-
-	public void setTargetClass(Class<?> targetClass) {
-		this.targetClass = targetClass;
-	}
-
-	public void setItemClass(Class<?> itemClass) {
-		this.itemClass = itemClass;
-	}
+	boolean isCollection();
+	boolean isReference();
 	
-	public Class<?> getItemClass() {
-		return itemClass;
-	}
+	Object construct(int level, Object object, SourceObjects sources) throws ProjectionError, ConvertorError;
 	
-	public boolean isCollection() {
-		return itemClass != null;
-	}
-	
-	public boolean isReference() {
-		return reference;
-	}
-
-	public void setReference(boolean reference) {
-		this.reference = reference;
-	}
+	Object deconstruct(Object object, SourceObjects sources)  throws ProjectionError, ConvertorError;
 }

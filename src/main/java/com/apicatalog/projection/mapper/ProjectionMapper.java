@@ -7,15 +7,27 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.annotation.Provided;
+import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.annotation.Conversion;
 import com.apicatalog.projection.annotation.Projection;
+import com.apicatalog.projection.annotation.Provided;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
+import com.apicatalog.projection.mapper.mapping.ConversionMappingImpl;
+import com.apicatalog.projection.mapper.mapping.ProjectionMappingImpl;
+import com.apicatalog.projection.mapper.mapping.PropertyMappingImpl;
+import com.apicatalog.projection.mapper.mapping.ProvidedMappingImpl;
+import com.apicatalog.projection.mapper.mapping.SourceMappingImpl;
+import com.apicatalog.projection.mapper.mapping.SourcesMappingImpl;
+import com.apicatalog.projection.mapper.mapping.TargetMappingImpl;
+import com.apicatalog.projection.mapping.ConversionMapping;
 import com.apicatalog.projection.mapping.ProjectionMapping;
 import com.apicatalog.projection.mapping.PropertyMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
@@ -25,7 +37,13 @@ public class ProjectionMapper {
 
 	final Logger logger = LoggerFactory.getLogger(ProjectionMapper.class);
 	
-	public ProjectionMapping getMapping(final Class<?> targetProjectionClass) {
+	final ProjectionFactory index;
+	
+	public ProjectionMapper(ProjectionFactory index) {
+		this.index = index;
+	}
+	
+	public <P> ProjectionMapping<P> getMapping(final Class<P> targetProjectionClass) {
 
 		if (targetProjectionClass == null) {
 			throw new IllegalArgumentException();
@@ -40,7 +58,7 @@ public class ProjectionMapper {
 		
 		final Projection projectionAnnotation = targetProjectionClass.getAnnotation(Projection.class);
 		
-		final ProjectionMapping projectionMapping = new ProjectionMapping(targetProjectionClass);
+		final ProjectionMappingImpl<P> projectionMapping = new ProjectionMappingImpl<>(targetProjectionClass);
 		
 		final Class<?> defaultSourceClass = Class.class.equals(projectionAnnotation.value()) ? null : projectionAnnotation.value();
 		
@@ -78,9 +96,7 @@ public class ProjectionMapper {
 
 		// provided -> global source
 		} else if (field.isAnnotationPresent(Provided.class)) {
-			final PropertyMapping propertyMapping = new PropertyMapping(field.getName());
-			propertyMapping.setTarget(getTargetMapping(field));
-			return propertyMapping;
+			return getProvidedMapping(field);
 		}
 		
 		// direct mapping or a reference
@@ -89,12 +105,9 @@ public class ProjectionMapper {
 	
 	PropertyMapping getSourcesPropertyMapping(final Field field, final Class<?> defaultSourceClass) {
 		
-		final PropertyMapping propertyMapping = new PropertyMapping(field.getName());
-		propertyMapping.setTarget(getTargetMapping(field));
-
 		final Sources sources = field.getAnnotation(Sources.class);
 		
-		final Optional<SourceMapping[]> sourceMappings = 
+		final Optional<SourceMapping> sourceMappings = 
 					Optional.ofNullable( 
 								getSourcesMapping(
 										sources,  
@@ -107,26 +120,27 @@ public class ProjectionMapper {
 			return null;				
 		}
 
-		// set sources
-		sourceMappings.ifPresent(propertyMapping::setSources);
+		final PropertyMappingImpl propertyMapping = new PropertyMappingImpl();
+		// set projection property name
+		propertyMapping.setName(field.getName());
+
+		// set projection property value sources
+		sourceMappings.ifPresent(propertyMapping::setSource);
 		
-		// set conversions to apply
-		if (sources.map() != null && sources.map().length > 0) {
-			propertyMapping.setFunctions(sources.map());
-		}
+		// set property target mapping
+		propertyMapping.setTarget(getTargetMapping(field));
 		
 		return propertyMapping;
 	}
 	
 	PropertyMapping getSourcePropertyMapping(final Field field, final Class<?> defaultSourceClass) {
 		
-		final PropertyMapping propertyMapping = new PropertyMapping(field.getName());
-		propertyMapping.setTarget(getTargetMapping(field));
-
+		final Source source = field.getAnnotation(Source.class);
+		
 		final Optional<SourceMapping> sourceMapping = 
 				Optional.ofNullable(
 							getSourceMapping(
-										field.getAnnotation(Source.class), 
+										source, 
 										field,
 										defaultSourceClass
 									));
@@ -134,25 +148,29 @@ public class ProjectionMapper {
 		if (sourceMapping.isEmpty()) {
 			return null;
 		}
-		
-		sourceMapping
-			.map(mapping -> new SourceMapping[] {mapping})
-			.ifPresent(propertyMapping::setSources);			
+
+		final PropertyMappingImpl propertyMapping = new PropertyMappingImpl();
+		// set projection property name
+		propertyMapping.setName(field.getName());
+
+		// set projection property value sources
+		sourceMapping.ifPresent(propertyMapping::setSource);
+
+		// set property target mapping
+		propertyMapping.setTarget(getTargetMapping(field));
 
 		return propertyMapping;
 	}
 
 	PropertyMapping getDefaultPropertyMapping(final Field field, final Class<?> defaultSourceClass) {
-		final PropertyMapping propertyMapping = new PropertyMapping(field.getName());
-		propertyMapping.setTarget(getTargetMapping(field));
 
 		if (defaultSourceClass == null) {
 			logger.warn("Source class is missing. Property {} is ignored.", field.getName());
 			return null;				
 		}
 
-		final SourceMapping sourceMapping = new SourceMapping();
-			
+		final SourceMappingImpl sourceMapping = new SourceMappingImpl();
+		
 		// set default source object class
 		sourceMapping.setSourceClass(defaultSourceClass);
 
@@ -163,20 +181,53 @@ public class ProjectionMapper {
 		if (!isFieldPresent(sourceMapping.getSourceClass(), sourceMapping.getPropertyName())) {
 			logger.warn("Property {} is not accessible or does not exist in {} and is ignored.", field.getName(), sourceMapping.getSourceClass().getSimpleName());
 			return null;
-		}				
+		}
+		
+		final PropertyMappingImpl propertyMapping = new PropertyMappingImpl();
+		// set projection property name
+		propertyMapping.setName(field.getName());
+		// set projection property value sources
+		propertyMapping.setSource(sourceMapping);
+		// set property target mapping 
+		propertyMapping.setTarget(getTargetMapping(field));
+		
+		return propertyMapping;
+	}
 
-		propertyMapping.setSources(new SourceMapping[] {sourceMapping});
+	PropertyMapping getProvidedMapping(Field field) {
+		
+		final Provided provided = field.getAnnotation(Provided.class);
+		
+		final ProvidedMappingImpl sourceMapping = new ProvidedMappingImpl(index);
+		sourceMapping.setOptional(provided.optional());
+		
+		// set target object class
+		sourceMapping.setObjectClass(field.getType());
+
+		sourceMapping.setQualifier(provided.qualifier());
+		
+		final PropertyMappingImpl propertyMapping = new PropertyMappingImpl();
+		// set projection property name		
+		propertyMapping.setName(field.getName());
+		// set projection property value sources
+		propertyMapping.setSource(sourceMapping);		
+		// set property target mapping
+		propertyMapping.setTarget(getTargetMapping(field));
+		
 		return propertyMapping;
 	}
 	
 	TargetMapping getTargetMapping(Field field) {
-		final TargetMapping targetMapping = new TargetMapping();
-
+		final TargetMappingImpl targetMapping = new TargetMappingImpl(index);
+		// set projection property target class
 		targetMapping.setTargetClass(field.getType());
 
 		// a collection?
 		if (Collection.class.isAssignableFrom(field.getType())) {
 			targetMapping.setItemClass((Class<?>)((ParameterizedType)field.getGenericType()).getActualTypeArguments()[0]);
+			
+			
+			
 			targetMapping.setReference(targetMapping.getItemClass().isAnnotationPresent(Projection.class));
 			
 		} else {
@@ -186,7 +237,9 @@ public class ProjectionMapper {
 		return targetMapping;
 	}
 	
-	SourceMapping[] getSourcesMapping(final Sources sources, final Field field, final Class<?> defaultSourceClass) {
+	SourceMapping getSourcesMapping(final Sources sources, final Field field, final Class<?> defaultSourceClass) {
+		
+		final SourcesMappingImpl mapping = new SourcesMappingImpl();
 		
 		final List<SourceMapping> sourceMappings = new ArrayList<>();
 		
@@ -204,52 +257,74 @@ public class ProjectionMapper {
 			sourceMapping.ifPresent(sourceMappings::add);
 		}
 		
-		return sourceMappings.isEmpty() ? null : sourceMappings.toArray(new SourceMapping[0]);
+		if (sourceMappings.isEmpty()) {
+			logger.warn("Property {} has no source(s) and is ignored.", field.getName());
+			return null;
+		}
+
+		// set conversions to apply
+		mapping.setConversions(getConversionMapping(sources.map()));
+
+		mapping.setSources(sourceMappings);
+		
+		return mapping;
 	}
 	
 	SourceMapping getSourceMapping(final Source source, final Field field, final Class<?> defaultSourceClass) {
 		
-		final SourceMapping sourceMapping = new SourceMapping();
+		final SourceMappingImpl mapping = new SourceMappingImpl();
 		
 		// set default source object class
-		Optional.ofNullable(defaultSourceClass).ifPresent(sourceMapping::setSourceClass);
+		Optional.ofNullable(defaultSourceClass).ifPresent(mapping::setSourceClass);
 		
 		// override source property class
 		if (!Class.class.equals(source.type())) {
-			sourceMapping.setSourceClass(source.type());
+			mapping.setSourceClass(source.type());
 		}
 		
-		if (sourceMapping.getSourceClass() == null) {
+		if (mapping.getSourceClass() == null) {
 			logger.warn("Source class is missing. Property {} is ignored.", field.getName());
 			return null;
 		}
 
 		// set default source object property name -> use the same name
-		sourceMapping.setPropertyName(field.getName());
+		mapping.setPropertyName(field.getName());
 		
 		// override source property name
 		if (StringUtils.isNotBlank(source.value())) {
-			sourceMapping.setPropertyName(source.value());
+			mapping.setPropertyName(source.value());
 		}
 		
 		// check is source field does exist
-		if (!isFieldPresent(sourceMapping.getSourceClass(), sourceMapping.getPropertyName())) {
-			logger.warn("Property {} is not accessible or does not exist in {} and is ignored.", sourceMapping.getPropertyName(), sourceMapping.getSourceClass().getCanonicalName());
+		if (!isFieldPresent(mapping.getSourceClass(), mapping.getPropertyName())) {
+			logger.warn("Property {} is not accessible or does not exist in {} and is ignored.", mapping.getPropertyName(), mapping.getSourceClass().getCanonicalName());
 			return null;
 		}
 
 		// set source object qualifier
 		if (StringUtils.isNotBlank(source.qualifier())) {
-			sourceMapping.setQualifier(source.qualifier());
+			mapping.setQualifier(source.qualifier());
 		}
 		// set conversions to apply
-		if (source.map().length > 0) {
-			sourceMapping.setFunctions(source.map());
-		}
+		mapping.setConversions(getConversionMapping(source.map()));
 		// set optional 
-		sourceMapping.setOptional(source.optional());
+		mapping.setOptional(source.optional());
 				
-		return sourceMapping;
+		return mapping;
+	}
+	
+
+	ConversionMapping[] getConversionMapping(Conversion[] conversions) {
+
+		if (conversions.length == 0) {
+			return new ConversionMapping[0];
+		}
+
+		return Stream.of(conversions)
+				.map(c -> new ConversionMappingImpl(c.type(), c.value()))
+				.collect(Collectors.toList())
+				.toArray(new ConversionMapping[0])
+				;		
 	}
 	
 	static boolean isFieldPresent(final Class<?> clazz, final String fieldName) {

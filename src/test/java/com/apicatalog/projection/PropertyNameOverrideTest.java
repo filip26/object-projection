@@ -6,29 +6,27 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.apicatalog.projection.converter.InvertibleFunctionError;
+import com.apicatalog.projection.converter.ConvertorError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
-import com.apicatalog.projection.mapping.MappingIndex;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 import com.apicatalog.projection.projections.ProjectionBasicTypesNameOverride;
 
 
 public class PropertyNameOverrideTest {
 
-	ProjectionFactory projection;
+	ProjectionFactory projections;
+	ProjectionMapper mapper;
 	
 	@Before
 	public void setup() {
-		ProjectionMapper scanner = new ProjectionMapper();
+		projections = new ProjectionFactory();
+		mapper = new ProjectionMapper(projections);
 		
-		MappingIndex index = new MappingIndex();
-		index.add(scanner.getMapping(ProjectionBasicTypesNameOverride.class));
-		
-		projection = new ProjectionFactory(index);
+		projections.add(mapper.getMapping(ProjectionBasicTypesNameOverride.class));
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, InvertibleFunctionError {
+    public void testComposition() throws ProjectionError, ConvertorError {
     	
     	ObjectBasicTypes oa = new ObjectBasicTypes();
     	oa.booleanValue = true;
@@ -37,7 +35,7 @@ public class PropertyNameOverrideTest {
     	oa.longValue = 123456l;
     	oa.stringValue = "ABCDEF";
     	
-    	ProjectionBasicTypesNameOverride pa = projection.compose(ProjectionBasicTypesNameOverride.class, oa);
+    	ProjectionBasicTypesNameOverride pa = projections.compose(ProjectionBasicTypesNameOverride.class, oa);
     	
     	Assert.assertNotNull(pa);
     	
@@ -49,7 +47,7 @@ public class PropertyNameOverrideTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError, InvertibleFunctionError {
+    public void testDecomposition() throws ProjectionError, ConvertorError {
     	
     	ProjectionBasicTypesNameOverride pa = new ProjectionBasicTypesNameOverride();
     	pa.projectedBoolean = true;
@@ -58,7 +56,7 @@ public class PropertyNameOverrideTest {
     	pa.projectedLong = 123456l;
     	pa.projectedString = "ABCDEF";
     	
-    	Object[] oo = projection.decompose(pa);
+    	Object[] oo = projections.decompose(pa);
     	
     	Assert.assertNotNull(oo);
     	Assert.assertEquals(1, oo.length);

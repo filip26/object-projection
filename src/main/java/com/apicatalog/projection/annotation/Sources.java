@@ -16,4 +16,5 @@ public @interface Sources {
 	
 	Conversion[] map() default {};
 		
+	boolean optional() default false;
 }

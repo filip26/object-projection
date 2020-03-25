@@ -1,14 +1,14 @@
 package com.apicatalog.projection.converter;
 
-public class InvertibleFunctionError extends Exception {
+public class ConvertorError extends Exception {
 
 	private static final long serialVersionUID = 8321576342843307811L;
 
-	public InvertibleFunctionError(String message) {
+	public ConvertorError(String message) {
 		super(message);
 	}
 	
-	public InvertibleFunctionError(Throwable cause) {
+	public ConvertorError(Throwable cause) {
 		super(cause);
 	}
 	
