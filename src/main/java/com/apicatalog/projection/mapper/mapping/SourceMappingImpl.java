@@ -2,6 +2,7 @@ package com.apicatalog.projection.mapper.mapping;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -22,6 +23,8 @@ public class SourceMappingImpl implements SourceMapping {
 	Class<?> sourceClass;
 	
 	String propertyName;
+	
+	Class<?> propertyClass;
 	
 	String qualifier;
 	
@@ -57,13 +60,53 @@ public class SourceMappingImpl implements SourceMapping {
 	}
 
 	@Override
-	public void decompose(Object object, SourceObjects sources) throws ConvertorError, ProjectionError {
-		logger.debug("Decompose {}, source={}, qualifier={}, optional={}", object, sourceClass.getSimpleName(), qualifier, optional);
+	public void decompose(Object[] objects, SourceObjects sources) throws ConvertorError, ProjectionError {
+		logger.debug("Decompose {}, source={}, qualifier={}, optional={}", objects, sourceClass.getSimpleName(), qualifier, optional);
 
-		Optional<Object> value = Optional.ofNullable(object);
+		Optional<Object> value = Optional.empty(); 
+		
+		if (objects.length == 1) {
+			value = Optional.ofNullable(objects[0]);
+			
+		} else {
+			for (Object o : objects) {
+				if (propertyClass.isInstance(o)) {
+					value = Optional.ofNullable(o);
+				} else {
+					sources.addOrReplace(o);
+				}
+			}
+		}
 		
 		if (value.isEmpty()) {
 			return;
+		}
+		
+		//TODO hack, filter collection
+		if (Collection.class.isInstance(value.get())) {
+			
+			ArrayList<Object> l = new ArrayList<>();
+			
+			for (Object[] o : (Collection<Object[]>)value.get()) {
+
+				if (o.length == 1) {
+					l.add(o[0]);
+					
+				} else {
+					for (Object o1 : o) {
+						if (propertyClass.isInstance(o1)) {
+							l.add(o1);
+						} else {
+							sources.addOrReplace(o1);
+						}
+					}
+				}
+
+			}
+			
+			
+			value = Optional.of(l);
+			
 		}
 		
 		// apply explicit deconversions
@@ -105,6 +148,7 @@ public class SourceMappingImpl implements SourceMapping {
 		ObjectUtils.setPropertyValue(source.get(), propertyName, sourceValue);	
 	}
 	
+	@Override
 	public Class<?> getSourceClass() {
 		return sourceClass;
 	}
@@ -143,5 +187,13 @@ public class SourceMappingImpl implements SourceMapping {
 	
 	public void setOptional(Boolean optional) {
 		this.optional = optional;
+	}
+
+	public Class<?> getPropertyClass() {
+		return propertyClass;
+	}
+
+	public void setPropertyType(Class<?> propertyClass) {
+		this.propertyClass = propertyClass;
 	}
 }

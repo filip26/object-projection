@@ -1,6 +1,7 @@
 package com.apicatalog.projection.mapper.mapping;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -123,64 +124,64 @@ public class TargetMappingImpl implements TargetMapping {
 	}
 
 	@Override
-	public Object deconstruct(Object object, SourceObjects sources) throws ProjectionError, ConvertorError {
+	public Object[] deconstruct(Object object) throws ProjectionError, ConvertorError {
 
-		logger.debug("Deconstruct source from {}, colllection={}, reference={}", object, isCollection(), isReference());
+		logger.debug("Deconstruct {}, colllection={}, reference={}", object, isCollection(), isReference());
 		
-		Optional<Object> value = Optional.ofNullable(object);
-
-		if (value.isEmpty()) {
-			return null;
+		if (Optional.ofNullable(object).isEmpty()) {
+			return new Object[0];
 		}
 		
+		Optional<Object[]> value = Optional.ofNullable(new Object[] {object});
+
 		if (reference) {
 			
 			if (isCollection()) {
-
-				Object untyppedCollection = value.get();
-				
-				logger.trace("  collection={}", untyppedCollection.getClass().getCanonicalName());
-				
+								
 				final Collection<Object> collection = new ArrayList<>();
 
 				// compose a projection from each object in the collection
-				for (final Object item : (Collection<Object>)untyppedCollection) { //FIXME check value type, do implicit collection conversion if needed	 
-					collection.add(extract(getReference(true).decompose(item), sources, false));
+				for (final Object item : toCollection(object)) {
+					collection.add(getReference(true).decompose(item));
 				}
 				
-				value = Optional.of(collection);
+				value = Optional.of(new Object[] {collection});
 
 
 			} else {
-				value = Optional.ofNullable(extract(getReference(false).decompose(value.get()), sources, false));
+				value = Optional.ofNullable(getReference(false).decompose(object));
+
 			}
 		}
-
 		if (value.isEmpty()) {
-			logger.trace("  value = null");
-			return null;
+			logger.trace("  sourceValue = null");
+			return new Object[0];
 		}
 
-		Object sourceValue = value.get();
-		logger.trace("  value = {}", sourceValue);
+		Object[] sourceValue = value.get();
 
-		return sourceValue;
+		for (Object o : sourceValue) {	//FIXME
+			logger.trace("  sourceValue = {}", o);
+		}
+		return sourceValue.length == 0 ? null : sourceValue;
 	}
 	
-	Object extract(Object[] objects, SourceObjects sources, boolean collection) {
+	//FIXME check value type, do implicit collection conversion if needed
+	// use type adapters instead
+	@Deprecated
+	Collection<Object> toCollection(Object object) {
 		
-		Optional<Object> object = Optional.empty();
+		logger.trace("  toCollection=({})", object.getClass().getCanonicalName());
+
 		
-		for (Object o : objects) {
-//			System.out.println(">>> " + o);
-			if (targetClass.isInstance(o)) {
-				object = Optional.of(o);
-			} else {
-				sources.addOrReplace(o);
-			}
-			
+		if (Collection.class.isInstance(object)) {
+			return (Collection)object;
 		}
-		return object.isPresent() ? object.get() : null;		
+		if (object.getClass().isArray()) {
+			
+			return Arrays.asList(((Object[])object));
+		}
+		return (Collection)object;		//FIXME !?!?!
 	}
 	
 }

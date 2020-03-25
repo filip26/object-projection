@@ -13,7 +13,7 @@ public class ProvidedMappingImpl implements SourceMapping {
 
 	final ProjectionFactory index;
 	
-	Class<?> objectClass;
+	Class<?> sourceClass;
 	
 	String qualifier;
 	
@@ -26,37 +26,37 @@ public class ProvidedMappingImpl implements SourceMapping {
 	@Override
 	public Object compose(SourceObjects sources) throws ProjectionError, ConvertorError {
 		
-		if (objectClass.isAnnotationPresent(Projection.class)) {
-			return index.compose(objectClass, sources.getValues());
+		if (sourceClass.isAnnotationPresent(Projection.class)) {
+			return index.compose(sourceClass, sources.getValues());
 		}
 
 		final Optional<Object> source = 
 				Optional.ofNullable(
-					sources.get(objectClass, qualifier)
+					sources.get(sourceClass, qualifier)
 				);
 			
 		if (source.isEmpty()) {
 			if (Boolean.TRUE.equals(optional)) {
 				return null;
 			}
-			throw new ProjectionError("Source instance of " + objectClass.getCanonicalName() + ", qualifier=" + qualifier + ",  is not present.");
+			throw new ProjectionError("Source instance of " + sourceClass.getCanonicalName() + ", qualifier=" + qualifier + ",  is not present.");
 		}
 		
 		return source.get();
 	}
 	
 	@Override
-	public void decompose(Object object, SourceObjects sources) {
+	public void decompose(Object[] object, SourceObjects sources) {
 		// TODO Auto-generated method stub
 		return;
 	}
 
 	public Class<?> getObjectClass() {
-		return objectClass;
+		return sourceClass;
 	}
 
-	public void setObjectClass(Class<?> objectClass) {
-		this.objectClass = objectClass;
+	public void setSourceClass(Class<?> objectClass) {
+		this.sourceClass = objectClass;
 	}
 
 	public String getQualifier() {
@@ -73,5 +73,10 @@ public class ProvidedMappingImpl implements SourceMapping {
 
 	public void setOptional(Boolean optional) {
 		this.optional = optional;
+	}
+
+	@Override
+	public Class<?> getSourceClass() {
+		return sourceClass;
 	}
 }

@@ -13,7 +13,7 @@ import com.apicatalog.projection.mapper.MapperTest;
 	DirectMappingTest.class,
 	PropertyNameOverrideTest.class,
 	CollectionTest.class,
-	EmbeddedOneToOneTest.class,
+	ReferencedCompositeTest.class,
 	ImplicitConversionTest.class,
 	MultipleSourcesTest.class,
 	OneToOneWithFncTest.class,

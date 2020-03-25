@@ -14,5 +14,5 @@ public interface TargetMapping {
 	
 	Object construct(int level, Object object, SourceObjects sources) throws ProjectionError, ConvertorError;
 	
-	Object deconstruct(Object object, SourceObjects sources)  throws ProjectionError, ConvertorError;
+	Object[] deconstruct(Object object)  throws ProjectionError, ConvertorError;
 }

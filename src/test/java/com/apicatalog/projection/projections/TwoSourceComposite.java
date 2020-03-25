@@ -6,12 +6,12 @@ import com.apicatalog.projection.objects.ObjectBasicTypes;
 import com.apicatalog.projection.objects.ObjectReference;
 
 @Projection
-public class TestProjectionAI {
+public class TwoSourceComposite {
 
 	@Source(type=ObjectBasicTypes.class, value = "longValue")
-	public Long projectedLong;
+	public Long source1;
 		
 	@Source(type=ObjectReference.class, value = "stringValue")
-	public String inheritedValue;
+	public String source2;
 
 }

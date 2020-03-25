@@ -1,7 +1,6 @@
 package com.apicatalog.projection;
 
 import java.time.Instant;
-import java.util.stream.Stream;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -60,9 +59,6 @@ public class DirectMappingTest {
     	Object[] oo = projections.decompose(pa);
     	
     	Assert.assertNotNull(oo);
-    	
-    	Stream.of(oo).forEach(System.out::println);
-    	Stream.of(oo).map(Object::getClass).forEach(System.out::println);
     	
     	Assert.assertEquals(1, oo.length);
     	Assert.assertEquals(ObjectBasicTypes.class, oo[0].getClass());

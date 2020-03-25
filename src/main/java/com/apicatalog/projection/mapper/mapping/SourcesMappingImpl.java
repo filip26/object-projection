@@ -42,7 +42,7 @@ public class SourcesMappingImpl implements SourceMapping {
 	}
 
 	@Override
-	public void decompose(Object object, SourceObjects sources) {
+	public void decompose(Object[] object, SourceObjects sources) {
 		// TODO Auto-generated method stub
 		return;
 	}
@@ -69,5 +69,11 @@ public class SourcesMappingImpl implements SourceMapping {
 
 	public void setConversions(ConversionMapping[] conversions) {
 		this.conversions = conversions;
+	}
+
+	@Override
+	public Class<?> getSourceClass() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

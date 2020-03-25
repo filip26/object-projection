@@ -48,57 +48,13 @@ public class PropertyMappingImpl implements PropertyMapping {
 		logger.debug("Decompose {} = {}", name, object);
 		
 		// get target value
-		Optional<Object> value = Optional.ofNullable(target.deconstruct(object, sources));
+		Optional<Object[]> values = Optional.ofNullable(target.deconstruct(object));
 
-		if (value.isEmpty()) {
-			logger.trace("  = null");
+		if (values.isEmpty() || values.get().length == 0) {
 			return;
 		}
-		
-		Object sourceObject = value.get();
-		
-		logger.trace("  = {}", sourceObject);
 
-		source.decompose(sourceObject, sources);
-		
-//		if (value.isEmpty())	
-//		
-//		
-//		// is the target a reference on a projection
-//		if (target.isReference()) { 
-//
-//			// is the target a collection of references?
-//			if (target.isCollection()) {
-//				
-//				final Collection<Object> collection = new ArrayList<>();
-//				
-//				for (Object item : ((Collection<Object>)object)) {	//FIXME type check, implicit conversion					
-////					Optional.ofNullable(target.getReference().decompose(item))
-////							.ifPresent(collection::add);
-//				}
-//				
-//				//TODO merge same values
-//				
-////				value = Optional.ofNullable(collection);
-//
-//			} else {
-//
-//				Object[] v = target.getReference().decompose(object);
-//				
-////				value = Optional.ofNullable(v[0]);			//FIXME hack!
-////				if (v.length > 1) {	
-////					sources.addOrReplace(v[1]);
-////				}
-//			}
-//		}
-//		
-////		if (value.isEmpty()) {
-////			return;
-////		}
-////		
-////		source.decompose(value.get());
-//		
-//		return sources;
+		source.decompose(values.get(), sources);
 	}
 	
 	@Override

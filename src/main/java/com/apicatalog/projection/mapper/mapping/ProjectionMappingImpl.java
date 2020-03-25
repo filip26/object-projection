@@ -79,10 +79,11 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 		for (PropertyMapping property : properties) {
 	
 			final Optional<Object> value = Optional.ofNullable(ObjectUtils.getPropertyValue(projection, property.getName()));
-			
+
 			if (value.isEmpty()) {
 				continue;
 			}
+			
 			property.decompose(value.get(), sources);
 		}
 		return sources.getValues();

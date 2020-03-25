@@ -11,8 +11,8 @@ import com.apicatalog.projection.converter.ConvertorError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 import com.apicatalog.projection.objects.TestCollectionObject;
-import com.apicatalog.projection.projections.ProjectionBasicTypesNameOverride;
-import com.apicatalog.projection.projections.TestProjectionC1;
+import com.apicatalog.projection.projections.BasicPropertyNameOverride;
+import com.apicatalog.projection.projections.SimpleCollection;
 
 public class CollectionTest {
 
@@ -24,8 +24,8 @@ public class CollectionTest {
 		projections = new ProjectionFactory();
 		mapper = new ProjectionMapper(projections);	
 		
-		projections.add(mapper.getMapping(TestProjectionC1.class));
-		projections.add(mapper.getMapping(ProjectionBasicTypesNameOverride.class));
+		projections.add(mapper.getMapping(SimpleCollection.class));
+		projections.add(mapper.getMapping(BasicPropertyNameOverride.class));
 	}
 	
     @Test
@@ -39,52 +39,52 @@ public class CollectionTest {
     	oc.items = new ArrayList<>();
     	oc.items.add(oa);
     	
-    	TestProjectionC1 ca = projections.compose(TestProjectionC1.class, oc);
+    	SimpleCollection ca = projections.compose(SimpleCollection.class, oc);
     	
     	Assert.assertNotNull(ca);
     	Assert.assertNotNull(ca.items);    	
     	Assert.assertEquals(1, ca.items.size());
     	
-    	ProjectionBasicTypesNameOverride pa = ca.items.iterator().next();
+    	BasicPropertyNameOverride pa = ca.items.iterator().next();
     	
     	Assert.assertEquals(oa.booleanValue, pa.projectedBoolean);
     	Assert.assertEquals(oa.doubleValue, pa.projectedDouble);
     }
     
-//    @Test
-//    public void testDecomposition() throws ProjectionError, ConvertorError {
-//    	
-//    	TestProjectionC1 ca = new TestProjectionC1();
-//    	ca.items = new ArrayList<>();
-//    	
-//    	ProjectionBasicTypesNameOverride pa1 = new ProjectionBasicTypesNameOverride();
-//    	pa1.projectedString = "ABC";
-//
-//    	ProjectionBasicTypesNameOverride pa2 = new ProjectionBasicTypesNameOverride();
-//    	pa2.projectedString = "XYZ";
-//    	
-//    	ca.items.add(pa1);
-//    	ca.items.add(pa2);
-//
-//    	Object[] oo = projections.decompose(ca);
-//    	
-//    	Assert.assertNotNull(oo);
-//    	Assert.assertEquals(1, oo.length);
-//    	Assert.assertEquals(TestCollectionObject.class, oo[0].getClass());
-//    	
-//    	TestCollectionObject oc = (TestCollectionObject)oo[0];
-//    	Assert.assertNotNull(oc.items);
-//    	Assert.assertEquals(2, oc.items.size());
-//    	
-//    	Iterator<ObjectBasicTypes> it = oc.items.iterator();
-//    	
-//    	ObjectBasicTypes oa1 = it.next();
-//    	
-//    	Assert.assertEquals(pa1.projectedString, oa1.stringValue);
-//    	    	
-//    	ObjectBasicTypes oa2 = it.next();
-//    	
-//    	Assert.assertEquals(pa2.projectedString, oa2.stringValue);
-//    			
-//    }
+    @Test
+    public void testDecomposition() throws ProjectionError, ConvertorError {
+    	
+    	SimpleCollection ca = new SimpleCollection();
+    	ca.items = new ArrayList<>();
+    	
+    	BasicPropertyNameOverride pa1 = new BasicPropertyNameOverride();
+    	pa1.projectedString = "ABC";
+
+    	BasicPropertyNameOverride pa2 = new BasicPropertyNameOverride();
+    	pa2.projectedString = "XYZ";
+    	
+    	ca.items.add(pa1);
+    	ca.items.add(pa2);
+
+    	Object[] oo = projections.decompose(ca);
+    	
+    	Assert.assertNotNull(oo);
+    	Assert.assertEquals(1, oo.length);
+    	Assert.assertEquals(TestCollectionObject.class, oo[0].getClass());
+    	
+    	TestCollectionObject oc = (TestCollectionObject)oo[0];
+    	Assert.assertNotNull(oc.items);
+    	Assert.assertEquals(2, oc.items.size());
+    	
+    	Iterator<ObjectBasicTypes> it = oc.items.iterator();
+    	
+    	ObjectBasicTypes oa1 = it.next();
+    	
+    	Assert.assertEquals(pa1.projectedString, oa1.stringValue);
+    	    	
+    	ObjectBasicTypes oa2 = it.next();
+    	
+    	Assert.assertEquals(pa2.projectedString, oa2.stringValue);
+    			
+    }
 }

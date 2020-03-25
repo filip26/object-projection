@@ -6,10 +6,10 @@ import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.objects.ObjectReference;
 
 @Projection(ObjectReference.class)
-public class TestProjectionAA {
+public class ContainsReferencedProjection {
 
 	@Source(value = "objectA")
-	public TestProjectionAI ai;
+	public TwoSourceComposite ref;
 	
 //	@Provided
 //	public ProjectionBasicTypesNameOverride aa;

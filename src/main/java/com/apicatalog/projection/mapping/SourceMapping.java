@@ -6,7 +6,9 @@ import com.apicatalog.projection.objects.SourceObjects;
 
 public interface SourceMapping {
 
+	Class<?> getSourceClass();
+	
 	Object compose(SourceObjects sources) throws ProjectionError, ConvertorError;
 
-	void decompose(Object object, SourceObjects sources) throws ProjectionError, ConvertorError;
+	void decompose(Object[] objects, SourceObjects sources) throws ProjectionError, ConvertorError;
 }

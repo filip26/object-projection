@@ -177,6 +177,8 @@ public class ProjectionMapper {
 		// set default source object property name -> use the same name
 		sourceMapping.setPropertyName(field.getName());
 		
+		sourceMapping.setPropertyType(field.getType());
+		
 		// check if field exists and is accessible
 		if (!isFieldPresent(sourceMapping.getSourceClass(), sourceMapping.getPropertyName())) {
 			logger.warn("Property {} is not accessible or does not exist in {} and is ignored.", field.getName(), sourceMapping.getSourceClass().getSimpleName());
@@ -202,7 +204,7 @@ public class ProjectionMapper {
 		sourceMapping.setOptional(provided.optional());
 		
 		// set target object class
-		sourceMapping.setObjectClass(field.getType());
+		sourceMapping.setSourceClass(field.getType());
 
 		sourceMapping.setQualifier(provided.qualifier());
 		
@@ -300,6 +302,9 @@ public class ProjectionMapper {
 			logger.warn("Property {} is not accessible or does not exist in {} and is ignored.", mapping.getPropertyName(), mapping.getSourceClass().getCanonicalName());
 			return null;
 		}
+		
+		mapping.setPropertyType(getFieldType(mapping.getSourceClass(), mapping.getPropertyName()));
+		
 
 		// set source object qualifier
 		if (StringUtils.isNotBlank(source.qualifier())) {
@@ -325,6 +330,17 @@ public class ProjectionMapper {
 				.collect(Collectors.toList())
 				.toArray(new ConversionMapping[0])
 				;		
+	}
+	
+	static Class<?> getFieldType(Class<?> clazz, String name)  {
+		
+		try {
+			return clazz.getDeclaredField(name).getType();
+			
+		} catch (NoSuchFieldException e) {/* ignore */}
+		
+		return null;
+
 	}
 	
 	static boolean isFieldPresent(final Class<?> clazz, final String fieldName) {
