@@ -1,6 +1,7 @@
 package com.apicatalog.projection;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -55,14 +56,28 @@ public class TwoSourceCompositeTest {
     	Assert.assertEquals(2, objects.length);
 
     	assertNotNull(objects[0]);
-    	Assert.assertEquals(ObjectBasicTypes.class, objects[0].getClass());
-    	ObjectBasicTypes source1 = (ObjectBasicTypes)objects[0];
-    	Assert.assertEquals(projection.source1, source1.longValue);
-
     	assertNotNull(objects[1]);
-    	Assert.assertEquals(ObjectReference.class, objects[1].getClass());
-    	ObjectReference source2 = (ObjectReference)objects[1];
-    	Assert.assertEquals(projection.source2, source2.stringValue);
+    	
+    	if (ObjectBasicTypes.class.isInstance(objects[0])) {
+    		checkBasic(objects[0], projection.source1);
+    		checkReference(objects[1], projection.source2);
+    	} else {
+    		checkReference(objects[0], projection.source2);
+    		checkBasic(objects[1], projection.source1);
+    	}
     }
+    
+    static void checkReference(Object object, String ref) {
+    	Assert.assertEquals(ObjectReference.class, object.getClass());
+    	ObjectReference source2 = (ObjectReference)object;
+    	Assert.assertEquals(ref, source2.stringValue);
+    }
+    
+    static void checkBasic(Object object, Long ref) {
+    	Assert.assertEquals(ObjectBasicTypes.class, object.getClass());
+    	ObjectBasicTypes source1 = (ObjectBasicTypes)object;
+    	Assert.assertEquals(ref, source1.longValue);    	
+    }
+    
 }
 

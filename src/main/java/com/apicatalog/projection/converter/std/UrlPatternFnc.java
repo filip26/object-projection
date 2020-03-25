@@ -1,14 +1,12 @@
 package com.apicatalog.projection.converter.std;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.apicatalog.projection.converter.ContextValue;
-import com.apicatalog.projection.converter.InvertibleFunction;
 import com.apicatalog.projection.converter.ConvertorError;
+import com.apicatalog.projection.converter.InvertibleFunction;
 import com.apicatalog.urlpattern.MalformedUrlPattern;
 import com.apicatalog.urlpattern.UrlPattern;
 
@@ -44,10 +42,7 @@ public class UrlPatternFnc implements InvertibleFunction<String> {
 				v.add(o1.toString());
 			}
 		}
-		
-		
-		// = Arrays.stream(values).flatMap(s -> s.st).map(Object::toString).collect(Collectors.toList());
-		
+				
 		return pattern.populate(v.toArray(new String[0]));
 	}
 
