@@ -34,8 +34,8 @@ public class ProjectionFactory {
 
 	@SuppressWarnings("unchecked")
 	public Object[] decompose(Object projection) throws ProjectionError, ConvertorError {
-		return ((ProjectionMapping<Object>) Optional.ofNullable(get(projection.getClass()))
-					.orElseThrow(() -> new ProjectionError("The projection for " + projection.getClass().getCanonicalName() + " is not present.")))
+		return Optional.ofNullable(get((Class<Object>)projection.getClass()))
+					.orElseThrow(() -> new ProjectionError("The projection for " + projection.getClass().getCanonicalName() + " is not present."))
 					.decompose(projection);
 	}
 

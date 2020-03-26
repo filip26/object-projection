@@ -2,6 +2,9 @@ package com.apicatalog.projection.mapper.mapping;
 
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.annotation.Projection;
@@ -11,6 +14,8 @@ import com.apicatalog.projection.objects.SourceObjects;
 
 public class ProvidedMappingImpl implements SourceMapping {
 
+	final Logger logger = LoggerFactory.getLogger(PropertyMappingImpl.class);
+	
 	final ProjectionFactory index;
 	
 	Class<?> sourceClass;
@@ -46,9 +51,23 @@ public class ProvidedMappingImpl implements SourceMapping {
 	}
 	
 	@Override
-	public void decompose(Object[] object, SourceObjects sources) {
-		// TODO Auto-generated method stub
-		return;
+	public void decompose(Object[] objects, SourceObjects sources) throws ProjectionError {
+		logger.debug("Decompose {}, source={}, qualifier={}, optional={}", objects, sourceClass.getSimpleName(), qualifier, optional);
+
+		Optional<Object> value = Optional.empty(); 
+		
+		value = Optional.ofNullable(objects[0]);	//FIXME ?!
+					
+		if (value.isEmpty()) {
+			return;
+		}
+				
+		Object sourceValue = value.get();
+				
+		logger.trace("  = {}", sourceValue);
+		
+		
+		sources.addOrReplace(value.get());	 //TODO deal with qualifier
 	}
 
 	public Class<?> getObjectClass() {
