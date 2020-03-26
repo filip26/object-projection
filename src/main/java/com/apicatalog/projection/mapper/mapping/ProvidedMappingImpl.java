@@ -75,7 +75,6 @@ public class ProvidedMappingImpl implements SourceMapping {
 		this.optional = optional;
 	}
 
-	@Override
 	public Class<?> getSourceClass() {
 		return sourceClass;
 	}

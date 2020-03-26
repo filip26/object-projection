@@ -44,8 +44,21 @@ public class ConversionMappingImpl implements ConversionMapping {
 	}
 
 	@Override
-	public Object backward(Object value) throws ConvertorError {
-		// TODO Auto-generated method stub
-		return null;
+	public Object backward(Object value) throws ConvertorError, ProjectionError {
+
+		logger.debug("{}.backward({}, {})", convertorClass.getSimpleName(), value, context);
+		
+		final InvertibleFunction<Object> convertor = (InvertibleFunction<Object>)ObjectUtils.newInstance(convertorClass);	//TODO re-use preconstructed instances
+
+		ContextValue ctx = new ContextValue();
+		ctx.setValues(context);
+
+		convertor.init(ctx);
+			
+		final Object[] result = convertor.inverse(value);
+		
+		logger.trace("  result={}", result);
+		
+		return result;
 	}	
 }

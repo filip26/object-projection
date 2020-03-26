@@ -10,14 +10,14 @@ import com.apicatalog.projection.converter.InvertibleFunction;
 import com.apicatalog.uritemplate.MalformedUriTemplate;
 import com.apicatalog.uritemplate.UriTemplateL1;
 
-public class UrlPatternFnc implements InvertibleFunction<String> {
+public class UriTemplate implements InvertibleFunction<String> {
 
-	UriTemplateL1 pattern;
+	UriTemplateL1 template;
 
 	@Override
 	public void init(ContextValue ctx) throws ConvertorError {
 		try {
-			this.pattern = UriTemplateL1.of(ctx.getValues()[0]); 	//FIXME
+			this.template = UriTemplateL1.of(ctx.getValues()[0]); 	//FIXME
 			
 		} catch (MalformedUriTemplate e) {
 			throw new ConvertorError(e);
@@ -43,13 +43,12 @@ public class UrlPatternFnc implements InvertibleFunction<String> {
 			}
 		}
 				
-		return pattern.expand(v.toArray(new String[0]));
+		return template.expand(v.toArray(new String[0]));
 	}
 
 	@Override
 	public Object[] inverse(String value) throws ConvertorError {
-		// TODO Auto-generated method stub
-		return new Object[] {value};
+		return template.extract(value);
 	}
 
 	@Override

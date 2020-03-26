@@ -8,9 +8,9 @@ import com.apicatalog.projection.converter.ConvertorError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 import com.apicatalog.projection.objects.ObjectReference;
-import com.apicatalog.projection.projections.ProjectionSourcesAndFunction;
+import com.apicatalog.projection.projections.SourcesWithConversion;
 
-public class MultipleSourcesTest {
+public class SourcesWithConversionTest {
 
 	ProjectionFactory projections;
 	ProjectionMapper mapper;
@@ -20,7 +20,7 @@ public class MultipleSourcesTest {
 		projections = new ProjectionFactory();
 		mapper = new ProjectionMapper(projections);		
 		
-		projections.add(mapper.getMapping(ProjectionSourcesAndFunction.class));
+		projections.add(mapper.getMapping(SourcesWithConversion.class));
 	}
 		
     @Test
@@ -32,7 +32,7 @@ public class MultipleSourcesTest {
     	ObjectReference oaa = new ObjectReference();
     	oaa.stringValue = "ABC"; 
 
-    	ProjectionSourcesAndFunction pa = projections.compose(ProjectionSourcesAndFunction.class, oa, oaa);
+    	SourcesWithConversion pa = projections.compose(SourcesWithConversion.class, oa, oaa);
     	
     	Assert.assertNotNull(pa);
     	Assert.assertEquals(oa.longValue + oaa.stringValue + "!@#", pa.longstring);

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ObjectUtils;
 import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.converter.ConvertorError;
 import com.apicatalog.projection.mapping.ConversionMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
@@ -20,6 +21,8 @@ public class SourceMappingImpl implements SourceMapping {
 
 	final Logger logger = LoggerFactory.getLogger(SourceMappingImpl.class);
 
+	final TypeAdapters adapters;
+	
 	Class<?> sourceClass;
 	
 	String propertyName;
@@ -32,6 +35,10 @@ public class SourceMappingImpl implements SourceMapping {
 	
 	ConversionMapping[] conversions;
 
+	public SourceMappingImpl(TypeAdapters adapters) {
+		this.adapters = adapters;
+	}
+	
 	@Override
 	public Object compose(SourceObjects sources) throws ProjectionError, ConvertorError {
 		
@@ -116,14 +123,22 @@ public class SourceMappingImpl implements SourceMapping {
 			final ArrayList<ConversionMapping> revConversions = new ArrayList<>(Arrays.asList(conversions));
 			Collections.reverse(revConversions);
 			
+			Object o = value.get();
+			
 			for (ConversionMapping conversion : revConversions) {
 				
-				value = Optional.ofNullable(conversion.backward(value.get()));
-				
+				o = conversion.backward(o);
+				if (o != null) {
+					if (Object[].class.isInstance(o)) {
+						o = ((Object[])o)[0];	//FIXME hack
+					}
+
+				}
 				if (value.isEmpty()) {
 					break;
-				}
+				}				
 			}
+			value = Optional.ofNullable(o);
 		}
 
 		if (value.isEmpty()) {
@@ -131,8 +146,8 @@ public class SourceMappingImpl implements SourceMapping {
 			return;
 		}
 		
-		final Object sourceValue = value.get();
-		
+		Object sourceValue = value.get();
+				
 		logger.trace("  = {}", sourceValue);
 		
 		Optional<Object> source = 
@@ -145,10 +160,9 @@ public class SourceMappingImpl implements SourceMapping {
 			sources.addOrReplace(source.get());	 //TODO deal with qualifier
 		}
 		
-		ObjectUtils.setPropertyValue(source.get(), propertyName, sourceValue);	
+		ObjectUtils.setPropertyValue(source.get(), propertyName, adapters.convert(propertyClass, sourceValue));	
 	}
 	
-	@Override
 	public Class<?> getSourceClass() {
 		return sourceClass;
 	}

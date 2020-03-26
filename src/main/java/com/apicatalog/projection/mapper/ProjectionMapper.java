@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.annotation.Conversion;
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Provided;
@@ -37,10 +38,12 @@ public class ProjectionMapper {
 
 	final Logger logger = LoggerFactory.getLogger(ProjectionMapper.class);
 	
+	final TypeAdapters typeAdapters;
 	final ProjectionFactory index;
 	
 	public ProjectionMapper(ProjectionFactory index) {
 		this.index = index;
+		this.typeAdapters = new TypeAdapters();
 	}
 	
 	public <P> ProjectionMapping<P> getMapping(final Class<P> targetProjectionClass) {
@@ -169,7 +172,7 @@ public class ProjectionMapper {
 			return null;				
 		}
 
-		final SourceMappingImpl sourceMapping = new SourceMappingImpl();
+		final SourceMappingImpl sourceMapping = new SourceMappingImpl(typeAdapters);
 		
 		// set default source object class
 		sourceMapping.setSourceClass(defaultSourceClass);
@@ -274,7 +277,7 @@ public class ProjectionMapper {
 	
 	SourceMapping getSourceMapping(final Source source, final Field field, final Class<?> defaultSourceClass) {
 		
-		final SourceMappingImpl mapping = new SourceMappingImpl();
+		final SourceMappingImpl mapping = new SourceMappingImpl(typeAdapters);
 		
 		// set default source object class
 		Optional.ofNullable(defaultSourceClass).ifPresent(mapping::setSourceClass);
