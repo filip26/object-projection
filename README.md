@@ -11,7 +11,7 @@ public class TestProjection {
               @Source(type=Repository.class, value = "id"),
               },
       map = @Conversion(
-              type = UrlPattern.class,
+              type = URLTemplate.class,
               value="https://www.example.org/{username}/{repositoryId}"
               )
       )
