@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.apicatalog.projection.converter.ConvertorError;
+import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 import com.apicatalog.projection.objects.ObjectReference;
@@ -26,7 +26,7 @@ public class TwoSourceCompositeTest {
 	}	
 	
     @Test
-    public void testComposition() throws ProjectionError, ConvertorError {
+    public void testComposition() throws ProjectionError, ConverterError {
     	
     	ObjectBasicTypes source1 = new ObjectBasicTypes();
     	source1.longValue = 123456l;
@@ -43,7 +43,7 @@ public class TwoSourceCompositeTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError, ConvertorError {
+    public void testDecomposition() throws ProjectionError, ConverterError {
     	
     	TwoSourceComposite projection = new TwoSourceComposite();
     	projection.source1 = 123456l;

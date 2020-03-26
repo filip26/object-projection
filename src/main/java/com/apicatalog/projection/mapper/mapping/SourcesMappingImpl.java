@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.converter.ConvertorError;
+import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapping.ConversionMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.objects.SourceObjects;
@@ -27,7 +27,7 @@ public class SourcesMappingImpl implements SourceMapping {
 	ConversionMapping[] conversions;
 
 	@Override
-	public Object compose(SourceObjects sources) throws ProjectionError, ConvertorError {
+	public Object compose(SourceObjects sources) throws ProjectionError, ConverterError {
 
 		final List<Object> values = new ArrayList<>();
 		
@@ -49,7 +49,7 @@ public class SourcesMappingImpl implements SourceMapping {
 	}
 
 	@Override
-	public void decompose(Object[] objects, SourceObjects sources) throws ConvertorError, ProjectionError {
+	public void decompose(Object[] objects, SourceObjects sources) throws ConverterError, ProjectionError {
 		
 		logger.debug("Decompose {}, optional={}", objects, optional);
 

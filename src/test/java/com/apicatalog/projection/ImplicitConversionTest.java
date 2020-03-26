@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.apicatalog.projection.converter.ConvertorError;
+import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 import com.apicatalog.projection.projections.BasicTypesImplicitConversion;
@@ -25,7 +25,7 @@ public class ImplicitConversionTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConvertorError {
+    public void testComposition() throws ProjectionError, ConverterError {
     	
     	ObjectBasicTypes oa = new ObjectBasicTypes();
     	oa.instantValue = Instant.now();
@@ -46,7 +46,7 @@ public class ImplicitConversionTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError, ConvertorError {
+    public void testDecomposition() throws ProjectionError, ConverterError {
     	
     	BasicTypesImplicitConversion projection = new BasicTypesImplicitConversion();
     	projection.stringValue = "987654";

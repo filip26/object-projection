@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ObjectUtils;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.converter.ContextValue;
-import com.apicatalog.projection.converter.ConvertorError;
+import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.InvertibleFunction;
 import com.apicatalog.projection.mapping.ConversionMapping;
 
@@ -25,7 +25,7 @@ public class ConversionMappingImpl implements ConversionMapping {
 	}
 	
 	@Override
-	public Object forward(Object value) throws ConvertorError, ProjectionError {
+	public Object forward(Object value) throws ConverterError, ProjectionError {
 		
 		logger.debug("{}.forward({}, {})", convertorClass.getSimpleName(), value, context);
 		
@@ -44,7 +44,7 @@ public class ConversionMappingImpl implements ConversionMapping {
 	}
 
 	@Override
-	public Object backward(Object value) throws ConvertorError, ProjectionError {
+	public Object backward(Object value) throws ConverterError, ProjectionError {
 
 		logger.debug("{}.backward({}, {})", convertorClass.getSimpleName(), value, context);
 		

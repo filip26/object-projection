@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.annotation.Projection;
-import com.apicatalog.projection.converter.ConvertorError;
+import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.objects.SourceObjects;
 
@@ -29,7 +29,7 @@ public class ProvidedMappingImpl implements SourceMapping {
 	}
 	
 	@Override
-	public Object compose(SourceObjects sources) throws ProjectionError, ConvertorError {
+	public Object compose(SourceObjects sources) throws ProjectionError, ConverterError {
 		
 		if (sourceClass.isAnnotationPresent(Projection.class)) {
 			return index.compose(sourceClass, sources.getValues());

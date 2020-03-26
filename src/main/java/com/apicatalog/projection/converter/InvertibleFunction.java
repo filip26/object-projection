@@ -1,14 +1,14 @@
 package com.apicatalog.projection.converter;
 
-//TODO use annotations
+//TODO use annotations and Converter
 @Deprecated
 public interface InvertibleFunction<T> {
 
-	void init(ContextValue ctx) throws ConvertorError;
+	void init(ContextValue ctx) throws ConverterError;
 	
-	T compute(Object...values) throws ConvertorError;
+	T compute(Object...values) throws ConverterError;
 	
-	Object[] inverse(T value) throws ConvertorError;
+	Object[] inverse(T value) throws ConverterError;
 	
 	boolean isReverseable();
 	

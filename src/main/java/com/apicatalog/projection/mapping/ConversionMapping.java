@@ -1,12 +1,12 @@
 package com.apicatalog.projection.mapping;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.converter.ConvertorError;
+import com.apicatalog.projection.converter.ConverterError;
 
 public interface ConversionMapping {
 
-	Object forward(Object value) throws ConvertorError, ProjectionError;
+	Object forward(Object value) throws ConverterError, ProjectionError;
 	
-	Object backward(Object value) throws ConvertorError, ProjectionError;
+	Object backward(Object value) throws ConverterError, ProjectionError;
 
 }

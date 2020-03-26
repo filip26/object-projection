@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.converter.ConvertorError;
+import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapping.PropertyMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.mapping.TargetMapping;
@@ -23,7 +23,7 @@ public class PropertyMappingImpl implements PropertyMapping {
 	TargetMapping target;
 
 	@Override
-	public Object compose(int level, SourceObjects sources) throws ProjectionError, ConvertorError {
+	public Object compose(int level, SourceObjects sources) throws ProjectionError, ConverterError {
 
 		logger.debug("Compose property {} value at level {}", name, level);
 		
@@ -43,7 +43,7 @@ public class PropertyMappingImpl implements PropertyMapping {
 	}
 	
 	@Override
-	public void decompose(final Object object, SourceObjects sources) throws ProjectionError, ConvertorError {
+	public void decompose(final Object object, SourceObjects sources) throws ProjectionError, ConverterError {
 
 		logger.debug("Decompose {} = {}", name, object);
 		

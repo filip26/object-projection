@@ -7,7 +7,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.apicatalog.projection.converter.ConvertorError;
+import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 import com.apicatalog.projection.objects.TestCollectionObject;
@@ -29,7 +29,7 @@ public class CollectionTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConvertorError {
+    public void testComposition() throws ProjectionError, ConverterError {
     	
     	ObjectBasicTypes oa = new ObjectBasicTypes();
     	oa.booleanValue = true;
@@ -52,7 +52,7 @@ public class CollectionTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError, ConvertorError {
+    public void testDecomposition() throws ProjectionError, ConverterError {
     	
     	SimpleCollection ca = new SimpleCollection();
     	ca.items = new ArrayList<>();

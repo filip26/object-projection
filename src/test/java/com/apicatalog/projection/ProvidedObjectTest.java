@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.apicatalog.projection.converter.ConvertorError;
+import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 import com.apicatalog.projection.objects.SimpleObject;
@@ -24,7 +24,7 @@ public class ProvidedObjectTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConvertorError {
+    public void testComposition() throws ProjectionError, ConverterError {
     	
     	ObjectBasicTypes object1 = new ObjectBasicTypes();
     	object1.stringValue = "A B C D E";
@@ -47,7 +47,7 @@ public class ProvidedObjectTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError, ConvertorError {
+    public void testDecomposition() throws ProjectionError, ConverterError {
     	
     	ProvidedObjectProperty projection = new ProvidedObjectProperty();
     	projection.title = "QWERTY ZXCVBN";

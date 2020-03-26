@@ -1,7 +1,7 @@
 package com.apicatalog.projection.mapping;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.converter.ConvertorError;
+import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.SourceObjects;
 
 public interface PropertyMapping {
@@ -12,8 +12,8 @@ public interface PropertyMapping {
 	
 	TargetMapping getTarget();
 	
-	Object compose(int level, SourceObjects sources) throws ProjectionError, ConvertorError;
+	Object compose(int level, SourceObjects sources) throws ProjectionError, ConverterError;
 	
-	void decompose(Object value, SourceObjects sources) throws ProjectionError, ConvertorError;
+	void decompose(Object value, SourceObjects sources) throws ProjectionError, ConverterError;
 	
 }

@@ -3,7 +3,7 @@ package com.apicatalog.projection.mapping;
 import java.util.Collection;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.converter.ConvertorError;
+import com.apicatalog.projection.converter.ConverterError;
 
 public interface ProjectionMapping<P> {
 
@@ -17,9 +17,9 @@ public interface ProjectionMapping<P> {
 	 * @param values values used to compose a projection
 	 * @return a projection
 	 * @throws ProjectionError
-	 * @throws ConvertorError
+	 * @throws ConverterError
 	 */
-	P compose(Object...values) throws ProjectionError, ConvertorError;
+	P compose(Object...values) throws ProjectionError, ConverterError;
 	
 	/**
 	 * Decompose a projection into source values
@@ -27,7 +27,7 @@ public interface ProjectionMapping<P> {
 	 * @param projection a projection to decompose
 	 * @return values extracted from the projection
 	 * @throws ProjectionError
-	 * @throws ConvertorError
+	 * @throws ConverterError
 	 */
-	Object[] decompose(P projection) throws ProjectionError, ConvertorError;
+	Object[] decompose(P projection) throws ProjectionError, ConverterError;
 }

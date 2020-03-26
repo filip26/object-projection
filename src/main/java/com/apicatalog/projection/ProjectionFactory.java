@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.apicatalog.projection.converter.ConvertorError;
+import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapping.ProjectionMapping;
 
 public class ProjectionFactory {
@@ -33,13 +33,13 @@ public class ProjectionFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Object[] decompose(Object projection) throws ProjectionError, ConvertorError {
+	public Object[] decompose(Object projection) throws ProjectionError, ConverterError {
 		return Optional.ofNullable(get((Class<Object>)projection.getClass()))
 					.orElseThrow(() -> new ProjectionError("The projection for " + projection.getClass().getCanonicalName() + " is not present."))
 					.decompose(projection);
 	}
 
-	public <P> P compose(Class<P> projectionClass, Object...values) throws ProjectionError, ConvertorError {
+	public <P> P compose(Class<P> projectionClass, Object...values) throws ProjectionError, ConverterError {
 		return Optional.ofNullable(get(projectionClass))
 					.orElseThrow(() -> new ProjectionError("The projection for " + projectionClass.getCanonicalName() + " is not present."))
 					.compose(values);					
