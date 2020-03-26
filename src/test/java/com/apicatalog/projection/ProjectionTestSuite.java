@@ -19,6 +19,6 @@ import com.apicatalog.projection.mapper.MapperTest;
 	OneToOneWithFncTest.class,
 	UrlPatternFncTest.class,	
 })
-public class AllTestsSuite {
+public class ProjectionTestSuite {
 
 }

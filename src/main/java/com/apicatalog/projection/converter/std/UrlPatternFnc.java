@@ -7,19 +7,19 @@ import java.util.List;
 import com.apicatalog.projection.converter.ContextValue;
 import com.apicatalog.projection.converter.ConvertorError;
 import com.apicatalog.projection.converter.InvertibleFunction;
-import com.apicatalog.urlpattern.MalformedUrlPattern;
-import com.apicatalog.urlpattern.UrlPattern;
+import com.apicatalog.uritemplate.MalformedUriTemplate;
+import com.apicatalog.uritemplate.UriTemplateL1;
 
 public class UrlPatternFnc implements InvertibleFunction<String> {
 
-	UrlPattern pattern;
+	UriTemplateL1 pattern;
 
 	@Override
 	public void init(ContextValue ctx) throws ConvertorError {
 		try {
-			this.pattern = UrlPattern.valueOf(ctx.getValues()[0]); 	//FIXME
+			this.pattern = UriTemplateL1.of(ctx.getValues()[0]); 	//FIXME
 			
-		} catch (MalformedUrlPattern e) {
+		} catch (MalformedUriTemplate e) {
 			throw new ConvertorError(e);
 		}
 		
@@ -43,7 +43,7 @@ public class UrlPatternFnc implements InvertibleFunction<String> {
 			}
 		}
 				
-		return pattern.populate(v.toArray(new String[0]));
+		return pattern.expand(v.toArray(new String[0]));
 	}
 
 	@Override
