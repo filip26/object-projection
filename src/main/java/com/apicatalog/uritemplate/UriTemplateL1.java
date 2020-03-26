@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class UriTemplateL1 {
 	
-	protected static char END_OF_INPUT = '\n';
+	protected static final char END_OF_INPUT = '\n';
 	
 	final String[] elements;
 	final int[] variables;
@@ -65,7 +65,8 @@ public class UriTemplateL1 {
 		return builder.toString();
 	}
 	
-	public String[] extract(String url) {
+	public String[] extract(final String url) {
+		
 		if (StringUtils.isBlank(url)) {
 			throw new IllegalArgumentException();
 		}
@@ -76,42 +77,65 @@ public class UriTemplateL1 {
 		
 		char[] input = url.toCharArray();
 		int inputIndex = 0;
-		
-		// strip leading constant
-		if (variables[0] > 0) {
-			inputIndex = elements[0].length();
-		}
-
+	
 		final String[] vars = new String[variables.length];
+		int variableIndex = 0;
 
-		for (int variableIndex=0; variableIndex < variables.length; variableIndex++) {
+		for (int elementIndex = 0; elementIndex < elements.length; elementIndex++) {
+
+			// processing variable
+			if (variableIndex < variables.length && elementIndex == variables[variableIndex]) {
 			
-			// extract a variable from the remaining input
-			if (stopCharacters[variableIndex] == END_OF_INPUT) {
-				// done looking, it's end of input
-				int length = input.length - inputIndex;
-				if ((variables[variableIndex] + 1) < elements.length) {
-					length -= elements[variables[variableIndex] + 1].length();
+				// extract a variable from the remaining input
+				if (stopCharacters[variableIndex] == END_OF_INPUT) {
+					
+					int length = input.length - inputIndex;
+					
+					if ((variables[variableIndex] + 1) < elements.length) {
+						
+
+						String constant = elements[variables[variableIndex] + 1];
+						
+						length -= constant.length();
+					}
+					if (length < 0) {
+						return new String[0];
+					}
+
+					vars[variableIndex++] = String.copyValueOf(input, inputIndex,  length);
+					inputIndex += length;
+					
+				} else {
+					// looking for stop character
+					for (int i=inputIndex; i < input.length; i++) {
+						if (stopCharacters[variableIndex] == input[i]) {
+
+							String constant = elements[variables[variableIndex] + 1]; 
+						
+							vars[variableIndex++] = String.copyValueOf(input, inputIndex, 1 + i - inputIndex - constant.length());
+							inputIndex = 1 + i - constant.length();
+							break;
+						}
+					}
 				}
 				
-				vars[variableIndex] = String.copyValueOf(input, inputIndex,  length); 
-				break;
-			}
-			
-			// find stop character
-			for (int i=inputIndex; i < input.length; i++) {
-				if (stopCharacters[variableIndex] == input[i]) {
-					vars[variableIndex] = String.copyValueOf(input, inputIndex, 1 + i - inputIndex - elements[variables[variableIndex] + 1].length());
-					inputIndex = i + elements[variables[variableIndex] + 1].length();
-					break;
+
+			} else {
+				// processing constant
+				final String constant = elements[elementIndex];
+				
+				if (inputIndex + constant.length() > input.length) {
+					return new String[0];
 				}
+
+				// does it match to expected constant
+				if (!Arrays.equals(input, inputIndex, inputIndex + constant.length(), constant.toCharArray(), 0, constant.length())) {
+					return new String[0];
+				}
+				inputIndex += constant.length();								
 			}
 			
-			// haven't found?
-			if (inputIndex >= input.length) {
-				break;
-			}
-		}
+		}		
 		return vars;
 	}
 	

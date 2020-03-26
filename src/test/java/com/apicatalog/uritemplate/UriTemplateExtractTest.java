@@ -59,6 +59,63 @@ public class UriTemplateExtractTest {
     }
 
     @Test
+    public void testExtract1Var5() throws MalformedUriTemplate {
+    	final UriTemplateL1 pattern = UriTemplateL1.of("/{var1}A");
+    	final String[] params = pattern.extract("/123BBB");
+    	Assert.assertNotNull(params);
+    	Assert.assertEquals(0, params.length);
+    }
+
+    @Test
+    public void testExtract1Var6() throws MalformedUriTemplate {
+    	final UriTemplateL1 pattern = UriTemplateL1.of("/abc/{var1}");
+    	final String[] params = pattern.extract("/123/123");
+    	Assert.assertNotNull(params);
+    	Assert.assertEquals(0, params.length);
+    }
+    
+    @Test
+    public void testExtract1Var7() throws MalformedUriTemplate {
+    	final UriTemplateL1 pattern = UriTemplateL1.of("/abc/{var1}/");
+    	final String[] params = pattern.extract("/abc/1");
+    	Assert.assertNotNull(params);
+    	Assert.assertEquals(0, params.length);
+    }
+
+    @Test
+    public void testExtract1Var8() throws MalformedUriTemplate {
+    	final UriTemplateL1 pattern = UriTemplateL1.of("/{var1}x/a");
+    	final String[] params = pattern.extract("/123x/b");
+    	Assert.assertNotNull(params);
+    	Assert.assertEquals(0, params.length);
+    }
+    
+    @Test
+    public void testExtract1Var9() throws MalformedUriTemplate {
+    	final UriTemplateL1 pattern = UriTemplateL1.of("/{var1}x");
+    	final String[] params = pattern.extract("/");
+    	Assert.assertNotNull(params);
+    	Assert.assertEquals(0, params.length);
+    }
+
+    @Test
+    public void testExtract1Var10() throws MalformedUriTemplate {
+    	final UriTemplateL1 pattern = UriTemplateL1.of("a{var1}x");
+    	final String[] params = pattern.extract("ax");
+    	Assert.assertNotNull(params);
+    	Assert.assertEquals(1, params.length);
+    	Assert.assertEquals("", params[0]);
+    }
+
+    @Test
+    public void testExtract1Var11() throws MalformedUriTemplate {
+    	final UriTemplateL1 pattern = UriTemplateL1.of("a{var1}x");
+    	final String[] params = pattern.extract("ay");
+    	Assert.assertNotNull(params);
+    	Assert.assertEquals(0, params.length);
+    }
+
+    @Test
     public void testExtract2Var() throws MalformedUriTemplate {
     	final UriTemplateL1 pattern = UriTemplateL1.of("https://example.org/x{var1}y/x{var2}y/x");
     	final String[] params = pattern.extract("https://example.org/x123y/xABCy/x");
