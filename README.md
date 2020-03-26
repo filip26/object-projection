@@ -10,7 +10,7 @@ public class TestProjection {
               @Source(type=User.class, value = "username"),
               @Source(type=Repository.class, value = "id"),
               },
-      map = @Conversion(
+      reduce = @Reduction(
               type = URLTemplate.class,
               value="https://www.example.org/{username}/{repositoryId}"
               )
