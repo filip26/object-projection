@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ObjectUtils;
 import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.converter.ConvertorError;
 import com.apicatalog.projection.mapping.ProjectionMapping;
 import com.apicatalog.projection.mapping.PropertyMapping;
@@ -19,13 +20,16 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 
 	final Logger logger = LoggerFactory.getLogger(ProjectionMappingImpl.class);
 	
+	final TypeAdapters adapters;
+	
 	final Class<P> projectionClass;
 	
 	final Collection<PropertyMapping> properties;
 
-	public ProjectionMappingImpl(final Class<P> projectionClass) {
+	public ProjectionMappingImpl(final Class<P> projectionClass, TypeAdapters adapters) {
 		this.projectionClass = projectionClass;
 		this.properties = new ArrayList<>();
+		this.adapters = adapters;
 	}
 
 	@Override
@@ -55,7 +59,7 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 			if (value.isPresent()) {
 				logger.trace("  set {} to {}.{}: {}", value.get(), projectionClass.getSimpleName(), propertyMapping.getName(), propertyMapping.getTarget().getTargetClass().getSimpleName());
 				
-				ObjectUtils.setPropertyValue(projection, propertyMapping.getName(), value.get());
+				ObjectUtils.setPropertyValue(projection, propertyMapping.getName(), adapters.convert(propertyMapping.getTarget().getTargetClass(), value.get()));
 			}
 		}
 		return projection;

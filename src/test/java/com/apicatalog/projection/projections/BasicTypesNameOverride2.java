@@ -7,7 +7,7 @@ import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 
 @Projection(ObjectBasicTypes.class)
-public class ProjectionBasicTypesNameOverride2 {
+public class BasicTypesNameOverride2 {
 
 	@Source("longValue")
 	public Long projectedLong;

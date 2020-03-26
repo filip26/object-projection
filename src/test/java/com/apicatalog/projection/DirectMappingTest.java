@@ -9,7 +9,7 @@ import org.junit.Test;
 import com.apicatalog.projection.converter.ConvertorError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
-import com.apicatalog.projection.projections.ProjectionBasicTypes;
+import com.apicatalog.projection.projections.BasicTypes;
 
 
 public class DirectMappingTest {
@@ -22,7 +22,7 @@ public class DirectMappingTest {
 		projections = new ProjectionFactory();
 		mapper = new ProjectionMapper(projections);	
 		
-		projections.add(mapper.getMapping(ProjectionBasicTypes.class));
+		projections.add(mapper.getMapping(BasicTypes.class));
 	}
 	
     @Test
@@ -35,7 +35,7 @@ public class DirectMappingTest {
     	oa.longValue = 123456l;
     	oa.stringValue = "ABCDEF";
 
-    	ProjectionBasicTypes pa = projections.compose(ProjectionBasicTypes.class, oa);
+    	BasicTypes pa = projections.compose(BasicTypes.class, oa);
     	
     	Assert.assertNotNull(pa);
     	
@@ -49,7 +49,7 @@ public class DirectMappingTest {
     @Test
     public void testDecomposition() throws ProjectionError, ConvertorError {
     	
-    	ProjectionBasicTypes pa = new ProjectionBasicTypes();
+    	BasicTypes pa = new BasicTypes();
     	pa.booleanValue = true;
     	pa.doubleValue= 123.456d;
     	pa.instantValue = Instant.now();

@@ -14,7 +14,7 @@ import com.apicatalog.projection.mapping.PropertyMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.mapping.TargetMapping;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
-import com.apicatalog.projection.projections.ProjectionBasicTypes;
+import com.apicatalog.projection.projections.BasicTypes;
 import com.apicatalog.projection.projections.TestProjectionAF;
 
 public class MapperTest {
@@ -31,10 +31,10 @@ public class MapperTest {
     @Test
     public void testBasicTypes1() {
     	
-    	final ProjectionMapping<ProjectionBasicTypes> projection = mapper.getMapping(ProjectionBasicTypes.class);
+    	final ProjectionMapping<BasicTypes> projection = mapper.getMapping(BasicTypes.class);
     	
     	Assert.assertNotNull(projection);
-    	Assert.assertEquals(ProjectionBasicTypes.class, projection.getProjectionClass());
+    	Assert.assertEquals(BasicTypes.class, projection.getProjectionClass());
     	
     	Assert.assertNotNull(projection.getProperties());
     	Assert.assertEquals(7, projection.getProperties().size());

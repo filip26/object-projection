@@ -6,7 +6,9 @@ import java.util.Map;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.std.BooleanAdapter;
 import com.apicatalog.projection.adapter.std.DoubleAdapter;
+import com.apicatalog.projection.adapter.std.FloatAdapter;
 import com.apicatalog.projection.adapter.std.InstantAdapter;
+import com.apicatalog.projection.adapter.std.IntegerAdapter;
 import com.apicatalog.projection.adapter.std.LongAdapter;
 import com.apicatalog.projection.adapter.std.StringAdapter;
 
@@ -22,6 +24,8 @@ public class TypeAdapters {
 			.add(new LongAdapter())
 			.add(new InstantAdapter())
 			.add(new DoubleAdapter())
+			.add(new IntegerAdapter())
+			.add(new FloatAdapter())
 			;
 	}
 

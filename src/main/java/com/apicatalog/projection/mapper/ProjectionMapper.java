@@ -61,7 +61,7 @@ public class ProjectionMapper {
 		
 		final Projection projectionAnnotation = targetProjectionClass.getAnnotation(Projection.class);
 		
-		final ProjectionMappingImpl<P> projectionMapping = new ProjectionMappingImpl<>(targetProjectionClass);
+		final ProjectionMappingImpl<P> projectionMapping = new ProjectionMappingImpl<>(targetProjectionClass, typeAdapters);
 		
 		final Class<?> defaultSourceClass = Class.class.equals(projectionAnnotation.value()) ? null : projectionAnnotation.value();
 		

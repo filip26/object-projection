@@ -12,7 +12,7 @@ public class BooleanAdapter implements TypeAdapter<Boolean> {
 
 	@Override
 	public Class<?>[] targets() {
-		return new Class[] {String.class, Byte.class, Long.class, Double.class, Character.class};
+		return new Class[] {String.class, Byte.class, Long.class, Double.class, Character.class, Integer.class, Float.class};
 	}
 
 	@SuppressWarnings("unchecked")
@@ -36,6 +36,12 @@ public class BooleanAdapter implements TypeAdapter<Boolean> {
 		}
 		if (targetClass.isAssignableFrom(Character.class)) {
 			return (T)(Boolean.TRUE.equals(object) ? Character.valueOf('T') : Character.valueOf('F'));
+		}
+		if (targetClass.isAssignableFrom(Integer.class)) {
+			return (T)(Boolean.TRUE.equals(object) ? Integer.valueOf(1) : Integer.valueOf(0));
+		}
+		if (targetClass.isAssignableFrom(Float.class)) {
+			return (T)(Boolean.TRUE.equals(object) ? Float.valueOf(1.0f) : Float.valueOf(0.0f));
 		}
 
 		throw new TypeAdapterError("Can not convert " + object.getClass().getCanonicalName() + " to " + targetClass.getCanonicalName() + ".");

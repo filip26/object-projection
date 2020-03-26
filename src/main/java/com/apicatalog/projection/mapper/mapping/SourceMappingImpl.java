@@ -128,11 +128,8 @@ public class SourceMappingImpl implements SourceMapping {
 			for (ConversionMapping conversion : revConversions) {
 				
 				o = conversion.backward(o);
-				if (o != null) {
-					if (Object[].class.isInstance(o)) {
-						o = ((Object[])o)[0];	//FIXME hack
-					}
-
+				if (o != null && Object[].class.isInstance(o)) {
+					o = ((Object[])o)[0];	//FIXME hack
 				}
 				if (value.isEmpty()) {
 					break;
