@@ -35,7 +35,7 @@ public class ConversionMappingImpl implements ConversionMapping {
 		ctx.setValues(context);
 
 		try {
-			converter.init(ctx);
+			converter.initConverter(ctx);
 				
 			final Object result = converter.forward(value);
 			
@@ -59,7 +59,7 @@ public class ConversionMappingImpl implements ConversionMapping {
 		ctx.setValues(context);
 
 		try {
-			converter.init(ctx);
+			converter.initConverter(ctx);
 				
 			final Object result = converter.backward(value);
 			

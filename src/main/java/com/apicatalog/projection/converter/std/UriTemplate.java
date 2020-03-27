@@ -5,17 +5,19 @@ import java.util.Collection;
 import java.util.List;
 
 import com.apicatalog.projection.converter.ContextValue;
+import com.apicatalog.projection.converter.Converter;
+import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.Reducer;
 import com.apicatalog.projection.converter.ReducerError;
 import com.apicatalog.uritemplate.MalformedUriTemplate;
 import com.apicatalog.uritemplate.UriTemplateL1;
 
-public class UriTemplate implements Reducer {
+public class UriTemplate implements Reducer, Converter {
 
 	UriTemplateL1 template;
 
 	@Override
-	public void init(ContextValue ctx) throws ReducerError {
+	public void initReducer(ContextValue ctx) throws ReducerError {
 		try {
 			this.template = UriTemplateL1.of(ctx.getValues()[0]); 	//FIXME
 			
@@ -47,7 +49,24 @@ public class UriTemplate implements Reducer {
 	public Object[] expand(Object object) throws ReducerError {
 		return template.extract(object.toString());					//FIXME use implicit conversion
 	}
-	
-	
 
+	@Override
+	public void initConverter(ContextValue ctx) throws ConverterError {
+		try {
+			this.template = UriTemplateL1.of(ctx.getValues()[0]); 	//FIXME
+			
+		} catch (MalformedUriTemplate e) {
+			throw new ConverterError(e);
+		}		
+	}
+
+	@Override
+	public Object forward(Object object) throws ConverterError {
+		return template.expand(object.toString());
+	}
+
+	@Override
+	public Object backward(Object object) throws ConverterError {
+		return template.extract(object.toString());
+	}
 }

@@ -35,7 +35,7 @@ public class ReductionMappingImpl implements ReductionMapping {
 		ctx.setValues(context);
 
 		try {
-			reducer.init(ctx);
+			reducer.initReducer(ctx);
 				
 			final Object result = reducer.reduce(objects);
 			
@@ -60,7 +60,7 @@ public class ReductionMappingImpl implements ReductionMapping {
 		ctx.setValues(context);
 
 		try {
-			reducer.init(ctx);
+			reducer.initReducer(ctx);
 				
 			final Object[] result = reducer.expand(object);
 			

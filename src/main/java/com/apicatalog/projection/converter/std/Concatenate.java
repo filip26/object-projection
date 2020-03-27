@@ -15,7 +15,7 @@ public class Concatenate implements Reducer {
 	String suffix;
 	
 	@Override
-	public void init(final ContextValue ctx) {
+	public void initReducer(final ContextValue ctx) {
 		this.suffix = Stream.of(ctx.getValues()).map(Object::toString).collect(Collectors.joining());		
 	}
 

@@ -14,7 +14,7 @@ public class Append implements Converter {
 	String suffix;
 	
 	@Override
-	public void init(final ContextValue ctx) {
+	public void initConverter(final ContextValue ctx) {
 		this.suffix = Stream.of(ctx.getValues()).map(Object::toString).collect(Collectors.joining());
 	}
 	
