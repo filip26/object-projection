@@ -26,7 +26,7 @@ public class PropertyMappingImpl implements PropertyMapping {
 		logger.debug("Compose property {}, path = {}", name, path);
 		
 		// get source value
-		Object value = source.compose(context);
+		Object value = source.compose(path, context);
 
 		if (value == null) {
 			logger.trace("  value = null");
@@ -50,7 +50,7 @@ public class PropertyMappingImpl implements PropertyMapping {
 			return;
 		}
 
-		source.decompose(values, sources);
+		source.decompose(path, values, sources);
 	}
 	
 	@Override

@@ -15,6 +15,7 @@ import com.apicatalog.projection.mapping.ConversionMapping;
 import com.apicatalog.projection.mapping.ReductionMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.objects.ContextObjects;
+import com.apicatalog.projection.objects.Path;
 
 public class SourcesMappingImpl implements SourceMapping {
 
@@ -28,12 +29,12 @@ public class SourcesMappingImpl implements SourceMapping {
 	Boolean optional;
 
 	@Override
-	public Object compose(ContextObjects sources) throws ProjectionError {
+	public Object compose(Path path, ContextObjects sources) throws ProjectionError {
 
 		final List<Object> values = new ArrayList<>();
 		
 		for (SourceMapping source : mappings) {
-			Optional.ofNullable(source.compose(sources))
+			Optional.ofNullable(source.compose(path, sources))
 					.ifPresent(values::add);
 		}
 
@@ -51,7 +52,7 @@ public class SourcesMappingImpl implements SourceMapping {
 	}
 
 	@Override
-	public void decompose(Object[] objects, ContextObjects sources) throws ProjectionError {
+	public void decompose(Path path, Object[] objects, ContextObjects sources) throws ProjectionError {
 		
 		logger.debug("Decompose {}, optional={}", objects, optional);
 
@@ -91,7 +92,7 @@ public class SourcesMappingImpl implements SourceMapping {
 			if (it > sourceValues.length) {
 				continue;
 			}
-			sourceMapping.decompose(new Object[] {sourceValues[it++]}, sources);
+			sourceMapping.decompose(path, new Object[] {sourceValues[it++]}, sources);
 		}
 	}
 

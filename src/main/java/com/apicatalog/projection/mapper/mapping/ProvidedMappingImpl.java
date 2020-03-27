@@ -9,6 +9,7 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.objects.ContextObjects;
+import com.apicatalog.projection.objects.Path;
 
 public class ProvidedMappingImpl implements SourceMapping {
 
@@ -29,10 +30,10 @@ public class ProvidedMappingImpl implements SourceMapping {
 	}
 	
 	@Override
-	public Object compose(ContextObjects context) throws ProjectionError {
+	public Object compose(Path path, ContextObjects context) throws ProjectionError {
 		
 		if (reference) {
-			return factory.compose(sourceClass, context.getValues());				
+			return factory.get(sourceClass).compose(path, context.getValues());				
 		}
 
 		final Optional<Object> source = 
@@ -52,7 +53,7 @@ public class ProvidedMappingImpl implements SourceMapping {
 	}
 	
 	@Override
-	public void decompose(Object[] objects, ContextObjects sources) throws ProjectionError {
+	public void decompose(Path path, Object[] objects, ContextObjects sources) throws ProjectionError {
 
 		logger.debug("Decompose {}, source={}, qualifier={}, optional={}", objects, sourceClass.getSimpleName(), qualifier, optional);
 

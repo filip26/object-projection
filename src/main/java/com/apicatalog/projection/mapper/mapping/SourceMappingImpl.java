@@ -15,6 +15,7 @@ import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.mapping.ConversionMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.objects.ContextObjects;
+import com.apicatalog.projection.objects.Path;
 
 public class SourceMappingImpl implements SourceMapping {
 
@@ -39,7 +40,7 @@ public class SourceMappingImpl implements SourceMapping {
 	}
 	
 	@Override
-	public Object compose(ContextObjects sources) throws ProjectionError {
+	public Object compose(Path path, ContextObjects sources) throws ProjectionError {
 		
 		final Optional<Object> source = 
 				Optional.ofNullable(
@@ -66,7 +67,7 @@ public class SourceMappingImpl implements SourceMapping {
 	}
 
 	@Override
-	public void decompose(Object[] objects, ContextObjects sources) throws ProjectionError {
+	public void decompose(Path path, Object[] objects, ContextObjects sources) throws ProjectionError {
 		logger.debug("Decompose {}, source={}, qualifier={}, optional={}", objects, sourceClass.getSimpleName(), qualifier, optional);
 
 		Optional<Object> value = Optional.empty(); 
