@@ -14,6 +14,7 @@ import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.mapping.ProjectionMapping;
 import com.apicatalog.projection.mapping.PropertyMapping;
 import com.apicatalog.projection.objects.ContextObjects;
+import com.apicatalog.projection.objects.Path;
 
 public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 
@@ -33,15 +34,24 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 
 	@Override
 	public P compose(final Object... values) throws ProjectionError {
-		return compose(0, values);
+		return compose(Path.create(), values);
 	}
 
-	protected P compose(final int level, final Object... values) throws ProjectionError {
+	@Override
+	public P compose(final Path path, final Object... values) throws ProjectionError {
 
-		logger.debug("Compose {} of {} object(s)", projectionClass.getCanonicalName(), values.length);
+		logger.debug("Compose {} of {} object(s), path = {}", projectionClass.getSimpleName(), values.length, path.length());
+
+		// check for cycles
+		if (path.contains(projectionClass)) {
+			logger.debug("  ignored because projection {} is in processing already", projectionClass.getCanonicalName());
+			return null;
+		}
+		
+		path.push(projectionClass);
 		
 		if (logger.isTraceEnabled()) {
-			Stream.of(values).forEach(v -> logger.trace("  {}", v));
+			Stream.of(values).forEach(v -> logger.trace("  {}", v.getClass().getSimpleName()));
 		}
 		
 		final ContextObjects sources = 
@@ -53,7 +63,7 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 		
 		for (final PropertyMapping propertyMapping : properties) {
 
-			Optional<Object> value = Optional.ofNullable(propertyMapping.compose(level + 1, sources));
+			Optional<Object> value = Optional.ofNullable(propertyMapping.compose(path, sources));
 			
 			if (value.isPresent()) {
 				logger.trace("  set {} to {}.{}: {}", value.get(), projectionClass.getSimpleName(), propertyMapping.getName(), propertyMapping.getTarget().getTargetClass().getSimpleName());
@@ -61,12 +71,19 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 				ObjectUtils.setPropertyValue(projection, propertyMapping.getName(), adapters.convert(propertyMapping.getTarget().getTargetClass(), value.get()));
 			}
 		}
-					
+		
+		path.pop();
+		
 		return projection;
 	}
 
 	@Override
 	public Object[] decompose(final P projection) throws ProjectionError {
+		return decompose(Path.create(), projection);
+	}
+	
+	@Override
+	public Object[] decompose(final Path path, final P projection) throws ProjectionError {
 		
 		if (projection == null) {
 			throw new IllegalArgumentException();
@@ -88,7 +105,7 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 				continue;
 			}
 			
-			property.decompose(value.get(), sources);
+			property.decompose(path, value.get(), sources);
 		}
 
 		return sources.getValues();

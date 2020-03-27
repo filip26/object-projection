@@ -21,9 +21,8 @@ public class ArrayAdapter implements TypeAdapter<Object[]> {
 	@Override
 	public <T> T convert(Class<? extends T> targetClass, Object[] object) throws TypeAdapterError {
 
-		
 		if (object.getClass().isArray()) {
-			return (T)Arrays.asList(((Object[])object));
+			return (T)Arrays.asList(object);
 		}
 
 		throw new TypeAdapterError("Can not convert " + object.getClass().getCanonicalName() + " to " + targetClass.getCanonicalName() + ".");

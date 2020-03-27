@@ -19,7 +19,8 @@ import com.apicatalog.projection.mapper.MapperTest;
 	OneToOneWithFncTest.class,
 	UriTemplateConversionTest.class,
 	ProvidedObjectTest.class,
-	ProvidedRefTest.class
+	ProvidedRefTest.class,
+	CycleCheckTest.class,
 })
 public class ProjectionTestSuite {
 

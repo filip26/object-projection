@@ -8,6 +8,7 @@ import com.apicatalog.projection.mapping.PropertyMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.mapping.TargetMapping;
 import com.apicatalog.projection.objects.ContextObjects;
+import com.apicatalog.projection.objects.Path;
 
 public class PropertyMappingImpl implements PropertyMapping {
 
@@ -20,9 +21,9 @@ public class PropertyMappingImpl implements PropertyMapping {
 	TargetMapping target;
 
 	@Override
-	public Object compose(int level, ContextObjects context) throws ProjectionError {
+	public Object compose(Path path, ContextObjects context) throws ProjectionError {
 
-		logger.debug("Compose property {} at level {}", name, level);
+		logger.debug("Compose property {}, path = {}", name, path);
 		
 		// get source value
 		Object value = source.compose(context);
@@ -34,16 +35,16 @@ public class PropertyMappingImpl implements PropertyMapping {
 				
 		logger.trace("  value = {}", value);
 		
-		return target.construct(level, value, context);
+		return target.construct(path, value, context);
 	}
 	
 	@Override
-	public void decompose(final Object object, ContextObjects sources) throws ProjectionError {
+	public void decompose(final Path path, final Object object, ContextObjects sources) throws ProjectionError {
 
 		logger.debug("Decompose property {} = {}", name, object);
 		
 		// get target value
-		Object[] values = target.deconstruct(object);
+		Object[] values = target.deconstruct(path, object);
 
 		if (values == null || values.length == 0) {
 			return;

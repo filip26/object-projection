@@ -3,6 +3,7 @@ package com.apicatalog.projection.mapping;
 import java.util.Collection;
 
 import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.objects.Path;
 
 public interface ProjectionMapping<P> {
 
@@ -19,6 +20,8 @@ public interface ProjectionMapping<P> {
 	 */
 	P compose(Object...values) throws ProjectionError;
 	
+	P compose(Path path, Object...values) throws ProjectionError;
+	
 	/**
 	 * Decompose a projection into source values
 	 * 
@@ -27,4 +30,6 @@ public interface ProjectionMapping<P> {
 	 * @throws ProjectionError
 	 */
 	Object[] decompose(P projection) throws ProjectionError;
+	
+	Object[] decompose(Path path, P projection) throws ProjectionError;
 }
