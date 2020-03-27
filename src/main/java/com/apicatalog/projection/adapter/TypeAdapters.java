@@ -35,10 +35,11 @@ public class TypeAdapters {
 	}
 
 	public TypeAdapters add(TypeAdapter<?> adapter) {
-		adapters.put(adapter.source(), adapter);
+		adapters.put(adapter.consumes(), adapter);
 		return this;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public <T> T convert(Class<? extends T> targetClass, Object object) throws ProjectionError {
 		
 		// no conversion needed

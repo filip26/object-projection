@@ -9,12 +9,12 @@ import com.apicatalog.projection.adapter.TypeAdapterError;
 public class InstantAdapter implements TypeAdapter<Instant> {
 
 	@Override
-	public Class<Instant> source() {
+	public Class<Instant> consumes() {
 		return Instant.class;
 	}
 
 	@Override
-	public Class<?>[] targets() {
+	public Class<?>[] produces() {
 		return new Class[] {String.class, Long.class, Date.class};
 	}
 

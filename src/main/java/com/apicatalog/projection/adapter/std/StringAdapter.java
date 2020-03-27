@@ -6,12 +6,12 @@ import com.apicatalog.projection.adapter.TypeAdapterError;
 public class StringAdapter implements TypeAdapter<String> {
 
 	@Override
-	public Class<String> source() {
+	public Class<String> consumes() {
 		return String.class;
 	}
 
 	@Override
-	public Class<?>[] targets() {
+	public Class<?>[] produces() {
 		return new Class[] {Long.class, Double.class, Boolean.class};
 	}
 

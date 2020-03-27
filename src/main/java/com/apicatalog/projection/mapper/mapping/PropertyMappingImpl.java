@@ -1,7 +1,5 @@
 package com.apicatalog.projection.mapper.mapping;
 
-import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,7 +7,7 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.mapping.PropertyMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.mapping.TargetMapping;
-import com.apicatalog.projection.objects.SourceObjects;
+import com.apicatalog.projection.objects.ContextObjects;
 
 public class PropertyMappingImpl implements PropertyMapping {
 
@@ -22,38 +20,36 @@ public class PropertyMappingImpl implements PropertyMapping {
 	TargetMapping target;
 
 	@Override
-	public Object compose(int level, SourceObjects sources) throws ProjectionError {
+	public Object compose(int level, ContextObjects context) throws ProjectionError {
 
-		logger.debug("Compose property {} value at level {}", name, level);
+		logger.debug("Compose property {} at level {}", name, level);
 		
 		// get source value
-		Optional<Object> value = Optional.ofNullable(source.compose(sources));
+		Object value = source.compose(context);
 
-		if (value.isEmpty()) {
+		if (value == null) {
 			logger.trace("  value = null");
 			return null;
 		}
+				
+		logger.trace("  value = {}", value);
 		
-		final Object propertyValue = value.get();
-		
-		logger.trace("  value = {}", propertyValue);
-		
-		return target.construct(level, propertyValue, sources);
+		return target.construct(level, value, context);
 	}
 	
 	@Override
-	public void decompose(final Object object, SourceObjects sources) throws ProjectionError {
+	public void decompose(final Object object, ContextObjects sources) throws ProjectionError {
 
-		logger.debug("Decompose {} = {}", name, object);
+		logger.debug("Decompose property {} = {}", name, object);
 		
 		// get target value
-		Optional<Object[]> values = Optional.ofNullable(target.deconstruct(object));
+		Object[] values = target.deconstruct(object);
 
-		if (values.isEmpty() || values.get().length == 0) {
+		if (values == null || values.length == 0) {
 			return;
 		}
 
-		source.decompose(values.get(), sources);
+		source.decompose(values, sources);
 	}
 	
 	@Override

@@ -14,7 +14,7 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.mapping.ConversionMapping;
 import com.apicatalog.projection.mapping.ReductionMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
-import com.apicatalog.projection.objects.SourceObjects;
+import com.apicatalog.projection.objects.ContextObjects;
 
 public class SourcesMappingImpl implements SourceMapping {
 
@@ -28,7 +28,7 @@ public class SourcesMappingImpl implements SourceMapping {
 	Boolean optional;
 
 	@Override
-	public Object compose(SourceObjects sources) throws ProjectionError {
+	public Object compose(ContextObjects sources) throws ProjectionError {
 
 		final List<Object> values = new ArrayList<>();
 		
@@ -51,7 +51,7 @@ public class SourcesMappingImpl implements SourceMapping {
 	}
 
 	@Override
-	public void decompose(Object[] objects, SourceObjects sources) throws ProjectionError {
+	public void decompose(Object[] objects, ContextObjects sources) throws ProjectionError {
 		
 		logger.debug("Decompose {}, optional={}", objects, optional);
 

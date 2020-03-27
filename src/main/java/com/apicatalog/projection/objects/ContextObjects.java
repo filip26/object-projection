@@ -8,31 +8,31 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SourceObjects {
+public class ContextObjects {
 
-	final Logger logger = LoggerFactory.getLogger(SourceObjects.class);
+	final Logger logger = LoggerFactory.getLogger(ContextObjects.class);
 	
-	final Map<ProjectedObjectKey, Object> index;
+	final Map<ContextObjectKey, Object> index;
 	
-	protected SourceObjects(Map<ProjectedObjectKey, Object> index) {
+	protected ContextObjects(Map<ContextObjectKey, Object> index) {
 		this.index = index;
 	}
 	
-	public SourceObjects(SourceObjects sources) {
+	public ContextObjects(ContextObjects sources) {
 		this.index = new LinkedHashMap<>(sources.index);
 	}
 	
-	public static SourceObjects of(Object...objects) {		
-		return new SourceObjects(Stream
+	public static ContextObjects of(Object...objects) {		
+		return new ContextObjects(Stream
 							.of(objects)
 							.collect(Collectors.toMap(
-										ProjectedObjectKey::of,
+										ContextObjectKey::of,
 										o -> o
 									)));		
 	}
 	
 	public Object get(Class<?> clazz, String name) {
-		return index.get(ProjectedObjectKey.of(clazz, name));
+		return index.get(ContextObjectKey.of(clazz, name));
 	}
 
 	public Object[] getValues() {
@@ -40,6 +40,6 @@ public class SourceObjects {
 	}
 	
 	public void addOrReplace(Object object) {
-		index.put(ProjectedObjectKey.of(object), object);
+		index.put(ContextObjectKey.of(object), object);
 	}
 }

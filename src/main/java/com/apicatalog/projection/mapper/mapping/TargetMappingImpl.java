@@ -1,7 +1,6 @@
 package com.apicatalog.projection.mapper.mapping;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -10,23 +9,26 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.mapping.ProjectionMapping;
 import com.apicatalog.projection.mapping.TargetMapping;
-import com.apicatalog.projection.objects.SourceObjects;
+import com.apicatalog.projection.objects.ContextObjects;
 
 public class TargetMappingImpl implements TargetMapping {
 
 	final Logger logger = LoggerFactory.getLogger(TargetMappingImpl.class);
 	
-	final ProjectionFactory index;
+	final ProjectionFactory factory;
+	final TypeAdapters typeAdapters;
 	
 	Class<?> targetClass;
 	Class<?> itemClass;
 
 	boolean reference;
 	
-	public TargetMappingImpl(ProjectionFactory index) {
-		this.index = index;
+	public TargetMappingImpl(ProjectionFactory index, TypeAdapters typeAdapters) {
+		this.factory = index;
+		this.typeAdapters = typeAdapters;
 	}
 	
 	@Override
@@ -34,7 +36,7 @@ public class TargetMappingImpl implements TargetMapping {
 		return targetClass;
 	}
 
-	public void setTargetClass(Class<? extends Object> targetClass) {
+	public void setTargetClass(Class<?> targetClass) {
 		this.targetClass = targetClass;
 	}
 
@@ -58,7 +60,7 @@ public class TargetMappingImpl implements TargetMapping {
 
 	@SuppressWarnings("unchecked")
 	public ProjectionMapping<Object> getReference(boolean collection) {
-		return index.get(collection ? (Class<Object>)itemClass : (Class<Object>)targetClass);
+		return factory.get(collection ? (Class<Object>)itemClass : (Class<Object>)targetClass);
 	}
 
 	public void setReference(boolean reference) {
@@ -66,7 +68,7 @@ public class TargetMappingImpl implements TargetMapping {
 	}
 
 	@Override
-	public Object construct(final int level, final Object object, final SourceObjects sources) throws ProjectionError {
+	public Object construct(final int level, final Object object, final ContextObjects context) throws ProjectionError {
 		
 		logger.debug("Costruct target from {} at level {}, colllection={}, reference={}", object, level, isCollection(), isReference());
 		
@@ -86,12 +88,14 @@ public class TargetMappingImpl implements TargetMapping {
 				
 				logger.trace("  collection={}", untyppedCollection.getClass().getCanonicalName());
 				
+				Collection<?> sourceCollection = typeAdapters.convert(ArrayList.class, object);
+				
 				final Collection<Object> collection = new ArrayList<>();
 
 				// compose a projection from each object in the collection
-				for (final Object item : (Collection<Object>)untyppedCollection) { //FIXME check value type, do implicit collection conversion if needed	
-
-					final SourceObjects clonedSources = new SourceObjects(sources);
+				for (final Object item : sourceCollection) {
+				
+					final ContextObjects clonedSources = new ContextObjects(context);
 					clonedSources.addOrReplace(item);
  
 					collection.add(getReference(true).compose(clonedSources.getValues()));	//FIXME level + 1,
@@ -101,7 +105,7 @@ public class TargetMappingImpl implements TargetMapping {
 				value = Optional.of(collection);
 				
 			} else {				
-				final SourceObjects clonedSources = new SourceObjects(sources);
+				final ContextObjects clonedSources = new ContextObjects(context);
 				value.ifPresent(clonedSources::addOrReplace);
 
 				// compose a projection from a given value
@@ -139,13 +143,14 @@ public class TargetMappingImpl implements TargetMapping {
 								
 				final Collection<Object> collection = new ArrayList<>();
 
-				// compose a projection from each object in the collection
-				for (final Object item : toCollection(object)) {
+				Collection<?> sourceCollection = typeAdapters.convert(ArrayList.class, object);
+				
+				// extract objects from each projection in the collection
+				for (final Object item : sourceCollection) {
 					collection.add(getReference(true).decompose(item));
 				}
 				
 				value = Optional.of(new Object[] {collection});
-
 
 			} else {
 				value = Optional.ofNullable(getReference(false).decompose(object));
@@ -159,28 +164,11 @@ public class TargetMappingImpl implements TargetMapping {
 
 		Object[] sourceValue = value.get();
 
-		for (Object o : sourceValue) {	//FIXME
-			logger.trace("  sourceValue = {}", o);
+		if (logger.isTraceEnabled()) {
+			for (Object o : sourceValue) {
+				logger.trace("  sourceValue = {}", o);
+			}
 		}
 		return sourceValue.length == 0 ? null : sourceValue;
-	}
-	
-	//FIXME check value type, do implicit collection conversion if needed
-	// use type adapters instead
-	@Deprecated
-	Collection<Object> toCollection(Object object) {
-		
-		logger.trace("  toCollection=({})", object.getClass().getCanonicalName());
-
-		
-		if (Collection.class.isInstance(object)) {
-			return (Collection)object;
-		}
-		if (object.getClass().isArray()) {
-			
-			return Arrays.asList(((Object[])object));
-		}
-		return (Collection)object;		//FIXME !?!?!
-	}
-	
+	}	
 }

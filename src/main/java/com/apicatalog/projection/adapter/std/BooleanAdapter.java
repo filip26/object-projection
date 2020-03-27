@@ -6,12 +6,12 @@ import com.apicatalog.projection.adapter.TypeAdapterError;
 public class BooleanAdapter implements TypeAdapter<Boolean> {
 
 	@Override
-	public Class<Boolean> source() {
+	public Class<Boolean> consumes() {
 		return Boolean.class;
 	}
 
 	@Override
-	public Class<?>[] targets() {
+	public Class<?>[] produces() {
 		return new Class[] {String.class, Byte.class, Long.class, Double.class, Character.class, Integer.class, Float.class};
 	}
 

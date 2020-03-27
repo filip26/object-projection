@@ -7,39 +7,41 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
-import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.mapping.SourceMapping;
-import com.apicatalog.projection.objects.SourceObjects;
+import com.apicatalog.projection.objects.ContextObjects;
 
 public class ProvidedMappingImpl implements SourceMapping {
 
 	final Logger logger = LoggerFactory.getLogger(ProvidedMappingImpl.class);
 	
-	final ProjectionFactory index;
+	final ProjectionFactory factory;
 	
 	Class<?> sourceClass;
 	
 	String qualifier;
 	
 	Boolean optional;
+	
+	boolean reference;
 
-	public ProvidedMappingImpl(final ProjectionFactory index) {
-		this.index = index;
+	public ProvidedMappingImpl(final ProjectionFactory factory) {
+		this.factory = factory;
 	}
 	
 	@Override
-	public Object compose(SourceObjects sources) throws ProjectionError {
-	
-		if (sourceClass.isAnnotationPresent(Projection.class)) {
-			return index.compose(sourceClass, sources.getValues());				
+	public Object compose(ContextObjects context) throws ProjectionError {
+		
+		if (reference) {
+			return factory.compose(sourceClass, context.getValues());				
 		}
 
 		final Optional<Object> source = 
 				Optional.ofNullable(
-					sources.get(sourceClass, qualifier)
+					context.get(sourceClass, qualifier)
 				);
 			
 		if (source.isEmpty()) {
+			
 			if (Boolean.TRUE.equals(optional)) {
 				return null;
 			}
@@ -50,7 +52,8 @@ public class ProvidedMappingImpl implements SourceMapping {
 	}
 	
 	@Override
-	public void decompose(Object[] objects, SourceObjects sources) throws ProjectionError {
+	public void decompose(Object[] objects, ContextObjects sources) throws ProjectionError {
+
 		logger.debug("Decompose {}, source={}, qualifier={}, optional={}", objects, sourceClass.getSimpleName(), qualifier, optional);
 
 		Optional<Object> value = Optional.empty(); 
@@ -95,5 +98,13 @@ public class ProvidedMappingImpl implements SourceMapping {
 
 	public Class<?> getSourceClass() {
 		return sourceClass;
+	}
+
+	public boolean getReference() {
+		return reference;
+	}
+
+	public void setReference(boolean reference) {
+		this.reference = reference;
 	}
 }

@@ -6,12 +6,12 @@ import com.apicatalog.projection.adapter.TypeAdapterError;
 public class DoubleAdapter implements TypeAdapter<Float> {
 
 	@Override
-	public Class<Float> source() {
+	public Class<Float> consumes() {
 		return Float.class;
 	}
 
 	@Override
-	public Class<?>[] targets() {
+	public Class<?>[] produces() {
 		return new Class[] {String.class, Integer.class, Short.class, Byte.class, Long.class, Double.class, Boolean.class};
 	}
 

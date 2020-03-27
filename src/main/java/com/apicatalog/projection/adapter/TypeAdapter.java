@@ -2,9 +2,9 @@ package com.apicatalog.projection.adapter;
 
 public interface TypeAdapter<S> {
 
-	Class<S> source();
+	Class<S> consumes();
 	
-	Class<?>[] targets();
+	Class<?>[] produces();
 	
 	<T> T convert(Class<? extends T> targetClass, S object) throws TypeAdapterError;
 	

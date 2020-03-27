@@ -34,13 +34,13 @@ public class ProjectionFactory {
 	@SuppressWarnings("unchecked")
 	public Object[] decompose(Object projection) throws ProjectionError {
 		return Optional.ofNullable(get((Class<Object>)projection.getClass()))
-					.orElseThrow(() -> new ProjectionError("The projection for " + projection.getClass().getCanonicalName() + " is not present."))
+					.orElseThrow(() -> new ProjectionError("The projection " + projection.getClass().getCanonicalName() + " is not present."))
 					.decompose(projection);
 	}
 
 	public <P> P compose(Class<P> projectionClass, Object...values) throws ProjectionError {
 		return Optional.ofNullable(get(projectionClass))
-					.orElseThrow(() -> new ProjectionError("The projection for " + projectionClass.getCanonicalName() + " is not present."))
+					.orElseThrow(() -> new ProjectionError("The projection " + projectionClass.getCanonicalName() + " is not present."))
 					.compose(values);					
 	}
 }

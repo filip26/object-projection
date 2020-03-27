@@ -13,7 +13,7 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.mapping.ProjectionMapping;
 import com.apicatalog.projection.mapping.PropertyMapping;
-import com.apicatalog.projection.objects.SourceObjects;
+import com.apicatalog.projection.objects.ContextObjects;
 
 public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 
@@ -44,8 +44,8 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 			Stream.of(values).forEach(v -> logger.trace("  {}", v));
 		}
 		
-		final SourceObjects sources = 
-				Optional.ofNullable(SourceObjects.of(values))
+		final ContextObjects sources = 
+				Optional.ofNullable(ContextObjects.of(values))
 						.orElseThrow(IllegalStateException::new); 				
 
 						
@@ -74,7 +74,7 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 	
 		logger.debug("Decompose {}", projection.getClass().getCanonicalName());
 						
-		final SourceObjects sources = SourceObjects.of();
+		final ContextObjects sources = ContextObjects.of();
 	
 		if (sources == null) {
 			throw new IllegalStateException();

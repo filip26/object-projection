@@ -7,9 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class ObjectUtils {
 
-	ObjectUtils() {
-
-	}
+	ObjectUtils() {}
 	
 	public static Object getPropertyValue(Object object, String property) throws ProjectionError {
 		if (object == null) {

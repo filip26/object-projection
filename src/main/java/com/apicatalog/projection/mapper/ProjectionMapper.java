@@ -42,10 +42,10 @@ public class ProjectionMapper {
 	final Logger logger = LoggerFactory.getLogger(ProjectionMapper.class);
 	
 	final TypeAdapters typeAdapters;
-	final ProjectionFactory index;
+	final ProjectionFactory factory;
 	
 	public ProjectionMapper(ProjectionFactory index) {
-		this.index = index;
+		this.factory = index;
 		this.typeAdapters = new TypeAdapters();
 	}
 	
@@ -206,11 +206,13 @@ public class ProjectionMapper {
 		
 		final Provided provided = field.getAnnotation(Provided.class);
 		
-		final ProvidedMappingImpl sourceMapping = new ProvidedMappingImpl(index);
+		final ProvidedMappingImpl sourceMapping = new ProvidedMappingImpl(factory);
 		sourceMapping.setOptional(provided.optional());
 		
 		// set target object class
 		sourceMapping.setSourceClass(field.getType());
+		
+		sourceMapping.setReference(field.getType().isAnnotationPresent(Projection.class));
 
 		sourceMapping.setQualifier(provided.qualifier());
 		
@@ -226,7 +228,7 @@ public class ProjectionMapper {
 	}
 	
 	TargetMapping getTargetMapping(Field field) {
-		final TargetMappingImpl targetMapping = new TargetMappingImpl(index);
+		final TargetMappingImpl targetMapping = new TargetMappingImpl(factory, typeAdapters);
 		// set projection property target class
 		targetMapping.setTargetClass(field.getType());
 

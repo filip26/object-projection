@@ -8,12 +8,12 @@ import com.apicatalog.projection.adapter.TypeAdapterError;
 public class LongAdapter implements TypeAdapter<Long> {
 
 	@Override
-	public Class<Long> source() {
+	public Class<Long> consumes() {
 		return Long.class;
 	}
 
 	@Override
-	public Class<?>[] targets() {
+	public Class<?>[] produces() {
 		return new Class[] {String.class, Integer.class, Short.class, Byte.class, Double.class, Float.class, Instant.class, Boolean.class};
 	}
 
