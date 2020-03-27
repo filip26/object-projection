@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
-import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapping.ProjectionMapping;
 import com.apicatalog.projection.mapping.TargetMapping;
 import com.apicatalog.projection.objects.SourceObjects;
@@ -67,7 +66,7 @@ public class TargetMappingImpl implements TargetMapping {
 	}
 
 	@Override
-	public Object construct(final int level, final Object object, final SourceObjects sources) throws ProjectionError, ConverterError {
+	public Object construct(final int level, final Object object, final SourceObjects sources) throws ProjectionError {
 		
 		logger.debug("Costruct target from {} at level {}, colllection={}, reference={}", object, level, isCollection(), isReference());
 		
@@ -124,7 +123,7 @@ public class TargetMappingImpl implements TargetMapping {
 	}
 
 	@Override
-	public Object[] deconstruct(Object object) throws ProjectionError, ConverterError {
+	public Object[] deconstruct(Object object) throws ProjectionError {
 
 		logger.debug("Deconstruct {}, colllection={}, reference={}", object, isCollection(), isReference());
 		

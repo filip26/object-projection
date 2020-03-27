@@ -5,11 +5,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.apicatalog.projection.converter.Reducer;
+
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.FIELD)
 public @interface Reduction {
 
-	Class<? extends Reduction> type();
+	Class<? extends Reducer> type();
 	String[] value() default {};
 	
 }

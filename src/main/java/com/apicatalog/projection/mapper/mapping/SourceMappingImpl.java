@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ObjectUtils;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapping.ConversionMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.objects.SourceObjects;
@@ -40,7 +39,7 @@ public class SourceMappingImpl implements SourceMapping {
 	}
 	
 	@Override
-	public Object compose(SourceObjects sources) throws ProjectionError, ConverterError {
+	public Object compose(SourceObjects sources) throws ProjectionError {
 		
 		final Optional<Object> source = 
 				Optional.ofNullable(
@@ -67,7 +66,7 @@ public class SourceMappingImpl implements SourceMapping {
 	}
 
 	@Override
-	public void decompose(Object[] objects, SourceObjects sources) throws ConverterError, ProjectionError {
+	public void decompose(Object[] objects, SourceObjects sources) throws ProjectionError {
 		logger.debug("Decompose {}, source={}, qualifier={}, optional={}", objects, sourceClass.getSimpleName(), qualifier, optional);
 
 		Optional<Object> value = Optional.empty(); 
@@ -124,7 +123,7 @@ public class SourceMappingImpl implements SourceMapping {
 			Collections.reverse(revConversions);
 			
 			Object o = value.get();
-			
+
 			for (ConversionMapping conversion : revConversions) {
 				
 				o = conversion.backward(o);
@@ -135,6 +134,7 @@ public class SourceMappingImpl implements SourceMapping {
 					break;
 				}				
 			}
+
 			value = Optional.ofNullable(o);
 		}
 

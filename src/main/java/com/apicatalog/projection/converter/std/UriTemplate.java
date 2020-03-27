@@ -5,55 +5,47 @@ import java.util.Collection;
 import java.util.List;
 
 import com.apicatalog.projection.converter.ContextValue;
-import com.apicatalog.projection.converter.ConverterError;
-import com.apicatalog.projection.converter.InvertibleFunction;
+import com.apicatalog.projection.converter.Reducer;
+import com.apicatalog.projection.converter.ReducerError;
 import com.apicatalog.uritemplate.MalformedUriTemplate;
 import com.apicatalog.uritemplate.UriTemplateL1;
 
-public class UriTemplate implements InvertibleFunction<String> {
+public class UriTemplate implements Reducer {
 
 	UriTemplateL1 template;
 
 	@Override
-	public void init(ContextValue ctx) throws ConverterError {
+	public void init(ContextValue ctx) throws ReducerError {
 		try {
 			this.template = UriTemplateL1.of(ctx.getValues()[0]); 	//FIXME
 			
 		} catch (MalformedUriTemplate e) {
-			throw new ConverterError(e);
+			throw new ReducerError(e);
 		}
 		
 	}
 
 	@Override
-	public String compute(Object... values) throws ConverterError {
+	public Object reduce(Object... objects) throws ReducerError {
 
-		//TODO again, flatMap 
-		//FIXME use implicit conversion
+		List<String> variables = new ArrayList<>();
 		
-		List<String> v = new ArrayList<>();
-		
-		for (Object o1 : values) {
-			if (o1 instanceof Collection) {
-				for (Object o2 : (Collection<Object>)o1) {
-					v.add(o2.toString());	
+		for (Object object : objects) {						//FIXME use implicit conversion
+			if (object instanceof Collection) {
+				for (Object item : (Collection<Object>)object) {
+					variables.add(item.toString());	
 				}
 			} else {
-				v.add(o1.toString());
+				variables.add(object.toString());
 			}
 		}
 				
-		return template.expand(v.toArray(new String[0]));
+		return template.expand(variables.toArray(new String[0]));
 	}
 
 	@Override
-	public Object[] inverse(String value) throws ConverterError {
-		return template.extract(value);
-	}
-
-	@Override
-	public boolean isReverseable() {
-		return true;
+	public Object[] expand(Object object) throws ReducerError {
+		return template.extract(object.toString());					//FIXME use implicit conversion
 	}
 	
 	

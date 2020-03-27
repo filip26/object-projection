@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ObjectUtils;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapping.ProjectionMapping;
 import com.apicatalog.projection.mapping.PropertyMapping;
 import com.apicatalog.projection.objects.SourceObjects;
@@ -33,11 +32,11 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 	}
 
 	@Override
-	public P compose(final Object... values) throws ProjectionError, ConverterError {
+	public P compose(final Object... values) throws ProjectionError {
 		return compose(0, values);
 	}
 
-	protected P compose(final int level, final Object... values) throws ProjectionError, ConverterError {
+	protected P compose(final int level, final Object... values) throws ProjectionError {
 
 		logger.debug("Compose {} of {} object(s)", projectionClass.getCanonicalName(), values.length);
 		
@@ -62,11 +61,12 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 				ObjectUtils.setPropertyValue(projection, propertyMapping.getName(), adapters.convert(propertyMapping.getTarget().getTargetClass(), value.get()));
 			}
 		}
+					
 		return projection;
 	}
 
 	@Override
-	public Object[] decompose(final P projection) throws ProjectionError, ConverterError {
+	public Object[] decompose(final P projection) throws ProjectionError {
 		
 		if (projection == null) {
 			throw new IllegalArgumentException();
@@ -90,6 +90,7 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 			
 			property.decompose(value.get(), sources);
 		}
+
 		return sources.getValues();
 	}
 	

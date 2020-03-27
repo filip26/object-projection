@@ -14,6 +14,8 @@ public @interface Sources {
 
 	Source[] value();
 	
+	Reduction reduce();
+	
 	Conversion[] map() default {};
 		
 	boolean optional() default false;

@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
   
 	<name>Object Projection</name>  
-	<description>Experimental Declarative Object Projection</description>
+	<description>Experimental Declarative Invertible Object Projection</description>
 
 	<properties>
 		<maven.compiler.target>11</maven.compiler.target>

@@ -11,8 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapping.ConversionMapping;
+import com.apicatalog.projection.mapping.ReductionMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.objects.SourceObjects;
 
@@ -21,13 +21,14 @@ public class SourcesMappingImpl implements SourceMapping {
 	final Logger logger = LoggerFactory.getLogger(SourcesMappingImpl.class);
 
 	Collection<SourceMapping> mappings;
-	
-	Boolean optional;
-	
+
+	ReductionMapping reduction;
 	ConversionMapping[] conversions;
 
+	Boolean optional;
+
 	@Override
-	public Object compose(SourceObjects sources) throws ProjectionError, ConverterError {
+	public Object compose(SourceObjects sources) throws ProjectionError {
 
 		final List<Object> values = new ArrayList<>();
 		
@@ -35,9 +36,10 @@ public class SourcesMappingImpl implements SourceMapping {
 			Optional.ofNullable(source.compose(sources))
 					.ifPresent(values::add);
 		}
-		
-		Object value = values;
-		
+
+		// apply reduction
+		Object value = reduction.reduce(values.toArray(new Object[0]));
+
 		// apply explicit conversions
 		if (conversions != null) {
 			for (ConversionMapping conversion : conversions) {
@@ -49,11 +51,11 @@ public class SourcesMappingImpl implements SourceMapping {
 	}
 
 	@Override
-	public void decompose(Object[] objects, SourceObjects sources) throws ConverterError, ProjectionError {
+	public void decompose(Object[] objects, SourceObjects sources) throws ProjectionError {
 		
 		logger.debug("Decompose {}, optional={}", objects, optional);
 
-		if (objects == null || objects.length != 1) {
+		if (objects == null || objects.length != 1) {	//FIXME hack
 			return;
 		}
 		
@@ -81,7 +83,8 @@ public class SourcesMappingImpl implements SourceMapping {
 			return;
 		}
 
-		final Object[] sourceValues = (Object[])value.get();
+		// apply reduction
+		final Object[] sourceValues = reduction.expand(value.get());
 		int it = 0;
 		
 		for (SourceMapping sourceMapping : mappings) {
@@ -114,5 +117,13 @@ public class SourcesMappingImpl implements SourceMapping {
 
 	public void setConversions(ConversionMapping[] conversions) {
 		this.conversions = conversions;
+	}
+
+	public ReductionMapping getReduction() {
+		return reduction;
+	}
+
+	public void setReduction(ReductionMapping reduction) {
+		this.reduction = reduction;
 	}
 }

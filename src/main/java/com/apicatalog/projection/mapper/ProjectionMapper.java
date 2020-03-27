@@ -19,18 +19,21 @@ import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.annotation.Conversion;
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Provided;
+import com.apicatalog.projection.annotation.Reduction;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.mapper.mapping.ConversionMappingImpl;
 import com.apicatalog.projection.mapper.mapping.ProjectionMappingImpl;
 import com.apicatalog.projection.mapper.mapping.PropertyMappingImpl;
 import com.apicatalog.projection.mapper.mapping.ProvidedMappingImpl;
+import com.apicatalog.projection.mapper.mapping.ReductionMappingImpl;
 import com.apicatalog.projection.mapper.mapping.SourceMappingImpl;
 import com.apicatalog.projection.mapper.mapping.SourcesMappingImpl;
 import com.apicatalog.projection.mapper.mapping.TargetMappingImpl;
 import com.apicatalog.projection.mapping.ConversionMapping;
 import com.apicatalog.projection.mapping.ProjectionMapping;
 import com.apicatalog.projection.mapping.PropertyMapping;
+import com.apicatalog.projection.mapping.ReductionMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.mapping.TargetMapping;
 
@@ -266,6 +269,9 @@ public class ProjectionMapper {
 			logger.warn("Property {} has no source(s) and is ignored.", field.getName());
 			return null;
 		}
+		
+		// set reduction to apply
+		mapping.setReduction(getReductionMapping(sources.reduce()));
 
 		// set conversions to apply
 		mapping.setConversions(getConversionMapping(sources.map()));
@@ -321,7 +327,6 @@ public class ProjectionMapper {
 		return mapping;
 	}
 	
-
 	ConversionMapping[] getConversionMapping(Conversion[] conversions) {
 
 		if (conversions.length == 0) {
@@ -334,7 +339,11 @@ public class ProjectionMapper {
 				.toArray(new ConversionMapping[0])
 				;		
 	}
-	
+
+	ReductionMapping getReductionMapping(Reduction reduction) {
+		return new ReductionMappingImpl(reduction.type(), reduction.value());
+	}
+
 	static Class<?> getFieldType(Class<?> clazz, String name)  {
 		
 		try {

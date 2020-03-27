@@ -12,7 +12,7 @@ public class TestProjection {
               },
       reduce = @Reduction(
               type = URLTemplate.class,
-              value="https://www.example.org/{username}/{repositoryId}"
+              value = "https://www.example.org/{username}/{repositoryId}"
               )
       )
   String href;  // e.g. https://www.example.org/filip26/R1234
@@ -31,7 +31,7 @@ public class TestProjection {
       )
   Long total;
   ...
-  @Provided(optional=true)
+  @Provided(optional = true)
   String context;
   ...
 }

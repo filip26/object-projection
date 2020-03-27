@@ -1,7 +1,7 @@
 package com.apicatalog.projection.projections;
 
-import com.apicatalog.projection.annotation.Conversion;
 import com.apicatalog.projection.annotation.Projection;
+import com.apicatalog.projection.annotation.Reduction;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.converter.std.UriTemplate;
@@ -15,7 +15,7 @@ public class UriTemplateConversion {
 					@Source(type=ObjectBasicTypes.class, value = "longValue"),
 					@Source(type=ObjectReference.class, value = "stringValue")
 				},
-			map = @Conversion(type = UriTemplate.class, value="https://www.example.org/{}/{stringValue}")
+			reduce = @Reduction(type = UriTemplate.class, value="https://www.example.org/{}/{stringValue}")
 		)
 	public String href;
 		
