@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.apicatalog.projection.converter.ContextValue;
 import com.apicatalog.projection.converter.Converter;
 
-public class Append implements Converter {
+public class Suffix implements Converter {
 
 	String suffix;
 	
