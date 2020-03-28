@@ -26,6 +26,7 @@ import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.annotation.Visibility;
 import com.apicatalog.projection.converter.ConverterMapping;
+import com.apicatalog.projection.converter.ReducerMapping;
 import com.apicatalog.projection.mapper.mapping.ConversionMappingImpl;
 import com.apicatalog.projection.mapper.mapping.ProjectionMappingImpl;
 import com.apicatalog.projection.mapper.mapping.PropertyMappingImpl;
@@ -381,13 +382,21 @@ public class ProjectionMapper {
 		//FIXME checks
 		converter.setSourceClass((Class) (((ParameterizedType) conversion.type().getGenericInterfaces()[0]).getActualTypeArguments()[0]));
 		converter.setTargetClass((Class)(((ParameterizedType) conversion.type().getGenericInterfaces()[0]).getActualTypeArguments()[1]));
-				
-		ConversionMapping mapping = new ConversionMappingImpl(converter, typeAdapters, conversion.value());
 		
-		return mapping;
+		return new ConversionMappingImpl<>(converter, typeAdapters, conversion.value());
 	}
 
 	ReductionMapping getReductionMapping(Reduction reduction) {
-		return new ReductionMappingImpl(reduction.type(), reduction.value());
+		
+		//FIXME use ConverterFactory
+		ReducerMapping<?, ?> reducer = new ReducerMapping<>();
+
+		reducer.setReducerClass((Class)reduction.type());
+		//FIXME checks
+		reducer.setSourceClass((Class) (((ParameterizedType) reduction.type().getGenericInterfaces()[0]).getActualTypeArguments()[0]));
+		reducer.setTargetClass((Class)(((ParameterizedType) reduction.type().getGenericInterfaces()[0]).getActualTypeArguments()[1]));
+
+		
+		return new ReductionMappingImpl(reducer, typeAdapters, reduction.value());
 	}
 }

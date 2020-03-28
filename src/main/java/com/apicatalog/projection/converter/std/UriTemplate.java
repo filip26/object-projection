@@ -1,18 +1,14 @@
 package com.apicatalog.projection.converter.std;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import com.apicatalog.projection.converter.ConverterConfig;
 import com.apicatalog.projection.converter.Converter;
+import com.apicatalog.projection.converter.ConverterConfig;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.Reducer;
 import com.apicatalog.projection.converter.ReducerError;
 import com.apicatalog.uritemplate.MalformedUriTemplate;
 import com.apicatalog.uritemplate.UriTemplateL1;
 
-public class UriTemplate implements Reducer, Converter<String, String> {
+public class UriTemplate implements Reducer<String, String>, Converter<String, String> {
 
 	UriTemplateL1 template;
 
@@ -28,26 +24,13 @@ public class UriTemplate implements Reducer, Converter<String, String> {
 	}
 
 	@Override
-	public Object reduce(Object... objects) throws ReducerError {
-
-		List<String> variables = new ArrayList<>();
-		
-		for (Object object : objects) {						//FIXME use implicit conversion
-			if (object instanceof Collection) {
-				for (Object item : (Collection<Object>)object) {
-					variables.add(item.toString());	
-				}
-			} else {
-				variables.add(object.toString());
-			}
-		}
-				
-		return template.expand(variables.toArray(new String[0]));
+	public String reduce(String[] objects) throws ReducerError {
+		return template.expand(objects);
 	}
 
 	@Override
-	public Object[] expand(Object object) throws ReducerError {
-		return template.extract(object.toString());					//FIXME use implicit conversion
+	public String[] expand(String object) throws ReducerError {
+		return template.extract(object);
 	}
 
 	@Override

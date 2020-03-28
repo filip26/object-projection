@@ -3,6 +3,9 @@ package com.apicatalog.projection.adapter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.std.BooleanAdapter;
 import com.apicatalog.projection.adapter.std.DoubleAdapter;
@@ -14,6 +17,8 @@ import com.apicatalog.projection.adapter.std.StringAdapter;
 
 public class TypeAdapters {
 
+	final Logger logger = LoggerFactory.getLogger(TypeAdapters.class);
+	
 	final Map<Class<?>, TypeAdapter<?>> adapters;
 	
 	public TypeAdapters() {
@@ -42,9 +47,19 @@ public class TypeAdapters {
 	@SuppressWarnings("unchecked")
 	public <T> T convert(Class<? extends T> targetClass, Object object) throws ProjectionError {
 		
+		if (object == null) {
+			return null;
+		}
+		
 		// no conversion needed
 		if (targetClass.isInstance(object)) {
 			return (T)object;
+		}
+		
+		logger.debug("Convert {} to {}", object, targetClass);
+		
+		if (object.getClass().isArray()) {
+			return convertArray(targetClass, (Object[])object);
 		}
 
 		final TypeAdapter<Object> adapter = get(object.getClass());
@@ -59,6 +74,20 @@ public class TypeAdapters {
 		} catch (TypeAdapterError e) {
 			throw new ProjectionError(e);
 		}
+	}
+
+	public <T> T convertArray(Class<? extends T> targetClass, Object[] objects) throws ProjectionError {
+
+		logger.debug("Convert array of {} as array of {}", objects, targetClass);
+		
+//		final List<T> converted = new ArrayList<>(objects.length);
+		final Object[] converted = (Object[])java.lang.reflect.Array.newInstance(targetClass, objects.length);
+		
+		for (int i=0; i < objects.length; i++) {
+			converted[i] = convert(targetClass, objects[i]);
+		}
+		
+		return (T)converted;
 	}
 	
 }

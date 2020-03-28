@@ -1,11 +1,11 @@
 package com.apicatalog.projection.converter;
 
-public interface Reducer {
+public interface Reducer<S, T> {
 
 	void initReducer(ConverterConfig ctx) throws ReducerError;
 	
-	Object reduce(Object...objects) throws ReducerError;
+	T reduce(S[] objects) throws ReducerError;
 	
-	Object[] expand(Object object) throws ReducerError;
+	S[] expand(T object) throws ReducerError;
 	
 }
