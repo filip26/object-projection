@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.apicatalog.projection.converter.ContextValue;
+import com.apicatalog.projection.converter.ConverterConfig;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.Reducer;
@@ -12,12 +12,12 @@ import com.apicatalog.projection.converter.ReducerError;
 import com.apicatalog.uritemplate.MalformedUriTemplate;
 import com.apicatalog.uritemplate.UriTemplateL1;
 
-public class UriTemplate implements Reducer, Converter {
+public class UriTemplate implements Reducer, Converter<String, String> {
 
 	UriTemplateL1 template;
 
 	@Override
-	public void initReducer(ContextValue ctx) throws ReducerError {
+	public void initReducer(ConverterConfig ctx) throws ReducerError {
 		try {
 			this.template = UriTemplateL1.of(ctx.getValues()[0]); 	//FIXME
 			
@@ -51,7 +51,7 @@ public class UriTemplate implements Reducer, Converter {
 	}
 
 	@Override
-	public void initConverter(ContextValue ctx) throws ConverterError {
+	public void initConverter(ConverterConfig ctx) throws ConverterError {
 		try {
 			this.template = UriTemplateL1.of(ctx.getValues()[0]); 	//FIXME
 			
@@ -61,12 +61,20 @@ public class UriTemplate implements Reducer, Converter {
 	}
 
 	@Override
-	public Object forward(Object object) throws ConverterError {
-		return template.expand(object.toString());
+	public String forward(String object) throws ConverterError {
+		return template.expand(object);
 	}
 
 	@Override
-	public Object backward(Object object) throws ConverterError {
-		return template.extract(object.toString());
+	public String backward(String object) throws ConverterError {
+		
+		final String[] variables = template.extract(object);
+		
+		if (variables == null || variables.length == 0) {
+			return null;
+		}
+		
+		// return just the first variable
+		return variables[0];
 	}
 }

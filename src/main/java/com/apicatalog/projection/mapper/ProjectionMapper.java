@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apicatalog.projection.ObjectUtils;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.annotation.Conversion;
@@ -24,6 +25,7 @@ import com.apicatalog.projection.annotation.Reduction;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.annotation.Visibility;
+import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.mapper.mapping.ConversionMappingImpl;
 import com.apicatalog.projection.mapper.mapping.ProjectionMappingImpl;
 import com.apicatalog.projection.mapper.mapping.PropertyMappingImpl;
@@ -202,7 +204,7 @@ public class ProjectionMapper {
 		sourceMapping.setPropertyType(field.getType());
 		
 		// check if field exists and is accessible
-		if (!isFieldPresent(sourceMapping.getSourceClass(), sourceMapping.getPropertyName())) {
+		if (!ObjectUtils.hasPropery(sourceMapping.getSourceClass(), sourceMapping.getPropertyName())) {
 			logger.warn("Property {} is not accessible or does not exist in {} and is ignored.", field.getName(), sourceMapping.getSourceClass().getSimpleName());
 			return null;
 		}
@@ -339,13 +341,12 @@ public class ProjectionMapper {
 		}
 		
 		// check is source field does exist
-		if (!isFieldPresent(mapping.getSourceClass(), mapping.getPropertyName())) {
+		if (!ObjectUtils.hasPropery(mapping.getSourceClass(), mapping.getPropertyName())) {
 			logger.warn("Property {} is not accessible or does not exist in {} and is ignored.", mapping.getPropertyName(), mapping.getSourceClass().getCanonicalName());
 			return null;
 		}
 		
-		mapping.setPropertyType(getFieldType(mapping.getSourceClass(), mapping.getPropertyName()));
-		
+		mapping.setPropertyType(ObjectUtils.getPropertyType(mapping.getSourceClass(), mapping.getPropertyName()));
 
 		// set source object qualifier
 		if (StringUtils.isNotBlank(source.qualifier())) {
@@ -366,37 +367,27 @@ public class ProjectionMapper {
 		}
 
 		return Stream.of(conversions)
-				.map(c -> new ConversionMappingImpl(c.type(), c.value()))
+				.map(this::getConverterMapping)
 				.collect(Collectors.toList())
 				.toArray(new ConversionMapping[0])
 				;		
 	}
+	
+	ConversionMapping getConverterMapping(Conversion conversion) {
+		
+		//FIXME use ConverterFactory
+		ConverterMapping<?, ?> converter = new ConverterMapping<>();
+		converter.setConverterClass((Class)conversion.type());
+		//FIXME checks
+		converter.setSourceClass((Class) (((ParameterizedType) conversion.type().getGenericInterfaces()[0]).getActualTypeArguments()[0]));
+		converter.setTargetClass((Class)(((ParameterizedType) conversion.type().getGenericInterfaces()[0]).getActualTypeArguments()[1]));
+				
+		ConversionMapping mapping = new ConversionMappingImpl(converter, typeAdapters, conversion.value());
+		
+		return mapping;
+	}
 
 	ReductionMapping getReductionMapping(Reduction reduction) {
 		return new ReductionMappingImpl(reduction.type(), reduction.value());
-	}
-
-	static Class<?> getFieldType(Class<?> clazz, String name)  {
-		
-		try {
-			return clazz.getDeclaredField(name).getType();
-			
-		} catch (NoSuchFieldException e) {/* ignore */}
-		
-		return null;
-
-	}
-	
-	static boolean isFieldPresent(final Class<?> clazz, final String fieldName) {
-		try {
-			Field field = clazz.getDeclaredField(fieldName);
-
-			return  !Modifier.isStatic(field.getModifiers())
-					&& !Modifier.isTransient(field.getModifiers())
-					;
-			
-		} catch (NoSuchFieldException | SecurityException e) {/* ignore */}
-		
-		return false;
 	}
 }

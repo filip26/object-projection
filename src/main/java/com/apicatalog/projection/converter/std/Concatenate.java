@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.apicatalog.projection.converter.ContextValue;
+import com.apicatalog.projection.converter.ConverterConfig;
 import com.apicatalog.projection.converter.Reducer;
 import com.apicatalog.projection.converter.ReducerError;
 
@@ -15,7 +15,7 @@ public class Concatenate implements Reducer {
 	String suffix;
 	
 	@Override
-	public void initReducer(final ContextValue ctx) {
+	public void initReducer(final ConverterConfig ctx) {
 		this.suffix = Stream.of(ctx.getValues()).map(Object::toString).collect(Collectors.joining());		
 	}
 

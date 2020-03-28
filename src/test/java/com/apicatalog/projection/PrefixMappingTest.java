@@ -27,20 +27,20 @@ public class PrefixMappingTest {
     public void testComposition() throws ProjectionError, ConverterError {
     	
     	Object1 o1 = new Object1();
-    	o1.id = "of the new World";
+    	o1.id = "of the New World";
     	
     	PrefixTo projection = projections.compose(PrefixTo.class, o1);
     	
     	Assert.assertNotNull(projection);
     	
-    	Assert.assertEquals("At the beginning of the new World", projection.id);
+    	Assert.assertEquals("At the beginning of the New World", projection.id);
     }
     
     @Test
     public void testDecomposition() throws ProjectionError, ConverterError {
     	
     	PrefixTo projection = new PrefixTo();
-    	projection.id = "At the beginning of the new World";
+    	projection.id = "At the beginning of the New World";
     	
     	Object[] objects = projections.decompose(projection);
     	
@@ -51,6 +51,6 @@ public class PrefixMappingTest {
     	
     	Object1 o1 = (Object1)objects[0];
 
-    	Assert.assertEquals("of the new World", o1.id);
+    	Assert.assertEquals("of the New World", o1.id);
     }
 }

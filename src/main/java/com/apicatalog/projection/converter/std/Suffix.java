@@ -1,53 +1,45 @@
 package com.apicatalog.projection.converter.std;
 
-import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.apicatalog.projection.converter.ContextValue;
 import com.apicatalog.projection.converter.Converter;
+import com.apicatalog.projection.converter.ConverterConfig;
 
-public class Suffix implements Converter {
+public class Suffix implements Converter<String, String> {
 
-	String suffix;
+	String suffixString;
 	
 	@Override
-	public void initConverter(final ContextValue ctx) {
-		this.suffix = Stream.of(ctx.getValues()).map(Object::toString).collect(Collectors.joining());
+	public void initConverter(final ConverterConfig ctx) {
+		this.suffixString = Stream.of(ctx.getValues()).map(Object::toString).collect(Collectors.joining());
 	}
 	
 	@Override
-	public Object forward(Object object) {
+	public String forward(String object) {
 
-		StringBuilder builder = new StringBuilder();
-			//TODO use implicit conversion -> flatMap
-			if (object instanceof Collection) {
-				for (Object vi : (Collection<Object>)object) {
-					builder.append(vi.toString());
-				}
-			} else {
-			
-				builder.append(object.toString());
-			}
-		
-		if (StringUtils.isNotBlank(suffix)) {
-			builder.append(suffix);
+		if (StringUtils.isBlank(suffixString)) {
+			return object;
 		}
+		
+		StringBuilder builder = new StringBuilder();
+		builder.append(object);		
+		builder.append(suffixString);
 		
 		return builder.toString();
 	}
 
 	@Override
-	public Object backward(Object object) {
+	public String backward(String object) {
 
-		int lengthToCut = (suffix != null ? suffix.length() : 0);
-				
-		if (lengthToCut > 0) {
-			return object.toString().substring(0, object.toString().length() - lengthToCut);	//TODO use implicit conversion
+		if (StringUtils.isBlank(suffixString)) {
+			return object;
 		}
 		
-		return object;
+		int lengthToCut = suffixString.length();
+
+		return object.substring(0, object.length() - lengthToCut);
 	}
 }

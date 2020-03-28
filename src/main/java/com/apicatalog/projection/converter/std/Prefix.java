@@ -1,54 +1,46 @@
 package com.apicatalog.projection.converter.std;
 
-import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.apicatalog.projection.converter.ContextValue;
 import com.apicatalog.projection.converter.Converter;
+import com.apicatalog.projection.converter.ConverterConfig;
+import com.apicatalog.projection.converter.ConverterError;
 
-public class Prefix implements Converter {
+public class Prefix implements Converter<String, String> {
 
-	String prefix;
+	String prefixString;
 	
 	@Override
-	public void initConverter(final ContextValue ctx) {
-		this.prefix = Stream.of(ctx.getValues()).map(Object::toString).collect(Collectors.joining());
+	public void initConverter(final ConverterConfig ctx) {
+		this.prefixString = Stream.of(ctx.getValues()).map(Object::toString).collect(Collectors.joining());
 	}
-	
+
 	@Override
-	public Object forward(Object object) {
-
-		StringBuilder builder = new StringBuilder();
+	public String forward(String object) throws ConverterError {
 		
-		if (StringUtils.isNotBlank(prefix)) {
-			builder.append(prefix);
+		if (StringUtils.isBlank(prefixString)) {
+			return object;
 		}
-
-		//TODO use implicit conversion -> flatMap
-		if (object instanceof Collection) {
-			for (Object vi : (Collection<Object>)object) {
-				builder.append(vi.toString());
-			}
-		} else {
 		
-			builder.append(object.toString());
-		}
+		StringBuilder builder = new StringBuilder();		
+		builder.append(prefixString);
+		builder.append(object);
 				
 		return builder.toString();
 	}
 
 	@Override
-	public Object backward(Object object) {
-
-		int lengthToCut = (prefix != null ? prefix.length() : 0);
-				
-		if (lengthToCut > 0) {
-			return object.toString().substring(lengthToCut);	//TODO use implicit conversion
+	public String backward(String object) throws ConverterError {
+		
+		if (StringUtils.isBlank(prefixString)) {
+			return object;
 		}
 		
-		return object;
+		int lengthToCut = prefixString.length();
+		
+		return object.substring(lengthToCut);
 	}
 }

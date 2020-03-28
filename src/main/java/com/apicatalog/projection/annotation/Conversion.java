@@ -11,7 +11,7 @@ import com.apicatalog.projection.converter.Converter;
 @Target(ElementType.FIELD)
 public @interface Conversion {
 
-	Class<? extends Converter> type();
+	Class<? extends Converter<? extends Object, ? extends Object>> type();
 	String[] value() default {};
 	
 }

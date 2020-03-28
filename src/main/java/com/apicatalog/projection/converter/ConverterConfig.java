@@ -1,6 +1,6 @@
 package com.apicatalog.projection.converter;
 
-public class ContextValue {
+public class ConverterConfig {
 
 	String[] values;
 

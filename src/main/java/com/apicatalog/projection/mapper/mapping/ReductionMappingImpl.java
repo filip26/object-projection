@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ObjectUtils;
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.converter.ContextValue;
+import com.apicatalog.projection.converter.ConverterConfig;
 import com.apicatalog.projection.converter.Reducer;
 import com.apicatalog.projection.converter.ReducerError;
 import com.apicatalog.projection.mapping.ReductionMapping;
@@ -31,7 +31,7 @@ public class ReductionMappingImpl implements ReductionMapping {
 		
 		final Reducer reducer = ObjectUtils.newInstance(reducerClass);	//TODO re-use preconstructed instances
 
-		ContextValue ctx = new ContextValue();
+		ConverterConfig ctx = new ConverterConfig();
 		ctx.setValues(context);
 
 		try {
@@ -56,7 +56,7 @@ public class ReductionMappingImpl implements ReductionMapping {
 		
 		final Reducer reducer = ObjectUtils.newInstance(reducerClass);	//TODO re-use preconstructed instances
 
-		ContextValue ctx = new ContextValue();
+		ConverterConfig ctx = new ConverterConfig();
 		ctx.setValues(context);
 
 		try {
