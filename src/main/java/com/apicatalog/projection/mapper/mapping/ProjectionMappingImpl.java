@@ -71,7 +71,7 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 				if (value.isPresent()) {
 					logger.trace("  set {} to {}.{}: {}", value.get(), projectionClass.getSimpleName(), propertyMapping.getName(), propertyMapping.getTarget().getTargetClass().getSimpleName());
 					
-					ObjectUtils.setPropertyValue(projection, propertyMapping.getName(), adapters.convert(propertyMapping.getTarget().getTargetClass(), value.get()));
+					ObjectUtils.setPropertyValue(projection, propertyMapping.getName(), adapters.convert(propertyMapping.getTarget().getTargetClass(), propertyMapping.getTarget().getComponentClass(), value.get()));
 				}
 			}
 		}

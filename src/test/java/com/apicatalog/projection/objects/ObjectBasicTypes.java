@@ -17,4 +17,6 @@ public class ObjectBasicTypes {
 	public Float floatValue;
 	
 	public Double doubleValue;
+	
+	public String[] stringArray;
 }

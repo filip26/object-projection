@@ -1,13 +1,14 @@
 package com.apicatalog.projection.projections;
 
 import java.time.Instant;
+import java.util.Collection;
 
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 
 @Projection(ObjectBasicTypes.class)
-public class BasicTypesImplicitConversion {
+public class ImplicitConversionTo {
 
 	@Source("floatValue")
 	public Integer integerValue;
@@ -28,5 +29,8 @@ public class BasicTypesImplicitConversion {
 	
 	@Source("stringValue")
 	public Double doubleValue;
+	
+	@Source("stringArray")
+	public Collection<String> stringCollection;
 
 }

@@ -1,5 +1,7 @@
 package com.apicatalog.projection.adapter;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -43,9 +45,11 @@ public class TypeAdapters {
 		adapters.put(adapter.consumes(), adapter);
 		return this;
 	}
+	public Object convert(Class<?> targetClass, Object object) throws ProjectionError {
+		return convert(targetClass, null, object);
+	}
 	
-	@SuppressWarnings("unchecked")
-	public <T> T convert(Class<? extends T> targetClass, Object object) throws ProjectionError {
+	public Object convert(Class<?> targetClass, Class<?> componentClass, Object object) throws ProjectionError {
 		
 		if (object == null) {
 			return null;
@@ -53,12 +57,15 @@ public class TypeAdapters {
 		
 		// no conversion needed
 		if (targetClass.isInstance(object)) {
-			return (T)object;
+			return object;
 		}
 		
-		logger.debug("Convert {} to {}", object, targetClass);
+		logger.debug("Convert {} to {}", object, targetClass.getSimpleName());
 		
 		if (object.getClass().isArray()) {
+			if (componentClass != null) {
+				return convertArrayToCollection(targetClass, componentClass, (Object[])object);
+			}
 			return convertArray(targetClass, (Object[])object);
 		}
 
@@ -76,18 +83,29 @@ public class TypeAdapters {
 		}
 	}
 
-	public <T> T convertArray(Class<? extends T> targetClass, Object[] objects) throws ProjectionError {
-
-		logger.debug("Convert array of {} as array of {}", objects, targetClass);
+	Collection<Object> convertArrayToCollection(Class<?> targetClass, Class<?> componentClass, Object[] objects) throws ProjectionError {
+		logger.debug("Convert {} to {}<{}>", objects, targetClass.getSimpleName(), componentClass.getSimpleName());
 		
-//		final List<T> converted = new ArrayList<>(objects.length);
+		//TODO check target collection and choose
+		
+		final Collection<Object> converted = new ArrayList<>();
+		
+		for (Object object : objects) {
+			converted.add(convert(componentClass, object));
+		}
+
+		return converted;
+	}
+	
+	Object convertArray(Class<?> targetClass, Object[] objects) throws ProjectionError {
+
+		logger.debug("Convert {} to {}[]", objects, targetClass.getSimpleName());
+
 		final Object[] converted = (Object[])java.lang.reflect.Array.newInstance(targetClass, objects.length);
 		
 		for (int i=0; i < objects.length; i++) {
 			converted[i] = convert(targetClass, objects[i]);
 		}
-		
-		return (T)converted;
+		return converted;
 	}
-	
 }

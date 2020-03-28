@@ -267,11 +267,11 @@ public class ProjectionMapper {
 
 		// a collection?
 		if (Collection.class.isAssignableFrom(field.getType())) {
-			targetMapping.setItemClass((Class<?>)((ParameterizedType)field.getGenericType()).getActualTypeArguments()[0]);
+			targetMapping.setComponentClass((Class<?>)((ParameterizedType)field.getGenericType()).getActualTypeArguments()[0]);
 			
 			
 			
-			targetMapping.setReference(targetMapping.getItemClass().isAnnotationPresent(Projection.class));
+			targetMapping.setReference(targetMapping.getComponentClass().isAnnotationPresent(Projection.class));
 			
 		} else {
 			targetMapping.setReference(targetMapping.getTargetClass().isAnnotationPresent(Projection.class));

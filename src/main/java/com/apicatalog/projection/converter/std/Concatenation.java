@@ -4,7 +4,7 @@ import com.apicatalog.projection.converter.ConverterConfig;
 import com.apicatalog.projection.converter.Reducer;
 import com.apicatalog.projection.converter.ReducerError;
 
-public class Concatenate implements Reducer<String, String> {
+public class Concatenation implements Reducer<String, String> {
 
 	@Override
 	public void initReducer(final ConverterConfig ctx) {

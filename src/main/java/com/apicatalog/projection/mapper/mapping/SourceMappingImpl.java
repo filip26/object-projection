@@ -28,6 +28,7 @@ public class SourceMappingImpl implements SourceMapping {
 	String propertyName;
 	
 	Class<?> propertyClass;
+	Class<?> componentClass;
 	
 	String qualifier;
 	
@@ -158,7 +159,7 @@ public class SourceMappingImpl implements SourceMapping {
 			sources.addOrReplace(source.get());	 //TODO deal with qualifier
 		}
 		
-		ObjectUtils.setPropertyValue(source.get(), propertyName, adapters.convert(propertyClass, sourceValue));	
+		ObjectUtils.setPropertyValue(source.get(), propertyName, adapters.convert(propertyClass, componentClass, sourceValue));	
 	}
 	
 	public Class<?> getSourceClass() {
@@ -207,5 +208,13 @@ public class SourceMappingImpl implements SourceMapping {
 
 	public void setPropertyType(Class<?> propertyClass) {
 		this.propertyClass = propertyClass;
+	}
+	
+	public void setComponentClass(Class<?> componentClass) {
+		this.componentClass = componentClass;
+	}
+	
+	public Class<?> getComponentClass() {
+		return componentClass;
 	}
 }

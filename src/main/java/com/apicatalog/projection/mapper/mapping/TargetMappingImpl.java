@@ -24,7 +24,7 @@ public class TargetMappingImpl implements TargetMapping {
 	final TypeAdapters typeAdapters;
 	
 	Class<?> targetClass;
-	Class<?> itemClass;
+	Class<?> componentClass;
 
 	boolean reference;
 	
@@ -54,7 +54,7 @@ public class TargetMappingImpl implements TargetMapping {
 				
 				logger.trace("  collection={}", untyppedCollection.getClass().getCanonicalName());
 				
-				Collection<?> sourceCollection = typeAdapters.convert(ArrayList.class, object);
+				Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, componentClass, object);
 				
 				final Collection<Object> collection = new ArrayList<>();
 
@@ -109,7 +109,7 @@ public class TargetMappingImpl implements TargetMapping {
 								
 				final Collection<Object> collection = new ArrayList<>();
 
-				Collection<?> sourceCollection = typeAdapters.convert(ArrayList.class, object);
+				Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, componentClass, object);
 				
 				// extract objects from each projection in the collection
 				for (final Object item : sourceCollection) {
@@ -146,18 +146,18 @@ public class TargetMappingImpl implements TargetMapping {
 		this.targetClass = targetClass;
 	}
 
-	public void setItemClass(Class<?> itemClass) {
-		this.itemClass = itemClass;
+	public void setComponentClass(Class<?> itemClass) {
+		this.componentClass = itemClass;
 	}
 	
 	@Override
-	public Class<?> getItemClass() {
-		return itemClass;
+	public Class<?> getComponentClass() {
+		return componentClass;
 	}
 	
 	@Override
 	public boolean isCollection() {
-		return itemClass != null;
+		return componentClass != null;
 	}
 	
 	public boolean isReference() {
@@ -166,7 +166,7 @@ public class TargetMappingImpl implements TargetMapping {
 
 	@SuppressWarnings("unchecked")
 	public ProjectionMapping<Object> getReference(boolean collection) {
-		return factory.get(collection ? (Class<Object>)itemClass : (Class<Object>)targetClass);
+		return factory.get(collection ? (Class<Object>)componentClass : (Class<Object>)targetClass);
 	}
 
 	public void setReference(boolean reference) {

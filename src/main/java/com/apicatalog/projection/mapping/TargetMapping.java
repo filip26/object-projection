@@ -7,7 +7,7 @@ import com.apicatalog.projection.objects.Path;
 public interface TargetMapping {
 
 	Class<?> getTargetClass();
-	Class<?> getItemClass();
+	Class<?> getComponentClass();
 	
 	boolean isCollection();
 	boolean isReference();
