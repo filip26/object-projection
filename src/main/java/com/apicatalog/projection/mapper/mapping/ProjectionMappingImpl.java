@@ -44,7 +44,7 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 
 		// check for cycles
 		if (path.contains(projectionClass)) {
-			logger.debug("  ignored because projection {} is in processing already", projectionClass.getCanonicalName());
+			logger.debug("  ignored because projection {} is in processing already", projectionClass.getSimpleName());
 			return null;
 		}
 		
@@ -63,12 +63,16 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 		
 		for (final PropertyMapping propertyMapping : properties) {
 
-			Optional<Object> value = Optional.ofNullable(propertyMapping.compose(path, sources));
+			// limit property visibility
+			if (propertyMapping.isVisible(path.length() - 1)) {
 			
-			if (value.isPresent()) {
-				logger.trace("  set {} to {}.{}: {}", value.get(), projectionClass.getSimpleName(), propertyMapping.getName(), propertyMapping.getTarget().getTargetClass().getSimpleName());
+				Optional<Object> value = Optional.ofNullable(propertyMapping.compose(path, sources));
 				
-				ObjectUtils.setPropertyValue(projection, propertyMapping.getName(), adapters.convert(propertyMapping.getTarget().getTargetClass(), value.get()));
+				if (value.isPresent()) {
+					logger.trace("  set {} to {}.{}: {}", value.get(), projectionClass.getSimpleName(), propertyMapping.getName(), propertyMapping.getTarget().getTargetClass().getSimpleName());
+					
+					ObjectUtils.setPropertyValue(projection, propertyMapping.getName(), adapters.convert(propertyMapping.getTarget().getTargetClass(), value.get()));
+				}
 			}
 		}
 		

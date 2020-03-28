@@ -1,5 +1,7 @@
 package com.apicatalog.projection.mapper.mapping;
 
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +21,8 @@ public class PropertyMappingImpl implements PropertyMapping {
 	SourceMapping source;
 		
 	TargetMapping target;
+	
+	Set<Integer> visibleLevels;
 
 	@Override
 	public Object compose(Path path, ContextObjects context) throws ProjectionError {
@@ -78,5 +82,14 @@ public class PropertyMappingImpl implements PropertyMapping {
 
 	public void setTarget(TargetMapping target) {
 		this.target = target;
+	}
+	
+	@Override
+	public boolean isVisible(int level) {
+		return visibleLevels == null || visibleLevels.isEmpty() || visibleLevels.contains(level);
+	}
+
+	public void setVisible(final Set<Integer> levels) {
+		this.visibleLevels = levels;
 	}
 }

@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +23,7 @@ import com.apicatalog.projection.annotation.Provided;
 import com.apicatalog.projection.annotation.Reduction;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
+import com.apicatalog.projection.annotation.Visibility;
 import com.apicatalog.projection.mapper.mapping.ConversionMappingImpl;
 import com.apicatalog.projection.mapper.mapping.ProjectionMappingImpl;
 import com.apicatalog.projection.mapper.mapping.PropertyMappingImpl;
@@ -135,7 +137,14 @@ public class ProjectionMapper {
 		
 		// set property target mapping
 		propertyMapping.setTarget(getTargetMapping(field));
-		
+
+		if (field.isAnnotationPresent(Visibility.class)) {
+			propertyMapping.setVisible(
+					IntStream.of(field.getAnnotation(Visibility.class).level())
+							.boxed()
+							.collect(Collectors.toSet()));
+		}
+
 		return propertyMapping;
 	}
 	
@@ -164,6 +173,13 @@ public class ProjectionMapper {
 
 		// set property target mapping
 		propertyMapping.setTarget(getTargetMapping(field));
+		
+		if (field.isAnnotationPresent(Visibility.class)) {
+			propertyMapping.setVisible(
+					IntStream.of(field.getAnnotation(Visibility.class).level())
+							.boxed()
+							.collect(Collectors.toSet()));
+		}
 
 		return propertyMapping;
 	}
@@ -198,7 +214,14 @@ public class ProjectionMapper {
 		propertyMapping.setSource(sourceMapping);
 		// set property target mapping 
 		propertyMapping.setTarget(getTargetMapping(field));
-		
+
+		if (field.isAnnotationPresent(Visibility.class)) {
+			propertyMapping.setVisible(
+					IntStream.of(field.getAnnotation(Visibility.class).level())
+							.boxed()
+							.collect(Collectors.toSet()));
+		}
+
 		return propertyMapping;
 	}
 
@@ -223,7 +246,14 @@ public class ProjectionMapper {
 		propertyMapping.setSource(sourceMapping);		
 		// set property target mapping
 		propertyMapping.setTarget(getTargetMapping(field));
-		
+
+		if (field.isAnnotationPresent(Visibility.class)) {
+			propertyMapping.setVisible(
+					IntStream.of(field.getAnnotation(Visibility.class).level())
+							.boxed()
+							.collect(Collectors.toSet()));
+		}
+
 		return propertyMapping;
 	}
 	
