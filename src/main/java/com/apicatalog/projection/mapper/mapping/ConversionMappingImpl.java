@@ -16,12 +16,12 @@ public class ConversionMappingImpl implements ConversionMapping {
 
 	final Logger logger = LoggerFactory.getLogger(ConversionMappingImpl.class);
 
-	final ConverterMapping mapping;
+	final ConverterMapping converterMapping;
 	final TypeAdapters typeAdapters;
 	final String[] config;
 
 	public ConversionMappingImpl(ConverterMapping mapping, TypeAdapters typeAdapters, String[] config) {
-		this.mapping = mapping;
+		this.converterMapping = mapping;
 		this.typeAdapters = typeAdapters;
 		this.config = config;
 	}
@@ -29,9 +29,9 @@ public class ConversionMappingImpl implements ConversionMapping {
 	@Override
 	public Object forward(Object value) throws ProjectionError {
 		
-		logger.debug("{}.forward({}, {})", mapping.getConverterClass().getSimpleName(), value, config);
+		logger.debug("{}.forward({}, {})", converterMapping.getConverterClass().getSimpleName(), value, config);
 		
-		final Converter<Object, Object> converter = (Converter<Object, Object>) ObjectUtils.newInstance(mapping.getConverterClass());	//TODO re-use preconstructed instances
+		final Converter<Object, Object> converter = (Converter<Object, Object>) ObjectUtils.newInstance(converterMapping.getConverterClass());	//TODO re-use preconstructed instances
 
 		ConverterConfig ctx = new ConverterConfig();
 		ctx.setValues(config);
@@ -39,7 +39,7 @@ public class ConversionMappingImpl implements ConversionMapping {
 		try {
 			converter.initConverter(ctx);
 				
-			final Object result = converter.forward(typeAdapters.convert(mapping.getSourceClass(), value));
+			final Object result = converter.forward(typeAdapters.convert(converterMapping.getSourceClass(), value));
 			
 			logger.trace("  result={}", result);
 			
@@ -53,9 +53,9 @@ public class ConversionMappingImpl implements ConversionMapping {
 	@Override
 	public Object backward(Object value) throws ProjectionError {
 
-		logger.debug("{}.backward({}, {})", mapping.getConverterClass().getSimpleName(), value, config);
+		logger.debug("{}.backward({}, {})", converterMapping.getConverterClass().getSimpleName(), value, config);
 		
-		final Converter<Object, Object> converter = (Converter<Object, Object>) ObjectUtils.newInstance(mapping.getConverterClass());	//TODO re-use preconstructed instances
+		final Converter<Object, Object> converter = (Converter<Object, Object>) ObjectUtils.newInstance(converterMapping.getConverterClass());	//TODO re-use preconstructed instances
 
 		ConverterConfig ctx = new ConverterConfig();
 		ctx.setValues(config);
@@ -63,7 +63,7 @@ public class ConversionMappingImpl implements ConversionMapping {
 		try {
 			converter.initConverter(ctx);
 				
-			final Object result = converter.backward(typeAdapters.convert(mapping.getTargetClass(), value));
+			final Object result = converter.backward(typeAdapters.convert(converterMapping.getTargetClass(), value));
 			
 			logger.trace("  result={}", result);
 			
@@ -73,14 +73,10 @@ public class ConversionMappingImpl implements ConversionMapping {
 			throw new ProjectionError(e);
 		}
 	}
-
+	
 	@Override
-	public Class<?> getSourceClass() {
-		return mapping.getSourceClass();
+	public ConverterMapping getConverterMapping() {
+		return converterMapping;
 	}
-
-	@Override
-	public Class<?> getTargetClass() {
-		return mapping.getTargetClass();
-	}	
+	
 }

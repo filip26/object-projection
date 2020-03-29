@@ -41,7 +41,7 @@ public class ReductionMappingImpl implements ReductionMapping {
 
 		try {
 			reducer.initReducer(ctx);
-				System.out.println(">>>> " + reducerMapping.getSourceClass() + ", " + objects);
+
 			final Object result = reducer.reduce((Object[])typeAdapters.convert(reducerMapping.getSourceClass(), objects));
 			
 			logger.trace("  result={}", result);
@@ -76,5 +76,10 @@ public class ReductionMappingImpl implements ReductionMapping {
 		} catch (ReducerError e) {
 			throw new ProjectionError(e);
 		}			
+	}
+	
+	@Override
+	public ReducerMapping getReducerMapping() {
+		return reducerMapping;
 	}
 }

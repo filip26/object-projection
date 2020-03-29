@@ -1,6 +1,7 @@
 package com.apicatalog.projection.objects;
 
 import java.time.Instant;
+import java.util.Collection;
 
 public class ObjectBasicTypes {
 
@@ -19,4 +20,6 @@ public class ObjectBasicTypes {
 	public Double doubleValue;
 	
 	public String[] stringArray;
+	
+	public Collection<String> stringCollection;
 }

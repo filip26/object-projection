@@ -60,8 +60,9 @@ public class PropertyMappingImpl implements PropertyMapping {
 		return name;
 	}
 	
-	public void setName(String name) {
+	public PropertyMappingImpl setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	@Override
@@ -69,8 +70,9 @@ public class PropertyMappingImpl implements PropertyMapping {
 		return source;
 	}
 
-	public void setSource(SourceMapping source) {
+	public PropertyMappingImpl setSource(SourceMapping source) {
 		this.source = source;
+		return this;
 	}
 
 	@Override

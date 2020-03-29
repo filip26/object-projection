@@ -4,25 +4,25 @@ import java.util.Objects;
 
 import com.apicatalog.projection.NamedObject;
 
-public class ContextObjectKey {
+public class ObjectKey {
 
 	final Class<?> clazz;
 	final String qualifier;
 	
-	ContextObjectKey(Class<?> clazz, String qualifier) {
+	ObjectKey(Class<?> clazz, String qualifier) {
 		this.clazz = clazz;
 		this.qualifier = qualifier;
 	}
 	
-	public static ContextObjectKey of(Class<?> clazz, String qualifier) {
-		return new ContextObjectKey(clazz, qualifier == null ? "" : qualifier);
+	public static ObjectKey of(Class<?> clazz, String qualifier) {
+		return new ObjectKey(clazz, qualifier == null ? "" : qualifier);
 	}
 
-	public static ContextObjectKey of(Object object) {
+	public static ObjectKey of(Object object) {
 		if (object instanceof NamedObject) {
 			NamedObject<?> namedObject = (NamedObject<?>)object;
 			
-			return new ContextObjectKey(namedObject.getObject().getClass(), namedObject.getName()) ;	
+			return new ObjectKey(namedObject.getObject().getClass(), namedObject.getName()) ;	
 		}
 		return of(object.getClass(), null);
 	}
@@ -44,7 +44,7 @@ public class ContextObjectKey {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		ContextObjectKey other = (ContextObjectKey) obj;
+		ObjectKey other = (ObjectKey) obj;
 		return Objects.equals(clazz, other.clazz) && Objects.equals(qualifier, other.qualifier);
 	}	
 }

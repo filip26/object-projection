@@ -1,5 +1,6 @@
 package com.apicatalog.projection.adapter;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -48,6 +49,7 @@ public class TypeAdapters {
 		adapters.put(adapter.consumes(), adapter);
 		return this;
 	}
+	
 	public Object convert(Class<?> targetClass, Object object) throws ProjectionError {
 		return convert(targetClass, null, object);
 	}
@@ -67,8 +69,9 @@ public class TypeAdapters {
 		
 		// collection to ?
 		if (Collection.class.isInstance(object)) {
+			
 			// collection to collection
-			if (componentClass != null) {
+			if (componentClass != null) {				
 				return collectionToCollection(targetClass, componentClass, (Collection<Object>)object);
 			}
 			// collection to array
@@ -80,7 +83,7 @@ public class TypeAdapters {
 		// array to ?
 		if (object.getClass().isArray()) {
 			// array to collection
-			if (componentClass != null) {
+			if (componentClass != null) {				
 				return arrayToCollection(targetClass, componentClass, (Object[])object);
 			}
 			// array to array

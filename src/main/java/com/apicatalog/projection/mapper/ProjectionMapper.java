@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -196,29 +197,32 @@ public class ProjectionMapper {
 		final SourceMappingImpl sourceMapping = new SourceMappingImpl(typeAdapters);
 		
 		// set default source object class
-		sourceMapping.setSourceClass(defaultSourceClass);
+		sourceMapping.setSourceObjectClass(defaultSourceClass);
 
 		// set default source object property name -> use the same name
 		sourceMapping.setPropertyName(field.getName());
 		
-		sourceMapping.setPropertyType(field.getType());
+		sourceMapping.setSourceClass(field.getType());
+		if (Collection.class.isAssignableFrom(field.getType())) {
+			sourceMapping.setSourceComponentClass((Class<?>)((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]);
+		}
 		
 		sourceMapping.setTargetClass(field.getType());
-		sourceMapping.setTargetComponentClass(field.getType().getComponentType());
+		
+		if (Collection.class.isAssignableFrom(field.getType())) {
+			sourceMapping.setTargetComponentClass((Class<?>)((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]);
+		}
 		
 		// check if field exists and is accessible
-		if (!ObjectUtils.hasPropery(sourceMapping.getSourceClass(), sourceMapping.getPropertyName())) {
-			logger.warn("Property {} is not accessible or does not exist in {} and is ignored.", field.getName(), sourceMapping.getSourceClass().getSimpleName());
+		if (!ObjectUtils.hasPropery(sourceMapping.getSourceObjectClass(), sourceMapping.getPropertyName())) {
+			logger.warn("Property {} is not accessible or does not exist in {} and is ignored.", field.getName(), sourceMapping.getSourceObjectClass().getSimpleName());
 			return null;
 		}
 		
-		final PropertyMappingImpl propertyMapping = new PropertyMappingImpl();
-		// set projection property name
-		propertyMapping.setName(field.getName());
-		// set projection property value sources
-		propertyMapping.setSource(sourceMapping);
-
-		return propertyMapping;
+		return (new PropertyMappingImpl())
+						.setName(field.getName())		// set projection property name
+						.setSource(sourceMapping)		// set projection property value sources
+						;
 	}
 
 	PropertyMappingImpl getProvidedMapping(Field field) {
@@ -234,18 +238,17 @@ public class ProjectionMapper {
 		sourceMapping.setReference(field.getType().isAnnotationPresent(Projection.class));
 
 		sourceMapping.setTargetClass(field.getType());
-		sourceMapping.setTargetComponentClass(field.getType().getComponentType());
-
+		
+		if (Collection.class.isAssignableFrom(field.getType())) {
+			sourceMapping.setTargetComponentClass((Class<?>)((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]);
+		}
 		
 		sourceMapping.setQualifier(provided.qualifier());
 		
-		final PropertyMappingImpl propertyMapping = new PropertyMappingImpl();
-		// set projection property name		
-		propertyMapping.setName(field.getName());
-		// set projection property value sources
-		propertyMapping.setSource(sourceMapping);		
-
-		return propertyMapping;
+		return (new PropertyMappingImpl())
+				.setName(field.getName())		// set projection property name
+				.setSource(sourceMapping)		// set projection property value sources
+				;
 	}
 	
 	TargetMapping getTargetMapping(Field field, SourceMapping sourceMapping) {
@@ -255,7 +258,7 @@ public class ProjectionMapper {
 
 		// a collection?
 		if (Collection.class.isAssignableFrom(field.getType())) {
-			targetMapping.setComponentClass((Class<?>)((ParameterizedType)field.getGenericType()).getActualTypeArguments()[0]);
+			targetMapping.setTargetComponentClass((Class<?>)((ParameterizedType)field.getGenericType()).getActualTypeArguments()[0]);
 			targetMapping.setReference(targetMapping.getTargetComponentClass().isAnnotationPresent(Projection.class));
 			
 		} else {
@@ -310,14 +313,14 @@ public class ProjectionMapper {
 		final SourceMappingImpl mapping = new SourceMappingImpl(typeAdapters);
 		
 		// set default source object class
-		Optional.ofNullable(defaultSourceClass).ifPresent(mapping::setSourceClass);
+		Optional.ofNullable(defaultSourceClass).ifPresent(mapping::setSourceObjectClass);
 		
 		// override source property class
 		if (!Class.class.equals(source.type())) {
-			mapping.setSourceClass(source.type());
+			mapping.setSourceObjectClass(source.type());
 		}
 		
-		if (mapping.getSourceClass() == null) {
+		if (mapping.getSourceObjectClass() == null) {
 			logger.warn("Source class is missing. Property {} is ignored.", field.getName());
 			return null;
 		}
@@ -329,15 +332,21 @@ public class ProjectionMapper {
 		if (StringUtils.isNotBlank(source.value())) {
 			mapping.setPropertyName(source.value());
 		}
-		
+
+		Field sourceField = ObjectUtils.getProperty(mapping.getSourceObjectClass(), mapping.getPropertyName());
+
 		// check is source field does exist
-		if (!ObjectUtils.hasPropery(mapping.getSourceClass(), mapping.getPropertyName())) {
-			logger.warn("Property {} is not accessible or does not exist in {} and is ignored.", mapping.getPropertyName(), mapping.getSourceClass().getCanonicalName());
+		if (sourceField == null) {
+			logger.warn("Property {} is not accessible or does not exist in {} and is ignored.", mapping.getPropertyName(), mapping.getSourceObjectClass().getCanonicalName());
 			return null;
 		}
+				
+		mapping.setSourceClass(sourceField.getType());
 		
-		mapping.setPropertyType(ObjectUtils.getPropertyType(mapping.getSourceClass(), mapping.getPropertyName()));
-
+		if (Collection.class.isAssignableFrom(sourceField.getType())) {
+			mapping.setSourceComponentClass((Class<?>)((ParameterizedType) sourceField.getGenericType()).getActualTypeArguments()[0]);
+		}
+		
 		// set source object qualifier
 		if (StringUtils.isNotBlank(source.qualifier())) {
 			mapping.setQualifier(source.qualifier());
@@ -347,30 +356,26 @@ public class ProjectionMapper {
 		// set optional 
 		mapping.setOptional(source.optional());
 
-		mapping.setTargetClass(getLastTarget(mapping));
-//		mapping.setTargetComponentClass(field.getType().getComponentType());
-
+		setTargetClass(mapping);
 		
 		return mapping;
 	}
 	
-	Class<?> getLastTarget(SourceMappingImpl sourceMapping) {
+	void setTargetClass(SourceMappingImpl sourceMapping) {
 
-		Class<?> targetClazz = sourceMapping.getPropertyClass();
+		sourceMapping.setTargetClass(sourceMapping.getSourceClass());
+		sourceMapping.setTargetComponentClass(sourceMapping.getSourceComponentClass());
 		
-		if (sourceMapping.getConversions() != null && sourceMapping.getConversions().length > 0) {
+		if (sourceMapping.getConversions() != null) {
 			
-			targetClazz = Stream.of(sourceMapping.getConversions())
-					
-								.reduce((first, second) -> second)
-					.map(ConversionMapping::getTargetClass)			
-//								.orElseGet(() -> (Class)targetClazz)
-								.orElse((Class)targetClazz)
-								;
-			
+			Stream.of(sourceMapping.getConversions())
+					.reduce((first, second) -> second)
+					.map(ConversionMapping::getConverterMapping)
+					.ifPresent(m -> { 
+								sourceMapping.setTargetClass(m.getSourceClass());
+								sourceMapping.setTargetComponentClass(m.getSourceComponentClass());
+								});
 		}
-		
-		return targetClazz;
 	}
 	
 	ConversionMapping[] getConversionMapping(Conversion[] conversions) {
@@ -386,15 +391,45 @@ public class ProjectionMapper {
 				;		
 	}
 	
-	ConversionMapping getConverterMapping(Conversion conversion) {
+	ConversionMapping getConverterMapping(final Conversion conversion) {
 		
 		//FIXME use ConverterFactory
 		ConverterMapping converter = new ConverterMapping();
 		converter.setConverterClass(conversion.type());
 		
-		//FIXME checks
-		converter.setSourceClass((Class<?>)(((ParameterizedType) conversion.type().getGenericInterfaces()[0]).getActualTypeArguments()[0]));
-		converter.setTargetClass((Class<?>)(((ParameterizedType) conversion.type().getGenericInterfaces()[0]).getActualTypeArguments()[1]));
+		
+		Type sourceType = ((ParameterizedType) conversion.type().getGenericInterfaces()[0]).getActualTypeArguments()[0];
+		
+		Class<?> sourceClass = null;
+		Class<?> sourceComponentClass = null;
+		
+		if (ParameterizedType.class.isInstance(sourceType)) {
+			sourceClass = (Class<?>)((ParameterizedType)sourceType).getRawType();
+			sourceComponentClass = (Class<?>)((ParameterizedType)sourceType).getActualTypeArguments()[0];
+			
+		} else {
+			sourceClass = (Class<?>) sourceType;
+		}
+		
+
+		converter.setSourceClass(sourceClass);
+		converter.setSourceComponentClass(sourceComponentClass);
+
+		Type targetType = ((ParameterizedType) conversion.type().getGenericInterfaces()[0]).getActualTypeArguments()[1];
+		
+		Class<?> targetClass = null;
+		Class<?> targetComponentClass = null;
+		
+		if (ParameterizedType.class.isInstance(targetType)) {
+			targetClass = (Class<?>)((ParameterizedType)targetType).getRawType();
+			targetComponentClass = (Class<?>)((ParameterizedType)targetType).getActualTypeArguments()[0];
+			
+		} else {
+			targetClass = (Class<?>) targetType;
+		}
+
+		converter.setTargetClass(targetClass);
+		converter.setTargetComponentClass(targetComponentClass);
 		
 		return new ConversionMappingImpl(converter, typeAdapters, conversion.value());
 	}

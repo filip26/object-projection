@@ -26,7 +26,7 @@ public class TestProjectionAF {
 			}
 			)
 	public String modified2xString;
-
+	
 	public String nodirectmappingtosourceproperty;
 	
 }

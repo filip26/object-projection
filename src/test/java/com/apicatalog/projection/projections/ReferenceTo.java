@@ -5,7 +5,7 @@ import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.objects.ObjectReference;
 
 @Projection(ObjectReference.class)
-public class ContainsReferencedProjection {
+public class ReferenceTo {
 
 	@Source(value = "objectA")
 	public TwoSourceComposite ref;

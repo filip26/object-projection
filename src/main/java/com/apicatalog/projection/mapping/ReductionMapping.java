@@ -8,4 +8,5 @@ public interface ReductionMapping {
 	
 	Object[] expand(Object object) throws ProjectionError;
 
+	ReducerMapping getReducerMapping();
 }

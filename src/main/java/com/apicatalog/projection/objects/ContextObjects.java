@@ -12,9 +12,9 @@ public class ContextObjects {
 
 	final Logger logger = LoggerFactory.getLogger(ContextObjects.class);
 	
-	final Map<ContextObjectKey, Object> index;
+	final Map<ObjectKey, Object> index;
 	
-	protected ContextObjects(Map<ContextObjectKey, Object> index) {
+	protected ContextObjects(Map<ObjectKey, Object> index) {
 		this.index = index;
 	}
 	
@@ -26,13 +26,13 @@ public class ContextObjects {
 		return new ContextObjects(Stream
 							.of(objects)
 							.collect(Collectors.toMap(
-										ContextObjectKey::of,
+										ObjectKey::of,
 										o -> o
 									)));		
 	}
 	
 	public Object get(Class<?> clazz, String name) {
-		return index.get(ContextObjectKey.of(clazz, name));
+		return index.get(ObjectKey.of(clazz, name));
 	}
 
 	public Object[] getValues() {
@@ -40,6 +40,6 @@ public class ContextObjects {
 	}
 	
 	public void addOrReplace(Object object) {
-		index.put(ContextObjectKey.of(object), object);
+		index.put(ObjectKey.of(object), object);
 	}
 }

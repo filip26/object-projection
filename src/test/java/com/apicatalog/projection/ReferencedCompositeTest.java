@@ -9,7 +9,7 @@ import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 import com.apicatalog.projection.objects.ObjectReference;
 import com.apicatalog.projection.projections.BasicPropertyNameOverride;
-import com.apicatalog.projection.projections.ContainsReferencedProjection;
+import com.apicatalog.projection.projections.ReferenceTo;
 import com.apicatalog.projection.projections.TwoSourceComposite;
 
 public class ReferencedCompositeTest {
@@ -22,7 +22,7 @@ public class ReferencedCompositeTest {
 		projections = new ProjectionFactory();
 		mapper = new ProjectionMapper(projections);
 		
-		projections.add(mapper.getMapping(ContainsReferencedProjection.class));
+		projections.add(mapper.getMapping(ReferenceTo.class));
 		projections.add(mapper.getMapping(TwoSourceComposite.class));
 		projections.add(mapper.getMapping(BasicPropertyNameOverride.class));
 	}	
@@ -40,7 +40,7 @@ public class ReferencedCompositeTest {
     	oaa.stringValue = "inherit me";
     	oaa.objectA = oa;
 
-    	ContainsReferencedProjection pa = projections.compose(ContainsReferencedProjection.class, oaa, oa2);
+    	ReferenceTo pa = projections.compose(ReferenceTo.class, oaa, oa2);
     	
     	Assert.assertNotNull(pa);
     	Assert.assertNotNull(pa.ref);
@@ -59,7 +59,7 @@ public class ReferencedCompositeTest {
     	pa.source1 = 123456l;
     	pa.source2 = "source 2 value";
 
-    	ContainsReferencedProjection paa = new ContainsReferencedProjection();
+    	ReferenceTo paa = new ReferenceTo();
     	paa.ref = pa;
 
     	Object[] oo = projections.decompose(paa);

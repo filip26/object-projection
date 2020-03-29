@@ -36,6 +36,7 @@ public class ImplicitConversionTest {
     	object.stringValue = "0.103";
     	object.booleanValue = true;
     	object.stringArray = new String[] { "item 1", "item 2", "item 3" };
+    	object.stringCollection = Arrays.asList("10", "20");
     	
     	ImplicitConversionTo projection = projections.compose(ImplicitConversionTo.class, object);
     	
@@ -56,6 +57,12 @@ public class ImplicitConversionTest {
     	Assert.assertEquals("item 1", it.next());
     	Assert.assertEquals("item 2", it.next());
     	Assert.assertEquals("item 3", it.next());
+    	
+    	Assert.assertNotNull(projection.longArray);
+    	
+    	Assert.assertEquals(2, projection.longArray.length);
+    	Assert.assertEquals(Long.valueOf(10l), projection.longArray[0]);
+    	Assert.assertEquals(Long.valueOf(20l), projection.longArray[1]);
     }
     
     @Test

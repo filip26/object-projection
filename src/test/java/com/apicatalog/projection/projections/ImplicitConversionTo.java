@@ -33,4 +33,7 @@ public class ImplicitConversionTo {
 	@Source("stringArray")
 	public Collection<String> stringCollection;
 
+	@Source("stringCollection")
+	public Long[] longArray;
+	
 }

@@ -82,4 +82,15 @@ public class ObjectUtils {
 		
 		return false;
 	}
+
+	public static Field getProperty(Class<?> clazz, String property) {
+		
+		try {
+			return clazz.getDeclaredField(property);
+			
+		} catch (NoSuchFieldException e) {/* ignore */}
+		
+		return null;
+
+	}
 }

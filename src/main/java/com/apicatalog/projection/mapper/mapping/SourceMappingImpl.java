@@ -22,7 +22,7 @@ public class SourceMappingImpl implements SourceMapping {
 
 	final TypeAdapters adapters;
 	
-	Class<?> sourceClass;
+	Class<?> sourceObjectClass;
 	
 	String propertyName;
 	
@@ -47,14 +47,14 @@ public class SourceMappingImpl implements SourceMapping {
 		
 		final Optional<Object> source = 
 				Optional.ofNullable(
-					sources.get(sourceClass, qualifier)
+					sources.get(sourceObjectClass, qualifier)
 				);
 			
 		if (source.isEmpty()) {
 			if (Boolean.TRUE.equals(optional)) {
 				return null;
 			}
-			throw new ProjectionError("Source instance of " + sourceClass.getCanonicalName() + ", qualifier=" + qualifier + ",  is not present.");
+			throw new ProjectionError("Source instance of " + sourceObjectClass.getCanonicalName() + ", qualifier=" + qualifier + ",  is not present.");
 		}
 			
 		Object value = ObjectUtils.getPropertyValue(source.get(), propertyName);
@@ -71,7 +71,7 @@ public class SourceMappingImpl implements SourceMapping {
 
 	@Override
 	public void decompose(Path path, Object object, ContextObjects sources) throws ProjectionError {
-		logger.debug("Decompose {}, source={}, qualifier={}, optional={}", object, sourceClass.getSimpleName(), qualifier, optional);
+		logger.debug("Decompose {}, source={}, qualifier={}, optional={}", object, sourceObjectClass.getSimpleName(), qualifier, optional);
 
 		Optional<Object> value = Optional.ofNullable(object);
 		
@@ -106,11 +106,11 @@ public class SourceMappingImpl implements SourceMapping {
 		
 		Optional<Object> source = 
 				Optional.ofNullable(
-					sources.get(sourceClass, qualifier)
+					sources.get(sourceObjectClass, qualifier)
 				);
 		
 		if (source.isEmpty()) {
-			source = Optional.of(ObjectUtils.newInstance(sourceClass));
+			source = Optional.of(ObjectUtils.newInstance(sourceObjectClass));
 			sources.addOrReplace(source.get());	 //TODO deal with qualifier
 		}
 		
@@ -121,12 +121,12 @@ public class SourceMappingImpl implements SourceMapping {
 						);	
 	}
 	
-	public Class<?> getSourceClass() {
-		return sourceClass;
+	public Class<?> getSourceObjectClass() {
+		return sourceObjectClass;
 	}
 
-	public void setSourceClass(Class<?> sourceClass) {
-		this.sourceClass = sourceClass;
+	public void setSourceObjectClass(Class<?> sourceClass) {
+		this.sourceObjectClass = sourceClass;
 	}
 
 	public String getPropertyName() {
@@ -161,19 +161,19 @@ public class SourceMappingImpl implements SourceMapping {
 		this.optional = optional;
 	}
 
-	public Class<?> getPropertyClass() {
+	public Class<?> getSourceClass() {
 		return sourcePropertyClass;
 	}
 
-	public void setPropertyType(Class<?> propertyClass) {
-		this.sourcePropertyClass = propertyClass;
+	public void setSourceClass(Class<?> sourcePropertyClass) {
+		this.sourcePropertyClass = sourcePropertyClass;
 	}
 	
-	public void setComponentClass(Class<?> componentClass) {
+	public void setSourceComponentClass(Class<?> componentClass) {
 		this.sourcePropertyComponentClass = componentClass;
 	}
 	
-	public Class<?> getComponentClass() {
+	public Class<?> getSourceComponentClass() {
 		return sourcePropertyComponentClass;
 	}
 	

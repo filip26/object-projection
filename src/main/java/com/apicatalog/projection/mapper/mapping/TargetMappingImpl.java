@@ -175,8 +175,8 @@ public class TargetMappingImpl implements TargetMapping {
 		this.targetClass = targetClass;
 	}
 
-	public void setComponentClass(Class<?> itemClass) {
-		this.targetComponentClass = itemClass;
+	public void setTargetComponentClass(Class<?> targetComponentClass) {
+		this.targetComponentClass = targetComponentClass;
 	}
 	
 	@Override
