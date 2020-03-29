@@ -9,7 +9,7 @@ import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.converter.ConverterConfig;
 import com.apicatalog.projection.converter.Reducer;
 import com.apicatalog.projection.converter.ReducerError;
-import com.apicatalog.projection.converter.ReducerMapping;
+import com.apicatalog.projection.mapping.ReducerMapping;
 import com.apicatalog.projection.mapping.ReductionMapping;
 
 public class ReductionMappingImpl implements ReductionMapping {
@@ -20,10 +20,10 @@ public class ReductionMappingImpl implements ReductionMapping {
 
 	//TODO !!! use ConverterFactory|Index!!!! a conversion utilizes a convertor
 	
-	final ReducerMapping<?, ?> reducerMapping;
+	final ReducerMapping reducerMapping;
 	final String[] config;
 
-	public ReductionMappingImpl(ReducerMapping<?, ?> reducerMapping, TypeAdapters typeAdapters, String[] config) {
+	public ReductionMappingImpl(ReducerMapping reducerMapping, TypeAdapters typeAdapters, String[] config) {
 		this.reducerMapping = reducerMapping;
 		this.typeAdapters = typeAdapters;
 		this.config = config;
@@ -34,7 +34,7 @@ public class ReductionMappingImpl implements ReductionMapping {
 		
 		logger.debug("{}.reduce({}, {})", reducerMapping.getReducerClass().getSimpleName(), objects, config);
 		
-		final Reducer reducer = ObjectUtils.newInstance(reducerMapping.getReducerClass());	//TODO re-use preconstructed instances
+		final Reducer<Object, Object> reducer = (Reducer<Object, Object>) ObjectUtils.newInstance(reducerMapping.getReducerClass());	//TODO re-use preconstructed instances
 
 		ConverterConfig ctx = new ConverterConfig();
 		ctx.setValues(config);
@@ -59,7 +59,7 @@ public class ReductionMappingImpl implements ReductionMapping {
 
 		logger.debug("{}.expand({}, {})", reducerMapping.getReducerClass().getSimpleName(), object, config);
 		
-		final Reducer reducer = ObjectUtils.newInstance(reducerMapping.getReducerClass());	//TODO re-use preconstructed instances
+		final Reducer<Object, Object> reducer = (Reducer<Object, Object>) ObjectUtils.newInstance(reducerMapping.getReducerClass());	//TODO re-use preconstructed instances
 
 		ConverterConfig ctx = new ConverterConfig();
 		ctx.setValues(config);

@@ -1,5 +1,6 @@
 package com.apicatalog.projection.mapper.mapping;
 
+import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -29,32 +30,29 @@ public class PropertyMappingImpl implements PropertyMapping {
 
 		logger.debug("Compose property {}, path = {}", name, path);
 		
-		// get source value
-		Object value = source.compose(path, context);
-
-		if (value == null) {
-			logger.trace("  value = null");
+		// get source value if exists
+		final Optional<Object> value = Optional.ofNullable(source.compose(path, context));
+		
+		if (value.isEmpty()) {
 			return null;
 		}
-				
-		logger.trace("  value = {}", value);
 		
-		return target.construct(path, value, context);
+		return target.construct(path, value.get(), context);
 	}
 	
 	@Override
-	public void decompose(final Path path, final Object object, ContextObjects sources) throws ProjectionError {
+	public void decompose(final Path path, final Object object, ContextObjects context) throws ProjectionError {
 
 		logger.debug("Decompose property {} = {}", name, object);
 		
-		// get target value
-		Object[] values = target.deconstruct(path, object);
+		// get target value if exists
+		final Optional<Object> value = Optional.ofNullable(target.deconstruct(path, object, context));
 
-		if (values == null || values.length == 0) {
+		if (value.isEmpty()) {
 			return;
 		}
-
-		source.decompose(path, values, sources);
+		
+		source.decompose(path, value.get(), context);		
 	}
 	
 	@Override

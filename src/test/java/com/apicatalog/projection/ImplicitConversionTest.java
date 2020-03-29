@@ -1,6 +1,7 @@
 package com.apicatalog.projection;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import org.junit.Assert;
@@ -66,6 +67,7 @@ public class ImplicitConversionTest {
     	projection.longValue = Instant.now().toEpochMilli();
     	projection.floatValue = 0.0f;
     	projection.doubleValue = 1.23d;
+    	projection.stringCollection = Arrays.asList("1 item", "2 item", "3 item");
 
     	Object[] objects = projections.decompose(projection);
     	
@@ -80,5 +82,14 @@ public class ImplicitConversionTest {
     	Assert.assertEquals((Long)987654l, object.longValue);
     	Assert.assertEquals((Integer)1, object.integerValue);
     	Assert.assertEquals(Boolean.FALSE, object.booleanValue);
+    	
+    	Assert.assertNotNull(object.stringArray);
+    	Assert.assertEquals(3, object.stringArray.length);
+
+    	Assert.assertEquals("1 item", object.stringArray[0]);
+    	Assert.assertEquals("2 item", object.stringArray[1]);
+    	Assert.assertEquals("3 item", object.stringArray[2]);
+    	
+
     }
 }

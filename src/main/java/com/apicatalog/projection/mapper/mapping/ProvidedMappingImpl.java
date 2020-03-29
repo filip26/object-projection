@@ -18,6 +18,10 @@ public class ProvidedMappingImpl implements SourceMapping {
 	final ProjectionFactory factory;
 	
 	Class<?> sourceClass;
+	Class<?> sourceComponentClass;
+	
+	Class<?> targetClass;
+	Class<?> targetComponentClass;
 	
 	String qualifier;
 	
@@ -32,7 +36,7 @@ public class ProvidedMappingImpl implements SourceMapping {
 	@Override
 	public Object compose(Path path, ContextObjects context) throws ProjectionError {
 		
-		if (reference) {
+		if (reference) {	//FIXME ?!?!?!
 			return factory.get(sourceClass).compose(path, context.getValues());				
 		}
 
@@ -46,6 +50,7 @@ public class ProvidedMappingImpl implements SourceMapping {
 			if (Boolean.TRUE.equals(optional)) {
 				return null;
 			}
+			
 			throw new ProjectionError("Source instance of " + sourceClass.getCanonicalName() + ", qualifier=" + qualifier + ",  is not present.");
 		}
 		
@@ -53,24 +58,13 @@ public class ProvidedMappingImpl implements SourceMapping {
 	}
 	
 	@Override
-	public void decompose(Path path, Object[] objects, ContextObjects sources) throws ProjectionError {
+	public void decompose(Path path, Object object, ContextObjects sources) throws ProjectionError {
 
-		logger.debug("Decompose {}, source={}, qualifier={}, optional={}", objects, sourceClass.getSimpleName(), qualifier, optional);
+		logger.debug("Decompose {}, source={}, qualifier={}, optional={}", object, sourceClass.getSimpleName(), qualifier, optional);
 
-		Optional<Object> value = Optional.empty(); 
+		Optional.ofNullable(object)
+				.ifPresent(v -> sources.addOrReplace(v)); //TODO deal with qualifier
 		
-		value = Optional.ofNullable(objects[0]);	//FIXME ?!
-					
-		if (value.isEmpty()) {
-			return;
-		}
-				
-		Object sourceValue = value.get();
-				
-		logger.trace("  = {}", sourceValue);
-		
-		
-		sources.addOrReplace(value.get());	 //TODO deal with qualifier
 	}
 
 	public Class<?> getObjectClass() {
@@ -107,5 +101,23 @@ public class ProvidedMappingImpl implements SourceMapping {
 
 	public void setReference(boolean reference) {
 		this.reference = reference;
+	}
+	
+	@Override
+	public Class<?> getTargetClass() {
+		return targetClass;
+	}
+	
+	@Override
+	public Class<?> getTargetComponentClass() {
+		return targetComponentClass;
+	}
+	
+	public void setTargetClass(Class<?> targetClass) {
+		this.targetClass = targetClass;
+	}
+	
+	public void setTargetComponentClass(Class<?> targetComponentClass) {
+		this.targetComponentClass = targetComponentClass;
 	}
 }

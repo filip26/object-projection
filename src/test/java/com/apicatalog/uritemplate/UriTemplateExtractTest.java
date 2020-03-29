@@ -150,4 +150,13 @@ public class UriTemplateExtractTest {
     	Assert.assertEquals("ABC", params[1]);
     }
 
+    @Test
+    public void testExtract2Var5() throws MalformedUriTemplate {
+    	final UriTemplateL1 pattern = UriTemplateL1.of("https://www.example.org/{}/{stringValue}");
+		final String[] params = pattern.extract("https://www.example.org/123456/ABC");
+    	Assert.assertNotNull(params);
+    	Assert.assertEquals(2, params.length);
+    	Assert.assertEquals("123456", params[0]);
+    	Assert.assertEquals("ABC", params[1]);
+    }
 }

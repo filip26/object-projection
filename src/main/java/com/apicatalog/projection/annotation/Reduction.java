@@ -11,7 +11,7 @@ import com.apicatalog.projection.converter.Reducer;
 @Target(ElementType.FIELD)
 public @interface Reduction {
 
-	Class<? extends Reducer> type();
+	Class<? extends Reducer<?, ?>> type();
 	String[] value() default {};
 	
 }

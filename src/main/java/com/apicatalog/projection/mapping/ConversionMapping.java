@@ -8,4 +8,7 @@ public interface ConversionMapping {
 	
 	Object backward(Object object) throws ProjectionError;
 
+	Class<?> getSourceClass();
+	Class<?> getTargetClass();
+	
 }

@@ -2,8 +2,11 @@ package com.apicatalog.projection.adapter;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,13 +63,30 @@ public class TypeAdapters {
 			return object;
 		}
 		
-		logger.debug("Convert {} to {}", object, targetClass.getSimpleName());
+		logger.debug("Convert {} : {} to {}", object, object.getClass().getSimpleName(), targetClass.getSimpleName());
 		
-		if (object.getClass().isArray()) {
+		// collection to ?
+		if (Collection.class.isInstance(object)) {
+			// collection to collection
 			if (componentClass != null) {
-				return convertArrayToCollection(targetClass, componentClass, (Object[])object);
+				return collectionToCollection(targetClass, componentClass, (Collection<Object>)object);
 			}
-			return convertArray(targetClass, (Object[])object);
+			// collection to array
+			if (targetClass.isArray()) {
+				return collectiontoArray(targetClass.getComponentType(), (Collection<Object>)object);
+			}
+		}
+		
+		// array to ?
+		if (object.getClass().isArray()) {
+			// array to collection
+			if (componentClass != null) {
+				return arrayToCollection(targetClass, componentClass, (Object[])object);
+			}
+			// array to array
+			if (targetClass.isArray()) {
+				return arrayToArray(targetClass.getComponentType(), (Object[])object);
+			}
 		}
 
 		final TypeAdapter<Object> adapter = get(object.getClass());
@@ -83,12 +103,21 @@ public class TypeAdapters {
 		}
 	}
 
-	Collection<Object> convertArrayToCollection(Class<?> targetClass, Class<?> componentClass, Object[] objects) throws ProjectionError {
+	Collection<Object> collectionToCollection(Class<?> targetClass, Class<?> componentClass, Collection<Object> objects) throws ProjectionError {
 		logger.debug("Convert {} to {}<{}>", objects, targetClass.getSimpleName(), componentClass.getSimpleName());
 		
-		//TODO check target collection and choose
+		if (objects == null || objects.isEmpty()) {
+			return Collections.emptyList();
+		}
 		
-		final Collection<Object> converted = new ArrayList<>();
+		Collection<Object> converted = null;
+		
+		if (Set.class.isAssignableFrom(targetClass)) {
+			converted = new LinkedHashSet<>(objects.size());
+		
+		} else {
+			converted = new ArrayList<>(objects.size());
+		}
 		
 		for (Object object : objects) {
 			converted.add(convert(componentClass, object));
@@ -96,11 +125,55 @@ public class TypeAdapters {
 
 		return converted;
 	}
+
+	Collection<Object> arrayToCollection(Class<?> targetClass, Class<?> componentClass, Object[] objects) throws ProjectionError {
+		logger.debug("Convert {} to {}<{}>", objects, targetClass.getSimpleName(), componentClass.getSimpleName());
+
+		if (objects == null || objects.length == 0) {
+			return Collections.emptyList();
+		}
+		
+		Collection<Object> converted = null;
+		
+		if (Set.class.isAssignableFrom(targetClass)) {
+			converted = new LinkedHashSet<>(objects.length);
+		
+		} else {
+			converted = new ArrayList<>(objects.length);
+		}
+		
+		for (Object object : objects) {
+			converted.add(convert(componentClass, object));
+		}
+
+		return converted;
+	}
+
+	Object[] collectiontoArray(Class<?> targetClass, Collection<Object> objects) throws ProjectionError {
+		logger.debug("Convert {} to {}[]", objects, targetClass.getSimpleName());
+
+		if (objects == null || objects.isEmpty()) {
+			return new Object[0];
+		}
+		
+		final Object[] converted = (Object[])java.lang.reflect.Array.newInstance(targetClass, objects.size());
+
+		int index = 0;
+		for (Object object : objects) {
+			converted[index++] = convert(targetClass, object);
+		}
+		
+		return converted;
+	}
 	
-	Object convertArray(Class<?> targetClass, Object[] objects) throws ProjectionError {
+	Object[] arrayToArray(Class<?> targetClass, Object[] objects) throws ProjectionError {
 
 		logger.debug("Convert {} to {}[]", objects, targetClass.getSimpleName());
 
+		if (objects == null || objects.length == 0) {
+			return new Object[0];
+		}
+		
 		final Object[] converted = (Object[])java.lang.reflect.Array.newInstance(targetClass, objects.length);
 		
 		for (int i=0; i < objects.length; i++) {

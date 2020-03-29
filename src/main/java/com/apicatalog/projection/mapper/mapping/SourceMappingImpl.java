@@ -2,7 +2,6 @@ package com.apicatalog.projection.mapper.mapping;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -27,8 +26,11 @@ public class SourceMappingImpl implements SourceMapping {
 	
 	String propertyName;
 	
-	Class<?> propertyClass;
-	Class<?> componentClass;
+	Class<?> sourcePropertyClass;
+	Class<?> sourcePropertyComponentClass;
+	
+	Class<?> targetClass;
+	Class<?> targetComponentClass;
 	
 	String qualifier;
 	
@@ -68,53 +70,13 @@ public class SourceMappingImpl implements SourceMapping {
 	}
 
 	@Override
-	public void decompose(Path path, Object[] objects, ContextObjects sources) throws ProjectionError {
-		logger.debug("Decompose {}, source={}, qualifier={}, optional={}", objects, sourceClass.getSimpleName(), qualifier, optional);
+	public void decompose(Path path, Object object, ContextObjects sources) throws ProjectionError {
+		logger.debug("Decompose {}, source={}, qualifier={}, optional={}", object, sourceClass.getSimpleName(), qualifier, optional);
 
-		Optional<Object> value = Optional.empty(); 
-		
-		if (objects.length == 1) {
-			value = Optional.ofNullable(objects[0]);
-			
-		} else {
-			for (Object o : objects) {
-				if (propertyClass.isInstance(o)) {
-					value = Optional.ofNullable(o);
-				} else {
-					sources.addOrReplace(o);
-				}
-			}
-		}
+		Optional<Object> value = Optional.ofNullable(object);
 		
 		if (value.isEmpty()) {
 			return;
-		}
-		
-		//TODO hack, filter collection
-		if (Collection.class.isInstance(value.get())) {
-			
-			ArrayList<Object> l = new ArrayList<>();
-			
-			for (Object[] o : (Collection<Object[]>)value.get()) {
-
-				if (o.length == 1) {
-					l.add(o[0]);
-					
-				} else {
-					for (Object o1 : o) {
-						if (propertyClass.isInstance(o1)) {
-							l.add(o1);
-						} else {
-							sources.addOrReplace(o1);
-						}
-					}
-				}
-
-			}
-			
-			
-			value = Optional.of(l);
-			
 		}
 		
 		// apply explicit deconversions
@@ -127,14 +89,7 @@ public class SourceMappingImpl implements SourceMapping {
 			Object o = value.get();
 
 			for (ConversionMapping conversion : revConversions) {
-				
-				o = conversion.backward(o);
-				if (o != null && Object[].class.isInstance(o)) {
-					o = ((Object[])o)[0];	//FIXME hack
-				}
-				if (value.isEmpty()) {
-					break;
-				}				
+				o = conversion.backward(o);			
 			}
 
 			value = Optional.ofNullable(o);
@@ -145,7 +100,7 @@ public class SourceMappingImpl implements SourceMapping {
 			return;
 		}
 		
-		Object sourceValue = value.get();
+		final Object sourceValue = value.get();
 				
 		logger.trace("  = {}", sourceValue);
 		
@@ -159,7 +114,11 @@ public class SourceMappingImpl implements SourceMapping {
 			sources.addOrReplace(source.get());	 //TODO deal with qualifier
 		}
 		
-		ObjectUtils.setPropertyValue(source.get(), propertyName, adapters.convert(propertyClass, componentClass, sourceValue));	
+		ObjectUtils.setPropertyValue(
+						source.get(), 
+						propertyName, 
+						adapters.convert(sourcePropertyClass, sourcePropertyComponentClass, sourceValue)
+						);	
 	}
 	
 	public Class<?> getSourceClass() {
@@ -203,18 +162,36 @@ public class SourceMappingImpl implements SourceMapping {
 	}
 
 	public Class<?> getPropertyClass() {
-		return propertyClass;
+		return sourcePropertyClass;
 	}
 
 	public void setPropertyType(Class<?> propertyClass) {
-		this.propertyClass = propertyClass;
+		this.sourcePropertyClass = propertyClass;
 	}
 	
 	public void setComponentClass(Class<?> componentClass) {
-		this.componentClass = componentClass;
+		this.sourcePropertyComponentClass = componentClass;
 	}
 	
 	public Class<?> getComponentClass() {
-		return componentClass;
+		return sourcePropertyComponentClass;
+	}
+	
+	@Override
+	public Class<?> getTargetClass() {
+		return targetClass;
+	}
+	
+	@Override
+	public Class<?> getTargetComponentClass() {
+		return targetComponentClass;
+	}
+	
+	public void setTargetClass(Class<?> targetClass) {
+		this.targetClass = targetClass;
+	}
+	
+	public void setTargetComponentClass(Class<?> targetComponentClass) {
+		this.targetComponentClass = targetComponentClass;
 	}
 }

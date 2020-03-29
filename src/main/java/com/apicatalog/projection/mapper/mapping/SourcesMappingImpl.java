@@ -21,6 +21,9 @@ public class SourcesMappingImpl implements SourceMapping {
 
 	final Logger logger = LoggerFactory.getLogger(SourcesMappingImpl.class);
 
+	Class<?> targetClass;
+	Class<?> targetComponentClass;
+	
 	Collection<SourceMapping> mappings;
 
 	ReductionMapping reduction;
@@ -52,17 +55,17 @@ public class SourcesMappingImpl implements SourceMapping {
 	}
 
 	@Override
-	public void decompose(Path path, Object[] objects, ContextObjects sources) throws ProjectionError {
+	public void decompose(Path path, Object object, ContextObjects sources) throws ProjectionError {
 		
-		logger.debug("Decompose {}, optional={}", objects, optional);
+		logger.debug("Decompose {}, optional={}", object, optional);
 
-		if (objects == null || objects.length != 1) {	//FIXME hack
+		Optional<Object> value = Optional.ofNullable(object);
+		
+		if (value.isEmpty()) {
 			return;
 		}
-		
-		Optional<Object> value = Optional.of(objects[0]);
 
-		// apply explicit deconversions
+		// apply explicit conversions
 		if (Optional.ofNullable(conversions).isPresent()) {
 			
 			// reverse order
@@ -92,7 +95,7 @@ public class SourcesMappingImpl implements SourceMapping {
 			if (it > sourceValues.length) {
 				continue;
 			}
-			sourceMapping.decompose(path, new Object[] {sourceValues[it++]}, sources);
+			sourceMapping.decompose(path, sourceValues[it++], sources);
 		}
 	}
 
@@ -126,5 +129,23 @@ public class SourcesMappingImpl implements SourceMapping {
 
 	public void setReduction(ReductionMapping reduction) {
 		this.reduction = reduction;
+	}
+	
+	public void setTargetClass(Class<?> targetClass) {
+		this.targetClass = targetClass;
+	}
+	
+	public void setTargetComponentClass(Class<?> targetComponentClass) {
+		this.targetComponentClass = targetComponentClass;
+	}
+	
+	@Override
+	public Class<?> getTargetClass() {
+		return targetClass;
+	}
+	
+	@Override
+	public Class<?> getTargetComponentClass() {
+		return targetComponentClass;
 	}
 }

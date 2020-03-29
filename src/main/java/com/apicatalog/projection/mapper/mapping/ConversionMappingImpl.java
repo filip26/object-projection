@@ -9,14 +9,14 @@ import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterConfig;
 import com.apicatalog.projection.converter.ConverterError;
-import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.mapping.ConversionMapping;
+import com.apicatalog.projection.mapping.ConverterMapping;
 
-public class ConversionMappingImpl<S, T> implements ConversionMapping {
+public class ConversionMappingImpl implements ConversionMapping {
 
 	final Logger logger = LoggerFactory.getLogger(ConversionMappingImpl.class);
 
-	final ConverterMapping<S, T> mapping;
+	final ConverterMapping mapping;
 	final TypeAdapters typeAdapters;
 	final String[] config;
 
@@ -31,7 +31,7 @@ public class ConversionMappingImpl<S, T> implements ConversionMapping {
 		
 		logger.debug("{}.forward({}, {})", mapping.getConverterClass().getSimpleName(), value, config);
 		
-		final Converter converter = ObjectUtils.newInstance(mapping.getConverterClass());	//TODO re-use preconstructed instances
+		final Converter<Object, Object> converter = (Converter<Object, Object>) ObjectUtils.newInstance(mapping.getConverterClass());	//TODO re-use preconstructed instances
 
 		ConverterConfig ctx = new ConverterConfig();
 		ctx.setValues(config);
@@ -55,7 +55,7 @@ public class ConversionMappingImpl<S, T> implements ConversionMapping {
 
 		logger.debug("{}.backward({}, {})", mapping.getConverterClass().getSimpleName(), value, config);
 		
-		final Converter converter = ObjectUtils.newInstance(mapping.getConverterClass());	//TODO re-use preconstructed instances
+		final Converter<Object, Object> converter = (Converter<Object, Object>) ObjectUtils.newInstance(mapping.getConverterClass());	//TODO re-use preconstructed instances
 
 		ConverterConfig ctx = new ConverterConfig();
 		ctx.setValues(config);
@@ -72,5 +72,15 @@ public class ConversionMappingImpl<S, T> implements ConversionMapping {
 		} catch (ConverterError e) {
 			throw new ProjectionError(e);
 		}
+	}
+
+	@Override
+	public Class<?> getSourceClass() {
+		return mapping.getSourceClass();
+	}
+
+	@Override
+	public Class<?> getTargetClass() {
+		return mapping.getTargetClass();
 	}	
 }

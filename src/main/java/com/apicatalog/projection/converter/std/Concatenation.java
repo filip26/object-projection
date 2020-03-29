@@ -29,7 +29,6 @@ public class Concatenation implements Reducer<String, String> {
 
 	@Override
 	public String[] expand(String object) throws ReducerError {
-		// TODO Auto-generated method stub
-		return null;
+		return new String[0];	// unsupported ->  return an empty array
 	}
 }

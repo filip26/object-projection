@@ -123,6 +123,6 @@ public class MapperTest {
     	Assert.assertEquals(isCollection, target.isCollection());
     	Assert.assertEquals(isReference, target.isReference());
     	Assert.assertEquals(targetClass, target.getTargetClass());
-    	Assert.assertEquals(itemClass, target.getComponentClass());
+    	Assert.assertEquals(itemClass, target.getTargetComponentClass());
     }
 }

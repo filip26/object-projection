@@ -24,8 +24,11 @@ public class TargetMappingImpl implements TargetMapping {
 	final TypeAdapters typeAdapters;
 	
 	Class<?> targetClass;
-	Class<?> componentClass;
+	Class<?> targetComponentClass;
 
+	Class<?> sourceClass;
+	Class<?> sourceComponentClass;
+	
 	boolean reference;
 	
 	public TargetMappingImpl(ProjectionFactory index, TypeAdapters typeAdapters) {
@@ -54,7 +57,7 @@ public class TargetMappingImpl implements TargetMapping {
 				
 				logger.trace("  collection={}", untyppedCollection.getClass().getCanonicalName());
 				
-				Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, componentClass, object);
+				Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, targetComponentClass, object);
 				
 				final Collection<Object> collection = new ArrayList<>();
 
@@ -64,7 +67,7 @@ public class TargetMappingImpl implements TargetMapping {
 					final ContextObjects clonedSources = new ContextObjects(context);
 					clonedSources.addOrReplace(item);
  
-					collection.add(getReference(true).compose(path, clonedSources.getValues()));	//FIXME level + 1,
+					collection.add(getReference(true).compose(path, clonedSources.getValues()));
 
 				}
 				
@@ -75,7 +78,7 @@ public class TargetMappingImpl implements TargetMapping {
 				value.ifPresent(clonedSources::addOrReplace);
 
 				// compose a projection from a given value
-				value = Optional.ofNullable(getReference(false).compose(path, clonedSources.getValues()));	//FIXME level + 1, 
+				value = Optional.ofNullable(getReference(false).compose(path, clonedSources.getValues()));
 			}
 		}
 
@@ -93,7 +96,7 @@ public class TargetMappingImpl implements TargetMapping {
 	}
 
 	@Override
-	public Object[] deconstruct(final Path path, final Object object) throws ProjectionError {
+	public Object deconstruct(final Path path, final Object object, final ContextObjects context) throws ProjectionError {
 
 		logger.debug("Deconstruct {}, colllection = {}, reference = {}", object, isCollection(), isReference());
 		
@@ -101,7 +104,7 @@ public class TargetMappingImpl implements TargetMapping {
 			return new Object[0];
 		}
 		
-		Optional<Object[]> value = Optional.ofNullable(new Object[] {object});
+		Optional<Object> value = Optional.ofNullable(object);
 
 		if (reference) {
 			
@@ -109,32 +112,58 @@ public class TargetMappingImpl implements TargetMapping {
 								
 				final Collection<Object> collection = new ArrayList<>();
 
-				Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, componentClass, object);
+				Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, targetComponentClass, object);
 				
 				// extract objects from each projection in the collection
 				for (final Object item : sourceCollection) {
-					collection.add(getReference(true).decompose(path, item));
+					collection.add(filter(getReference(true).decompose(path, item), context));
 				}
 				
-				value = Optional.of(new Object[] {collection});
+				value = Optional.of(collection);
 
 			} else {
-				value = Optional.ofNullable(getReference(false).decompose(path, object));
+				value = Optional.ofNullable(filter(getReference(false).decompose(path, object), context));
 
 			}
 		}
 		if (value.isEmpty()) {
 			logger.trace("  sourceValue = null");
-			return new Object[0];
+			return null;
 		}
 
-		final Object[] sourceValue = value.get();
+		final Object sourceValue = value.get();
 
 		if (logger.isTraceEnabled()) {
 			Stream.of(sourceValue).forEach(v -> logger.trace("  sourceValue = {}", v));
 		}
 
-		return sourceValue.length == 0 ? null : sourceValue;
+		return sourceValue;
+	}
+	
+	Object filter(Object[] objects, ContextObjects context) {
+		if (objects == null) {
+			return null;
+		}
+		
+		if (objects.length == 1) {
+			return objects[0];
+		}
+		
+		Optional<Object> value = Optional.empty();
+		
+		for (Object object : objects) {
+			
+			if (value.isEmpty() 
+					&& (sourceComponentClass != null ? sourceComponentClass.isInstance(object) : sourceClass.isInstance(object))
+				) {
+				
+				value = Optional.ofNullable(object);
+				
+			} else {
+				context.addOrReplace(object);
+			}
+		}
+		return value.orElse(null);
 	}
 	
 	@Override
@@ -147,17 +176,17 @@ public class TargetMappingImpl implements TargetMapping {
 	}
 
 	public void setComponentClass(Class<?> itemClass) {
-		this.componentClass = itemClass;
+		this.targetComponentClass = itemClass;
 	}
 	
 	@Override
-	public Class<?> getComponentClass() {
-		return componentClass;
+	public Class<?> getTargetComponentClass() {
+		return targetComponentClass;
 	}
 	
 	@Override
 	public boolean isCollection() {
-		return componentClass != null;
+		return targetComponentClass != null;
 	}
 	
 	public boolean isReference() {
@@ -166,10 +195,28 @@ public class TargetMappingImpl implements TargetMapping {
 
 	@SuppressWarnings("unchecked")
 	public ProjectionMapping<Object> getReference(boolean collection) {
-		return factory.get(collection ? (Class<Object>)componentClass : (Class<Object>)targetClass);
+		return factory.get(collection ? (Class<Object>)targetComponentClass : (Class<Object>)targetClass);
 	}
 
 	public void setReference(boolean reference) {
 		this.reference = reference;
+	}
+	
+	public void setSourceClass(Class<?> sourceClass) {
+		this.sourceClass = sourceClass;
+	}
+	
+	public void setSourceComponentClass(Class<?> sourceComponentClass) {
+		this.sourceComponentClass = sourceComponentClass;
+	}
+	
+	@Override
+	public Class<?> getSourceClass() {
+		return sourceClass;
+	}
+	
+	@Override
+	public Class<?> getSourceComponentClass() {
+		return sourceComponentClass;
 	}
 }
