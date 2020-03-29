@@ -71,11 +71,11 @@ public class TypeAdapters {
 			
 			// collection to collection
 			if (componentClass != null) {				
-				return collectionToCollection(targetClass, componentClass, (Collection<Object>)object);
+				return collectionToCollection(targetClass, componentClass, (Collection<?>)object);
 			}
 			// collection to array
 			if (targetClass.isArray()) {
-				return collectiontoArray(targetClass.getComponentType(), (Collection<Object>)object);
+				return collectiontoArray(targetClass.getComponentType(), (Collection<?>)object);
 			}
 		}
 		
@@ -105,7 +105,7 @@ public class TypeAdapters {
 		}
 	}
 
-	Collection<Object> collectionToCollection(Class<?> targetClass, Class<?> componentClass, Collection<Object> objects) throws ProjectionError {
+	Collection<Object> collectionToCollection(Class<?> targetClass, Class<?> componentClass, Collection<?> objects) throws ProjectionError {
 		logger.debug("Convert {} to {}<{}>", objects, targetClass.getSimpleName(), componentClass.getSimpleName());
 		
 		if (objects == null || objects.isEmpty()) {
@@ -151,7 +151,7 @@ public class TypeAdapters {
 		return converted;
 	}
 
-	Object[] collectiontoArray(Class<?> targetClass, Collection<Object> objects) throws ProjectionError {
+	Object[] collectiontoArray(Class<?> targetClass, Collection<?> objects) throws ProjectionError {
 		logger.debug("Convert {} to {}[]", objects, targetClass.getSimpleName());
 
 		if (objects == null || objects.isEmpty()) {
@@ -174,6 +174,11 @@ public class TypeAdapters {
 
 		if (objects == null || objects.length == 0) {
 			return new Object[0];
+		}
+		
+		// no conversion needed
+		if (targetClass.isAssignableFrom(objects.getClass().getComponentType())) {
+			return objects;
 		}
 		
 		final Object[] converted = (Object[])java.lang.reflect.Array.newInstance(targetClass, objects.length);

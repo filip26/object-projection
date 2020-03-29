@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ObjectUtils;
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.mapping.ProjectionMapping;
 import com.apicatalog.projection.mapping.PropertyMapping;
 import com.apicatalog.projection.objects.ContextObjects;
@@ -20,27 +19,24 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 
 	final Logger logger = LoggerFactory.getLogger(ProjectionMappingImpl.class);
 	
-	final TypeAdapters adapters;
-	
 	final Class<P> projectionClass;
 	
 	final Collection<PropertyMapping> properties;
 
-	public ProjectionMappingImpl(final Class<P> projectionClass, TypeAdapters adapters) {
+	public ProjectionMappingImpl(final Class<P> projectionClass) {
 		this.projectionClass = projectionClass;
 		this.properties = new ArrayList<>();
-		this.adapters = adapters;
 	}
 
 	@Override
-	public P compose(final Object... values) throws ProjectionError {
-		return compose(Path.create(), values);
+	public P compose(final Object... objects) throws ProjectionError {
+		return compose(Path.create(), objects);
 	}
 
 	@Override
-	public P compose(final Path path, final Object... values) throws ProjectionError {
+	public P compose(final Path path, final Object... objects) throws ProjectionError {
 
-		logger.debug("Compose {} of {} object(s), path = {}", projectionClass.getSimpleName(), values.length, path.length());
+		logger.debug("Compose {} of {} object(s), path = {}", projectionClass.getSimpleName(), objects.length, path.length());
 
 		// check for cycles
 		if (path.contains(projectionClass)) {
@@ -51,11 +47,11 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 		path.push(projectionClass);
 		
 		if (logger.isTraceEnabled()) {
-			Stream.of(values).forEach(v -> logger.trace("  {}", v.getClass().getSimpleName()));
+			Stream.of(objects).forEach(v -> logger.trace("  {}", v.getClass().getSimpleName()));
 		}
 		
-		final ContextObjects sources = 
-				Optional.ofNullable(ContextObjects.of(values))
+		final ContextObjects contextObjects = 
+				Optional.ofNullable(ContextObjects.of(objects))
 						.orElseThrow(IllegalStateException::new); 				
 
 						
@@ -66,12 +62,16 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 			// limit property visibility
 			if (propertyMapping.isVisible(path.length() - 1)) {
 			
-				Optional<Object> value = Optional.ofNullable(propertyMapping.compose(path, sources));
+				final Optional<Object> value = Optional.ofNullable(propertyMapping.compose(path, contextObjects));
 				
 				if (value.isPresent()) {
 					logger.trace("  set {} to {}.{}: {}", value.get(), projectionClass.getSimpleName(), propertyMapping.getName(), propertyMapping.getTarget().getTargetClass().getSimpleName());
 					
-					ObjectUtils.setPropertyValue(projection, propertyMapping.getName(), adapters.convert(propertyMapping.getTarget().getTargetClass(), propertyMapping.getTarget().getTargetComponentClass(), value.get()));
+					ObjectUtils.setPropertyValue(
+									projection, 
+									propertyMapping.getName(),
+									value.get()
+									);
 				}
 			}
 		}
@@ -95,24 +95,30 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 	
 		logger.debug("Decompose {}", projection.getClass().getCanonicalName());
 						
-		final ContextObjects sources = ContextObjects.of();
+		final ContextObjects contextObjects = 
+				Optional.ofNullable(ContextObjects.of())
+						.orElseThrow(IllegalStateException::new); 				
+		
+		for (PropertyMapping propertyMapping : properties) {
 	
-		if (sources == null) {
-			throw new IllegalStateException();
-		}
-	
-		for (PropertyMapping property : properties) {
-	
-			final Optional<Object> value = Optional.ofNullable(ObjectUtils.getPropertyValue(projection, property.getName()));
+			final Optional<Object> value = 
+					Optional.ofNullable(
+						ObjectUtils.getPropertyValue(
+										projection, 
+										propertyMapping.getName()
+										)
+						);
 
 			if (value.isEmpty()) {
 				continue;
 			}
 			
-			property.decompose(path, value.get(), sources);
+			logger.trace("  got {} from {}.{}: {}", value.get(), projectionClass.getSimpleName(), propertyMapping.getName(), propertyMapping.getTarget().getTargetClass().getSimpleName());
+			
+			propertyMapping.decompose(path, value.get(), contextObjects);
 		}
 
-		return sources.getValues();
+		return contextObjects.getValues();
 	}
 	
 	@Override

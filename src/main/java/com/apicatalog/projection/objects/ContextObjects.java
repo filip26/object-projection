@@ -39,7 +39,8 @@ public class ContextObjects {
 		return index.values().toArray(new Object[0]);
 	}
 	
-	public void addOrReplace(Object object) {
+	public ContextObjects addOrReplace(Object object) {
 		index.put(ObjectKey.of(object), object);
+		return this;
 	}
 }

@@ -34,15 +34,15 @@ public class ProvidedMappingImpl implements SourceMapping {
 	}
 	
 	@Override
-	public Object compose(Path path, ContextObjects context) throws ProjectionError {
+	public Object compose(Path path, ContextObjects contextObjects) throws ProjectionError {
 		
 		if (reference) {	//FIXME ?!?!?!
-			return factory.get(sourceClass).compose(path, context.getValues());				
+			return factory.get(sourceClass).compose(path, contextObjects.getValues());				
 		}
 
 		final Optional<Object> source = 
 				Optional.ofNullable(
-					context.get(sourceClass, qualifier)
+					contextObjects.get(sourceClass, qualifier)
 				);
 			
 		if (source.isEmpty()) {
@@ -58,12 +58,12 @@ public class ProvidedMappingImpl implements SourceMapping {
 	}
 	
 	@Override
-	public void decompose(Path path, Object object, ContextObjects sources) throws ProjectionError {
+	public void decompose(Path path, Object object, ContextObjects contextObjects) throws ProjectionError {
 
 		logger.debug("Decompose {}, source={}, qualifier={}, optional={}", object, sourceClass.getSimpleName(), qualifier, optional);
 
 		Optional.ofNullable(object)
-				.ifPresent(sources::addOrReplace); //TODO deal with qualifier
+				.ifPresent(contextObjects::addOrReplace); //TODO deal with qualifier
 		
 	}
 

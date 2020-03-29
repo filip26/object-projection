@@ -26,33 +26,33 @@ public class PropertyMappingImpl implements PropertyMapping {
 	Set<Integer> visibleLevels;
 
 	@Override
-	public Object compose(Path path, ContextObjects context) throws ProjectionError {
+	public Object compose(Path path, ContextObjects contextObjects) throws ProjectionError {
 
 		logger.debug("Compose property {}, path = {}", name, path);
 		
 		// get source value if exists
-		final Optional<Object> value = Optional.ofNullable(source.compose(path, context));
+		final Optional<Object> value = Optional.ofNullable(source.compose(path, contextObjects));
 		
 		if (value.isEmpty()) {
 			return null;
 		}
 		
-		return target.construct(path, value.get(), context);
+		return target.construct(path, value.get(), contextObjects);
 	}
 	
 	@Override
-	public void decompose(final Path path, final Object object, ContextObjects context) throws ProjectionError {
+	public void decompose(final Path path, final Object object, ContextObjects contextObjects) throws ProjectionError {
 
 		logger.debug("Decompose property {} = {}", name, object);
 		
 		// get target value if exists
-		final Optional<Object> value = Optional.ofNullable(target.deconstruct(path, object, context));
+		final Optional<Object> value = Optional.ofNullable(target.deconstruct(path, object, contextObjects));
 
 		if (value.isEmpty()) {
 			return;
 		}
 		
-		source.decompose(path, value.get(), context);		
+		source.decompose(path, value.get(), contextObjects);		
 	}
 	
 	@Override
