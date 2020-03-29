@@ -40,8 +40,8 @@ public class ProvidedMappingImpl implements SourceMapping {
 
 		logger.debug("Compose path = {}, source = {}, qualifier = {}, optional = {}, reference = {}", path.length(), sourceClass.getSimpleName(), qualifier, optional, reference);
 
-		if (reference) {	//FIXME ?!?!?!
-			return factory.get(sourceClass).compose(path, contextObjects.getValues());				
+		if (reference) {
+			return null;				
 		}
 
 		final Optional<Object> source = 

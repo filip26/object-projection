@@ -33,11 +33,11 @@ public class PropertyMappingImpl implements PropertyMapping {
 		// get source value if exists
 		final Optional<Object> value = Optional.ofNullable(source.compose(path, contextObjects));
 		
-		if (value.isEmpty()) {
-			return null;
-		}
+//		if (value.isEmpty()) {
+//			return null;
+//		}
 		
-		return target.construct(path, value.get(), contextObjects);
+		return target.construct(path, value.orElse(null), contextObjects);
 	}
 	
 	@Override

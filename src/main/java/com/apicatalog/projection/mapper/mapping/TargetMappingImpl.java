@@ -42,17 +42,17 @@ public class TargetMappingImpl implements TargetMapping {
 		logger.debug("Costruct target from {}, path = {}, colllection = {}, reference = {}", object, path.length(), isCollection(), isReference());
 		
 		Optional<Object> value = Optional.ofNullable(object);
-
-		if (value.isEmpty()) {
-			logger.trace("  value = null");
-			return null;
-		}
 		
 		// is the target a reference on a projection
 		if (reference) {
 
 			// is the target a collection of references?
 			if (isCollection()) {
+
+				if (value.isEmpty()) {
+					logger.trace("  value = null");
+					return null;
+				}
 				
 				final Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, Object.class, object);
 				
@@ -73,9 +73,14 @@ public class TargetMappingImpl implements TargetMapping {
 			} else {				
 				final ContextObjects clonedSources = new ContextObjects(contextObjects);
 				value.ifPresent(clonedSources::addOrReplace);
-
-				// compose a projection from a given value
-				value = Optional.ofNullable(getTargetType(false).compose(path, clonedSources.getValues()));
+				
+				final ProjectionMapping<Object> projection = getTargetType(false);
+				
+				if (projection != null) {
+					value = Optional.ofNullable(projection.compose(path, clonedSources.getValues()));
+				} else {
+					value = Optional.empty();
+				}
 			}
 		}
 
@@ -123,7 +128,15 @@ public class TargetMappingImpl implements TargetMapping {
 				value = Optional.of(collection);
 
 			} else {
-				value = Optional.ofNullable(filter(getTargetType(false).decompose(path, object), context));
+				
+				final ProjectionMapping<Object> projection = getTargetType(false);
+				
+				if (projection != null) {
+					value = Optional.ofNullable(filter(projection.decompose(path, object), context));
+				} else {
+					value = Optional.empty();
+				}
+				
 
 			}
 		}
