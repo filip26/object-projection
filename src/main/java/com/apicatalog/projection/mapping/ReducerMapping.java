@@ -7,7 +7,10 @@ public class ReducerMapping {
 	Class<? extends Reducer<?, ?>> reducerClass;
 	
 	Class<?> sourceClass;
+	Class<?> sourceComponentClass;
+	
 	Class<?> targetClass;
+	Class<?> targetComponentClass;
 	
 	public Class<? extends Reducer<?, ?>> getReducerClass() {
 		return reducerClass;
@@ -31,5 +34,21 @@ public class ReducerMapping {
 	
 	public void setReducerClass(Class<? extends Reducer<? , ?>> converterClass) {
 		this.reducerClass = converterClass;
+	}
+	
+	public Class<?> getSourceComponentClass() {
+		return sourceComponentClass;
+	}
+	
+	public Class<?> getTargetComponentClass() {
+		return targetComponentClass;
+	}
+	
+	public void setSourceComponentClass(Class<?> sourceComponentClass) {
+		this.sourceComponentClass = sourceComponentClass;
+	}
+	
+	public void setTargetComponentClass(Class<?> targetComponentClass) {
+		this.targetComponentClass = targetComponentClass;
 	}
 }

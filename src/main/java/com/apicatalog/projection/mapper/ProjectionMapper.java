@@ -299,11 +299,25 @@ public class ProjectionMapper {
 		
 		// set reduction to apply
 		mapping.setReduction(getReductionMapping(sources.reduce()));
+		
+		mapping.setTargetClass(mapping.getReduction().getReducerMapping().getTargetClass());
+		mapping.setTargetComponentClass(mapping.getReduction().getReducerMapping().getTargetComponentClass());
 
 		// set conversions to apply
 		mapping.setConversions(getConversionMapping(sources.map()));
 
 		mapping.setSources(sourceMappings);
+		
+		if (mapping.getConversions() != null) {
+			
+			Stream.of(mapping.getConversions())
+					.reduce((first, second) -> second)
+					.map(ConversionMapping::getConverterMapping)
+					.ifPresent(m -> { 
+								mapping.setTargetClass(m.getSourceClass());
+								mapping.setTargetComponentClass(m.getSourceComponentClass());
+								});
+		}
 		
 		return mapping;
 	}

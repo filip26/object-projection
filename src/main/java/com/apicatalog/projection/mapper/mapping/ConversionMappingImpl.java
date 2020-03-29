@@ -39,7 +39,7 @@ public class ConversionMappingImpl implements ConversionMapping {
 		try {
 			converter.initConverter(ctx);
 				
-			final Object result = converter.forward(typeAdapters.convert(converterMapping.getSourceClass(), value));
+			final Object result = converter.forward(typeAdapters.convert(converterMapping.getSourceClass(), converterMapping.getSourceComponentClass(), value));
 			
 			logger.trace("  result={}", result);
 			
@@ -63,7 +63,7 @@ public class ConversionMappingImpl implements ConversionMapping {
 		try {
 			converter.initConverter(ctx);
 				
-			final Object result = converter.backward(typeAdapters.convert(converterMapping.getTargetClass(), value));
+			final Object result = converter.backward(typeAdapters.convert(converterMapping.getTargetClass(), converterMapping.getTargetComponentClass(), value));
 			
 			logger.trace("  result={}", result);
 			

@@ -93,7 +93,7 @@ public class SourcesMappingImpl implements SourceMapping {
 		
 		for (SourceMapping sourceMapping : mappings) {
 			if (it > sourceValues.length) {
-				continue;
+				break;
 			}
 			sourceMapping.decompose(path, sourceValues[it++], sources);
 		}
