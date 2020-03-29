@@ -28,7 +28,7 @@ public class PropertyMappingImpl implements PropertyMapping {
 	@Override
 	public Object compose(Path path, ContextObjects contextObjects) throws ProjectionError {
 
-		logger.debug("Compose property {}, path = {}", name, path);
+		logger.debug("Compose property {}, path = {}", name, path.length());
 		
 		// get source value if exists
 		final Optional<Object> value = Optional.ofNullable(source.compose(path, contextObjects));

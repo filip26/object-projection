@@ -5,8 +5,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.apicatalog.projection.NamedObject;
 
 public class ContextObjects {
 
@@ -27,12 +30,28 @@ public class ContextObjects {
 							.of(objects)
 							.collect(Collectors.toMap(
 										ObjectKey::of,
-										o -> o
+										o -> 
+											(NamedObject.class.isInstance(o)) 
+												? ((NamedObject<Object>)o).getObject()
+												: o
 									)));		
 	}
 	
 	public Object get(Class<?> clazz, String name) {
-		return index.get(ObjectKey.of(clazz, name));
+		Object object =  index.get(ObjectKey.of(clazz, name));
+		
+		//FIXME optimize
+		if (object == null) {
+			for (Map.Entry<ObjectKey, Object> entry : index.entrySet()) {
+				if (clazz.isAssignableFrom(entry.getKey().getClazz()) && ((StringUtils.isBlank(name) && StringUtils.isBlank(entry.getKey().getQualifier()))
+							|| StringUtils.isNotBlank(name) && name.equals(entry.getKey().getQualifier())
+							)) {
+						return entry.getValue();
+				
+				}
+			}
+		}
+		return object;
 	}
 
 	public Object[] getValues() {

@@ -1,5 +1,6 @@
 package com.apicatalog.projection.objects;
 
+import java.util.Collection;
 import java.util.Objects;
 
 import com.apicatalog.projection.NamedObject;
@@ -15,6 +16,7 @@ public class ObjectKey {
 	}
 	
 	public static ObjectKey of(Class<?> clazz, String qualifier) {
+//		System.out.println("L " + clazz + ", " + qualifier);
 		return new ObjectKey(clazz, qualifier == null ? "" : qualifier);
 	}
 
@@ -22,7 +24,13 @@ public class ObjectKey {
 		if (object instanceof NamedObject) {
 			NamedObject<?> namedObject = (NamedObject<?>)object;
 			
-			return new ObjectKey(namedObject.getObject().getClass(), namedObject.getName()) ;	
+			if (Collection.class.isInstance(namedObject.getObject()) && !((Collection<?>)namedObject.getObject()).isEmpty()) {
+				
+	//			System.out.println(" >                    " + ((Collection<?>)namedObject.getObject()).getClass().getDeclaringClass());				
+			}
+			
+	
+			return of(namedObject.getObject().getClass(), namedObject.getName());	
 		}
 		return of(object.getClass(), null);
 	}
@@ -47,4 +55,12 @@ public class ObjectKey {
 		ObjectKey other = (ObjectKey) obj;
 		return Objects.equals(clazz, other.clazz) && Objects.equals(qualifier, other.qualifier);
 	}	
+	
+	public Class<?> getClazz() {
+		return clazz;
+	}
+	
+	public String getQualifier() {
+		return qualifier;
+	}
 }

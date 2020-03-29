@@ -11,6 +11,6 @@ public @interface Projection {
 
 	Class<?> value() default Class.class;
 	
-	int propertyMaxLevel() default 1;
+	boolean ignoreUnknown() default true;
 
 }

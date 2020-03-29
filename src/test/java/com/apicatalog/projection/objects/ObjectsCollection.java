@@ -2,7 +2,7 @@ package com.apicatalog.projection.objects;
 
 import java.util.Collection;
 
-public class TestCollectionObject {
+public class ObjectsCollection {
 
 	public String id;
 	

@@ -43,7 +43,7 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 			logger.debug("  ignored because projection {} is in processing already", projectionClass.getSimpleName());
 			return null;
 		}
-		
+				
 		path.push(projectionClass);
 		
 		if (logger.isTraceEnabled()) {

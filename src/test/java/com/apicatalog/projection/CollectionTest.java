@@ -10,9 +10,9 @@ import org.junit.Test;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
-import com.apicatalog.projection.objects.TestCollectionObject;
-import com.apicatalog.projection.projections.BasicPropertyNameOverride;
-import com.apicatalog.projection.projections.SimpleCollection;
+import com.apicatalog.projection.objects.ObjectsCollection;
+import com.apicatalog.projection.projections.NameOverrideTo;
+import com.apicatalog.projection.projections.ProjectionsCollectionTo;
 
 public class CollectionTest {
 
@@ -24,8 +24,8 @@ public class CollectionTest {
 		projections = new ProjectionFactory();
 		mapper = new ProjectionMapper(projections);	
 		
-		projections.add(mapper.getMapping(SimpleCollection.class));
-		projections.add(mapper.getMapping(BasicPropertyNameOverride.class));
+		projections.add(mapper.getMapping(ProjectionsCollectionTo.class));
+		projections.add(mapper.getMapping(NameOverrideTo.class));
 	}
 	
     @Test
@@ -35,17 +35,17 @@ public class CollectionTest {
     	oa.booleanValue = true;
     	oa.doubleValue = 123.456d;
     	
-    	TestCollectionObject oc = new TestCollectionObject();
+    	ObjectsCollection oc = new ObjectsCollection();
     	oc.items = new ArrayList<>();
     	oc.items.add(oa);
     	
-    	SimpleCollection ca = projections.compose(SimpleCollection.class, oc);
+    	ProjectionsCollectionTo ca = projections.compose(ProjectionsCollectionTo.class, oc);
     	
     	Assert.assertNotNull(ca);
     	Assert.assertNotNull(ca.items);    	
     	Assert.assertEquals(1, ca.items.size());
     	
-    	BasicPropertyNameOverride pa = ca.items.iterator().next();
+    	NameOverrideTo pa = ca.items.iterator().next();
     	
     	Assert.assertEquals(oa.booleanValue, pa.projectedBoolean);
     	Assert.assertEquals(oa.doubleValue, pa.projectedDouble);
@@ -54,13 +54,13 @@ public class CollectionTest {
     @Test
     public void testDecomposition() throws ProjectionError, ConverterError {
     	
-    	SimpleCollection ca = new SimpleCollection();
+    	ProjectionsCollectionTo ca = new ProjectionsCollectionTo();
     	ca.items = new ArrayList<>();
     	
-    	BasicPropertyNameOverride pa1 = new BasicPropertyNameOverride();
+    	NameOverrideTo pa1 = new NameOverrideTo();
     	pa1.projectedString = "ABC";
 
-    	BasicPropertyNameOverride pa2 = new BasicPropertyNameOverride();
+    	NameOverrideTo pa2 = new NameOverrideTo();
     	pa2.projectedString = "XYZ";
     	
     	ca.items.add(pa1);
@@ -70,9 +70,9 @@ public class CollectionTest {
     	
     	Assert.assertNotNull(oo);
     	Assert.assertEquals(1, oo.length);
-    	Assert.assertEquals(TestCollectionObject.class, oo[0].getClass());
+    	Assert.assertEquals(ObjectsCollection.class, oo[0].getClass());
     	
-    	TestCollectionObject oc = (TestCollectionObject)oo[0];
+    	ObjectsCollection oc = (ObjectsCollection)oo[0];
     	Assert.assertNotNull(oc.items);
     	Assert.assertEquals(2, oc.items.size());
     	

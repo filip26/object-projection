@@ -60,7 +60,7 @@ public class TypeAdapters {
 		}
 		
 		// no conversion needed
-		if (targetClass.isInstance(object)) {
+		if (targetClass.isInstance(object) && componentClass == null) {
 			return object;
 		}
 		

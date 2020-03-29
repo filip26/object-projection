@@ -115,10 +115,10 @@ public class SourceMappingImpl implements SourceMapping {
 		}
 		
 		ObjectUtils.setPropertyValue(
-						source.get(), 
-						propertyName, 
-						adapters.convert(sourcePropertyClass, sourcePropertyComponentClass, sourceValue)
-						);	
+				source.get(), 
+				propertyName,
+				adapters.convert(sourcePropertyClass, sourcePropertyComponentClass, sourceValue)
+				);	
 	}
 	
 	public Class<?> getSourceObjectClass() {

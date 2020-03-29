@@ -6,22 +6,22 @@ import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 
-@Projection
-public class BasicPropertyNameOverride {
+@Projection(ObjectBasicTypes.class)
+public class NameOverride2To {
 
-	@Source(type = ObjectBasicTypes.class, value = "longValue")
+	@Source("longValue")
 	public Long projectedLong;
 	
-	@Source(type = ObjectBasicTypes.class, value = "stringValue")
+	@Source("stringValue")
 	public String projectedString;
 	
-	@Source(type = ObjectBasicTypes.class, value = "booleanValue")
+	@Source("booleanValue")
 	public Boolean projectedBoolean;
 	
-	@Source(type = ObjectBasicTypes.class, value = "instantValue")
+	@Source("instantValue")
 	public Instant projectedInstant;
 	
-	@Source(type = ObjectBasicTypes.class, value = "doubleValue")
+	@Source("doubleValue")
 	public Double projectedDouble;
 	
 }

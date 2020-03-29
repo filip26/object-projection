@@ -8,7 +8,7 @@ import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 import com.apicatalog.projection.objects.ObjectReference;
-import com.apicatalog.projection.projections.BasicPropertyNameOverride;
+import com.apicatalog.projection.projections.NameOverrideTo;
 import com.apicatalog.projection.projections.ReferenceTo;
 import com.apicatalog.projection.projections.TwoSourceComposite;
 
@@ -24,7 +24,7 @@ public class ReferencedCompositeTest {
 		
 		projections.add(mapper.getMapping(ReferenceTo.class));
 		projections.add(mapper.getMapping(TwoSourceComposite.class));
-		projections.add(mapper.getMapping(BasicPropertyNameOverride.class));
+		projections.add(mapper.getMapping(NameOverrideTo.class));
 	}	
 	
     @Test

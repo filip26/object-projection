@@ -39,7 +39,7 @@ public class TargetMappingImpl implements TargetMapping {
 	@Override
 	public Object construct(final Path path, final Object object, final ContextObjects contextObjects) throws ProjectionError {
 		
-		logger.debug("Costruct target from {}, path = {}, colllection = {}, reference = {}", object, path, isCollection(), isReference());
+		logger.debug("Costruct target from {}, path = {}, colllection = {}, reference = {}", object, path.length(), isCollection(), isReference());
 		
 		Optional<Object> value = Optional.ofNullable(object);
 
@@ -54,10 +54,10 @@ public class TargetMappingImpl implements TargetMapping {
 			// is the target a collection of references?
 			if (isCollection()) {
 				
-				final Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, targetComponentClass, object);
+				final Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, Object.class, object);
 				
 				final Collection<Object> collection = new ArrayList<>();
-
+				
 				// compose a projection from each object in the collection
 				for (final Object item : sourceCollection) {				
 					collection.add(getTargetType(true)

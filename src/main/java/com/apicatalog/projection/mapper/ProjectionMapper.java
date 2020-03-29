@@ -201,22 +201,26 @@ public class ProjectionMapper {
 
 		// set default source object property name -> use the same name
 		sourceMapping.setPropertyName(field.getName());
-		
-		sourceMapping.setSourceClass(field.getType());
-		if (Collection.class.isAssignableFrom(field.getType())) {
-			sourceMapping.setSourceComponentClass((Class<?>)((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]);
+
+		Field sourceField = ObjectUtils.getProperty(sourceMapping.getSourceObjectClass(), sourceMapping.getPropertyName());
+
+		// check is source field does exist
+		if (sourceField == null) {
+			logger.warn("Property {} is not accessible or does not exist in {} and is ignored.", field.getName(), sourceMapping.getSourceObjectClass().getSimpleName());
+			return null;
 		}
+				
+		sourceMapping.setSourceClass(sourceField.getType());
+		
+		if (Collection.class.isAssignableFrom(sourceField.getType())) {
+			sourceMapping.setSourceComponentClass((Class<?>)((ParameterizedType) sourceField.getGenericType()).getActualTypeArguments()[0]);
+		}
+
 		
 		sourceMapping.setTargetClass(field.getType());
 		
 		if (Collection.class.isAssignableFrom(field.getType())) {
 			sourceMapping.setTargetComponentClass((Class<?>)((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]);
-		}
-		
-		// check if field exists and is accessible
-		if (!ObjectUtils.hasPropery(sourceMapping.getSourceObjectClass(), sourceMapping.getPropertyName())) {
-			logger.warn("Property {} is not accessible or does not exist in {} and is ignored.", field.getName(), sourceMapping.getSourceObjectClass().getSimpleName());
-			return null;
 		}
 		
 		return (new PropertyMappingImpl())
@@ -229,12 +233,12 @@ public class ProjectionMapper {
 		
 		final Provided provided = field.getAnnotation(Provided.class);
 		
-		final ProvidedMappingImpl sourceMapping = new ProvidedMappingImpl(factory);
+		final ProvidedMappingImpl sourceMapping = new ProvidedMappingImpl(factory, typeAdapters);
 		sourceMapping.setOptional(provided.optional());
 		
 		// set target object class
 		sourceMapping.setSourceClass(field.getType());
-		
+
 		sourceMapping.setReference(field.getType().isAnnotationPresent(Projection.class));
 
 		sourceMapping.setTargetClass(field.getType());

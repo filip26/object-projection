@@ -9,7 +9,7 @@ import org.junit.Test;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
-import com.apicatalog.projection.projections.BasicPropertyNameOverride;
+import com.apicatalog.projection.projections.NameOverrideTo;
 
 
 public class PropertyNameOverrideTest {
@@ -22,7 +22,7 @@ public class PropertyNameOverrideTest {
 		projections = new ProjectionFactory();
 		mapper = new ProjectionMapper(projections);
 		
-		projections.add(mapper.getMapping(BasicPropertyNameOverride.class));
+		projections.add(mapper.getMapping(NameOverrideTo.class));
 	}
 	
     @Test
@@ -35,7 +35,7 @@ public class PropertyNameOverrideTest {
     	oa.longValue = 123456l;
     	oa.stringValue = "ABCDEF";
     	
-    	BasicPropertyNameOverride pa = projections.compose(BasicPropertyNameOverride.class, oa);
+    	NameOverrideTo pa = projections.compose(NameOverrideTo.class, oa);
     	
     	Assert.assertNotNull(pa);
     	
@@ -49,7 +49,7 @@ public class PropertyNameOverrideTest {
     @Test
     public void testDecomposition() throws ProjectionError, ConverterError {
     	
-    	BasicPropertyNameOverride pa = new BasicPropertyNameOverride();
+    	NameOverrideTo pa = new NameOverrideTo();
     	pa.projectedBoolean = true;
     	pa.projectedDouble = 123.456d;
     	pa.projectedInstant = Instant.now();
