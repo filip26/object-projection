@@ -6,16 +6,11 @@ import com.apicatalog.projection.objects.Path;
 
 public interface TargetMapping {
 
-	Class<?> getTargetClass();
-	Class<?> getTargetComponentClass();
-
 	Class<?> getSourceClass();
 	Class<?> getSourceComponentClass();
-	
-	@Deprecated
-	boolean isCollection();
-	@Deprecated
-	boolean isReference();
+
+	Class<?> getTargetClass();
+	Class<?> getTargetComponentClass();
 	
 	Object construct(Path path, Object object, ContextObjects context) throws ProjectionError;
 	

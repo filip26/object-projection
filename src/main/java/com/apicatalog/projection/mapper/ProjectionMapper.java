@@ -99,7 +99,7 @@ public class ProjectionMapper {
 	
 	PropertyMapping getPropertyMapping(final Field field, final Class<?> defaultSourceClass) {
 
-		Optional<PropertyMappingImpl> mapping = Optional.empty();
+		final Optional<PropertyMappingImpl> mapping;
 		
 		// single source? 
 		if (field.isAnnotationPresent(Source.class)) {

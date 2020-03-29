@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.mapper.mapping.TargetMappingImpl;
 import com.apicatalog.projection.mapping.ProjectionMapping;
 import com.apicatalog.projection.mapping.PropertyMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
@@ -120,8 +121,8 @@ public class MapperTest {
 
     public void checkTarget(TargetMapping target, boolean isCollection, boolean isReference, Class<?> targetClass, Class<?> itemClass) {
     	Assert.assertNotNull(target);
-    	Assert.assertEquals(isCollection, target.isCollection());
-    	Assert.assertEquals(isReference, target.isReference());
+    	Assert.assertEquals(isCollection, ((TargetMappingImpl)target).isCollection());
+    	Assert.assertEquals(isReference, ((TargetMappingImpl)target).isReference());
     	Assert.assertEquals(targetClass, target.getTargetClass());
     	Assert.assertEquals(itemClass, target.getTargetComponentClass());
     }

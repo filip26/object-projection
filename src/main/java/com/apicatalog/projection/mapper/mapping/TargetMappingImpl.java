@@ -184,7 +184,6 @@ public class TargetMappingImpl implements TargetMapping {
 		return targetComponentClass;
 	}
 	
-	@Override
 	public boolean isCollection() {
 		return targetComponentClass != null;
 	}

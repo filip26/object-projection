@@ -1,6 +1,5 @@
 package com.apicatalog.projection.adapter;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
