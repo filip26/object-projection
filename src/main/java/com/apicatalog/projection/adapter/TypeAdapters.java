@@ -113,6 +113,7 @@ public class TypeAdapters {
 		}
 	}
 
+
 	Collection<Object> collectionToCollection(Class<?> targetClass, Class<?> componentClass, Collection<?> objects) throws ProjectionError {
 		logger.debug("Convert {} to {}<{}>", objects, targetClass.getSimpleName(), componentClass.getSimpleName());
 		

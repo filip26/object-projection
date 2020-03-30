@@ -2,6 +2,7 @@ package com.apicatalog.projection;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import org.apache.commons.lang3.StringUtils;
@@ -91,6 +92,16 @@ public class ObjectUtils {
 		} catch (NoSuchFieldException e) {/* ignore */}
 		
 		return null;
-
 	}
+	
+	public static Method getMethod(Class<?> clazz, String name) {
+				
+		try {
+			return clazz.getDeclaredMethod(name);
+			
+		} catch (NoSuchMethodException | SecurityException e) {/* ignore */}
+		
+		return null;
+	}
+	
 }

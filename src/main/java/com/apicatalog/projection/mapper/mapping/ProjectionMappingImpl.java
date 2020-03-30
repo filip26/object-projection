@@ -58,7 +58,9 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 		final P projection = ObjectUtils.newInstance(projectionClass);
 		
 		for (final PropertyMapping propertyMapping : properties) {
-
+			
+			logger.trace("Processing property = {}", propertyMapping.getName());
+			
 			// limit property visibility
 			if (propertyMapping.isVisible(path.length() - 1)) {
 			

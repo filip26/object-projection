@@ -15,6 +15,8 @@ import com.apicatalog.projection.mapping.ConversionMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.Path;
+import com.apicatalog.projection.objects.ValueGetter;
+import com.apicatalog.projection.objects.ValueSetter;
 
 public class SourceMappingImpl implements SourceMapping {
 
@@ -23,11 +25,9 @@ public class SourceMappingImpl implements SourceMapping {
 	final TypeAdapters adapters;
 	
 	Class<?> sourceObjectClass;
-	
-	String propertyName;
-	
-	Class<?> sourcePropertyClass;
-	Class<?> sourcePropertyComponentClass;
+
+	ValueGetter getter;
+	ValueSetter setter;
 	
 	Class<?> targetClass;
 	Class<?> targetComponentClass;
@@ -44,6 +44,11 @@ public class SourceMappingImpl implements SourceMapping {
 	
 	@Override
 	public Object compose(Path path, ContextObjects sources) throws ProjectionError {
+		logger.debug("Compose path = {}, source = {}, qualifier = {}, optional = {}", path.length(), sourceObjectClass.getSimpleName(), qualifier, optional);
+	
+		if (getter == null) {
+			return null;
+		}
 		
 		final Optional<Object> source = 
 				Optional.ofNullable(
@@ -56,9 +61,10 @@ public class SourceMappingImpl implements SourceMapping {
 			}
 			throw new ProjectionError("Source instance of " + sourceObjectClass.getCanonicalName() + ", qualifier=" + qualifier + ",  is not present.");
 		}
-			
-		Object value = ObjectUtils.getPropertyValue(source.get(), propertyName);
 
+		// get source value
+		Object value = getter.get(source.get());
+		
 		// apply explicit conversions
 		if (conversions != null) {
 			for (ConversionMapping conversion : conversions) {
@@ -71,7 +77,7 @@ public class SourceMappingImpl implements SourceMapping {
 
 	@Override
 	public void decompose(Path path, Object object, ContextObjects sources) throws ProjectionError {
-		logger.debug("Decompose {}, source={}, qualifier={}, optional={}", object, sourceObjectClass.getSimpleName(), qualifier, optional);
+		logger.debug("Decompose {}, source = {}, qualifier = {}, optional = {}", object, sourceObjectClass.getSimpleName(), qualifier, optional);
 
 		Optional<Object> value = Optional.ofNullable(object);
 		
@@ -108,17 +114,16 @@ public class SourceMappingImpl implements SourceMapping {
 				Optional.ofNullable(
 					sources.get(sourceObjectClass, qualifier)
 				);
+
+		if (setter != null) {
+			if (source.isEmpty()) {
+				source = Optional.of(ObjectUtils.newInstance(sourceObjectClass));
+				sources.addOrReplace(source.get(), qualifier);
+			}
 		
-		if (source.isEmpty()) {
-			source = Optional.of(ObjectUtils.newInstance(sourceObjectClass));
-			sources.addOrReplace(source.get(), qualifier);
+			// set a value back to source
+			setter.set(source.get(), sourceValue);
 		}
-		
-		ObjectUtils.setPropertyValue(
-				source.get(), 
-				propertyName,
-				adapters.convert(sourcePropertyClass, sourcePropertyComponentClass, sourceValue)
-				);	
 	}
 	
 	public Class<?> getSourceObjectClass() {
@@ -127,14 +132,6 @@ public class SourceMappingImpl implements SourceMapping {
 
 	public void setSourceObjectClass(Class<?> sourceClass) {
 		this.sourceObjectClass = sourceClass;
-	}
-
-	public String getPropertyName() {
-		return propertyName;
-	}
-
-	public void setPropertyName(String propertyName) {
-		this.propertyName = propertyName;
 	}
 
 	public String getQualifier() {
@@ -160,22 +157,6 @@ public class SourceMappingImpl implements SourceMapping {
 	public void setOptional(Boolean optional) {
 		this.optional = optional;
 	}
-
-	public Class<?> getSourceClass() {
-		return sourcePropertyClass;
-	}
-
-	public void setSourceClass(Class<?> sourcePropertyClass) {
-		this.sourcePropertyClass = sourcePropertyClass;
-	}
-	
-	public void setSourceComponentClass(Class<?> componentClass) {
-		this.sourcePropertyComponentClass = componentClass;
-	}
-	
-	public Class<?> getSourceComponentClass() {
-		return sourcePropertyComponentClass;
-	}
 	
 	@Override
 	public Class<?> getTargetClass() {
@@ -193,5 +174,21 @@ public class SourceMappingImpl implements SourceMapping {
 	
 	public void setTargetComponentClass(Class<?> targetComponentClass) {
 		this.targetComponentClass = targetComponentClass;
+	}
+	
+	public void setGetter(ValueGetter getter) {
+		this.getter = getter;
+	}
+	
+	public void setSetter(ValueSetter setter) {
+		this.setter = setter;
+	}
+	
+	public ValueGetter getGetter() {
+		return getter;
+	}
+	
+	public ValueSetter getSetter() {
+		return setter;
 	}
 }
