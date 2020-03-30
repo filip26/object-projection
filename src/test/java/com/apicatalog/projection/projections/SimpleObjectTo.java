@@ -4,7 +4,7 @@ import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.objects.SimpleObject;
 
 @Projection(SimpleObject.class)
-public class SimpleObjectProjection {
+public class SimpleObjectTo {
 
 	public String s1;
 	

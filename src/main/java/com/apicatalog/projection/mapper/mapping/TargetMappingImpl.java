@@ -42,6 +42,10 @@ public class TargetMappingImpl implements TargetMapping {
 		logger.debug("Costruct target from {}, path = {}, colllection = {}, reference = {}", object, path.length(), isCollection(), isReference());
 		
 		Optional<Object> value = Optional.ofNullable(object);
+		if (value.isEmpty()) {
+			logger.trace("  value = null");
+			return null;
+		}
 		
 		// is the target a reference on a projection
 		if (reference) {
@@ -49,10 +53,6 @@ public class TargetMappingImpl implements TargetMapping {
 			// is the target a collection of references?
 			if (isCollection()) {
 
-				if (value.isEmpty()) {
-					logger.trace("  value = null");
-					return null;
-				}
 				
 				final Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, Object.class, object);
 				
@@ -207,8 +207,12 @@ public class TargetMappingImpl implements TargetMapping {
 	}
 
 	@SuppressWarnings("unchecked")
-	ProjectionMapping<Object> getTargetType(boolean collection) {
-		return factory.get(collection ? (Class<Object>)targetComponentClass : (Class<Object>)targetClass);
+	ProjectionMapping<Object> getTargetType(boolean collection) throws ProjectionError {
+		ProjectionMapping<Object> mapping = factory.get(collection ? (Class<Object>)targetComponentClass : (Class<Object>)targetClass);
+		if (mapping == null) {
+			throw new ProjectionError("Projection " + (collection ? (Class<Object>)targetComponentClass : (Class<Object>)targetClass).getSimpleName() + " is missing from index.");
+		}
+		return mapping;
 	}
 
 	public void setReference(boolean reference) {

@@ -9,7 +9,7 @@ import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 import com.apicatalog.projection.objects.SimpleObject;
 import com.apicatalog.projection.projections.ProvidedRefProperty;
-import com.apicatalog.projection.projections.SimpleObjectProjection;
+import com.apicatalog.projection.projections.SimpleObjectTo;
 
 public class ProvidedRefTest {
 
@@ -22,7 +22,7 @@ public class ProvidedRefTest {
 		mapper = new ProjectionMapper(projections);		
 		
 		projections.add(mapper.getMapping(ProvidedRefProperty.class));
-		projections.add(mapper.getMapping(SimpleObjectProjection.class));
+		projections.add(mapper.getMapping(SimpleObjectTo.class));
 	}
 	
     @Test
@@ -54,7 +54,7 @@ public class ProvidedRefTest {
     	ProvidedRefProperty projection1 = new ProvidedRefProperty();
     	projection1.title = "QWERTY ZXCVBN";
 
-    	SimpleObjectProjection projection2 = new SimpleObjectProjection();
+    	SimpleObjectTo projection2 = new SimpleObjectTo();
     	projection2.i1 = 13;
     	projection2.s1 = "! @ #";
 

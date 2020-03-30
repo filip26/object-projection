@@ -36,10 +36,15 @@ public class ProvidedMappingImpl implements SourceMapping {
 	@Override
 	public Object compose(Path path, ContextObjects contextObjects) throws ProjectionError {
 
-		logger.debug("Compose path = {}, source = {}, qualifier = {}, optional = {}, reference = {}", path.length(), targetClass.getSimpleName(), qualifier, optional, reference);
+		logger.debug("Compose path = {}, target = {}, qualifier = {}, optional = {}, reference = {}", path.length(), targetClass.getSimpleName(), qualifier, optional, reference);
 
 		if (reference) {
-			return null;				
+//			if (targetComponentClass == null) {
+				return factory.get(targetClass).compose(path, contextObjects.getValues());
+//			}
+			
+			//TODO deal with a collection
+			
 		}
 
 		final Optional<Object> source = 
@@ -59,8 +64,8 @@ public class ProvidedMappingImpl implements SourceMapping {
 		final Object providedValue = source.get();
 		
 		logger.trace("  providedValue = {}", providedValue);
-		
-		return typeAdapters.convert(targetClass, targetComponentClass, providedValue);
+		return providedValue;
+		//return typeAdapters.convert(targetClass, targetComponentClass, providedValue);
 	}
 	
 	@Override

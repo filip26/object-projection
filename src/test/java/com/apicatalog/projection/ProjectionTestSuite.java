@@ -24,6 +24,7 @@ import com.apicatalog.projection.mapper.MapperTest;
 	ProvidedCollectionTest.class,
 	VisibilityTest.class,
 	ConstantTest.class,
+	ProvidedRefCollectionTest.class,
 })
 public class ProjectionTestSuite {
 

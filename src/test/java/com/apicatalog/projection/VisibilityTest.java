@@ -10,6 +10,7 @@ import com.apicatalog.projection.objects.Object1;
 import com.apicatalog.projection.objects.Object2;
 import com.apicatalog.projection.projections.Object1To;
 import com.apicatalog.projection.projections.Object2To;
+import com.apicatalog.projection.projections.TypeObjectTo;
 
 
 public class VisibilityTest {
@@ -24,6 +25,7 @@ public class VisibilityTest {
 		
 		projections.add(mapper.getMapping(Object1To.class));
 		projections.add(mapper.getMapping(Object2To.class));
+		projections.add(mapper.getMapping(TypeObjectTo.class));
 	}
 	
     @Test

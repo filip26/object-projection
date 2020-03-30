@@ -1,18 +1,16 @@
 package com.apicatalog.projection.projections;
 
+import java.util.Collection;
+
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Provided;
-import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 
 @Projection(ObjectBasicTypes.class)
-public class ProvidedRefProperty {
+public class ProvidedRefCollectionTo {
 
-	@Source("stringValue")
-	public String title;
-	
-	@Provided
-	public SimpleObjectTo projection;
+	@Provided(qualifier = "items")
+	public Collection<SimpleObjectTo> items;
 	
 	
 }

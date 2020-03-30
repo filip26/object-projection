@@ -6,7 +6,7 @@ import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.objects.ObjectBasicTypes;
 
 @Projection(ObjectBasicTypes.class)
-public class BasicTypes {
+public class TypeObjectTo {
 
 	public Integer integerValue;
 	

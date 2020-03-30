@@ -10,6 +10,6 @@ public class Object2To {
 	@Visibility(level= 0)
 	public String id;
 
-	public BasicTypes object3;
+	public TypeObjectTo object3;
 
 }
