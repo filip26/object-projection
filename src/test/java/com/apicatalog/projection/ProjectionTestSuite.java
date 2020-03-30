@@ -23,6 +23,7 @@ import com.apicatalog.projection.mapper.MapperTest;
 	CycleCheckTest.class,
 	ProvidedCollectionTest.class,
 	VisibilityTest.class,
+	ConstantTest.class,
 })
 public class ProjectionTestSuite {
 

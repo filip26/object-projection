@@ -1,10 +1,8 @@
 package com.apicatalog.projection;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -62,7 +60,7 @@ public class ProvidedCollectionTest {
     	Assert.assertEquals(to.href, objects[0]);
     	
     	Assert.assertTrue(Collection.class.isInstance(objects[1]));
-    	Assert.assertArrayEquals(new String[] {"10", "20", "30"}, ((Collection<String>)objects[1]).toArray(new String[0]));
+    	Assert.assertArrayEquals(new String[] {"10", "20", "30"}, ((Collection<?>)objects[1]).toArray(new String[0]));
     }    
     
 }

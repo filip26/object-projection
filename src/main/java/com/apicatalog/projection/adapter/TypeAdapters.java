@@ -77,6 +77,10 @@ public class TypeAdapters {
 			if (targetClass.isArray()) {
 				return collectiontoArray(targetClass.getComponentType(), (Collection<?>)object);
 			}
+			// one item collection?
+			if (((Collection<?>)object).size() == 1) {
+				object = ((Collection<?>)object).iterator().next();	// reduce to single object
+			}
 		}
 		
 		// array to ?
@@ -88,6 +92,10 @@ public class TypeAdapters {
 			// array to array
 			if (targetClass.isArray()) {
 				return arrayToArray(targetClass.getComponentType(), (Object[])object);
+			}
+			// one item array?
+			if (((Object[])object).length== 1) {
+				object = ((Object[])object)[0];	// reduce to single object
 			}
 		}
 

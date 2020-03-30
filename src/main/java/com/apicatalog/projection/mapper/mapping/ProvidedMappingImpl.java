@@ -19,8 +19,6 @@ public class ProvidedMappingImpl implements SourceMapping {
 	final ProjectionFactory factory;
 	final TypeAdapters typeAdapters;
 	
-	Class<?> sourceClass;
-	
 	Class<?> targetClass;
 	Class<?> targetComponentClass;
 	
@@ -38,7 +36,7 @@ public class ProvidedMappingImpl implements SourceMapping {
 	@Override
 	public Object compose(Path path, ContextObjects contextObjects) throws ProjectionError {
 
-		logger.debug("Compose path = {}, source = {}, qualifier = {}, optional = {}, reference = {}", path.length(), sourceClass.getSimpleName(), qualifier, optional, reference);
+		logger.debug("Compose path = {}, source = {}, qualifier = {}, optional = {}, reference = {}", path.length(), targetClass.getSimpleName(), qualifier, optional, reference);
 
 		if (reference) {
 			return null;				
@@ -46,7 +44,7 @@ public class ProvidedMappingImpl implements SourceMapping {
 
 		final Optional<Object> source = 
 				Optional.ofNullable(
-					contextObjects.get(sourceClass, qualifier)
+					contextObjects.get(targetClass, qualifier)
 				);
 			
 		if (source.isEmpty()) {
@@ -55,7 +53,7 @@ public class ProvidedMappingImpl implements SourceMapping {
 				return null;
 			}
 			
-			throw new ProjectionError("Source instance of " + sourceClass.getCanonicalName() + ", qualifier=" + qualifier + ",  is not present.");
+			throw new ProjectionError("Source instance of " + targetClass.getCanonicalName() + ", qualifier=" + qualifier + ",  is not present.");
 		}
 		
 		final Object providedValue = source.get();
@@ -68,19 +66,11 @@ public class ProvidedMappingImpl implements SourceMapping {
 	@Override
 	public void decompose(Path path, Object object, ContextObjects contextObjects) throws ProjectionError {
 
-		logger.debug("Decompose {}, source = {}, qualifier = {}, optional = {}", object, sourceClass.getSimpleName(), qualifier, optional);
+		logger.debug("Decompose {}, source = {}, qualifier = {}, optional = {}", object, targetClass.getSimpleName(), qualifier, optional);
 
 		Optional.ofNullable(object)
 				.ifPresent(v -> contextObjects.addOrReplace(v, qualifier));
 		
-	}
-
-	public Class<?> getSourceClass() {
-		return sourceClass;
-	}
-
-	public void setSourceClass(Class<?> objectClass) {
-		this.sourceClass = objectClass;
 	}
 
 	public String getQualifier() {

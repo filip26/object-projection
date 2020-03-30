@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 import com.apicatalog.projection.converter.Reducer;
 
-@Retention(RetentionPolicy.CLASS)
+@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Reduction {
 

@@ -5,13 +5,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.apicatalog.projection.converter.Converter;
-
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface Conversion {
+public @interface Constant {
 
-	Class<? extends Converter<?, ?>> type();
-	String[] value() default {};
+	String[] value();
 	
 }

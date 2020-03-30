@@ -32,7 +32,7 @@ public class ContextObjects {
 										ObjectKey::of,
 										o -> 
 											(NamedObject.class.isInstance(o)) 
-												? ((NamedObject<Object>)o).getObject()
+												? ((NamedObject<?>)o).getObject()
 												: o
 									)));		
 	}

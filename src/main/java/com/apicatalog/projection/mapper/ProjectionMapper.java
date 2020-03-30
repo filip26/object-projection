@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ObjectUtils;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
+import com.apicatalog.projection.annotation.Constant;
 import com.apicatalog.projection.annotation.Conversion;
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Provided;
@@ -27,6 +28,7 @@ import com.apicatalog.projection.annotation.Reduction;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.annotation.Visibility;
+import com.apicatalog.projection.mapper.mapping.ConstantMappingImpl;
 import com.apicatalog.projection.mapper.mapping.ConversionMappingImpl;
 import com.apicatalog.projection.mapper.mapping.ProjectionMappingImpl;
 import com.apicatalog.projection.mapper.mapping.PropertyMappingImpl;
@@ -113,6 +115,10 @@ public class ProjectionMapper {
 		} else if (field.isAnnotationPresent(Provided.class)) {
 			mapping = Optional.ofNullable(getProvidedMapping(field));
 			
+		// constant value
+		} else if (field.isAnnotationPresent(Constant.class)) {
+			mapping = Optional.ofNullable(getConstantMapping(field));
+
 		// direct mapping or a reference
 		} else {
 			mapping = Optional.ofNullable(getDefaultPropertyMapping(field, defaultSourceClass));
@@ -234,11 +240,9 @@ public class ProjectionMapper {
 		final Provided provided = field.getAnnotation(Provided.class);
 		
 		final ProvidedMappingImpl sourceMapping = new ProvidedMappingImpl(factory, typeAdapters);
+		
 		sourceMapping.setOptional(provided.optional());
 		
-		// set target object class
-		sourceMapping.setSourceClass(field.getType());
-
 		sourceMapping.setReference(field.getType().isAnnotationPresent(Projection.class));
 
 		sourceMapping.setTargetClass(field.getType());
@@ -254,7 +258,30 @@ public class ProjectionMapper {
 				.setSource(sourceMapping)		// set projection property value sources
 				;
 	}
-	
+
+	PropertyMappingImpl getConstantMapping(Field field) {
+		
+		final Constant constant = field.getAnnotation(Constant.class);
+		
+		final ConstantMappingImpl sourceMapping = new ConstantMappingImpl(typeAdapters);
+		
+		// set constant values
+		sourceMapping.setConstants(constant.value());
+
+		// set target object class
+		sourceMapping.setTargetClass(field.getType());
+		
+		if (Collection.class.isAssignableFrom(field.getType())) {
+			// set target component class
+			sourceMapping.setTargetComponentClass((Class<?>)((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]);
+		}
+
+		return (new PropertyMappingImpl())
+				.setName(field.getName())		// set projection property name
+				.setSource(sourceMapping)		// set projection property value sources
+				;
+	}
+
 	TargetMapping getTargetMapping(Field field, SourceMapping sourceMapping) {
 		final TargetMappingImpl targetMapping = new TargetMappingImpl(factory, typeAdapters);
 		// set projection property target class
