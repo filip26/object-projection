@@ -19,6 +19,7 @@ import com.apicatalog.projection.adapter.std.InstantAdapter;
 import com.apicatalog.projection.adapter.std.IntegerAdapter;
 import com.apicatalog.projection.adapter.std.LongAdapter;
 import com.apicatalog.projection.adapter.std.StringAdapter;
+import com.apicatalog.projection.adapter.std.UriAdapter;
 
 public class TypeAdapters {
 
@@ -36,6 +37,7 @@ public class TypeAdapters {
 			.add(new DoubleAdapter())
 			.add(new IntegerAdapter())
 			.add(new FloatAdapter())
+			.add(new UriAdapter())
 			;
 	}
 
@@ -102,6 +104,7 @@ public class TypeAdapters {
 		final TypeAdapter<Object> adapter = get(object.getClass());
 		
 		if (adapter == null) {
+			//TODO do implicit conversion to string via toString()
 			throw new ProjectionError("Can not convert " + object.getClass() + " to " + targetClass + ".");
 		}
 		
