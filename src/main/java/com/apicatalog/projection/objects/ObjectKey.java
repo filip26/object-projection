@@ -1,6 +1,5 @@
 package com.apicatalog.projection.objects;
 
-import java.util.Collection;
 import java.util.Objects;
 
 import com.apicatalog.projection.NamedObject;
@@ -16,20 +15,13 @@ public class ObjectKey {
 	}
 	
 	public static ObjectKey of(Class<?> clazz, String qualifier) {
-//		System.out.println("L " + clazz + ", " + qualifier);
 		return new ObjectKey(clazz, qualifier == null ? "" : qualifier);
 	}
 
 	public static ObjectKey of(Object object) {
 		if (object instanceof NamedObject) {
-			NamedObject<?> namedObject = (NamedObject<?>)object;
+			final NamedObject<?> namedObject = (NamedObject<?>)object;
 			
-			if (Collection.class.isInstance(namedObject.getObject()) && !((Collection<?>)namedObject.getObject()).isEmpty()) {
-				
-	//			System.out.println(" >                    " + ((Collection<?>)namedObject.getObject()).getClass().getDeclaringClass());				
-			}
-			
-	
 			return of(namedObject.getObject().getClass(), namedObject.getName());	
 		}
 		return of(object.getClass(), null);

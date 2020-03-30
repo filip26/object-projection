@@ -111,7 +111,7 @@ public class SourceMappingImpl implements SourceMapping {
 		
 		if (source.isEmpty()) {
 			source = Optional.of(ObjectUtils.newInstance(sourceObjectClass));
-			sources.addOrReplace(source.get());	 //TODO deal with qualifier
+			sources.addOrReplace(source.get(), qualifier);
 		}
 		
 		ObjectUtils.setPropertyValue(

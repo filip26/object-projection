@@ -58,8 +58,8 @@ public class ContextObjects {
 		return index.values().toArray(new Object[0]);
 	}
 	
-	public ContextObjects addOrReplace(Object object) {
-		index.put(ObjectKey.of(object), object);
+	public ContextObjects addOrReplace(Object object, String qualifier) {
+		index.put(ObjectKey.of(object.getClass(), qualifier), object);
 		return this;
 	}
 }

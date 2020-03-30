@@ -71,7 +71,7 @@ public class ProvidedMappingImpl implements SourceMapping {
 		logger.debug("Decompose {}, source = {}, qualifier = {}, optional = {}", object, sourceClass.getSimpleName(), qualifier, optional);
 
 		Optional.ofNullable(object)
-				.ifPresent(contextObjects::addOrReplace); //TODO deal with qualifier
+				.ifPresent(v -> contextObjects.addOrReplace(v, qualifier));
 		
 	}
 

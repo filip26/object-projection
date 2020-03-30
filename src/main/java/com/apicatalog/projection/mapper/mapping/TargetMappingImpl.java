@@ -63,7 +63,7 @@ public class TargetMappingImpl implements TargetMapping {
 					collection.add(getTargetType(true)
 									.compose(
 										path,										
-										(new ContextObjects(contextObjects)).addOrReplace(item).getValues()
+										(new ContextObjects(contextObjects)).addOrReplace(item, null).getValues()
 										)
 									);
 				}
@@ -72,7 +72,7 @@ public class TargetMappingImpl implements TargetMapping {
 				
 			} else {				
 				final ContextObjects clonedSources = new ContextObjects(contextObjects);
-				value.ifPresent(clonedSources::addOrReplace);
+				value.ifPresent(v -> clonedSources.addOrReplace(v, null));
 				
 				final ProjectionMapping<Object> projection = getTargetType(false);
 				
@@ -174,7 +174,7 @@ public class TargetMappingImpl implements TargetMapping {
 				value = Optional.ofNullable(object);
 				
 			} else {
-				context.addOrReplace(object);
+				context.addOrReplace(object, null);
 			}
 		}
 		return value.orElse(null);

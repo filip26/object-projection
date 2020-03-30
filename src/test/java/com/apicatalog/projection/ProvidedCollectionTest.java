@@ -1,5 +1,6 @@
 package com.apicatalog.projection;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -44,8 +45,24 @@ public class ProvidedCollectionTest {
     	
     	Assert.assertNotNull(projection.items);
     	Assert.assertArrayEquals(items.stream().map(l -> Long.toString(l)).collect(Collectors.toList()).toArray(new String[0]), projection.items.toArray(new String[0]));
-
-    	
     }
+    
+    @Test
+    public void testDecomposition() throws ProjectionError, ConverterError {
+    	
+    	StringCollectionTo to = new StringCollectionTo();
+    	to.href = "https://example.org/provided";
+    	to.items = Arrays.asList("10", "20", "30"); 
+    	
+    	Object[] objects = projections.decompose(to);
+    	
+    	Assert.assertNotNull(objects);
+    	Assert.assertEquals(2, objects.length);
+    	
+    	Assert.assertEquals(to.href, objects[0]);
+    	
+    	Assert.assertTrue(Collection.class.isInstance(objects[1]));
+    	Assert.assertArrayEquals(new String[] {"10", "20", "30"}, ((Collection<String>)objects[1]).toArray(new String[0]));
+    }    
     
 }
