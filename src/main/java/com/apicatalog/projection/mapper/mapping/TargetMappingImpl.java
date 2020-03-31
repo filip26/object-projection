@@ -187,7 +187,6 @@ public class TargetMappingImpl implements TargetMapping {
 		if (objects.length == 1) {
 			return objects[0];	//FIXME hack!!!
 		}
-		
 
 		Optional<Object> value = Optional.empty();
 
