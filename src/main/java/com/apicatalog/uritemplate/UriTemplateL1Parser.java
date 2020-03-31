@@ -10,7 +10,7 @@ import java.util.ArrayList;
  */
 public class UriTemplateL1Parser {
 	
-	enum State { VAR_BEGIN, VAR_END, STOP_CHAR };
+	enum State { VAR_BEGIN, VAR_END, STOP_CHAR }
 	
 	protected UriTemplateL1Parser() {
 	}

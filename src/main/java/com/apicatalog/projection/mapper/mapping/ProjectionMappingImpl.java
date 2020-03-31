@@ -13,7 +13,6 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.mapping.ProjectionMapping;
 import com.apicatalog.projection.mapping.PropertyMapping;
 import com.apicatalog.projection.objects.ContextObjects;
-import com.apicatalog.projection.objects.ObjectKey;
 import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.objects.Path;
 
@@ -141,7 +140,7 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 		
 		return (S)Arrays
 					.stream(objects)
-					.filter(o -> sourceObjectClass.isInstance(o))
+					.filter(sourceObjectClass::isInstance)
 					.findFirst()
 					.orElse(null);
 	}

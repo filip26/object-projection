@@ -42,10 +42,7 @@ public class ProvidedMappingImpl implements SourceMapping {
 		logger.debug("Compose path = {}, target = {}, qualifier = {}, optional = {}, reference = {}", path.length(), targetClass.getSimpleName(), qualifier, optional, reference);
 
 		if (reference) {
-//			if (targetComponentClass == null) {
-				return factory.get(targetClass).compose(path, contextObjects.getValues());
-//			}
-			
+			return factory.get(targetClass).compose(path, contextObjects.getValues());
 			//TODO deal with a collection
 			
 		}
@@ -68,7 +65,6 @@ public class ProvidedMappingImpl implements SourceMapping {
 		
 		logger.trace("  providedValue = {}", providedValue);
 		return providedValue;
-		//return typeAdapters.convert(targetClass, targetComponentClass, providedValue);
 	}
 	
 	@Override

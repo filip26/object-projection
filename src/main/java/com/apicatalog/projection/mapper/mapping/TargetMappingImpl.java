@@ -151,7 +151,6 @@ public class TargetMappingImpl implements TargetMapping {
 			Stream.of(sourceValue).forEach(v -> logger.trace("  sourceValue = {}", v));
 		}
 		
-		//FIXME return typeAdapters.convert(sourceClass, sourceComponentClass, sourceValue);
 		return sourceValue;
 	}
 	
@@ -173,12 +172,9 @@ public class TargetMappingImpl implements TargetMapping {
 				
 				value = Optional.ofNullable(object);
 				
-			} else {
-				if (!context.contains(object.getClass(), null)) {
-					context.addOrReplace(object, null);
-				}
+			} else if (!context.contains(object.getClass(), null)) {
+				context.addOrReplace(object, null);
 				
-				//context.merge(object, null);
 			}
 		}
 		return value.orElse(null);

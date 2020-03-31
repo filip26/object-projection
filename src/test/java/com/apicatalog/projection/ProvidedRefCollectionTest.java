@@ -103,14 +103,14 @@ public class ProvidedRefCollectionTest {
     	Assert.assertNotNull(objects[0]);
     	Assert.assertTrue(Collection.class.isInstance(objects[0]));
     	
-    	Collection<SimpleObject> c1 = (Collection<SimpleObject>)objects[0];
+    	@SuppressWarnings("unchecked")
+		Collection<SimpleObject> c1 = (Collection<SimpleObject>)objects[0];
+    	
     	Assert.assertEquals(1, c1.size());
     	
     	SimpleObject o1 = c1.iterator().next();
     	
     	Assert.assertEquals(to1.i1, o1.i1);
     	Assert.assertEquals(to1.s1, o1.s1);
-    	
-    }    
-    
+    }
 }

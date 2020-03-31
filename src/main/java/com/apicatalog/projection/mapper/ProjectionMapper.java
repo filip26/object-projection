@@ -221,12 +221,6 @@ public class ProjectionMapper {
 		sourceMapping.setTargetClass(sourceMapping.getGetter().getValueClass());
 		sourceMapping.setTargetComponentClass(sourceMapping.getGetter().getValueComponentClass());
 
-//		sourceMapping.setTargetClass(field.getType());
-//		
-//		if (Collection.class.isAssignableFrom(field.getType())) {
-//			sourceMapping.setTargetComponentClass((Class<?>)((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]);
-//		}
-		
 		return (new PropertyMappingImpl())
 						.setName(field.getName())		// set projection property name
 						.setSource(sourceMapping)		// set projection property value sources
