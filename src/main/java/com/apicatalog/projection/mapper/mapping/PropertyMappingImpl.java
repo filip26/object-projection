@@ -48,7 +48,7 @@ public class PropertyMappingImpl implements PropertyMapping {
 	}
 	
 	@Override
-	public void decompose(final Path path, final Object object, final ContextObjects contextObjects) throws ProjectionError {
+	public void decompose(final Object object, final ContextObjects contextObjects) throws ProjectionError {
 
 		logger.debug("Decompose property {} = {}", name, object);
 		
@@ -59,13 +59,13 @@ public class PropertyMappingImpl implements PropertyMapping {
 		}
 		
 		// get target value if exists
-		final Optional<Object> value = Optional.ofNullable(target.deconstruct(path, object, contextObjects));
+		final Optional<Object> value = Optional.ofNullable(target.deconstruct(object, contextObjects));
 
 		if (value.isEmpty()) {
 			return;
 		}
 		
-		source.decompose(path, value.get(), contextObjects);		
+		source.decompose(value.get(), contextObjects);		
 	}
 
 	@Override

@@ -14,7 +14,7 @@ public interface PropertyMapping {
 	
 	Object compose(Path path, ContextObjects context) throws ProjectionError;
 	
-	void decompose(Path path, Object value, ContextObjects context) throws ProjectionError;
+	void decompose(Object value, ContextObjects context) throws ProjectionError;
 	
 	boolean isVisible(int level);
 }

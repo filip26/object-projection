@@ -102,7 +102,7 @@ public class TargetMappingImpl implements TargetMapping {
 	}
 
 	@Override
-	public Object deconstruct(final Path path, final Object object, final ContextObjects context) throws ProjectionError {
+	public Object deconstruct(final Object object, final ContextObjects context) throws ProjectionError {
 
 		logger.debug("Deconstruct {}, colllection = {}, reference = {}", object, isCollection(), isReference());
 		
@@ -122,7 +122,7 @@ public class TargetMappingImpl implements TargetMapping {
 				
 				// extract objects from each projection in the collection
 				for (final Object item : sourceCollection) {
-					collection.add(filter(getTargetType(true).decompose(path, item), context));
+					collection.add(filter(getTargetType(true).decompose(item, context), context));
 				}
 				
 				value = Optional.of(collection);
@@ -132,7 +132,7 @@ public class TargetMappingImpl implements TargetMapping {
 				final ProjectionMapping<Object> projection = getTargetType(false);
 				
 				if (projection != null) {
-					value = Optional.ofNullable(filter(projection.decompose(path, object), context));
+					value = Optional.ofNullable(filter(projection.decompose(object, context), context));
 				} else {
 					value = Optional.empty();
 				}
@@ -165,7 +165,7 @@ public class TargetMappingImpl implements TargetMapping {
 		}
 		
 		Optional<Object> value = Optional.empty();
-		
+
 		for (Object object : objects) {
 			if (value.isEmpty() 
 					&& (sourceComponentClass != null ? sourceComponentClass.isInstance(object) : sourceClass.isInstance(object))
@@ -174,7 +174,11 @@ public class TargetMappingImpl implements TargetMapping {
 				value = Optional.ofNullable(object);
 				
 			} else {
-				context.addOrReplace(object, null);
+				if (!context.contains(object.getClass(), null)) {
+					context.addOrReplace(object, null);
+				}
+				
+				//context.merge(object, null);
 			}
 		}
 		return value.orElse(null);

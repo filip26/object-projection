@@ -79,7 +79,7 @@ public class SourceMappingImpl implements SourceMapping {
 	}
 
 	@Override
-	public void decompose(Path path, Object object, ContextObjects sources) throws ProjectionError {
+	public void decompose(Object object, ContextObjects sources) throws ProjectionError {
 		logger.debug("Decompose {}, source = {}, qualifier = {}, optional = {}", object, sourceObjectClass.getSimpleName(), qualifier, optional);
 
 		Optional<Object> value = Optional.ofNullable(object);

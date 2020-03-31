@@ -34,7 +34,7 @@ public class ConstantMappingImpl implements SourceMapping {
 	}
 	
 	@Override
-	public void decompose(Path path, Object object, ContextObjects contextObjects) throws ProjectionError {
+	public void decompose(Object object, ContextObjects contextObjects) throws ProjectionError {
 		// nothing to decompose, it's constant
 	}
 	

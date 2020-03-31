@@ -87,21 +87,19 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 
 	@Override
 	public Object[] decompose(final P projection) throws ProjectionError {
-		return decompose(Path.create(), projection);
+		return decompose(projection, ContextObjects.of());
 	}
 	
 	@Override
-	public Object[] decompose(final Path path, final P projection) throws ProjectionError {
+	public Object[] decompose(final P projection, final ContextObjects providedContext) throws ProjectionError {
 		
 		if (projection == null) {
 			throw new IllegalArgumentException();
 		}
 	
 		logger.debug("Decompose {}", projection.getClass().getCanonicalName());
-						
-		final ContextObjects contextObjects = 
-				Optional.ofNullable(ContextObjects.of())
-						.orElseThrow(IllegalStateException::new); 				
+				
+		final ContextObjects contextObjects = new ContextObjects(providedContext);
 		
 		for (PropertyMapping propertyMapping : properties) {
 	
@@ -119,7 +117,7 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 			
 			logger.trace("  got {} from {}.{}: {}", value.get(), projectionClass.getSimpleName(), propertyMapping.getName(), propertyMapping.getTarget().getTargetClass().getSimpleName());
 			
-			propertyMapping.decompose(path, value.get(), contextObjects);
+			propertyMapping.decompose(value.get(), contextObjects);
 		}
 
 		return contextObjects.getValues();

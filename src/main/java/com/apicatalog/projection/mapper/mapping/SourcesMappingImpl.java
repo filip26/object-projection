@@ -58,7 +58,7 @@ public class SourcesMappingImpl implements SourceMapping {
 	}
 
 	@Override
-	public void decompose(Path path, Object object, ContextObjects sources) throws ProjectionError {
+	public void decompose(Object object, ContextObjects sources) throws ProjectionError {
 		
 		logger.debug("Decompose {}, optional={}", object, optional);
 
@@ -98,7 +98,7 @@ public class SourcesMappingImpl implements SourceMapping {
 			if (it > sourceValues.length) {
 				break;
 			}
-			sourceMapping.decompose(path, sourceValues[it++], sources);
+			sourceMapping.decompose(sourceValues[it++], sources);
 		}
 	}
 

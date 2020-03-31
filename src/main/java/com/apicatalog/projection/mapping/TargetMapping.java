@@ -14,6 +14,6 @@ public interface TargetMapping {
 	
 	Object construct(Path path, Object object, ContextObjects context) throws ProjectionError;
 	
-	Object deconstruct(Path path, Object object, ContextObjects context) throws ProjectionError;
+	Object deconstruct(Object object, ContextObjects context) throws ProjectionError;
 	
 }

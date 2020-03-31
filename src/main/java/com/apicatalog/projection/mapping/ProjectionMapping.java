@@ -3,6 +3,7 @@ package com.apicatalog.projection.mapping;
 import java.util.Collection;
 
 import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.Path;
 
 public interface ProjectionMapping<P> {
@@ -31,7 +32,7 @@ public interface ProjectionMapping<P> {
 	 */
 	Object[] decompose(P projection) throws ProjectionError;
 	
-	Object[] decompose(Path path, P projection) throws ProjectionError;
+	Object[] decompose(P projection, ContextObjects context) throws ProjectionError;
 
 	/**
 	 * Extract exact source value for the given projection

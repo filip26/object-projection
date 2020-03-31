@@ -12,7 +12,7 @@ public interface SourceMapping {
 
 	Object compose(Path path, ContextObjects context) throws ProjectionError;
 
-	void decompose(Path path, Object object, ContextObjects context) throws ProjectionError;
+	void decompose(Object object, ContextObjects context) throws ProjectionError;
 	
 	AccessMode getAccessMode();
 

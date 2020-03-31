@@ -62,4 +62,8 @@ public class ContextObjects {
 		index.put(ObjectKey.of(object.getClass(), qualifier), object);
 		return this;
 	}
+
+	public boolean contains(Class<? extends Object> class1, String qualifier) {
+		return index.containsKey(ObjectKey.of(class1, qualifier));
+	}
 }

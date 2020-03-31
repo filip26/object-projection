@@ -72,7 +72,7 @@ public class ProvidedMappingImpl implements SourceMapping {
 	}
 	
 	@Override
-	public void decompose(Path path, Object object, ContextObjects contextObjects) throws ProjectionError {
+	public void decompose(Object object, ContextObjects contextObjects) throws ProjectionError {
 
 		logger.debug("Decompose {}, source = {}, qualifier = {}, optional = {}", object, targetClass.getSimpleName(), qualifier, optional);
 

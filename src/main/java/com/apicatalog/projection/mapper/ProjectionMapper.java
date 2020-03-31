@@ -217,12 +217,15 @@ public class ProjectionMapper {
 		
 		// set default access mode
 		sourceMapping.setAccessMode(AccessMode.READ_WRITE);
-				
-		sourceMapping.setTargetClass(field.getType());
-		
-		if (Collection.class.isAssignableFrom(field.getType())) {
-			sourceMapping.setTargetComponentClass((Class<?>)((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]);
-		}
+
+		sourceMapping.setTargetClass(sourceMapping.getGetter().getValueClass());
+		sourceMapping.setTargetComponentClass(sourceMapping.getGetter().getValueComponentClass());
+
+//		sourceMapping.setTargetClass(field.getType());
+//		
+//		if (Collection.class.isAssignableFrom(field.getType())) {
+//			sourceMapping.setTargetComponentClass((Class<?>)((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]);
+//		}
 		
 		return (new PropertyMappingImpl())
 						.setName(field.getName())		// set projection property name
