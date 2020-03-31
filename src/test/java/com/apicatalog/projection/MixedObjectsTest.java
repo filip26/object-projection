@@ -54,7 +54,7 @@ public class MixedObjectsTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError, ConverterError {
+    public void testDecomposition1() throws ProjectionError, ConverterError {
     	
     	Object3To to3 = new Object3To();
     	to3.id = "id-3";
@@ -83,6 +83,34 @@ public class MixedObjectsTest {
     	Assert.assertNotNull(object3.object4);
     	Assert.assertEquals(to4.name2, object3.object4.name2);
     	Assert.assertEquals(to4.name3, object3.object4.name3);
+    }
+    
+    @Test
+    public void testDecomposition2() throws ProjectionError, ConverterError {
+    	
+    	Object3To to3 = new Object3To();
+    	to3.id = "id-3";
+    	
+    	Object4To to4 = new Object4To();
+    	to4.name1 = "name-1";
+    	
+    	to3.object4 = to4;
+
+    	Object[] objects = projections.decompose(to3);
+    	
+    	Assert.assertNotNull(objects);
+    	Assert.assertEquals(1, objects.length);
+    	
+    	Assert.assertNotNull(objects[0]);
+    	Assert.assertTrue(Object3.class.isInstance(objects[0]));
+    	
+    	Object3 object3 = (Object3)objects[0];
+    	
+    	Assert.assertNotNull(object3);
+    	Assert.assertEquals(to3.id, object3.id);
+    	Assert.assertEquals(to4.name1, object3.name1);
+    	
+    	Assert.assertNull(object3.object4);
     }
     
     @Test

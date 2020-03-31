@@ -159,13 +159,10 @@ public class TargetMappingImpl implements TargetMapping {
 			return null;
 		}
 
-		if (objects.length == 1) {
-			return objects[0];
-		}
-		
 		Optional<Object> value = Optional.empty();
 
 		for (Object object : objects) {
+
 			if (value.isEmpty() 
 					&& (sourceComponentClass != null ? sourceComponentClass.isInstance(object) : sourceClass.isInstance(object))
 				) {
