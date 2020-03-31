@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.TypeAdapters;
+import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.Path;
@@ -61,5 +62,10 @@ public class ConstantMappingImpl implements SourceMapping {
 	
 	public void setConstants(String[] constants) {
 		this.constants = constants;
+	}
+	
+	@Override
+	public AccessMode getAccessMode() {
+		return AccessMode.READ_ONLY;
 	}
 }

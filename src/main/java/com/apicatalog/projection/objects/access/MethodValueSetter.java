@@ -1,4 +1,4 @@
-package com.apicatalog.projection.objects;
+package com.apicatalog.projection.objects.access;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

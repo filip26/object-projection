@@ -11,6 +11,8 @@ public @interface Provided {
 
 	boolean optional() default false;
 	
+	AccessMode mode() default AccessMode.READ_WRITE;
+	
 	String qualifier() default "";
 
 }

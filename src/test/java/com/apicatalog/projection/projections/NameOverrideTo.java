@@ -4,24 +4,24 @@ import java.time.Instant;
 
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Source;
-import com.apicatalog.projection.objects.ObjectBasicTypes;
+import com.apicatalog.projection.objects.BasicTypes;
 
 @Projection
 public class NameOverrideTo {
 
-	@Source(type = ObjectBasicTypes.class, value = "longValue")
+	@Source(type = BasicTypes.class, value = "longValue")
 	public Long projectedLong;
 	
-	@Source(type = ObjectBasicTypes.class, value = "stringValue")
+	@Source(type = BasicTypes.class, value = "stringValue")
 	public String projectedString;
 	
-	@Source(type = ObjectBasicTypes.class, value = "booleanValue")
+	@Source(type = BasicTypes.class, value = "booleanValue")
 	public Boolean projectedBoolean;
 	
-	@Source(type = ObjectBasicTypes.class, value = "instantValue")
+	@Source(type = BasicTypes.class, value = "instantValue")
 	public Instant projectedInstant;
 	
-	@Source(type = ObjectBasicTypes.class, value = "doubleValue")
+	@Source(type = BasicTypes.class, value = "doubleValue")
 	public Double projectedDouble;
 	
 }

@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
-import com.apicatalog.projection.objects.ObjectBasicTypes;
+import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.projections.TypeObjectTo;
 
 
@@ -28,7 +28,7 @@ public class DirectMappingTest {
     @Test
     public void testComposition() throws ProjectionError, ConverterError {
     	
-    	ObjectBasicTypes oa = new ObjectBasicTypes();
+    	BasicTypes oa = new BasicTypes();
     	oa.booleanValue = true;
     	oa.doubleValue = 123.456d;
     	oa.instantValue = Instant.now();
@@ -61,9 +61,9 @@ public class DirectMappingTest {
     	Assert.assertNotNull(oo);
     	
     	Assert.assertEquals(1, oo.length);
-    	Assert.assertEquals(ObjectBasicTypes.class, oo[0].getClass());
+    	Assert.assertEquals(BasicTypes.class, oo[0].getClass());
     	
-    	ObjectBasicTypes oa = (ObjectBasicTypes)oo[0];
+    	BasicTypes oa = (BasicTypes)oo[0];
 
     	Assert.assertEquals(pa.stringValue, oa.stringValue);
     	Assert.assertEquals(pa.booleanValue, oa.booleanValue);

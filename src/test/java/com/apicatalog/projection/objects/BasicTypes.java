@@ -3,7 +3,7 @@ package com.apicatalog.projection.objects;
 import java.time.Instant;
 import java.util.Collection;
 
-public class ObjectBasicTypes {
+public class BasicTypes {
 
 	public Integer integerValue;
 	

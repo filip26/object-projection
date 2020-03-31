@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
+import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.Path;
@@ -27,6 +28,8 @@ public class ProvidedMappingImpl implements SourceMapping {
 	Boolean optional;
 	
 	boolean reference;
+	
+	AccessMode accessMode;
 
 	public ProvidedMappingImpl(final ProjectionFactory factory, final TypeAdapters typeAdapters) {
 		this.factory = factory;
@@ -118,5 +121,14 @@ public class ProvidedMappingImpl implements SourceMapping {
 	
 	public void setTargetComponentClass(Class<?> targetComponentClass) {
 		this.targetComponentClass = targetComponentClass;
+	}
+	
+	@Override
+	public AccessMode getAccessMode() {
+		return accessMode;
+	}
+	
+	public void setAccessMode(AccessMode accessMode) {
+		this.accessMode = accessMode;
 	}
 }

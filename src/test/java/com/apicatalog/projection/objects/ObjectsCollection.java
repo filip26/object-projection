@@ -6,7 +6,7 @@ public class ObjectsCollection {
 
 	public String id;
 	
-	public Collection<ObjectBasicTypes> items;
+	public Collection<BasicTypes> items;
 	
 	
 }

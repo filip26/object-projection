@@ -6,9 +6,9 @@ import org.junit.Test;
 
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
-import com.apicatalog.projection.objects.ObjectBasicTypes;
+import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.objects.SimpleObject;
-import com.apicatalog.projection.projections.ProvidedObjectProperty;
+import com.apicatalog.projection.projections.ProvidedObjectTo;
 
 public class ProvidedObjectTest {
 
@@ -20,20 +20,20 @@ public class ProvidedObjectTest {
 		projections = new ProjectionFactory();
 		mapper = new ProjectionMapper(projections);		
 		
-		projections.add(mapper.getMapping(ProvidedObjectProperty.class));
+		projections.add(mapper.getMapping(ProvidedObjectTo.class));
 	}
 	
     @Test
     public void testComposition() throws ProjectionError, ConverterError {
     	
-    	ObjectBasicTypes object1 = new ObjectBasicTypes();
+    	BasicTypes object1 = new BasicTypes();
     	object1.stringValue = "A B C D E";
     	
     	SimpleObject object2 = new SimpleObject();
     	object2.i1 = 13;
     	object2.s1 = "! @ #";
     	
-    	ProvidedObjectProperty projection = projections.compose(ProvidedObjectProperty.class, object1, object2);
+    	ProvidedObjectTo projection = projections.compose(ProvidedObjectTo.class, object1, object2);
     	
     	Assert.assertNotNull(projection);
     	
@@ -49,7 +49,7 @@ public class ProvidedObjectTest {
     @Test
     public void testDecomposition() throws ProjectionError, ConverterError {
     	
-    	ProvidedObjectProperty projection = new ProvidedObjectProperty();
+    	ProvidedObjectTo projection = new ProvidedObjectTo();
     	projection.title = "QWERTY ZXCVBN";
 
     	SimpleObject object2 = new SimpleObject();
@@ -66,15 +66,15 @@ public class ProvidedObjectTest {
     	Assert.assertNotNull(objects[0]);
     	Assert.assertNotNull(objects[1]);
     	
-    	if (ObjectBasicTypes.class.isInstance(objects[1])) {
+    	if (BasicTypes.class.isInstance(objects[1])) {
     		Object tmp = objects[0];
     		objects[0] = objects[1];
     		objects[1] = tmp;
     	}
     	
-    	Assert.assertEquals(ObjectBasicTypes.class, objects[0].getClass());
+    	Assert.assertEquals(BasicTypes.class, objects[0].getClass());
     	
-    	ObjectBasicTypes object1ref = (ObjectBasicTypes)objects[0];
+    	BasicTypes object1ref = (BasicTypes)objects[0];
 
     	Assert.assertEquals(projection.title, object1ref.stringValue);    	
     	

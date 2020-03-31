@@ -15,6 +15,8 @@ public @interface Source {
 	Class<?> type() default Class.class;
 	String value() default "";
 	
+	AccessMode mode() default AccessMode.READ_WRITE;
+	
 	String qualifier() default "";
 	
 	Conversion[] map() default {};

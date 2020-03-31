@@ -18,9 +18,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ObjectUtils;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
+import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.annotation.Constant;
 import com.apicatalog.projection.annotation.Conversion;
 import com.apicatalog.projection.annotation.Projection;
@@ -46,10 +46,11 @@ import com.apicatalog.projection.mapping.ReducerMapping;
 import com.apicatalog.projection.mapping.ReductionMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.mapping.TargetMapping;
-import com.apicatalog.projection.objects.FieldValueGetter;
-import com.apicatalog.projection.objects.FieldValueSetter;
-import com.apicatalog.projection.objects.MethodValueGetter;
-import com.apicatalog.projection.objects.MethodValueSetter;
+import com.apicatalog.projection.objects.ObjectUtils;
+import com.apicatalog.projection.objects.access.FieldValueGetter;
+import com.apicatalog.projection.objects.access.FieldValueSetter;
+import com.apicatalog.projection.objects.access.MethodValueGetter;
+import com.apicatalog.projection.objects.access.MethodValueSetter;
 
 public class ProjectionMapper {
 
@@ -213,6 +214,9 @@ public class ProjectionMapper {
 		if (!setGetterSetter(sourceMapping, field.getName())) {
 			return null;
 		}
+		
+		// set default access mode
+		sourceMapping.setAccessMode(AccessMode.READ_WRITE);
 				
 		sourceMapping.setTargetClass(field.getType());
 		
@@ -237,6 +241,9 @@ public class ProjectionMapper {
 		sourceMapping.setReference(field.getType().isAnnotationPresent(Projection.class));
 
 		sourceMapping.setTargetClass(field.getType());
+
+		// set source access mode
+		sourceMapping.setAccessMode(provided.mode());
 		
 		if (Collection.class.isAssignableFrom(field.getType())) {
 			sourceMapping.setTargetComponentClass((Class<?>)((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]);
@@ -346,17 +353,17 @@ public class ProjectionMapper {
 	
 	SourceMapping getSourceMapping(final Source source, final Field field, final Class<?> defaultSourceClass) {
 		
-		final SourceMappingImpl mapping = new SourceMappingImpl(typeAdapters);
+		final SourceMappingImpl sourceMapping = new SourceMappingImpl(typeAdapters);
 		
 		// set default source object class
-		Optional.ofNullable(defaultSourceClass).ifPresent(mapping::setSourceObjectClass);
+		Optional.ofNullable(defaultSourceClass).ifPresent(sourceMapping::setSourceObjectClass);
 		
 		// override source property class
 		if (!Class.class.equals(source.type())) {
-			mapping.setSourceObjectClass(source.type());
+			sourceMapping.setSourceObjectClass(source.type());
 		}
 		
-		if (mapping.getSourceObjectClass() == null) {
+		if (sourceMapping.getSourceObjectClass() == null) {
 			logger.warn("Source class is missing. Property {} is ignored.", field.getName());
 			return null;
 		}
@@ -369,48 +376,44 @@ public class ProjectionMapper {
 			sourceFieldName = source.value();
 		}
 
-		if (!setGetterSetter(mapping, sourceFieldName)) {
+		// extract setter/getter
+		if (!setGetterSetter(sourceMapping, sourceFieldName)) {
+			
+			// no setter nor getter? nothing to do with this 
 			return null;
 		}
-				
-//		Field sourceField = ObjectUtils.getProperty(mapping.getSourceObjectClass(), mapping.getPropertyName());
-//
-//		// check is source field does exist
-//		if (sourceField == null) {
-//			logger.warn("Property {} is not accessible or does not exist in {} and is ignored.", mapping.getPropertyName(), mapping.getSourceObjectClass().getCanonicalName());
-//			return null;
-//		}
-//				
-//		mapping.setSourceClass(sourceField.getType());
-//		
-//		if (Collection.class.isAssignableFrom(sourceField.getType())) {
-//			mapping.setSourceComponentClass((Class<?>)((ParameterizedType) sourceField.getGenericType()).getActualTypeArguments()[0]);
-//		}
 		
 		// set source object qualifier
 		if (StringUtils.isNotBlank(source.qualifier())) {
-			mapping.setQualifier(source.qualifier());
+			sourceMapping.setQualifier(source.qualifier());
 		}
-		// set conversions to apply
-		mapping.setConversions(getConversionMapping(source.map()));
-		// set optional 
-		mapping.setOptional(source.optional());
-
-		mapping.setTargetClass(mapping.getGetter().getValueClass());
-		mapping.setTargetComponentClass(mapping.getGetter().getValueComponentClass());
 		
-		if (mapping.getConversions() != null) {
+		// set source access mode
+		sourceMapping.setAccessMode(source.mode());
+		
+		// set conversions to apply
+		sourceMapping.setConversions(getConversionMapping(source.map()));
+		
+		// set optional 
+		sourceMapping.setOptional(source.optional());
+
+		// set default target object class
+		sourceMapping.setTargetClass(sourceMapping.getGetter().getValueClass());
+		sourceMapping.setTargetComponentClass(sourceMapping.getGetter().getValueComponentClass());
+		
+		// extract actual target object class 
+		if (sourceMapping.getConversions() != null) {
 			
-			Stream.of(mapping.getConversions())
+			Stream.of(sourceMapping.getConversions())
 					.reduce((first, second) -> second)
 					.map(ConversionMapping::getConverterMapping)
 					.ifPresent(m -> { 
-								mapping.setTargetClass(m.getSourceClass());
-								mapping.setTargetComponentClass(m.getSourceComponentClass());
+								sourceMapping.setTargetClass(m.getSourceClass());
+								sourceMapping.setTargetComponentClass(m.getSourceComponentClass());
 								});
 		}
 
-		return mapping;
+		return sourceMapping;
 	}
 		
 	ConversionMapping[] getConversionMapping(Conversion[] conversions) {
@@ -545,7 +548,7 @@ public class ProjectionMapper {
 			//FIXME do this during creation
 			setter.setValueClass(setterMethod.getReturnType());
 
-			if (Collection.class.isAssignableFrom(getterMethod.getReturnType())) {
+			if (Collection.class.isAssignableFrom(setterMethod.getReturnType())) {
 				setter.setValueComponentClass((Class<?>)((ParameterizedType) setterMethod.getGenericReturnType()).getActualTypeArguments()[0]);
 			}
 			

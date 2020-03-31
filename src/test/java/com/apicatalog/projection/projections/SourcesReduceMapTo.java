@@ -7,11 +7,11 @@ import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.converter.std.Concatenation;
 import com.apicatalog.projection.converter.std.Suffix;
-import com.apicatalog.projection.objects.ObjectBasicTypes;
+import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.objects.ObjectReference;
 
-@Projection(ObjectBasicTypes.class)
-public class SourcesWithConversion {
+@Projection(BasicTypes.class)
+public class SourcesReduceMapTo {
 
 	@Sources(value =  {
 					@Source(value = "longValue"),

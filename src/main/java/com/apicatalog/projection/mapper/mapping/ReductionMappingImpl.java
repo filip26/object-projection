@@ -3,7 +3,6 @@ package com.apicatalog.projection.mapper.mapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ObjectUtils;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.converter.ConverterConfig;
@@ -11,6 +10,7 @@ import com.apicatalog.projection.converter.Reducer;
 import com.apicatalog.projection.converter.ReducerError;
 import com.apicatalog.projection.mapping.ReducerMapping;
 import com.apicatalog.projection.mapping.ReductionMapping;
+import com.apicatalog.projection.objects.ObjectUtils;
 
 public class ReductionMappingImpl implements ReductionMapping {
 

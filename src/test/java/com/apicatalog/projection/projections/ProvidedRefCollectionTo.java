@@ -4,9 +4,9 @@ import java.util.Collection;
 
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Provided;
-import com.apicatalog.projection.objects.ObjectBasicTypes;
+import com.apicatalog.projection.objects.BasicTypes;
 
-@Projection(ObjectBasicTypes.class)
+@Projection(BasicTypes.class)
 public class ProvidedRefCollectionTo {
 
 	@Provided(qualifier = "items")

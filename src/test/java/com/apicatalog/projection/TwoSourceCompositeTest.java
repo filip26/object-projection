@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
-import com.apicatalog.projection.objects.ObjectBasicTypes;
+import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.objects.ObjectReference;
 import com.apicatalog.projection.projections.TwoSourceComposite;
 
@@ -28,7 +28,7 @@ public class TwoSourceCompositeTest {
     @Test
     public void testComposition() throws ProjectionError, ConverterError {
     	
-    	ObjectBasicTypes source1 = new ObjectBasicTypes();
+    	BasicTypes source1 = new BasicTypes();
     	source1.longValue = 123456l;
 
     	ObjectReference source2 = new ObjectReference();
@@ -57,7 +57,7 @@ public class TwoSourceCompositeTest {
     	assertNotNull(objects[0]);
     	assertNotNull(objects[1]);
     	
-    	if (ObjectBasicTypes.class.isInstance(objects[0])) {
+    	if (BasicTypes.class.isInstance(objects[0])) {
     		checkBasic(objects[0], projection.source1);
     		checkReference(objects[1], projection.source2);
     	} else {
@@ -73,8 +73,8 @@ public class TwoSourceCompositeTest {
     }
     
     static void checkBasic(Object object, Long ref) {
-    	Assert.assertEquals(ObjectBasicTypes.class, object.getClass());
-    	ObjectBasicTypes source1 = (ObjectBasicTypes)object;
+    	Assert.assertEquals(BasicTypes.class, object.getClass());
+    	BasicTypes source1 = (BasicTypes)object;
     	Assert.assertEquals(ref, source1.longValue);    	
     }
     

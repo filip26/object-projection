@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.mapping.PropertyMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.mapping.TargetMapping;
@@ -30,6 +31,12 @@ public class PropertyMappingImpl implements PropertyMapping {
 
 		logger.debug("Compose property {}, path = {}", name, path.length());
 		
+		// do nothing in a case read is not allowed
+		if (AccessMode.WRITE_ONLY.equals(source.getAccessMode())) {
+			logger.trace("Composition is nOt allowed mode = {}", source.getAccessMode());
+			return null;
+		}
+		
 		// get source value if exists
 		final Optional<Object> value = Optional.ofNullable(source.compose(path, contextObjects));
 		
@@ -44,6 +51,12 @@ public class PropertyMappingImpl implements PropertyMapping {
 	public void decompose(final Path path, final Object object, ContextObjects contextObjects) throws ProjectionError {
 
 		logger.debug("Decompose property {} = {}", name, object);
+		
+		// do nothing in a case write is not allowed
+		if (AccessMode.READ_ONLY.equals(source.getAccessMode())) {
+			logger.trace("Decomposition is not allowed mode = {}", source.getAccessMode());
+			return;
+		}
 		
 		// get target value if exists
 		final Optional<Object> value = Optional.ofNullable(target.deconstruct(path, object, contextObjects));

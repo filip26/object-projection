@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.mapping.ConversionMapping;
 import com.apicatalog.projection.mapping.ReductionMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
@@ -30,6 +31,8 @@ public class SourcesMappingImpl implements SourceMapping {
 	ConversionMapping[] conversions;
 
 	Boolean optional;
+	
+	AccessMode accessMode;
 
 	@Override
 	public Object compose(Path path, ContextObjects sources) throws ProjectionError {
@@ -147,5 +150,14 @@ public class SourcesMappingImpl implements SourceMapping {
 	@Override
 	public Class<?> getTargetComponentClass() {
 		return targetComponentClass;
+	}
+	
+	@Override
+	public AccessMode getAccessMode() {
+		return accessMode;
+	}
+	
+	public void setAccessMode(AccessMode accessMode) {
+		this.accessMode = accessMode;
 	}
 }

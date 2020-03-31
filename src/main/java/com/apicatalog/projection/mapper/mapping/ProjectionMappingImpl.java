@@ -8,11 +8,11 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ObjectUtils;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.mapping.ProjectionMapping;
 import com.apicatalog.projection.mapping.PropertyMapping;
 import com.apicatalog.projection.objects.ContextObjects;
+import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.objects.Path;
 
 public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {

@@ -4,6 +4,6 @@ public class Object2 {
 
 	public String id;
 	
-	public ObjectBasicTypes object3;
+	public BasicTypes object3;
 	
 }

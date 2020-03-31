@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
-import com.apicatalog.projection.objects.ObjectBasicTypes;
+import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.objects.ObjectReference;
 import com.apicatalog.projection.projections.NameOverrideTo;
 import com.apicatalog.projection.projections.ReferenceTo;
@@ -30,10 +30,10 @@ public class ReferencedCompositeTest {
     @Test
     public void testComposition() throws ProjectionError, ConverterError {
     	
-    	ObjectBasicTypes oa = new ObjectBasicTypes();
+    	BasicTypes oa = new BasicTypes();
     	oa.longValue = 123456l;
 
-    	ObjectBasicTypes oa2 = new ObjectBasicTypes();
+    	BasicTypes oa2 = new BasicTypes();
     	oa2.longValue = 987654l;
 
     	ObjectReference oaa = new ObjectReference();

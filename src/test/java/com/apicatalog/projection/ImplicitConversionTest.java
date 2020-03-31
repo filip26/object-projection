@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
-import com.apicatalog.projection.objects.ObjectBasicTypes;
+import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.projections.ImplicitConversionTo;
 
 public class ImplicitConversionTest {
@@ -29,7 +29,7 @@ public class ImplicitConversionTest {
     @Test
     public void testComposition() throws ProjectionError, ConverterError {
     	
-    	ObjectBasicTypes object = new ObjectBasicTypes();
+    	BasicTypes object = new BasicTypes();
     	object.instantValue = Instant.now();
     	object.longValue = 123456l;
     	object.integerValue = 1;
@@ -80,9 +80,9 @@ public class ImplicitConversionTest {
     	
     	Assert.assertNotNull(objects);
     	Assert.assertEquals(1, objects.length);
-    	Assert.assertEquals(ObjectBasicTypes.class, objects[0].getClass());
+    	Assert.assertEquals(BasicTypes.class, objects[0].getClass());
     	
-    	ObjectBasicTypes object = (ObjectBasicTypes)objects[0];
+    	BasicTypes object = (BasicTypes)objects[0];
 
     	Assert.assertEquals("1.23", object.stringValue);
     	Assert.assertEquals(Instant.ofEpochMilli(projection.longValue), object.instantValue);

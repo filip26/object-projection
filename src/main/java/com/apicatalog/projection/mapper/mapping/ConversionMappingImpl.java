@@ -3,7 +3,6 @@ package com.apicatalog.projection.mapper.mapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ObjectUtils;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.converter.Converter;
@@ -11,6 +10,7 @@ import com.apicatalog.projection.converter.ConverterConfig;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapping.ConversionMapping;
 import com.apicatalog.projection.mapping.ConverterMapping;
+import com.apicatalog.projection.objects.ObjectUtils;
 
 public class ConversionMappingImpl implements ConversionMapping {
 

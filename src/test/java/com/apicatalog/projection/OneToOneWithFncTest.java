@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
-import com.apicatalog.projection.objects.ObjectBasicTypes;
+import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.projections.TestProjectionAF;
 
 public class OneToOneWithFncTest {
@@ -25,7 +25,7 @@ public class OneToOneWithFncTest {
     @Test
     public void testComposition() throws ProjectionError, ConverterError {
     	
-    	ObjectBasicTypes oa = new ObjectBasicTypes();
+    	BasicTypes oa = new BasicTypes();
     	oa.stringValue = "ABCDEF";
     	
     	TestProjectionAF pa = projections.compose(TestProjectionAF.class, oa);
@@ -49,9 +49,9 @@ public class OneToOneWithFncTest {
     	
     	Assert.assertNotNull(oo);
     	Assert.assertEquals(1, oo.length);
-    	Assert.assertEquals(ObjectBasicTypes.class, oo[0].getClass());
+    	Assert.assertEquals(BasicTypes.class, oo[0].getClass());
     	
-    	ObjectBasicTypes oa = (ObjectBasicTypes)oo[0];
+    	BasicTypes oa = (BasicTypes)oo[0];
 
     	Assert.assertEquals("ABCDEF", oa.stringValue);
     }

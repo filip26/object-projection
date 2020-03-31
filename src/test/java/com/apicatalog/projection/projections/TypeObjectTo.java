@@ -3,9 +3,9 @@ package com.apicatalog.projection.projections;
 import java.time.Instant;
 
 import com.apicatalog.projection.annotation.Projection;
-import com.apicatalog.projection.objects.ObjectBasicTypes;
+import com.apicatalog.projection.objects.BasicTypes;
 
-@Projection(ObjectBasicTypes.class)
+@Projection(BasicTypes.class)
 public class TypeObjectTo {
 
 	public Integer integerValue;

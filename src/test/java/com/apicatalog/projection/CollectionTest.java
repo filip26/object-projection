@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
-import com.apicatalog.projection.objects.ObjectBasicTypes;
+import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.objects.ObjectsCollection;
 import com.apicatalog.projection.projections.NameOverrideTo;
 import com.apicatalog.projection.projections.ProjectionsCollectionTo;
@@ -31,7 +31,7 @@ public class CollectionTest {
     @Test
     public void testComposition() throws ProjectionError, ConverterError {
     	
-    	ObjectBasicTypes oa = new ObjectBasicTypes();
+    	BasicTypes oa = new BasicTypes();
     	oa.booleanValue = true;
     	oa.doubleValue = 123.456d;
     	
@@ -76,13 +76,13 @@ public class CollectionTest {
     	Assert.assertNotNull(oc.items);
     	Assert.assertEquals(2, oc.items.size());
     	
-    	Iterator<ObjectBasicTypes> it = oc.items.iterator();
+    	Iterator<BasicTypes> it = oc.items.iterator();
     	
-    	ObjectBasicTypes oa1 = it.next();
+    	BasicTypes oa1 = it.next();
     	
     	Assert.assertEquals(pa1.projectedString, oa1.stringValue);
     	    	
-    	ObjectBasicTypes oa2 = it.next();
+    	BasicTypes oa2 = it.next();
     	
     	Assert.assertEquals(pa2.projectedString, oa2.stringValue);
     			

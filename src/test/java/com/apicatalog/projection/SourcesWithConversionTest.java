@@ -6,9 +6,9 @@ import org.junit.Test;
 
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
-import com.apicatalog.projection.objects.ObjectBasicTypes;
+import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.objects.ObjectReference;
-import com.apicatalog.projection.projections.SourcesWithConversion;
+import com.apicatalog.projection.projections.SourcesReduceMapTo;
 
 public class SourcesWithConversionTest {
 
@@ -20,19 +20,19 @@ public class SourcesWithConversionTest {
 		projections = new ProjectionFactory();
 		mapper = new ProjectionMapper(projections);		
 		
-		projections.add(mapper.getMapping(SourcesWithConversion.class));
+		projections.add(mapper.getMapping(SourcesReduceMapTo.class));
 	}
 		
     @Test
     public void testComposition() throws ProjectionError, ConverterError {
     	
-    	ObjectBasicTypes oa = new ObjectBasicTypes();
+    	BasicTypes oa = new BasicTypes();
     	oa.longValue = 123l;
 
     	ObjectReference oaa = new ObjectReference();
     	oaa.stringValue = "ABC"; 
 
-    	SourcesWithConversion pa = projections.compose(SourcesWithConversion.class, oa, oaa);
+    	SourcesReduceMapTo pa = projections.compose(SourcesReduceMapTo.class, oa, oaa);
     	
     	Assert.assertNotNull(pa);
     	Assert.assertEquals(oa.longValue + oaa.stringValue + "!@#", pa.longstring);

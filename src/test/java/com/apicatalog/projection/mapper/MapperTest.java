@@ -14,7 +14,7 @@ import com.apicatalog.projection.mapping.ProjectionMapping;
 import com.apicatalog.projection.mapping.PropertyMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.mapping.TargetMapping;
-import com.apicatalog.projection.objects.ObjectBasicTypes;
+import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.projections.TypeObjectTo;
 import com.apicatalog.projection.projections.TestProjectionAF;
 
@@ -44,37 +44,37 @@ public class MapperTest {
     	
     	PropertyMapping pm = it.next();
 		checkProperty(pm, "integerValue");
-		checkSource(pm.getSource(), "integerValue", ObjectBasicTypes.class);
+		checkSource(pm.getSource(), "integerValue", BasicTypes.class);
 		checkTarget(pm.getTarget(), false, false, Integer.class, null);
 
     	pm = it.next();
 		checkProperty(pm, "longValue");
-		checkSource(pm.getSource(), "longValue", ObjectBasicTypes.class);		
+		checkSource(pm.getSource(), "longValue", BasicTypes.class);		
 		checkTarget(pm.getTarget(), false, false, Long.class, null);
 
     	pm = it.next();
 		checkProperty(pm, "stringValue");
-		checkSource(pm.getSource(), "stringValue", ObjectBasicTypes.class);
+		checkSource(pm.getSource(), "stringValue", BasicTypes.class);
 		checkTarget(pm.getTarget(), false, false, String.class, null);
 
     	pm = it.next();
 		checkProperty(pm, "booleanValue");
-		checkSource(pm.getSource(), "booleanValue", ObjectBasicTypes.class);
+		checkSource(pm.getSource(), "booleanValue", BasicTypes.class);
 		checkTarget(pm.getTarget(), false, false, Boolean.class, null);
 
     	pm = it.next();
 		checkProperty(pm, "instantValue");
-		checkSource(pm.getSource(), "instantValue", ObjectBasicTypes.class);
+		checkSource(pm.getSource(), "instantValue", BasicTypes.class);
 		checkTarget(pm.getTarget(), false, false, Instant.class, null);
 
     	pm = it.next();
 		checkProperty(pm, "floatValue");
-		checkSource(pm.getSource(), "floatValue", ObjectBasicTypes.class);
+		checkSource(pm.getSource(), "floatValue", BasicTypes.class);
 		checkTarget(pm.getTarget(), false, false, Float.class, null);
 
     	pm = it.next();
 		checkProperty(pm, "doubleValue");
-		checkSource(pm.getSource(), "doubleValue", ObjectBasicTypes.class);
+		checkSource(pm.getSource(), "doubleValue", BasicTypes.class);
 		checkTarget(pm.getTarget(), false, false, Double.class, null);
     }
 	
@@ -95,17 +95,17 @@ public class MapperTest {
     	
     	final PropertyMapping pm1 = it.next();
 		checkProperty(pm1, "originString");
-		checkSource(pm1.getSource(), "stringValue", ObjectBasicTypes.class);
+		checkSource(pm1.getSource(), "stringValue", BasicTypes.class);
 		checkTarget(pm1.getTarget(), false, false, String.class, null);
 
     	final PropertyMapping pm2 = it.next();
 		checkProperty(pm2, "modifiedString");
-		checkSource(pm2.getSource(), "stringValue", ObjectBasicTypes.class);
+		checkSource(pm2.getSource(), "stringValue", BasicTypes.class);
 		checkTarget(pm2.getTarget(), false, false, String.class, null);
     	
     	final PropertyMapping pm3 = it.next();
 		checkProperty(pm3, "modified2xString");
-		checkSource(pm3.getSource(), "stringValue", ObjectBasicTypes.class);
+		checkSource(pm3.getSource(), "stringValue", BasicTypes.class);
 		checkTarget(pm3.getTarget(), false, false, String.class, null);
     }
     

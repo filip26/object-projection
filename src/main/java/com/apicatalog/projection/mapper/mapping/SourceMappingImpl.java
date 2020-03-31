@@ -8,15 +8,16 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ObjectUtils;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.TypeAdapters;
+import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.mapping.ConversionMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.objects.ContextObjects;
+import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.objects.Path;
-import com.apicatalog.projection.objects.ValueGetter;
-import com.apicatalog.projection.objects.ValueSetter;
+import com.apicatalog.projection.objects.access.ValueGetter;
+import com.apicatalog.projection.objects.access.ValueSetter;
 
 public class SourceMappingImpl implements SourceMapping {
 
@@ -36,6 +37,8 @@ public class SourceMappingImpl implements SourceMapping {
 	
 	Boolean optional;
 	
+	AccessMode accessMode;
+	
 	ConversionMapping[] conversions;
 
 	public SourceMappingImpl(TypeAdapters adapters) {
@@ -45,7 +48,7 @@ public class SourceMappingImpl implements SourceMapping {
 	@Override
 	public Object compose(Path path, ContextObjects sources) throws ProjectionError {
 		logger.debug("Compose path = {}, source = {}, qualifier = {}, optional = {}", path.length(), sourceObjectClass.getSimpleName(), qualifier, optional);
-	
+
 		if (getter == null) {
 			return null;
 		}
@@ -190,5 +193,14 @@ public class SourceMappingImpl implements SourceMapping {
 	
 	public ValueSetter getSetter() {
 		return setter;
+	}
+	
+	@Override
+	public AccessMode getAccessMode() {
+		return accessMode;
+	}
+	
+	public void setAccessMode(AccessMode accessMode) {
+		this.accessMode = accessMode;
 	}
 }

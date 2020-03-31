@@ -4,24 +4,24 @@ import java.time.Instant;
 
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Source;
-import com.apicatalog.projection.objects.ObjectBasicTypes;
+import com.apicatalog.projection.objects.BasicTypes;
 
 @Projection
-public class BasicTypes2 {
+public class BasicTypesTo {
 
-	@Source(type=ObjectBasicTypes.class)
+	@Source(type=BasicTypes.class)
 	public Long longValue;
 
-	@Source(type=ObjectBasicTypes.class)
+	@Source(type=BasicTypes.class)
 	public String stringValue;
 	
-	@Source(type=ObjectBasicTypes.class)
+	@Source(type=BasicTypes.class)
 	public Boolean booleanValue;
 	
-	@Source(type=ObjectBasicTypes.class)
+	@Source(type=BasicTypes.class)
 	public Instant instantValue;
 	
-	@Source(type=ObjectBasicTypes.class)
+	@Source(type=BasicTypes.class)
 	public Double doubleValue;
 
 }

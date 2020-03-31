@@ -1,4 +1,4 @@
-package com.apicatalog.projection;
+package com.apicatalog.projection.objects;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -6,6 +6,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import org.apache.commons.lang3.StringUtils;
+
+import com.apicatalog.projection.ProjectionError;
 
 public class ObjectUtils {
 

@@ -1,8 +1,8 @@
-package com.apicatalog.projection.objects;
+package com.apicatalog.projection.objects.access;
 
-import com.apicatalog.projection.ObjectUtils;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.TypeAdapters;
+import com.apicatalog.projection.objects.ObjectUtils;
 
 public class FieldValueSetter implements ValueSetter {
 

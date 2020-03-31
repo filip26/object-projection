@@ -1,31 +1,28 @@
-package com.apicatalog.projection.objects;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+package com.apicatalog.projection.objects.access;
 
 import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.objects.ObjectUtils;
 
-public class MethodValueGetter implements ValueGetter {
+public class FieldValueGetter implements ValueGetter {
 
 	Class<?> valueClass;
 	Class<?> valueComponentClass;
 	
-	final Method method;
-	
-	public MethodValueGetter(Method method) {
-		this.method = method;
-	}
+	String fieldName;
 	
 	@Override
 	public Object get(final Object object) throws ProjectionError {
-		try {
-			return method.invoke(object);
-			
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) { /* ignore */}
-		
-		return null;
+		return ObjectUtils.getPropertyValue(object, fieldName);
 	}
 
+	public void setFieldName(final String fieldName) {
+		this.fieldName = fieldName;
+	}
+	
+	public String getFieldName() {
+		return fieldName;
+	}
+	
 	@Override
 	public Class<?> getValueClass() {
 		return valueClass;
