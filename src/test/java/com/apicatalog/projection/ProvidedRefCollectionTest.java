@@ -95,6 +95,7 @@ public class ProvidedRefCollectionTest {
     	
     	to.items.add(to1);
     	
+    	
     	Object[] objects = projections.decompose(to);
     	
     	Assert.assertNotNull(objects);

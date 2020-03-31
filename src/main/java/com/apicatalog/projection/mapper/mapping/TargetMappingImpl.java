@@ -1,6 +1,7 @@
 package com.apicatalog.projection.mapper.mapping;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -122,7 +123,7 @@ public class TargetMappingImpl implements TargetMapping {
 				
 				// extract objects from each projection in the collection
 				for (final Object item : sourceCollection) {
-					collection.add(filter(getTargetType(true).decompose(item, context), context));
+					collection.add(filterComponent(getTargetType(true).decompose(item, context), context));
 				}
 				
 				value = Optional.of(collection);
@@ -176,7 +177,36 @@ public class TargetMappingImpl implements TargetMapping {
 		}
 		return value.orElse(null);
 	}
+
 	
+	Object filterComponent(Object[] objects, ContextObjects context) {
+		if (objects == null) {
+			return null;
+		}
+
+		if (objects.length == 1) {
+			return objects[0];	//FIXME hack!!!
+		}
+		
+
+		Optional<Object> value = Optional.empty();
+
+		for (Object object : objects) {
+
+			if (value.isEmpty() 
+					&& (sourceComponentClass.isInstance(object))
+				) {
+				
+				value = Optional.ofNullable(object);
+				
+			} else if (!context.contains(object.getClass(), null)) {
+				context.addOrReplace(object, null);
+				
+			}
+		}
+		return value.orElse(null);
+	}
+
 	@Override
 	public Class<?> getTargetClass() {
 		return targetClass;
