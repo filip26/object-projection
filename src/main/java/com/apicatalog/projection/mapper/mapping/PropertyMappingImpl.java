@@ -48,7 +48,7 @@ public class PropertyMappingImpl implements PropertyMapping {
 	}
 	
 	@Override
-	public void decompose(final Path path, final Object object, ContextObjects contextObjects) throws ProjectionError {
+	public void decompose(final Path path, final Object object, final ContextObjects contextObjects) throws ProjectionError {
 
 		logger.debug("Decompose property {} = {}", name, object);
 		
@@ -67,7 +67,7 @@ public class PropertyMappingImpl implements PropertyMapping {
 		
 		source.decompose(path, value.get(), contextObjects);		
 	}
-	
+
 	@Override
 	public String getName() {
 		return name;

@@ -7,7 +7,7 @@ import org.junit.Test;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.BasicTypes;
-import com.apicatalog.projection.objects.ObjectReference;
+import com.apicatalog.projection.objects.Reference;
 import com.apicatalog.projection.projections.SourcesReduceMapTo;
 
 public class SourcesWithConversionTest {
@@ -29,7 +29,7 @@ public class SourcesWithConversionTest {
     	BasicTypes oa = new BasicTypes();
     	oa.longValue = 123l;
 
-    	ObjectReference oaa = new ObjectReference();
+    	Reference oaa = new Reference();
     	oaa.stringValue = "ABC"; 
 
     	SourcesReduceMapTo pa = projections.compose(SourcesReduceMapTo.class, oa, oaa);

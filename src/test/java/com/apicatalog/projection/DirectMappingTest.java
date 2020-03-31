@@ -28,47 +28,69 @@ public class DirectMappingTest {
     @Test
     public void testComposition() throws ProjectionError, ConverterError {
     	
-    	BasicTypes oa = new BasicTypes();
-    	oa.booleanValue = true;
-    	oa.doubleValue = 123.456d;
-    	oa.instantValue = Instant.now();
-    	oa.longValue = 123456l;
-    	oa.stringValue = "ABCDEF";
+    	BasicTypes object = new BasicTypes();
+    	object.booleanValue = true;
+    	object.doubleValue = 123.456d;
+    	object.instantValue = Instant.now();
+    	object.longValue = 123456l;
+    	object.stringValue = "ABCDEF";
 
-    	TypeObjectTo pa = projections.compose(TypeObjectTo.class, oa);
+    	TypeObjectTo projection = projections.compose(TypeObjectTo.class, object);
     	
-    	Assert.assertNotNull(pa);
+    	Assert.assertNotNull(projection);
     	
-    	Assert.assertEquals(oa.stringValue, pa.stringValue);
-    	Assert.assertEquals(oa.booleanValue, pa.booleanValue);
-    	Assert.assertEquals(oa.doubleValue, pa.doubleValue);
-    	Assert.assertEquals(oa.instantValue, pa.instantValue);
-    	Assert.assertEquals(oa.longValue, pa.longValue);
+    	Assert.assertEquals(object.stringValue, projection.stringValue);
+    	Assert.assertEquals(object.booleanValue, projection.booleanValue);
+    	Assert.assertEquals(object.doubleValue, projection.doubleValue);
+    	Assert.assertEquals(object.instantValue, projection.instantValue);
+    	Assert.assertEquals(object.longValue, projection.longValue);
     }
     
     @Test
     public void testDecomposition() throws ProjectionError, ConverterError {
     	
-    	TypeObjectTo pa = new TypeObjectTo();
-    	pa.booleanValue = true;
-    	pa.doubleValue= 123.456d;
-    	pa.instantValue = Instant.now();
-    	pa.longValue = 123456l;
-    	pa.stringValue = "ABCDEF";
+    	TypeObjectTo projection = new TypeObjectTo();
+    	projection.booleanValue = true;
+    	projection.doubleValue= 123.456d;
+    	projection.instantValue = Instant.now();
+    	projection.longValue = 123456l;
+    	projection.stringValue = "ABCDEF";
     	
-    	Object[] oo = projections.decompose(pa);
+    	Object[] objects = projections.decompose(projection);
     	
-    	Assert.assertNotNull(oo);
+    	Assert.assertNotNull(objects);
     	
-    	Assert.assertEquals(1, oo.length);
-    	Assert.assertEquals(BasicTypes.class, oo[0].getClass());
+    	Assert.assertEquals(1, objects.length);
+    	Assert.assertEquals(BasicTypes.class, objects[0].getClass());
     	
-    	BasicTypes oa = (BasicTypes)oo[0];
+    	BasicTypes object = (BasicTypes)objects[0];
 
-    	Assert.assertEquals(pa.stringValue, oa.stringValue);
-    	Assert.assertEquals(pa.booleanValue, oa.booleanValue);
-    	Assert.assertEquals(pa.doubleValue, oa.doubleValue);
-    	Assert.assertEquals(pa.instantValue, oa.instantValue);
-    	Assert.assertEquals(pa.longValue, oa.longValue);
+    	Assert.assertEquals(projection.stringValue, object.stringValue);
+    	Assert.assertEquals(projection.booleanValue, object.booleanValue);
+    	Assert.assertEquals(projection.doubleValue, object.doubleValue);
+    	Assert.assertEquals(projection.instantValue, object.instantValue);
+    	Assert.assertEquals(projection.longValue, object.longValue);
     }
+    
+    @Test
+    public void testExtraction() throws ProjectionError, ConverterError {
+    	
+    	TypeObjectTo projection = new TypeObjectTo();
+    	projection.booleanValue = true;
+    	projection.doubleValue= 123.456d;
+    	projection.instantValue = Instant.now();
+    	projection.longValue = 123456l;
+    	projection.stringValue = "ABCDEF";
+    	
+    	BasicTypes object = projections.extract(BasicTypes.class, projection);
+    	
+    	Assert.assertNotNull(object);
+    	
+    	Assert.assertEquals(projection.stringValue, object.stringValue);
+    	Assert.assertEquals(projection.booleanValue, object.booleanValue);
+    	Assert.assertEquals(projection.doubleValue, object.doubleValue);
+    	Assert.assertEquals(projection.instantValue, object.instantValue);
+    	Assert.assertEquals(projection.longValue, object.longValue);
+    }
+
 }

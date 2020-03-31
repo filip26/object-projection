@@ -8,14 +8,14 @@ import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.converter.std.Concatenation;
 import com.apicatalog.projection.converter.std.Suffix;
 import com.apicatalog.projection.objects.BasicTypes;
-import com.apicatalog.projection.objects.ObjectReference;
+import com.apicatalog.projection.objects.Reference;
 
 @Projection(BasicTypes.class)
 public class SourcesReduceMapTo {
 
 	@Sources(value =  {
 					@Source(value = "longValue"),
-					@Source(type=ObjectReference.class, value = "stringValue")
+					@Source(type=Reference.class, value = "stringValue")
 				},
 			reduce = @Reduction(type = Concatenation.class),
 			map = @Conversion(type = Suffix.class, value = "!@#")
@@ -24,7 +24,7 @@ public class SourcesReduceMapTo {
 		
 
 	@Sources(value =  {
-					@Source(type=ObjectReference.class, value = "stringValue"),
+					@Source(type=Reference.class, value = "stringValue"),
 					@Source("longValue")
 				},
 			reduce = @Reduction(type = Concatenation.class)

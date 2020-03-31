@@ -17,5 +17,4 @@ public interface PropertyMapping {
 	void decompose(Path path, Object value, ContextObjects context) throws ProjectionError;
 	
 	boolean isVisible(int level);
-		
 }

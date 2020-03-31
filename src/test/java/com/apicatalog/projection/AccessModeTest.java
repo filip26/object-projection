@@ -59,6 +59,21 @@ public class AccessModeTest {
     	Assert.assertNull(((BasicTypes)objects[0]).stringValue);
     	Assert.assertEquals(to.longValue, ((BasicTypes)objects[0]).longValue);
     	Assert.assertTrue(((BasicTypes)objects[0]).booleanValue);
+    }
+    
+    @Test
+    public void testExtraction() throws ProjectionError, ConverterError {
+    	
+    	AccessModeTo to = new AccessModeTo();
+    	to.stringValue = "ABC123";
+    	to.longValue = 951l;
+    	to.booleanValue = true;
 
+    	BasicTypes object = projections.extract(BasicTypes.class, to);
+    	
+    	Assert.assertNotNull(object);
+    	Assert.assertNull(object.stringValue);
+    	Assert.assertEquals(to.longValue, object.longValue);
+    	Assert.assertTrue(object.booleanValue);
     }
 }

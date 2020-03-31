@@ -43,4 +43,16 @@ public class ProjectionFactory {
 					.orElseThrow(() -> new ProjectionError("The projection " + projectionClass.getCanonicalName() + " is not present."))
 					.compose(values);					
 	}
+	
+	public <P> P extract(Class<P> sourceObjectClass, Object projection) throws ProjectionError {
+		return extract(sourceObjectClass, null, projection);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <P> P extract(Class<P> sourceObjectClass, String qualifier, Object projection) throws ProjectionError {
+		return Optional.ofNullable(get((Class<Object>)projection.getClass()))
+				.orElseThrow(() -> new ProjectionError("The projection " + projection.getClass().getCanonicalName() + " is not present."))
+				.extract(sourceObjectClass, qualifier, projection);		
+	}
+	
 }

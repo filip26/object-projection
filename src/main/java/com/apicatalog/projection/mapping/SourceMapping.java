@@ -15,4 +15,5 @@ public interface SourceMapping {
 	void decompose(Path path, Object object, ContextObjects context) throws ProjectionError;
 	
 	AccessMode getAccessMode();
+
 }

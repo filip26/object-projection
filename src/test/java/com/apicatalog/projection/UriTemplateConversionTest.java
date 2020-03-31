@@ -9,7 +9,7 @@ import org.junit.Test;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.BasicTypes;
-import com.apicatalog.projection.objects.ObjectReference;
+import com.apicatalog.projection.objects.Reference;
 import com.apicatalog.projection.projections.UriTemplateConversion;
 
 public class UriTemplateConversionTest {
@@ -31,7 +31,7 @@ public class UriTemplateConversionTest {
     	BasicTypes oa = new BasicTypes();
     	oa.longValue = 123l;
 
-    	ObjectReference oaa = new ObjectReference();
+    	Reference oaa = new Reference();
     	oaa.stringValue = "ABC"; 
 
     	UriTemplateConversion pa = projections.compose(UriTemplateConversion.class, oa, oaa);
@@ -63,8 +63,8 @@ public class UriTemplateConversionTest {
     }
     
     static void checkReference(Object object, String ref) {
-    	Assert.assertEquals(ObjectReference.class, object.getClass());
-    	ObjectReference source2 = (ObjectReference)object;
+    	Assert.assertEquals(Reference.class, object.getClass());
+    	Reference source2 = (Reference)object;
     	Assert.assertEquals(ref, source2.stringValue);
     }
     

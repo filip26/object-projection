@@ -96,7 +96,34 @@ public class ImplicitConversionTest {
     	Assert.assertEquals("1 item", object.stringArray[0]);
     	Assert.assertEquals("2 item", object.stringArray[1]);
     	Assert.assertEquals("3 item", object.stringArray[2]);
+    }
+    
+    @Test
+    public void testExtraction() throws ProjectionError, ConverterError {
     	
+    	ImplicitConversionTo projection = new ImplicitConversionTo();
+    	projection.stringValue = "987654";
+    	projection.booleanValue = true;
+    	projection.longValue = Instant.now().toEpochMilli();
+    	projection.floatValue = 0.0f;
+    	projection.doubleValue = 1.23d;
+    	projection.stringCollection = Arrays.asList("1 item", "2 item", "3 item");
 
+    	BasicTypes object = projections.extract(BasicTypes.class, projection);
+    	
+    	Assert.assertNotNull(object);
+
+    	Assert.assertEquals("1.23", object.stringValue);
+    	Assert.assertEquals(Instant.ofEpochMilli(projection.longValue), object.instantValue);
+    	Assert.assertEquals((Long)987654l, object.longValue);
+    	Assert.assertEquals((Integer)1, object.integerValue);
+    	Assert.assertEquals(Boolean.FALSE, object.booleanValue);
+    	
+    	Assert.assertNotNull(object.stringArray);
+    	Assert.assertEquals(3, object.stringArray.length);
+
+    	Assert.assertEquals("1 item", object.stringArray[0]);
+    	Assert.assertEquals("2 item", object.stringArray[1]);
+    	Assert.assertEquals("3 item", object.stringArray[2]);
     }
 }

@@ -1,6 +1,7 @@
 package com.apicatalog.projection.mapper.mapping;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -12,6 +13,7 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.mapping.ProjectionMapping;
 import com.apicatalog.projection.mapping.PropertyMapping;
 import com.apicatalog.projection.objects.ContextObjects;
+import com.apicatalog.projection.objects.ObjectKey;
 import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.objects.Path;
 
@@ -123,6 +125,29 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 		return contextObjects.getValues();
 	}
 	
+	@Override
+	public <S> S extract(Class<S> sourceObjectClass, String qualifier, P projection) throws ProjectionError {
+		
+		if (projection == null || sourceObjectClass == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		logger.debug("Extract {} from {}", sourceObjectClass.getSimpleName(), projection.getClass().getSimpleName());
+
+		//TODO optimize, don't use decompose
+		Object[] objects = decompose(projection);
+		
+		if (objects == null || objects.length == 0) {
+			return null;
+		}
+		
+		return (S)Arrays
+					.stream(objects)
+					.filter(o -> sourceObjectClass.isInstance(o))
+					.findFirst()
+					.orElse(null);
+	}
+
 	@Override
 	public Collection<PropertyMapping> getProperties() {
 		return properties;

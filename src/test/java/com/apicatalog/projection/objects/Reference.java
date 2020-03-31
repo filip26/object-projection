@@ -1,6 +1,6 @@
 package com.apicatalog.projection.objects;
 
-public class ObjectReference {
+public class Reference {
 	
 	public BasicTypes objectA;
 

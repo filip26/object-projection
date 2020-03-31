@@ -9,8 +9,8 @@ import org.junit.Test;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.BasicTypes;
-import com.apicatalog.projection.objects.ObjectReference;
-import com.apicatalog.projection.projections.TwoSourceComposite;
+import com.apicatalog.projection.objects.Reference;
+import com.apicatalog.projection.projections.CompositeTo;
 
 public class TwoSourceCompositeTest {
 
@@ -22,7 +22,7 @@ public class TwoSourceCompositeTest {
 		projections = new ProjectionFactory();
 		mapper = new ProjectionMapper(projections);
 		
-		projections.add(mapper.getMapping(TwoSourceComposite.class));
+		projections.add(mapper.getMapping(CompositeTo.class));
 	}	
 	
     @Test
@@ -31,10 +31,10 @@ public class TwoSourceCompositeTest {
     	BasicTypes source1 = new BasicTypes();
     	source1.longValue = 123456l;
 
-    	ObjectReference source2 = new ObjectReference();
+    	Reference source2 = new Reference();
     	source2.stringValue = "s2value";
 
-    	TwoSourceComposite projection = projections.compose(TwoSourceComposite.class, source1, source2);
+    	CompositeTo projection = projections.compose(CompositeTo.class, source1, source2);
     	
     	Assert.assertNotNull(projection);
     	
@@ -45,7 +45,7 @@ public class TwoSourceCompositeTest {
     @Test
     public void testDecomposition() throws ProjectionError, ConverterError {
     	
-    	TwoSourceComposite projection = new TwoSourceComposite();
+    	CompositeTo projection = new CompositeTo();
     	projection.source1 = 123456l;
     	projection.source2 = "source 2 value";
 
@@ -67,8 +67,8 @@ public class TwoSourceCompositeTest {
     }
     
     static void checkReference(Object object, String ref) {
-    	Assert.assertEquals(ObjectReference.class, object.getClass());
-    	ObjectReference source2 = (ObjectReference)object;
+    	Assert.assertEquals(Reference.class, object.getClass());
+    	Reference source2 = (Reference)object;
     	Assert.assertEquals(ref, source2.stringValue);
     }
     

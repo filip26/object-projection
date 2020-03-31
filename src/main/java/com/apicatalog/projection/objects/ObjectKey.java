@@ -55,4 +55,9 @@ public class ObjectKey {
 	public String getQualifier() {
 		return qualifier;
 	}
+
+	@Override
+	public String toString() {
+		return "ObjectKey [clazz=" + clazz + ", qualifier=" + qualifier + "]";
+	}
 }

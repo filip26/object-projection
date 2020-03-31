@@ -32,4 +32,16 @@ public interface ProjectionMapping<P> {
 	Object[] decompose(P projection) throws ProjectionError;
 	
 	Object[] decompose(Path path, P projection) throws ProjectionError;
+
+	/**
+	 * Extract exact source value for the given projection
+	 * 
+	 * @param sourceClass
+	 * @param qualifier
+	 * @param projection
+	 * @return
+	 * @throws ProjectionError 
+	 */
+	<S> S extract(Class<S> sourceClass, String qualifier, P projection) throws ProjectionError;
+	
 }

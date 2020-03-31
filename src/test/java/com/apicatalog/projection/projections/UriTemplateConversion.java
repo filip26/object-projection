@@ -6,14 +6,14 @@ import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.converter.std.UriTemplate;
 import com.apicatalog.projection.objects.BasicTypes;
-import com.apicatalog.projection.objects.ObjectReference;
+import com.apicatalog.projection.objects.Reference;
 
 @Projection
 public class UriTemplateConversion {
 
 	@Sources(value =  {
 					@Source(type=BasicTypes.class, value = "longValue"),
-					@Source(type=ObjectReference.class, value = "stringValue")
+					@Source(type=Reference.class, value = "stringValue")
 				},
 			reduce = @Reduction(type = UriTemplate.class, value="https://www.example.org/{}/{stringValue}")
 		)
