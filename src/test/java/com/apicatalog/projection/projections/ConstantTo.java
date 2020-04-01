@@ -1,5 +1,6 @@
 package com.apicatalog.projection.projections;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import com.apicatalog.projection.annotation.Constant;
@@ -19,4 +20,10 @@ public class ConstantTo {
 	
 	@Constant({ "true", "false", "true", "true"  })
 	public Collection<Boolean> booleanCollection;
+
+	@Override
+	public String toString() {
+		return "ConstantTo [id=" + id + ", longValue=" + longValue + ", stringArray=" + Arrays.toString(stringArray)
+				+ ", booleanCollection=" + booleanCollection + "]";
+	}
 }

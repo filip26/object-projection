@@ -9,5 +9,9 @@ public class ReferenceTo {
 
 	@Source(value = "objectA")
 	public CompositeTo ref;
-	
+
+	@Override
+	public String toString() {
+		return "ReferenceTo [ref=" + ref + "]";
+	}
 }

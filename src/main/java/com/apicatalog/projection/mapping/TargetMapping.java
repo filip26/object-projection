@@ -2,7 +2,7 @@ package com.apicatalog.projection.mapping;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.objects.ContextObjects;
-import com.apicatalog.projection.objects.Path;
+import com.apicatalog.projection.objects.ProjectionQueue;
 
 public interface TargetMapping {
 
@@ -12,7 +12,7 @@ public interface TargetMapping {
 	Class<?> getTargetClass();
 	Class<?> getTargetComponentClass();
 	
-	Object construct(Path path, Object object, ContextObjects context) throws ProjectionError;
+	Object construct(ProjectionQueue path, Object object, ContextObjects context) throws ProjectionError;
 	
 	Object deconstruct(Object object, ContextObjects context) throws ProjectionError;
 	

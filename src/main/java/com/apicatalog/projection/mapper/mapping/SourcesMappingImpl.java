@@ -16,7 +16,7 @@ import com.apicatalog.projection.mapping.ConversionMapping;
 import com.apicatalog.projection.mapping.ReductionMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.objects.ContextObjects;
-import com.apicatalog.projection.objects.Path;
+import com.apicatalog.projection.objects.ProjectionQueue;
 
 public class SourcesMappingImpl implements SourceMapping {
 
@@ -35,7 +35,7 @@ public class SourcesMappingImpl implements SourceMapping {
 	AccessMode accessMode;
 
 	@Override
-	public Object compose(Path path, ContextObjects sources) throws ProjectionError {
+	public Object compose(ProjectionQueue path, ContextObjects sources) throws ProjectionError {
 
 		final List<Object> values = new ArrayList<>();
 		

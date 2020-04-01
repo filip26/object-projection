@@ -1,7 +1,6 @@
 package com.apicatalog.projection.mapper.mapping;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -15,7 +14,7 @@ import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.mapping.ProjectionMapping;
 import com.apicatalog.projection.mapping.TargetMapping;
 import com.apicatalog.projection.objects.ContextObjects;
-import com.apicatalog.projection.objects.Path;
+import com.apicatalog.projection.objects.ProjectionQueue;
 
 public class TargetMappingImpl implements TargetMapping {
 
@@ -38,7 +37,7 @@ public class TargetMappingImpl implements TargetMapping {
 	}
 	
 	@Override
-	public Object construct(final Path path, final Object object, final ContextObjects contextObjects) throws ProjectionError {
+	public Object construct(final ProjectionQueue path, final Object object, final ContextObjects contextObjects) throws ProjectionError {
 		
 		logger.debug("Costruct target from {}, path = {}, colllection = {}, reference = {}", object, path.length(), isCollection(), isReference());
 		
@@ -234,11 +233,12 @@ public class TargetMappingImpl implements TargetMapping {
 
 	@SuppressWarnings("unchecked")
 	ProjectionMapping<Object> getTargetType(boolean collection) throws ProjectionError {
-		ProjectionMapping<Object> mapping = factory.get(collection ? (Class<Object>)targetComponentClass : (Class<Object>)targetClass);
-		if (mapping == null) {
-			throw new ProjectionError("Projection " + (collection ? (Class<Object>)targetComponentClass : (Class<Object>)targetClass).getSimpleName() + " is missing from index.");
-		}
-		return mapping;
+//		ProjectionMapping<Object> mapping = factory.get(collection ? (Class<Object>)targetComponentClass : (Class<Object>)targetClass);
+//		if (mapping == null) {
+//			throw new ProjectionError("Projection " + (collection ? (Class<Object>)targetComponentClass : (Class<Object>)targetClass).getSimpleName() + " is missing from index.");
+//		}
+//		return mapping;
+		return null;
 	}
 
 	public void setReference(boolean reference) {

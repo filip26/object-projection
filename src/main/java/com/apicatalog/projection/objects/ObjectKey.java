@@ -2,8 +2,6 @@ package com.apicatalog.projection.objects;
 
 import java.util.Objects;
 
-import com.apicatalog.projection.NamedObject;
-
 public class ObjectKey {
 
 	final Class<?> clazz;

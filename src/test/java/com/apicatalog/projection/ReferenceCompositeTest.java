@@ -1,5 +1,7 @@
 package com.apicatalog.projection;
 
+import java.util.Arrays;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,7 +62,7 @@ public class ReferenceCompositeTest {
     	projection2.ref = projection1;
 
     	Object[] objects = projections.decompose(projection2);
-    	
+Arrays.stream(objects).forEach(System.out::println);
     	Assert.assertNotNull(objects);
 
     	Assert.assertEquals(1, objects.length);

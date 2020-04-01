@@ -13,5 +13,9 @@ public class StringCollectionTo {
 	
 	@Provided(qualifier = "items")
 	public Collection<String> items;
-	
+
+	@Override
+	public String toString() {
+		return "StringCollectionTo [href=" + href + ", items=" + items + "]";
+	}
 }

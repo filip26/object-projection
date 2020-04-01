@@ -11,7 +11,7 @@ import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.objects.ContextObjects;
-import com.apicatalog.projection.objects.Path;
+import com.apicatalog.projection.objects.ProjectionQueue;
 
 public class ProvidedMappingImpl implements SourceMapping {
 
@@ -37,7 +37,7 @@ public class ProvidedMappingImpl implements SourceMapping {
 	}
 	
 	@Override
-	public Object compose(Path path, ContextObjects contextObjects) throws ProjectionError {
+	public Object compose(ProjectionQueue path, ContextObjects contextObjects) throws ProjectionError {
 
 		logger.debug("Compose path = {}, target = {}, qualifier = {}, optional = {}, reference = {}", path.length(), targetClass.getSimpleName(), qualifier, optional, reference);
 

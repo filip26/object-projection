@@ -6,20 +6,20 @@ import java.lang.reflect.Method;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.TypeAdapters;
 
-public class MethodValueSetter implements ValueSetter {
+public class MethodSetter implements Setter {
 
-	final TypeAdapters typeAdapters;
+	TypeAdapters typeAdapters;
 
 	final Method method;
-
+	final String name;
+	
 	Class<?> valueClass;
 	Class<?> valueComponentClass;
 	
-	public MethodValueSetter(TypeAdapters typeAdapters, Method method) {
-		this.typeAdapters = typeAdapters;
+	public MethodSetter(Method method, String name) {
 		this.method = method;
+		this.name = name;
 	}
-	
 
 	@Override
 	public void set(Object object, Object value) throws ProjectionError {
@@ -49,4 +49,10 @@ public class MethodValueSetter implements ValueSetter {
 	public void setValueComponentClass(Class<?> valueComponentClass) {
 		this.valueComponentClass = valueComponentClass;
 	}
+
+	@Override
+	public Object getName() {
+		return name;
+	}
+	
 }

@@ -5,15 +5,17 @@ import java.lang.reflect.Method;
 
 import com.apicatalog.projection.ProjectionError;
 
-public class MethodValueGetter implements ValueGetter {
+public class MethodGetter implements Getter {
 
 	Class<?> valueClass;
 	Class<?> valueComponentClass;
 	
 	final Method method;
+	final String name;
 	
-	public MethodValueGetter(Method method) {
+	public MethodGetter(Method method, String name) {
 		this.method = method;
+		this.name = name;
 	}
 	
 	@Override
@@ -42,5 +44,10 @@ public class MethodValueGetter implements ValueGetter {
 	
 	public void setValueComponentClass(Class<?> valueComponentClass) {
 		this.valueComponentClass = valueComponentClass;
+	}
+	
+	@Override
+	public String getName() {
+		return name;
 	}
 }

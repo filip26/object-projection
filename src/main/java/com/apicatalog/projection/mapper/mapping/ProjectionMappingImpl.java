@@ -14,8 +14,9 @@ import com.apicatalog.projection.mapping.ProjectionMapping;
 import com.apicatalog.projection.mapping.PropertyMapping;
 import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.ObjectUtils;
-import com.apicatalog.projection.objects.Path;
+import com.apicatalog.projection.objects.ProjectionQueue;
 
+@Deprecated
 public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 
 	final Logger logger = LoggerFactory.getLogger(ProjectionMappingImpl.class);
@@ -31,11 +32,11 @@ public class ProjectionMappingImpl<P> implements ProjectionMapping<P> {
 
 	@Override
 	public P compose(final Object... objects) throws ProjectionError {
-		return compose(Path.create(), objects);
+		return compose(ProjectionQueue.create(), objects);
 	}
 
 	@Override
-	public P compose(final Path path, final Object... objects) throws ProjectionError {
+	public P compose(final ProjectionQueue path, final Object... objects) throws ProjectionError {
 
 		logger.debug("Compose {} of {} object(s), path = {}", projectionClass.getSimpleName(), objects.length, path.length());
 

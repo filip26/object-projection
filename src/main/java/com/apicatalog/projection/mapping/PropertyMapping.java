@@ -2,7 +2,7 @@ package com.apicatalog.projection.mapping;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.objects.ContextObjects;
-import com.apicatalog.projection.objects.Path;
+import com.apicatalog.projection.objects.ProjectionQueue;
 
 public interface PropertyMapping {
 
@@ -12,7 +12,7 @@ public interface PropertyMapping {
 	
 	TargetMapping getTarget();
 	
-	Object compose(Path path, ContextObjects context) throws ProjectionError;
+	Object compose(ProjectionQueue path, ContextObjects context) throws ProjectionError;
 	
 	void decompose(Object value, ContextObjects context) throws ProjectionError;
 	

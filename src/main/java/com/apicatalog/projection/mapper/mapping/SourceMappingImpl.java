@@ -15,9 +15,9 @@ import com.apicatalog.projection.mapping.ConversionMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.ObjectUtils;
-import com.apicatalog.projection.objects.Path;
-import com.apicatalog.projection.objects.access.ValueGetter;
-import com.apicatalog.projection.objects.access.ValueSetter;
+import com.apicatalog.projection.objects.ProjectionQueue;
+import com.apicatalog.projection.objects.access.Getter;
+import com.apicatalog.projection.objects.access.Setter;
 
 public class SourceMappingImpl implements SourceMapping {
 
@@ -27,8 +27,8 @@ public class SourceMappingImpl implements SourceMapping {
 	
 	Class<?> sourceObjectClass;
 
-	ValueGetter getter;
-	ValueSetter setter;
+	Getter getter;
+	Setter setter;
 	
 	Class<?> targetClass;
 	Class<?> targetComponentClass;
@@ -46,7 +46,7 @@ public class SourceMappingImpl implements SourceMapping {
 	}
 	
 	@Override
-	public Object compose(Path path, ContextObjects sources) throws ProjectionError {
+	public Object compose(ProjectionQueue path, ContextObjects sources) throws ProjectionError {
 		logger.debug("Compose path = {}, source = {}, qualifier = {}, optional = {}", path.length(), sourceObjectClass.getSimpleName(), qualifier, optional);
 
 		if (getter == null) {
@@ -179,19 +179,19 @@ public class SourceMappingImpl implements SourceMapping {
 		this.targetComponentClass = targetComponentClass;
 	}
 	
-	public void setGetter(ValueGetter getter) {
+	public void setGetter(Getter getter) {
 		this.getter = getter;
 	}
 	
-	public void setSetter(ValueSetter setter) {
+	public void setSetter(Setter setter) {
 		this.setter = setter;
 	}
 	
-	public ValueGetter getGetter() {
+	public Getter getGetter() {
 		return getter;
 	}
 	
-	public ValueSetter getSetter() {
+	public Setter getSetter() {
 		return setter;
 	}
 	

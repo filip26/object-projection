@@ -12,4 +12,8 @@ public class Object2To {
 
 	public TypeObjectTo object3;
 
+	@Override
+	public String toString() {
+		return "Object2To [id=" + id + ", object3=" + object3 + "]";
+	}
 }
