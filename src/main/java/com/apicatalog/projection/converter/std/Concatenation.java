@@ -1,8 +1,8 @@
 package com.apicatalog.projection.converter.std;
 
 import com.apicatalog.projection.converter.ConverterConfig;
-import com.apicatalog.projection.converter.Reducer;
-import com.apicatalog.projection.converter.ReducerError;
+import com.apicatalog.projection.reducer.Reducer;
+import com.apicatalog.projection.reducer.ReducerError;
 
 public class Concatenation implements Reducer<String, String> {
 

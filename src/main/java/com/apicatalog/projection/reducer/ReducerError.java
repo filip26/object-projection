@@ -1,4 +1,4 @@
-package com.apicatalog.projection.converter;
+package com.apicatalog.projection.reducer;
 
 public class ReducerError extends Exception {
 

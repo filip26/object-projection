@@ -2,18 +2,21 @@ package com.apicatalog.projection.mapper;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.annotation.Conversion;
-import com.apicatalog.projection.mapper.mapping.ConversionMappingImpl;
-import com.apicatalog.projection.mapping.ConversionMapping;
+import com.apicatalog.projection.converter.Converter;
+import com.apicatalog.projection.converter.ConverterConfig;
+import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapping.ConverterMapping;
+import com.apicatalog.projection.objects.ObjectUtils;
 
 public class ConversionMapper {
 
@@ -27,27 +30,32 @@ public class ConversionMapper {
 		this.typeAdapters = typeAdapters;
 	}
 	
-	ConversionMapping[] getConversionMapping(Conversion[] conversions) {
+	ConverterMapping[] getConverterMapping(Conversion[] conversions) throws ConverterError, ProjectionError {
 
 		if (conversions.length == 0) {
-			return new ConversionMapping[0];
+			return new ConverterMapping[0];
 		}
 
-		return Stream.of(conversions)
-				.map(this::getConverterMapping)
-				.collect(Collectors.toList())
-				.toArray(new ConversionMapping[0])
-				;		
+		List<ConverterMapping> converters = new ArrayList<>();
+		
+		for (Conversion conversion : conversions) {
+			converters.add(getConverterMapping(conversion));
+		}
+		
+		return converters.toArray(new ConverterMapping[0]);
 	}
 	
-	ConversionMapping getConverterMapping(final Conversion conversion) {
+	ConverterMapping getConverterMapping(final Conversion conversionAnnotation) throws ConverterError, ProjectionError {
 		
-		//FIXME use ConverterFactory
 		ConverterMapping converter = new ConverterMapping();
-		converter.setConverterClass(conversion.type());
 		
+		Converter<Object, Object> instance = (Converter<Object, Object>) ObjectUtils.newInstance(conversionAnnotation.type());
 		
-		Type sourceType = ((ParameterizedType) conversion.type().getGenericInterfaces()[0]).getActualTypeArguments()[0];
+		instance.initConverter(new ConverterConfig(conversionAnnotation.value()));
+		
+		converter.setConverter(instance);
+
+		Type sourceType = ((ParameterizedType) conversionAnnotation.type().getGenericInterfaces()[0]).getActualTypeArguments()[0];
 		
 		Class<?> sourceClass = null;
 		Class<?> sourceComponentClass = null;
@@ -64,7 +72,7 @@ public class ConversionMapper {
 		converter.setSourceClass(sourceClass);
 		converter.setSourceComponentClass(sourceComponentClass);
 
-		Type targetType = ((ParameterizedType) conversion.type().getGenericInterfaces()[0]).getActualTypeArguments()[1];
+		Type targetType = ((ParameterizedType) conversionAnnotation.type().getGenericInterfaces()[0]).getActualTypeArguments()[1];
 		
 		Class<?> targetClass = null;
 		Class<?> targetComponentClass = null;
@@ -80,6 +88,7 @@ public class ConversionMapper {
 		converter.setTargetClass(targetClass);
 		converter.setTargetComponentClass(targetComponentClass);
 		
-		return new ConversionMappingImpl(converter, typeAdapters, conversion.value());
+		return converter;
+			
 	}
 }

@@ -6,7 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.mapping.ConversionMapping;
+import com.apicatalog.projection.converter.ConverterError;
+import com.apicatalog.projection.mapping.ConverterMapping;
 import com.apicatalog.projection.mapping.ReductionMapping;
 import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.ProjectionQueue;
@@ -20,7 +21,7 @@ public class ArraySource implements Source {
 	
 	ReductionMapping reduction;
 	
-	ConversionMapping[] conversions;
+	ConverterMapping[] conversions;
 	
 	TargetAdapter targetAdapter;
 
@@ -50,8 +51,12 @@ public class ArraySource implements Source {
 		
 		// apply explicit conversions
 		if (conversions != null) {
-			for (ConversionMapping conversion : conversions) {
-				object = conversion.forward(object);
+			try {
+				for (ConverterMapping conversion : conversions) {
+					object = conversion.getConverter().forward(object);
+				}
+			} catch (ConverterError e) {
+				throw new ProjectionError(e);
 			}
 		}
 
@@ -66,8 +71,12 @@ public class ArraySource implements Source {
 		
 		// apply explicit conversions in reverse order
 		if (conversions != null) {
-			for (int i=conversions.length - 1; i >= 0; i--) {
-				object = conversions[i].backward(object);
+			try {
+				for (int i=conversions.length - 1; i >= 0; i--) {
+					object = conversions[i].getConverter().backward(object);
+				}
+			} catch (ConverterError e) {
+				throw new ProjectionError(e);
 			}
 		}
 
@@ -92,7 +101,7 @@ public class ArraySource implements Source {
 		this.targetAdapter = targetAdapter;
 	}
 	
-	public void setConversions(ConversionMapping[] conversions) {
+	public void setConversions(ConverterMapping[] conversions) {
 		this.conversions = conversions;
 	}
 	

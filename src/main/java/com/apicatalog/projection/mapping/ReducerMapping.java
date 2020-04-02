@@ -1,6 +1,6 @@
 package com.apicatalog.projection.mapping;
 
-import com.apicatalog.projection.converter.Reducer;
+import com.apicatalog.projection.reducer.Reducer;
 
 @Deprecated
 public class ReducerMapping {

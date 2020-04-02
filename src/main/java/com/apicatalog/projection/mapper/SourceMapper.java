@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.annotation.AccessMode;
@@ -20,6 +21,7 @@ import com.apicatalog.projection.beans.FieldGetter;
 import com.apicatalog.projection.beans.FieldSetter;
 import com.apicatalog.projection.beans.Getter;
 import com.apicatalog.projection.beans.Setter;
+import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.property.ProjectionProperty;
 import com.apicatalog.projection.property.SourceProperty;
@@ -198,10 +200,15 @@ public class SourceMapper {
 		}			
 
 		// set conversions to apply
-		Optional.ofNullable(conversions)
-				.ifPresent(c -> 
-					source.setConversions(conversionMapper.getConversionMapping(c))	
-					);
+		if (Optional.ofNullable(conversions).isPresent()) {
+			try {
+				source.setConversions(conversionMapper.getConverterMapping(conversions));
+				
+			} catch (ConverterError | ProjectionError e) {
+				logger.error("Property " + sourceFieldName + " is ignored.", e);
+				return null;
+			}
+		}
 
 		// set optional 
 		source.setOptional(optional);
@@ -254,7 +261,13 @@ public class SourceMapper {
 		source.setReduction(reductionMapper.getReductionMapping(sourcesAnnotation.reduce()));
 		
 		// set conversions to apply
-		source.setConversions(conversionMapper.getConversionMapping(sourcesAnnotation.map()));
+		try {
+			source.setConversions(conversionMapper.getConverterMapping(sourcesAnnotation.map()));
+			
+		} catch (ConverterError | ProjectionError e) {
+			logger.error("Property " + field.getName() + " is ignored.", e);
+			return null;
+		}
 
 		// set optional 
 		source.setOptional(sourcesAnnotation.optional());
