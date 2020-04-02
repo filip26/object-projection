@@ -12,7 +12,7 @@ public class PropertyBuilder<P> {
 		this.projectionBuilder = projection;
 	}
 	
-	public SourcePropertyBuilder<P> source(String sourceProperty, Class<?> sourceClass) {
+	public SourcePropertyBuilder<P> source(Class<?> sourceClass, String sourceProperty) {
 
 		
 		return new SourcePropertyBuilder<>(projectionBuilder);
@@ -33,6 +33,16 @@ public class PropertyBuilder<P> {
 	public ProvidedPropertyBuilder<P> provided() {
 
 		return new ProvidedPropertyBuilder<>(projectionBuilder);
+	}
+
+	public ProjectionBuilder<P> constant(String string) {
+		// TODO Auto-generated method stub
+		return projectionBuilder;
+	}
+
+	public PropertyBuilder<P> sources() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

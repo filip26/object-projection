@@ -7,10 +7,10 @@ import com.apicatalog.projection.converter.Converter;
 
 public class SourcePropertyBuilder<P> {
 	
-	ProjectionBuilder<P> projection;
+	ProjectionBuilder<P> projectionBuilder;
 	
 	protected SourcePropertyBuilder(ProjectionBuilder<P> projection) {
-		this.projection = projection;
+		this.projectionBuilder = projection;
 	}
 	
 
@@ -34,12 +34,12 @@ public class SourcePropertyBuilder<P> {
 	}
 	
 	public PropertyBuilder<P> map(String propertyName) {
-		return projection.map(propertyName);
+		return projectionBuilder.map(propertyName);
 	}
 
 	
 	public Projection<P> build(TypeAdapters typeAdapters) {
-		return projection.build(typeAdapters);
+		return projectionBuilder.build(typeAdapters);
 	}
 
 
@@ -47,5 +47,18 @@ public class SourcePropertyBuilder<P> {
 
 		return this;
 	}
-	
+
+
+
+	public SourcesPropertyBuilder<P> source(Class<?> sourceClass, String sourceProperty) {
+
+		
+		return new SourcesPropertyBuilder<>(projectionBuilder);
+	}
+
+	public SourcesPropertyBuilder<P> source(Class<?> sourceClass) {
+
+		
+		return new SourcesPropertyBuilder<>(projectionBuilder);
+	}	
 }

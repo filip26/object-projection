@@ -5,6 +5,7 @@ import org.junit.Test;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.converter.std.Prefix;
 import com.apicatalog.projection.converter.std.Suffix;
+import com.apicatalog.projection.converter.std.UriTemplate;
 import com.apicatalog.projection.objects.Object1;
 import com.apicatalog.projection.objects.SimpleObject;
 import com.apicatalog.projection.projections.Object1To;
@@ -33,8 +34,8 @@ public class ProjectionBuilderTest {
 				ProjectionBuilder
 					.of(SimpleObjectTo.class)
 					
-					.map("i1").source("s1", SimpleObject.class)
-					.map("s1").source("i1", SimpleObject.class)
+					.map("i1").source(SimpleObject.class, "s1")
+					.map("s1").source(SimpleObject.class, "i1")
 					
 					.build(new TypeAdapters());
 	}
@@ -80,6 +81,34 @@ public class ProjectionBuilderTest {
 
 					.map("id").source(Object1.class)
 					
+					.build(new TypeAdapters());
+	}
+
+	
+	@Test
+	public void test6() {
+		final Projection<Object1To> projection = 
+				ProjectionBuilder
+					.of(Object1To.class)
+					
+					.map("id").constant("StringContant")
+					
+					.build(new TypeAdapters());
+	}
+
+
+	@Test
+	public void test7() {
+		final Projection<Object1To> projection = 
+				ProjectionBuilder
+					.of(Object1To.class)
+					
+					.map("id")
+						.source(Object1.class)
+						.source(Object1.class, "i1")
+						.reduce(UriTemplate.class, "/{}/{}")
+						.conversion(Prefix.class, "https://example.org")
+						
 					.build(new TypeAdapters());
 	}
 
