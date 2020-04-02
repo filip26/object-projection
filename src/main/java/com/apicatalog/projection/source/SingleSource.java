@@ -168,4 +168,8 @@ public class SingleSource implements Source {
 	public void setTargetComponentClass(Class<?> targetComponentClass) {
 		this.targetComponentClass = targetComponentClass;
 	}
+	
+	public ConverterMapping[] getConversions() {
+		return conversions;
+	}
 }

@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -37,6 +38,8 @@ public class SourceMapper {
 
 	final Logger logger = LoggerFactory.getLogger(SourceMapper.class);
 	
+	static final String SOURCE_IS_MISSING = "Source is missing. Property {} is ignored."; 
+	
 	final TypeAdapters typeAdapters;
 	final ProjectionFactory factory;
 	
@@ -60,7 +63,7 @@ public class SourceMapper {
 		final ArraySource arraySource = getArraySource(sourcesAnnotation, field, defaultSourceClass);
 
 		if (arraySource == null) {
-			logger.warn("Source is missing. Property {} is ignored.", field.getName());
+			logger.warn(SOURCE_IS_MISSING, field.getName());
 			return null;				
 		}
 		
@@ -99,7 +102,7 @@ public class SourceMapper {
 						); 
 		
 		if (source == null) {
-			logger.warn("Source is missing. Property {} is ignored.", field.getName());
+			logger.warn(SOURCE_IS_MISSING, field.getName());
 			return null;
 		}
 
@@ -146,7 +149,7 @@ public class SourceMapper {
 		}
 		
 		if (sourceObjectClass == null) {
-			logger.warn("Source class is missing. Property {} is ignored.", field.getName());
+			logger.warn(SOURCE_IS_MISSING, field.getName());
 			return null;
 		}
 
@@ -220,23 +223,20 @@ public class SourceMapper {
 		// set target class
 		Class<?> targetClass = sourceGetter != null ? sourceGetter.getValueClass() : sourceSetter.getValueClass();
 		Class<?> targetComponentClass = sourceGetter != null ? sourceGetter.getValueComponentClass() : sourceSetter.getValueComponentClass();
-		
-		//TODO last conversion
-//		
-//		// extract actual target object class 
-//		if (property.getConversions() != null) {
-//			
-//			Stream.of(property.getConversions())
-//					.reduce((first, second) -> second)
-//					.map(ConversionMapping::getConverterMapping)
-//					.ifPresent(m -> { 
-//								sourceMapping.setTargetClass(m.getSourceClass());
-//								sourceMapping.setTargetComponentClass(m.getSourceComponentClass());
-//								});
-//		}
 
 		source.setTargetClass(targetClass);
 		source.setTargetComponentClass(targetComponentClass);
+
+		// extract actual target object class 
+		if (source.getConversions() != null) {
+			Stream.of(source.getConversions())
+					.reduce((first, second) -> second)
+					.ifPresent(m -> { 
+ 
+								source.setTargetClass(m.getSourceClass());
+								source.setTargetComponentClass(m.getSourceComponentClass());
+								});
+					}
 		
 		return source;
 	}
@@ -252,7 +252,7 @@ public class SourceMapper {
 										;
 		
 		if (sources.length == 0) {
-			logger.warn("Source is missing. Property {} is ignored.", field.getName());
+			logger.warn(SOURCE_IS_MISSING, field.getName());
 			return null;
 		}
 
@@ -277,22 +277,19 @@ public class SourceMapper {
 		Class<?> targetClass =  sources[sources.length - 1].getTargetClass();
 		Class<?> targetComponentClass = sources[sources.length - 1].getTargetComponentClass();
 		
-		//TODO last conversion
-//		
-//		// extract actual target object class 
-//		if (property.getConversions() != null) {
-//			
-//			Stream.of(property.getConversions())
-//					.reduce((first, second) -> second)
-//					.map(ConversionMapping::getConverterMapping)
-//					.ifPresent(m -> { 
-//								sourceMapping.setTargetClass(m.getSourceClass());
-//								sourceMapping.setTargetComponentClass(m.getSourceComponentClass());
-//								});
-//		}
-
 		source.setTargetClass(targetClass);
 		source.setTargetComponentClass(targetComponentClass);
+		
+		// extract actual target object class 
+		if (source.getConversions() != null) {
+			Stream.of(source.getConversions())
+					.reduce((first, second) -> second)
+					.ifPresent(m -> { 
+ 
+								source.setTargetClass(m.getSourceClass());
+								source.setTargetComponentClass(m.getSourceComponentClass());
+								});
+					}
 		
 		return source;
 	}	

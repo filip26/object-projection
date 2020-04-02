@@ -54,7 +54,7 @@ public class ArraySource implements Source {
 		for (int i = 0; i < sources.length; i++) {
 			sourceObjects[i] = sources[i].read(queue, context);
 		}
-
+		
 		try {
 			Object object = reduction
 								.getReducer()
@@ -87,7 +87,16 @@ public class ArraySource implements Source {
 		logger.debug("Write {}, {} sources(s), optional = {}, depth = {}", object, sources.length, optional, queue.length());
 
 		try {
-			Object[] sourceObjects = reduction.getReducer().expand(object);
+			Object[] sourceObjects = reduction
+										.getReducer()
+										.expand(
+											typeAdapters
+												.convert(
+													reduction.getTargetClass(),
+													reduction.getTargetComponentClass(),
+													object
+													)
+												);
 			
 			// apply explicit conversions in reverse order
 			if (conversions != null) {
@@ -153,5 +162,9 @@ public class ArraySource implements Source {
 	
 	public void setTargetComponentClass(Class<?> targetComponentClass) {
 		this.targetComponentClass = targetComponentClass;
+	}
+	
+	public ConverterMapping[] getConversions() {
+		return conversions;
 	}
 }

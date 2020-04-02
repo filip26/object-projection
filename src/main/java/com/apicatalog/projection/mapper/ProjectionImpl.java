@@ -99,6 +99,7 @@ class ProjectionImpl<P> implements Projection<P> {
 		return context.getValues();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public <S> S extract(Class<S> sourceObjectClass, String qualifier, P projection) throws ProjectionError {
 		

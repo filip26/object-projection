@@ -41,9 +41,10 @@ public class TargetTypeConverter implements TargetAdapter {
 
 	@Override
 	public Object backward(Object object, ContextObjects context) throws ProjectionError {
-		logger.debug("Deconstruct {} from {}", sourceClass != null ? sourceClass.getSimpleName() : null, object);
+		logger.debug("Deconstruct {} from {}", sourceClass.getSimpleName(), object);
 		
-		return sourceClass != null ? typeAdapters.convert(sourceClass, sourceComponentClass, object) : object;
+		return typeAdapters.convert(sourceClass, sourceComponentClass, object);
 	}
 
 }
+

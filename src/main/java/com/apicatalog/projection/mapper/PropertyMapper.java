@@ -151,7 +151,7 @@ public class PropertyMapper {
 
 		property.setOptional(provided.optional());
 		
-		property.setTargetAdapter(sourceMapper.getTargetConverter(null, null, targetSetter.getValueClass(), targetSetter.getValueComponentClass()));
+		property.setTargetAdapter(sourceMapper.getTargetConverter(targetSetter.getValueClass(), targetSetter.getValueComponentClass(), targetSetter.getValueClass(), targetSetter.getValueComponentClass()));
 
 		return property;
 	}
