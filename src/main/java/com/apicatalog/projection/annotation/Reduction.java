@@ -13,5 +13,5 @@ public @interface Reduction {
 
 	Class<? extends Reducer<?, ?>> type();
 	String[] value() default {};
-	
+
 }

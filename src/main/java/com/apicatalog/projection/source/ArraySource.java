@@ -154,4 +154,8 @@ public class ArraySource implements Source {
 	public void setTargetComponentClass(Class<?> targetComponentClass) {
 		this.targetComponentClass = targetComponentClass;
 	}
+	
+	public ReductionMapping getReduction() {
+		return reduction;
+	}
 }

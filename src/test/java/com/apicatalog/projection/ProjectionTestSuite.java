@@ -6,8 +6,6 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-//TODO	MapperTest.class,
-	
 	DirectMappingTest.class,
 	PropertyNameOverrideTest.class,
 	RefCollectionTest.class,
@@ -24,6 +22,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	ConstantTest.class,
 	ProvidedRefCollectionTest.class,
 	AccessModeTest.class,
+	ArrayCollectorTest.class,
 })
 public class ProjectionTestSuite {
 

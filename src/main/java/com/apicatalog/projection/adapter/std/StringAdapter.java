@@ -12,7 +12,7 @@ public class StringAdapter implements TypeAdapter<String> {
 
 	@Override
 	public Class<?>[] produces() {
-		return new Class[] {Long.class, Double.class, Boolean.class};
+		return new Class[] {Long.class, Double.class, Boolean.class, Integer.class};
 	}
 
 	@SuppressWarnings("unchecked")
@@ -34,6 +34,9 @@ public class StringAdapter implements TypeAdapter<String> {
 		}		
 		if (targetClass.isAssignableFrom(Double.class)) {
 			return (T)Double.valueOf(object);
+		}		
+		if (targetClass.isAssignableFrom(Integer.class)) {
+			return (T)Integer.valueOf(object);
 		}		
 		
 		throw new TypeAdapterError("Can not convert " + object.getClass().getCanonicalName() + " to " + targetClass.getCanonicalName() + ".");
