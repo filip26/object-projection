@@ -26,8 +26,8 @@ public class ProjectionMapper {
 	
 	public ProjectionMapper(ProjectionFactory factory) {
 		this.factory = factory;
-		this.propertyMapper = new PropertyMapper(factory);
 		this.typeAdapters = new TypeAdapters();
+		this.propertyMapper = new PropertyMapper(factory, typeAdapters);
 	}
 	
 	public <P> ObjectProjection<P> getMapping(final Class<P> targetProjectionClass) {
@@ -58,17 +58,22 @@ public class ProjectionMapper {
 			if (Modifier.isStatic(field.getModifiers())
 					|| Modifier.isTransient(field.getModifiers())
 					) {
-					logger.trace("Skipping property {} because is transient or static", field.getName());
+					logger.trace("Skipped {}.{} because is transient or static", targetProjectionClass.getSimpleName(), field.getName());
 					continue;
 			}
 			
 			Optional.ofNullable(propertyMapper.getPropertyMapping(field, defaultSourceClass))
 					.ifPresent(
 							projectionProperty -> {
-									logger.trace("Found property {} : {}", field.getName(), field.getType().getSimpleName());
+									logger.trace("Found {}.{} : {}", targetProjectionClass.getSimpleName(), field.getName(), field.getType().getSimpleName());
 									properties.add(projectionProperty);
 								}
 							);				
+		}
+		
+		if (properties.isEmpty()) {
+			logger.debug("Ignored {} because has no projected properties", targetProjectionClass.getSimpleName());
+			return null;
 		}
 		
 		projectionMapping.setProperties(properties.toArray(new ProjectionProperty[0]));

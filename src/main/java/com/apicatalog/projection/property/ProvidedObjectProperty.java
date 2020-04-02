@@ -89,4 +89,8 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 	public void setTargetAdapter(TargetAdapter targetAdapter) {
 		this.targetAdapter = targetAdapter;
 	}
+	
+	public void setOptional(boolean optional) {
+		this.optional = optional;
+	}
 }

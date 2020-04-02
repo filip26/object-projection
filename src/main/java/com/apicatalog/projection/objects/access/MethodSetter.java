@@ -2,13 +2,12 @@ package com.apicatalog.projection.objects.access;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.util.Collection;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.adapter.TypeAdapters;
 
 public class MethodSetter implements Setter {
-
-	TypeAdapters typeAdapters;
 
 	final Method method;
 	final String name;
@@ -16,16 +15,29 @@ public class MethodSetter implements Setter {
 	Class<?> valueClass;
 	Class<?> valueComponentClass;
 	
-	public MethodSetter(Method method, String name) {
+	protected MethodSetter(Method method, String name) {
 		this.method = method;
 		this.name = name;
+	}
+	
+	public static final MethodSetter from(Method method, String name) {
+		
+		final MethodSetter setter = new MethodSetter(method, name);
+		
+		setter.setValueClass(method.getReturnType());
+
+		if (Collection.class.isAssignableFrom(method.getReturnType())) {
+			setter.setValueComponentClass((Class<?>)((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0]);
+		}
+		
+		return setter;
 	}
 
 	@Override
 	public void set(Object object, Object value) throws ProjectionError {
 		
 		try {
-			method.invoke(object, typeAdapters.convert(valueClass, valueComponentClass, value));
+			method.invoke(object, value);
 			
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			/* ignored */

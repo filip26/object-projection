@@ -2,6 +2,8 @@ package com.apicatalog.projection.objects.access;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.util.Collection;
 
 import com.apicatalog.projection.ProjectionError;
 
@@ -13,11 +15,24 @@ public class MethodGetter implements Getter {
 	final Method method;
 	final String name;
 	
-	public MethodGetter(Method method, String name) {
+	protected MethodGetter(Method method, String name) {
 		this.method = method;
 		this.name = name;
 	}
 	
+	public static final MethodGetter from(Method method, String name) {
+		
+		final MethodGetter setter = new MethodGetter(method, name);
+		
+		setter.setValueClass(method.getReturnType());
+
+		if (Collection.class.isAssignableFrom(method.getReturnType())) {
+			setter.setValueComponentClass((Class<?>)((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0]);
+		}
+		
+		return setter;
+	}
+
 	@Override
 	public Object get(final Object object) throws ProjectionError {
 		try {

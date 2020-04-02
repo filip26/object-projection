@@ -5,26 +5,16 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.adapter.TypeAdapters;
 
 public class FieldSetter implements Setter {
 
-	TypeAdapters typeAdapters;
-	
 	Class<?> valueClass;
 	Class<?> valueComponentClass;
-	
 
 	final Field field;
 
-	public FieldSetter(Field field) {
+	protected FieldSetter(Field field) {
 		this.field = field;
-	}
-	
-	@Deprecated
-	public FieldSetter(final TypeAdapters typeAdapters) {
-		this.typeAdapters = typeAdapters;
-		this.field = null;
 	}
 	
 	public static final FieldSetter from(Field field) {

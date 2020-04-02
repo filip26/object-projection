@@ -8,6 +8,12 @@ import java.lang.reflect.Modifier;
 import org.apache.commons.lang3.StringUtils;
 
 import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.objects.access.FieldGetter;
+import com.apicatalog.projection.objects.access.FieldSetter;
+import com.apicatalog.projection.objects.access.Getter;
+import com.apicatalog.projection.objects.access.MethodGetter;
+import com.apicatalog.projection.objects.access.MethodSetter;
+import com.apicatalog.projection.objects.access.Setter;
 
 public class ObjectUtils {
 
@@ -106,4 +112,40 @@ public class ObjectUtils {
 		return null;
 	}
 	
+	
+	public static final Getter getGetter(Class<?> objectClass, final String name) {
+
+		final Field sourceField = ObjectUtils.getProperty(objectClass, name);
+		
+		if (sourceField != null) {
+			return FieldGetter.from(sourceField);
+		}
+
+		// look for getter method
+		final Method sourceGetter = ObjectUtils.getMethod(objectClass, "get".concat(StringUtils.capitalize(name)));
+		
+		if (sourceGetter != null) {
+			return MethodGetter.from(sourceGetter, name);
+		}
+
+		return null;
+	}
+	
+	public static final Setter getSetter(Class<?> objectClass, final String name) {
+
+		final Field sourceField = ObjectUtils.getProperty(objectClass, name);
+		
+		if (sourceField != null) {
+			return FieldSetter.from(sourceField);
+		}
+
+		// look for getter method
+		final Method sourceGetter = ObjectUtils.getMethod(objectClass, "set".concat(StringUtils.capitalize(name)));
+		
+		if (sourceGetter != null) {
+			return MethodSetter.from(sourceGetter, name);
+		}
+
+		return null;
+	}
 }

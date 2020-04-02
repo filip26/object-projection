@@ -2,7 +2,6 @@ package com.apicatalog.projection.mapper;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -46,12 +45,8 @@ import com.apicatalog.projection.mapping.ReducerMapping;
 import com.apicatalog.projection.mapping.ReductionMapping;
 import com.apicatalog.projection.mapping.SourceMapping;
 import com.apicatalog.projection.mapping.TargetMapping;
-import com.apicatalog.projection.objects.ObjectUtils;
-import com.apicatalog.projection.objects.access.FieldGetter;
-import com.apicatalog.projection.objects.access.FieldSetter;
-import com.apicatalog.projection.objects.access.MethodGetter;
-import com.apicatalog.projection.objects.access.MethodSetter;
 
+@Deprecated
 public class ProjectionMapper2 {
 
 	final Logger logger = LoggerFactory.getLogger(ProjectionMapper2.class);
@@ -211,9 +206,9 @@ public class ProjectionMapper2 {
 		// set default source object class
 		sourceMapping.setSourceObjectClass(defaultSourceClass);
 		
-		if (!setGetterSetter(sourceMapping, field.getName())) {
-			return null;
-		}
+//		if (!setGetterSetter(sourceMapping, field.getName())) {
+//			return null;
+//		}
 		
 		// set default access mode
 		sourceMapping.setAccessMode(AccessMode.READ_WRITE);
@@ -374,12 +369,12 @@ public class ProjectionMapper2 {
 		}
 
 		// extract setter/getter
-		if (!setGetterSetter(sourceMapping, sourceFieldName)) {
-			
-			// no setter nor getter? nothing to do with this 
-			return null;
-		}
-		
+//		if (!setGetterSetter(sourceMapping, sourceFieldName)) {
+//			
+//			// no setter nor getter? nothing to do with this 
+//			return null;
+//		}
+//		
 		// set source object qualifier
 		if (StringUtils.isNotBlank(source.qualifier())) {
 			sourceMapping.setQualifier(source.qualifier());
@@ -489,75 +484,4 @@ public class ProjectionMapper2 {
 		return new ReductionMappingImpl(reducer, typeAdapters, reduction.value());
 	}
 	
-	boolean setGetterSetter(final SourceMappingImpl sourceMapping, final String name) {
-
-		final Field sourceField = ObjectUtils.getProperty(sourceMapping.getSourceObjectClass(), name);
-		if (sourceField != null) {
-
-//			final FieldGetter getter = new FieldGetter();
-//			getter.setFieldName(sourceField.getName());
-//			
-//			//FIXME do this during creation
-//			getter.setValueClass(sourceField.getType());
-//
-//			if (Collection.class.isAssignableFrom(sourceField.getType())) {
-//				getter.setValueComponentClass((Class<?>)((ParameterizedType) sourceField.getGenericType()).getActualTypeArguments()[0]);
-//			}
-//
-//			sourceMapping.setGetter(getter);
-//			
-//			final FieldSetter setter = new FieldSetter(typeAdapters);
-//			setter.setFieldName(getter.getFieldName());
-//			//FIXME do this during creation
-//			setter.setValueClass(getter.getValueClass());
-//			setter.setValueComponentClass(getter.getValueComponentClass());
-//			
-//			sourceMapping.setSetter(setter);
-			
-			return true;
-		}
-		
-		// look for getter
-		final String getterName = "get".concat(StringUtils.capitalize(name));
-		
-		final Method getterMethod = ObjectUtils.getMethod(sourceMapping.getSourceObjectClass(), getterName);
-		
-		if (getterMethod != null) {
-			final MethodGetter getter = new MethodGetter(getterMethod, name);
-			
-			//FIXME do this during creation
-			getter.setValueClass(getterMethod.getReturnType());
-
-			if (Collection.class.isAssignableFrom(getterMethod.getReturnType())) {
-				getter.setValueComponentClass((Class<?>)((ParameterizedType) getterMethod.getGenericReturnType()).getActualTypeArguments()[0]);
-			}
-			
-			sourceMapping.setGetter(getter);
-		}
-		
-		final String setterName = "set".concat(StringUtils.capitalize(name));
-
-		final Method setterMethod = ObjectUtils.getMethod(sourceMapping.getSourceObjectClass(), setterName);
-		
-		if (setterMethod != null) {
-//			final MethodSetter setter = new MethodSetter(typeAdapters, setterMethod);
-//			
-//			//FIXME do this during creation
-//			setter.setValueClass(setterMethod.getReturnType());
-//
-//			if (Collection.class.isAssignableFrom(setterMethod.getReturnType())) {
-//				setter.setValueComponentClass((Class<?>)((ParameterizedType) setterMethod.getGenericReturnType()).getActualTypeArguments()[0]);
-//			}
-//			
-//			sourceMapping.setSetter(setter);			
-		}
-		
-
-		if (setterMethod == null && getterMethod == null) {
-			logger.warn("Property {} is not accessible or does not exist in {} and is ignored.", name, sourceMapping.getSourceObjectClass().getSimpleName());
-			return false;
-		}
-		
-		return true;
-	}
 }
