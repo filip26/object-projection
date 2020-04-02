@@ -22,4 +22,10 @@ public class TypeObjectTo {
 	
 	public Double doubleValue;
 
+	@Override
+	public String toString() {
+		return "TypeObjectTo [integerValue=" + integerValue + ", longValue=" + longValue + ", stringValue="
+				+ stringValue + ", booleanValue=" + booleanValue + ", instantValue=" + instantValue + ", floatValue="
+				+ floatValue + ", doubleValue=" + doubleValue + "]";
+	}
 }

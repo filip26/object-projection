@@ -13,6 +13,9 @@ public class ProvidedReferefenceTo {
 	
 	@Provided
 	public SimpleObjectTo projection;
-	
-	
+
+	@Override
+	public String toString() {
+		return "ProvidedReferefenceTo [title=" + title + ", projection=" + projection + "]";
+	}
 }

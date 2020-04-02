@@ -7,6 +7,9 @@ public class ObjectsCollection {
 	public String id;
 	
 	public Collection<BasicTypes> items;
-	
-	
+
+	@Override
+	public String toString() {
+		return "ObjectsCollection [id=" + id + ", items=" + items + "]";
+	}
 }

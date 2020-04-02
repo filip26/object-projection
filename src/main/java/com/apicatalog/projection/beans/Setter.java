@@ -1,11 +1,13 @@
-package com.apicatalog.projection.objects.access;
+package com.apicatalog.projection.beans;
 
 import com.apicatalog.projection.ProjectionError;
 
-public interface ValueSetter {
+public interface Setter {
 
 	void set(Object object, Object value) throws ProjectionError;
 	
 	Class<?> getValueClass();
 	Class<?> getValueComponentClass();
+
+	Object getName();
 }

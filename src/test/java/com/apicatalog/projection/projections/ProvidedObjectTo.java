@@ -14,6 +14,9 @@ public class ProvidedObjectTo {
 	
 	@Provided
 	public SimpleObject object;
-	
-	
+
+	@Override
+	public String toString() {
+		return "ProvidedObjectTo [title=" + title + ", object=" + object + "]";
+	}	
 }

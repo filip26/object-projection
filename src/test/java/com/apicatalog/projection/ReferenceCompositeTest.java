@@ -8,9 +8,9 @@ import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.objects.Reference;
+import com.apicatalog.projection.projections.CompositeTo;
 import com.apicatalog.projection.projections.NameOverrideTo;
 import com.apicatalog.projection.projections.ReferenceTo;
-import com.apicatalog.projection.projections.CompositeTo;
 
 public class ReferenceCompositeTest {
 
@@ -60,7 +60,7 @@ public class ReferenceCompositeTest {
     	projection2.ref = projection1;
 
     	Object[] objects = projections.decompose(projection2);
-    	
+
     	Assert.assertNotNull(objects);
 
     	Assert.assertEquals(1, objects.length);

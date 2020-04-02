@@ -9,8 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.NamedObject;
-
 public class ContextObjects {
 
 	final Logger logger = LoggerFactory.getLogger(ContextObjects.class);
@@ -65,5 +63,9 @@ public class ContextObjects {
 
 	public boolean contains(Class<? extends Object> class1, String qualifier) {
 		return index.containsKey(ObjectKey.of(class1, qualifier));
+	}
+	
+	public void pushNamespace(String namespace) {
+		//TODO
 	}
 }

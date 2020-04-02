@@ -4,15 +4,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import com.apicatalog.projection.mapper.MapperTest;
-
 @RunWith(Suite.class)
 @SuiteClasses({
-	MapperTest.class,
+//TODO	MapperTest.class,
 	
 	DirectMappingTest.class,
 	PropertyNameOverrideTest.class,
-	CollectionTest.class,
+	RefCollectionTest.class,
 	ReferenceCompositeTest.class,
 	ImplicitConversionTest.class,
 	SourcesWithConversionTest.class,

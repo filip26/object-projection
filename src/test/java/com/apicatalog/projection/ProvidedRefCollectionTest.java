@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
+import com.apicatalog.projection.objects.NamedObject;
 import com.apicatalog.projection.objects.SimpleObject;
 import com.apicatalog.projection.projections.ProvidedRefCollectionTo;
 import com.apicatalog.projection.projections.SimpleObjectTo;

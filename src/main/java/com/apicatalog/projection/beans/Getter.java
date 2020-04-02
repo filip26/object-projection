@@ -1,12 +1,14 @@
-package com.apicatalog.projection.objects.access;
+package com.apicatalog.projection.beans;
 
 import com.apicatalog.projection.ProjectionError;
 
-public interface ValueGetter {
+public interface Getter {
 
 	Object get(Object object) throws ProjectionError;
 	
 	Class<?> getValueClass();
 	Class<?> getValueComponentClass();
+
+	String getName();
 
 }

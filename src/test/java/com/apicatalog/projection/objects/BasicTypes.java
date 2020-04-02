@@ -22,4 +22,12 @@ public class BasicTypes {
 	public String[] stringArray;
 	
 	public Collection<String> stringCollection;
+
+	@Override
+	public String toString() {
+		return "BasicTypes [integerValue=" + integerValue + ", longValue=" + longValue + ", stringValue=" + stringValue
+				+ ", booleanValue=" + booleanValue + ", instantValue=" + instantValue + ", floatValue=" + floatValue
+				+ ", doubleValue=" + doubleValue 
+				+  "]";
+	}
 }

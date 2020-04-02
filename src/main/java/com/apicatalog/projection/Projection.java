@@ -1,15 +1,10 @@
-package com.apicatalog.projection.mapping;
+package com.apicatalog.projection;
 
-import java.util.Collection;
-
-import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.objects.ContextObjects;
-import com.apicatalog.projection.objects.Path;
+import com.apicatalog.projection.objects.ProjectionQueue;
 
-public interface ProjectionMapping<P> {
+public interface Projection<P> {
 
-	Collection<PropertyMapping> getProperties();
-	
 	Class<P> getProjectionClass();
 	
 	/**
@@ -21,12 +16,12 @@ public interface ProjectionMapping<P> {
 	 */
 	P compose(Object...objects) throws ProjectionError;
 	
-	P compose(Path path, Object...objects) throws ProjectionError;
+	P compose(ProjectionQueue queue, Object...objects) throws ProjectionError;
 	
 	/**
-	 * Decompose a projection into source values
+	 * Decompose a projection into a source of values
 	 * 
-	 * @param projection a projection to decompose
+	 * @param projection to decompose
 	 * @return objects extracted from the projection
 	 * @throws ProjectionError
 	 */

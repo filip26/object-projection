@@ -2,6 +2,7 @@ package com.apicatalog.projection.mapping;
 
 import com.apicatalog.projection.converter.Reducer;
 
+@Deprecated
 public class ReducerMapping {
 
 	Class<? extends Reducer<?, ?>> reducerClass;

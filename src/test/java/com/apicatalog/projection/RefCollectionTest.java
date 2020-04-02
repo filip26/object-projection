@@ -12,9 +12,9 @@ import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.objects.ObjectsCollection;
 import com.apicatalog.projection.projections.NameOverrideTo;
-import com.apicatalog.projection.projections.ProjectionsCollectionTo;
+import com.apicatalog.projection.projections.RefCollectionTo;
 
-public class CollectionTest {
+public class RefCollectionTest {
 
 	ProjectionFactory projections;
 	ProjectionMapper mapper;
@@ -24,7 +24,7 @@ public class CollectionTest {
 		projections = new ProjectionFactory();
 		mapper = new ProjectionMapper(projections);	
 		
-		projections.add(mapper.getMapping(ProjectionsCollectionTo.class));
+		projections.add(mapper.getMapping(RefCollectionTo.class));
 		projections.add(mapper.getMapping(NameOverrideTo.class));
 	}
 	
@@ -39,7 +39,7 @@ public class CollectionTest {
     	oc.items = new ArrayList<>();
     	oc.items.add(oa);
     	
-    	ProjectionsCollectionTo ca = projections.compose(ProjectionsCollectionTo.class, oc);
+    	RefCollectionTo ca = projections.compose(RefCollectionTo.class, oc);
     	
     	Assert.assertNotNull(ca);
     	Assert.assertNotNull(ca.items);    	
@@ -54,7 +54,7 @@ public class CollectionTest {
     @Test
     public void testDecomposition() throws ProjectionError, ConverterError {
     	
-    	ProjectionsCollectionTo ca = new ProjectionsCollectionTo();
+    	RefCollectionTo ca = new RefCollectionTo();
     	ca.items = new ArrayList<>();
     	
     	NameOverrideTo pa1 = new NameOverrideTo();
@@ -67,7 +67,7 @@ public class CollectionTest {
     	ca.items.add(pa2);
 
     	Object[] oo = projections.decompose(ca);
-    	
+
     	Assert.assertNotNull(oo);
     	Assert.assertEquals(1, oo.length);
     	Assert.assertEquals(ObjectsCollection.class, oo[0].getClass());
