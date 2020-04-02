@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.mapping.ConversionMapping;
 import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.ObjectUtils;
@@ -17,6 +18,8 @@ public class SingleSource implements Source {
 
 	final Logger logger = LoggerFactory.getLogger(SingleSource.class);
 
+	final TypeAdapters typeAdapters;	//FIXME use concrete adapters set during mapping
+	
 	Getter getter;
 	Setter setter;
 	
@@ -31,6 +34,10 @@ public class SingleSource implements Source {
 	
 	boolean optional;
 
+	public SingleSource(TypeAdapters typeAdapters) {
+		this.typeAdapters = typeAdapters;
+	}
+	
 	@Override
 	public Object read(ProjectionQueue queue, ContextObjects context) throws ProjectionError {
 		
@@ -79,7 +86,7 @@ public class SingleSource implements Source {
 
 		// apply explicit conversions in reverse order
 		if (conversions != null) {
-			for (int i=conversions.length; i > 0; --i) {
+			for (int i=conversions.length - 1; i >= 0; i--) {
 				object = conversions[i].backward(object);
 			}
 		}
@@ -91,7 +98,7 @@ public class SingleSource implements Source {
 			context.addOrReplace(instance, qualifier);
 		}
 		
-		setter.set(instance, object);		
+		setter.set(instance, typeAdapters.convert(setter.getValueClass(), setter.getValueComponentClass(), object));		
 	}
 	
 	public void setConversions(ConversionMapping[] conversions) {

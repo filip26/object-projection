@@ -60,46 +60,21 @@ public class ArraySource implements Source {
 
 	@Override
 	public void write(ProjectionQueue queue, Object object, ContextObjects context) throws ProjectionError {
-		// TODO Auto-generated method stub
+		logger.debug("Write {}, {} sources(s), optional = {}, depth = {}", object, sources.length, optional, queue.length());
+
+		Object[] sourceObjects = reduction.expand(object);
 		
+		// apply explicit conversions in reverse order
+		if (conversions != null) {
+			for (int i=conversions.length - 1; i >= 0; i--) {
+				object = conversions[i].backward(object);
+			}
+		}
+
+		for (int i = 0; i < sources.length; i++) {
+			sources[i].write(queue, sourceObjects[i], context);
+		}				
 	}
-//	@Override
-//	public void forward(ProjectionQueue queue, ContextObjects context) throws ProjectionError {
-//		
-////		final Object[] sourceObjects = new Object[sources.length];
-////		
-////		for (int i = 0; i < sources.length; i++) {
-////			sourceObjects[i] = sources[i].read(context);
-////		}
-////		
-////		Object object = reduction.reduce(sourceObjects);
-////		
-////		for (int i = 0; i < conversions.length; i++) {
-////			object = conversions[i].forward(object);
-////		}
-////		
-////		object = targetAdapter.construct(queue, object, context);
-////		
-////		targetSetter.set(queue.peek(), object);
-//	}
-//
-//	@Override
-//	public void backward(ProjectionQueue queue, ContextObjects context) throws ProjectionError {
-//
-////		Object object = targetGetter.get(queue.peek());
-////		
-////		object = targetAdapter.deconstruct(object, context);
-////		
-////		for (int i=conversions.length; i > 0; --i) {
-////			object = conversions[i].backward(object);
-////		}
-////		
-////		Object[] sourceObjects = reduction.expand(object);
-////		
-////		for (int i = 0; i < sources.length; i++) {
-////			sources[i].write(context, sourceObjects);
-////		}
-//	}
 	
 	public void setVisible(final Set<Integer> levels) {
 		this.visibleLevels = levels;

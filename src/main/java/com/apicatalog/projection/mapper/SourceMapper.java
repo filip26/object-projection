@@ -166,7 +166,7 @@ public class SourceMapper {
 	
 	public SingleSource getSingleSource(Class<?> sourceObjectClass, String sourceFieldName, boolean optional, String qualifier, AccessMode mode, Conversion[] conversions) {
 		
-		final SingleSource source = new SingleSource();
+		final SingleSource source = new SingleSource(typeAdapters);
 
 		source.setObjectClass(sourceObjectClass);
 
