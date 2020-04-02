@@ -6,12 +6,15 @@ import java.lang.reflect.ParameterizedType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.annotation.Reduction;
-import com.apicatalog.projection.mapper.mapping.ReductionMappingImpl;
-import com.apicatalog.projection.mapping.ReducerMapping;
 import com.apicatalog.projection.mapping.ReductionMapping;
+import com.apicatalog.projection.objects.ObjectUtils;
+import com.apicatalog.projection.reducer.Reducer;
+import com.apicatalog.projection.reducer.ReducerConfig;
+import com.apicatalog.projection.reducer.ReducerError;
 
 public class ReductionMapper {
 
@@ -25,12 +28,17 @@ public class ReductionMapper {
 		this.typeAdapters = typeAdapters;
 	}
 	
-	public ReductionMapping getReductionMapping(Reduction reduction) {
+	public ReductionMapping getReductionMapping(Reduction reduction) throws ProjectionError, ReducerError {
 		
-		//FIXME use ConverterFactory
-		ReducerMapping reducer = new ReducerMapping();
+		ReductionMapping reducer = new ReductionMapping();
 
-		reducer.setReducerClass(reduction.type());
+		@SuppressWarnings("unchecked")
+		Reducer<Object, Object> instance = (Reducer<Object, Object>) ObjectUtils.newInstance(reduction.type());
+		
+		instance.initReducer(new ReducerConfig(reduction.value()));
+		
+		reducer.setReducer(instance);
+
 		//FIXME checks
 		
 		Class<?> sourceClass = (Class<?>)(((ParameterizedType) reduction.type().getGenericInterfaces()[0]).getActualTypeArguments()[0]); 
@@ -41,8 +49,6 @@ public class ReductionMapper {
 		reducer.setSourceClass(sourceClass);
 		reducer.setTargetClass((Class<?>)(((ParameterizedType) reduction.type().getGenericInterfaces()[0]).getActualTypeArguments()[1]));
 
-		
-		return new ReductionMappingImpl(reducer, typeAdapters, reduction.value());
-	}
-	
+		return reducer;
+	}	
 }

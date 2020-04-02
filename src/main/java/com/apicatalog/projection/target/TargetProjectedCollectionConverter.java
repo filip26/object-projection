@@ -50,6 +50,7 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 		
 		final Collection<Object> collection = new ArrayList<>();
 
+		@SuppressWarnings("unchecked")
 		final Projection<Object> projection = (Projection<Object>) factory.get(targetComponentClass);
 		
 		if (projection == null) {
@@ -73,6 +74,7 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 	public Object backward(Object object, ContextObjects context) throws ProjectionError {
 		logger.debug("Convert {} to {}, reference = true, collection = true", targetClass.getSimpleName(), sourceClass != null ? sourceClass.getSimpleName() : "unknown");
 		
+		@SuppressWarnings("unchecked")
 		final Projection<Object> projection = (Projection<Object>) factory.get(targetComponentClass); 
 		
 		if (projection == null) {

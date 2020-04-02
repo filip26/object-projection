@@ -25,6 +25,7 @@ import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.property.ProjectionProperty;
 import com.apicatalog.projection.property.SourceProperty;
+import com.apicatalog.projection.reducer.ReducerError;
 import com.apicatalog.projection.source.ArraySource;
 import com.apicatalog.projection.source.SingleSource;
 import com.apicatalog.projection.target.TargetAdapter;
@@ -242,7 +243,7 @@ public class SourceMapper {
 
 	ArraySource getArraySource(final Sources sourcesAnnotation, final Field field, final Class<?> defaultSourceObjectClass) {
 		
-		final ArraySource source = new ArraySource();
+		final ArraySource source = new ArraySource(typeAdapters);
 		
 		SingleSource[] sources = Arrays.stream(sourcesAnnotation.value())
 										.map(s -> getSingleSource(s, field, defaultSourceObjectClass))
@@ -257,14 +258,14 @@ public class SourceMapper {
 
 		source.setSources(sources);
 		
-		// set reduction
-		source.setReduction(reductionMapper.getReductionMapping(sourcesAnnotation.reduce()));
-		
-		// set conversions to apply
 		try {
+			// set reduction
+			source.setReduction(reductionMapper.getReductionMapping(sourcesAnnotation.reduce()));
+			
+			// set conversions to apply
 			source.setConversions(conversionMapper.getConverterMapping(sourcesAnnotation.map()));
 			
-		} catch (ConverterError | ProjectionError e) {
+		} catch (ConverterError | ReducerError | ProjectionError e) {
 			logger.error("Property " + field.getName() + " is ignored.", e);
 			return null;
 		}

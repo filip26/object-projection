@@ -4,6 +4,7 @@ import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterConfig;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.reducer.Reducer;
+import com.apicatalog.projection.reducer.ReducerConfig;
 import com.apicatalog.projection.reducer.ReducerError;
 import com.apicatalog.uritemplate.MalformedUriTemplate;
 import com.apicatalog.uritemplate.UriTemplateL1;
@@ -13,7 +14,7 @@ public class UriTemplate implements Reducer<String, String>, Converter<String, S
 	UriTemplateL1 template;
 
 	@Override
-	public void initReducer(ConverterConfig ctx) throws ReducerError {
+	public void initReducer(ReducerConfig ctx) throws ReducerError {
 		try {
 			this.template = UriTemplateL1.of(ctx.getValues()[0]); 	//FIXME
 			

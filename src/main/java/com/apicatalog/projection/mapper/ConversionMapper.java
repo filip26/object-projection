@@ -49,6 +49,7 @@ public class ConversionMapper {
 		
 		ConverterMapping converter = new ConverterMapping();
 		
+		@SuppressWarnings("unchecked")
 		Converter<Object, Object> instance = (Converter<Object, Object>) ObjectUtils.newInstance(conversionAnnotation.type());
 		
 		instance.initConverter(new ConverterConfig(conversionAnnotation.value()));
