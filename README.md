@@ -36,3 +36,16 @@ public class TestProjection {
   ...
 }
 ```
+
+```java
+
+  @Sources(value = {
+      @Source("stringProperty"),
+      @Source("integerProperty"),
+      @Source("booleanProperty"),
+      })
+  Collection<String> list;
+  ...
+}
+```
+
