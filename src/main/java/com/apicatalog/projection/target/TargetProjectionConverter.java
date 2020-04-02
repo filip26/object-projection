@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ObjectProjection;
+import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.objects.ContextObjects;
@@ -44,7 +44,7 @@ public class TargetProjectionConverter implements TargetAdapter {
 		
 		Optional.ofNullable(object).ifPresent(v -> clonedSources.addOrReplace(v, null));
 
-		final ObjectProjection<?> projection = factory.get(targetClass); 
+		final Projection<?> projection = factory.get(targetClass); 
 		
 		if (projection != null) {
 			return projection.compose(queue, clonedSources.getValues());
@@ -57,7 +57,7 @@ public class TargetProjectionConverter implements TargetAdapter {
 	public Object backward(Object object, ContextObjects context) throws ProjectionError {
 		logger.debug("Convert {} to {}, reference = true", targetClass.getSimpleName(), sourceClass != null ? sourceClass.getSimpleName() : "unknown");
 		
-		final ObjectProjection<Object> projection = (ObjectProjection<Object>) factory.get(targetClass); 
+		final Projection<Object> projection = (Projection<Object>) factory.get(targetClass); 
 		
 		if (projection != null) {
 			return filter(projection.decompose(object, new ContextObjects(context)), context);

@@ -3,7 +3,7 @@ package com.apicatalog.projection;
 import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.ProjectionQueue;
 
-public interface ObjectProjection<P> {
+public interface Projection<P> {
 
 	Class<P> getProjectionClass();
 	
@@ -19,9 +19,9 @@ public interface ObjectProjection<P> {
 	P compose(ProjectionQueue queue, Object...objects) throws ProjectionError;
 	
 	/**
-	 * Decompose a projection into source values
+	 * Decompose a projection into a source of values
 	 * 
-	 * @param projection a projection to decompose
+	 * @param projection to decompose
 	 * @return objects extracted from the projection
 	 * @throws ProjectionError
 	 */

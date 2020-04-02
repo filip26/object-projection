@@ -6,9 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.beans.Setter;
 import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.ProjectionQueue;
-import com.apicatalog.projection.objects.access.Setter;
 import com.apicatalog.projection.target.TargetAdapter;
 
 public class ConstantProperty implements ProjectionProperty {

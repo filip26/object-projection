@@ -67,7 +67,7 @@ public class RefCollectionTest {
     	ca.items.add(pa2);
 
     	Object[] oo = projections.decompose(ca);
-    	
+
     	Assert.assertNotNull(oo);
     	Assert.assertEquals(1, oo.length);
     	Assert.assertEquals(ObjectsCollection.class, oo[0].getClass());

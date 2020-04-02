@@ -19,20 +19,16 @@ import com.apicatalog.projection.annotation.Provided;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.annotation.Visibility;
-import com.apicatalog.projection.objects.access.FieldGetter;
-import com.apicatalog.projection.objects.access.FieldSetter;
-import com.apicatalog.projection.objects.access.Getter;
-import com.apicatalog.projection.objects.access.Setter;
+import com.apicatalog.projection.beans.FieldGetter;
+import com.apicatalog.projection.beans.FieldSetter;
+import com.apicatalog.projection.beans.Getter;
+import com.apicatalog.projection.beans.Setter;
 import com.apicatalog.projection.property.ConstantProperty;
 import com.apicatalog.projection.property.ProjectionProperty;
 import com.apicatalog.projection.property.ProvidedObjectProperty;
 import com.apicatalog.projection.property.ProvidedProjectionProperty;
 import com.apicatalog.projection.property.SourceProperty;
 import com.apicatalog.projection.source.SingleSource;
-import com.apicatalog.projection.target.TargetAdapter;
-import com.apicatalog.projection.target.TargetProjectedCollectionConverter;
-import com.apicatalog.projection.target.TargetProjectionConverter;
-import com.apicatalog.projection.target.TargetTypeConverter;
 
 public class PropertyMapper {
 

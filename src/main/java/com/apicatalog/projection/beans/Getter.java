@@ -1,4 +1,4 @@
-package com.apicatalog.projection.objects.access;
+package com.apicatalog.projection.beans;
 
 import com.apicatalog.projection.ProjectionError;
 

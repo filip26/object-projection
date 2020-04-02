@@ -1,4 +1,4 @@
-package com.apicatalog.projection.objects.access;
+package com.apicatalog.projection.beans;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;

@@ -39,8 +39,6 @@ public class ProvidedCollectionTest {
     									NamedObject.of("href",  href)
     									);
     	
-    	System.out.println(projection);
-    	
     	Assert.assertNotNull(projection);
     	Assert.assertEquals(href, projection.href);
     	

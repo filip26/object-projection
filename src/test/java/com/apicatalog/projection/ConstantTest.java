@@ -76,7 +76,7 @@ public class ConstantTest {
     	to.booleanCollection = Arrays.asList(false, true);
     	
     	Object[] objects = projections.decompose(to);
-    	Arrays.stream(objects).forEach(System.out::println);
+
     	Assert.assertNotNull(objects);
     	Assert.assertEquals(0, objects.length);    	
     }

@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ObjectProjection;
+import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
@@ -44,16 +44,16 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 	@Override
 	public Object forward(ProjectionQueue queue, Object object, ContextObjects context) throws ProjectionError {
 		
-		logger.debug("Convert {} to {}, depth = {}, reference = true", sourceClass != null ? sourceClass.getSimpleName() : "unknown", targetClass.getSimpleName(), queue.length());
+		logger.debug("Convert {} to {}, depth = {}, reference = true, collection = true", sourceClass != null ? sourceClass.getSimpleName() : "unknown", targetClass.getSimpleName(), queue.length());
 
 		final Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, Object.class, object);
 		
 		final Collection<Object> collection = new ArrayList<>();
 
-		final ObjectProjection<Object> projection = (ObjectProjection<Object>) factory.get(targetComponentClass);
+		final Projection<Object> projection = (Projection<Object>) factory.get(targetComponentClass);
 		
 		if (projection == null) {
-			throw new ProjectionError("Projection " + targetClass.getCanonicalName() +  " is not present.");
+			throw new ProjectionError("Projection " + targetComponentClass.getCanonicalName() +  " is not present.");
 		}
 		
 		// compose a projection from each object in the collection
@@ -71,12 +71,12 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 
 	@Override
 	public Object backward(Object object, ContextObjects context) throws ProjectionError {
-		logger.debug("Convert {} to {}, reference = true", targetClass.getSimpleName(), sourceClass != null ? sourceClass.getSimpleName() : "unknown");
+		logger.debug("Convert {} to {}, reference = true, collection = true", targetClass.getSimpleName(), sourceClass != null ? sourceClass.getSimpleName() : "unknown");
 		
-		final ObjectProjection<Object> projection = (ObjectProjection<Object>) factory.get(targetClass); 
+		final Projection<Object> projection = (Projection<Object>) factory.get(targetComponentClass); 
 		
 		if (projection == null) {
-			throw new ProjectionError("Projection " + targetClass.getCanonicalName() +  " is not present.");
+			throw new ProjectionError("Projection " + targetComponentClass.getCanonicalName() +  " is not present.");
 		}
 		
 		final Collection<Object> collection = new ArrayList<>();
@@ -85,7 +85,7 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 		
 		// extract objects from each projection in the collection
 		for (final Object item : sourceCollection) {
-			collection.add(filterComponent(projection.decompose(item, context), context));
+			collection.add(filterComponent(projection.decompose(item, new ContextObjects(context)), context));
 		}
 		
 		return collection;
@@ -105,7 +105,7 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 		for (Object object : objects) {
 
 			if (value.isEmpty() 
-					&& (sourceComponentClass.isInstance(object))
+					&& (sourceComponentClass != null && sourceComponentClass.isInstance(object))
 				) {
 				
 				value = Optional.ofNullable(object);
@@ -115,6 +115,7 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 				
 			}
 		}
+		
 		return value.orElse(null);
 	}
 }

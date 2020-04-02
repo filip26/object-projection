@@ -6,17 +6,17 @@ import java.util.Optional;
 
 public class ProjectionFactory {
 
-	final Map<Class<?>, ObjectProjection<?>> index;
+	final Map<Class<?>, Projection<?>> index;
 	
 	public ProjectionFactory() {
 		this(new LinkedHashMap<>());
 	}
 	
-	public ProjectionFactory(final Map<Class<?>, ObjectProjection<?>> projections) {
+	public ProjectionFactory(final Map<Class<?>, Projection<?>> projections) {
 		this.index = projections;
 	}
 
-	public ProjectionFactory add(final ObjectProjection<?> projection) {
+	public ProjectionFactory add(final Projection<?> projection) {
 		if (projection == null) {
 			throw new IllegalArgumentException();
 		}
@@ -25,8 +25,8 @@ public class ProjectionFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <P> ObjectProjection<P> get(final Class<P> projectionClass) {
-		return (ObjectProjection<P>) index.get(projectionClass);
+	public <P> Projection<P> get(final Class<P> projectionClass) {
+		return (Projection<P>) index.get(projectionClass);
 	}
 
 	@SuppressWarnings("unchecked")

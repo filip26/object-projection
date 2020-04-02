@@ -6,13 +6,13 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ObjectProjection;
+import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.beans.Getter;
+import com.apicatalog.projection.beans.Setter;
 import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.ProjectionQueue;
-import com.apicatalog.projection.objects.access.Getter;
-import com.apicatalog.projection.objects.access.Setter;
 
 public class ProvidedProjectionProperty implements ProjectionProperty {
 
@@ -46,7 +46,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 		
 		Optional.ofNullable(sourceObjectQualifier).ifPresent(clonedSources::pushNamespace);
 		
-		final ObjectProjection<?> projection = factory.get(targetSetter.getValueClass()); 
+		final Projection<?> projection = factory.get(targetSetter.getValueClass()); 
 		
 		if (projection == null) {
 			throw new ProjectionError("Projection " + targetSetter.getValueClass().getCanonicalName() +  " is not present.");
@@ -63,7 +63,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 	public void backward(ProjectionQueue queue, ContextObjects context) throws ProjectionError {
 		
 		@SuppressWarnings("unchecked")
-		final ObjectProjection<Object> projection = (ObjectProjection<Object>) factory.get(targetGetter.getValueClass()); 
+		final Projection<Object> projection = (Projection<Object>) factory.get(targetGetter.getValueClass()); 
 		
 		if (projection == null) {
 			throw new ProjectionError("Projection " + targetGetter.getValueClass().getCanonicalName() +  " is not present.");			

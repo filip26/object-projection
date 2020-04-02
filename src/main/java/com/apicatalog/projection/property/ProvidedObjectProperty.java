@@ -6,10 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.beans.Getter;
+import com.apicatalog.projection.beans.Setter;
 import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.ProjectionQueue;
-import com.apicatalog.projection.objects.access.Getter;
-import com.apicatalog.projection.objects.access.Setter;
 import com.apicatalog.projection.target.TargetAdapter;
 
 public class ProvidedObjectProperty implements ProjectionProperty {
@@ -55,11 +55,17 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 		if (targetGetter == null) {
 			return;
 		}
-		
-		final Object object = targetGetter.get(queue.peek());
-		
+
+		logger.debug("Backward {} : {}, qualifier = {}, optional = {}, depth = {}", targetGetter.getName(), targetGetter.getValueClass().getSimpleName(), sourceObjectQualifier, optional, queue.length());
+
+		Object object = targetGetter.get(queue.peek());
+
 		if (object == null) {
 			return;
+		}
+		
+		if (targetAdapter != null) {
+			object = targetAdapter.backward(object, context);
 		}
 
 		context.addOrReplace(object, sourceObjectQualifier);	//TODO what if the object already exists?

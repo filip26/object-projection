@@ -1,4 +1,4 @@
-package com.apicatalog.projection;
+package com.apicatalog.projection.mapper;
 
 import java.util.Arrays;
 import java.util.stream.Stream;
@@ -6,20 +6,22 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apicatalog.projection.Projection;
+import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.property.ProjectionProperty;
 
-public class ObjectProjectionImpl<P> implements ObjectProjection<P> {
+class ProjectionImpl<P> implements Projection<P> {
 	
-	final Logger logger = LoggerFactory.getLogger(ObjectProjectionImpl.class);
+	final Logger logger = LoggerFactory.getLogger(ProjectionImpl.class);
 
 	final Class<P> projectionClass;
 	
 	ProjectionProperty[] properties;
 	
-	public ObjectProjectionImpl(Class<P> projectionClass) {
+	public ProjectionImpl(Class<P> projectionClass) {
 		this.projectionClass = projectionClass;
 	}
 	

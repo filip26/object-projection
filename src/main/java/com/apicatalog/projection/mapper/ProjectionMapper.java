@@ -8,11 +8,9 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ObjectProjection;
-import com.apicatalog.projection.ObjectProjectionImpl;
+import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.property.ProjectionProperty;
 
 public class ProjectionMapper {
@@ -30,22 +28,22 @@ public class ProjectionMapper {
 		this.propertyMapper = new PropertyMapper(factory, typeAdapters);
 	}
 	
-	public <P> ObjectProjection<P> getMapping(final Class<P> targetProjectionClass) {
+	public <P> Projection<P> getMapping(final Class<P> targetProjectionClass) {
 
 		if (targetProjectionClass == null) {
 			throw new IllegalArgumentException();
 		}
 		
 		// ignore unannotated classes
-		if (!targetProjectionClass.isAnnotationPresent(Projection.class)) {
+		if (!targetProjectionClass.isAnnotationPresent(com.apicatalog.projection.annotation.Projection.class)) {
 			return null;
 		}
 		
 		logger.debug("Scan {}", targetProjectionClass.getCanonicalName());
 		
-		final Projection projectionAnnotation = targetProjectionClass.getAnnotation(Projection.class);
+		final com.apicatalog.projection.annotation.Projection projectionAnnotation = targetProjectionClass.getAnnotation(com.apicatalog.projection.annotation.Projection.class);
 		
-		final ObjectProjectionImpl<P> projectionMapping = new ObjectProjectionImpl<>(targetProjectionClass);
+		final ProjectionImpl<P> projectionMapping = new ProjectionImpl<>(targetProjectionClass);
 		
 		final Class<?> defaultSourceClass = Class.class.equals(projectionAnnotation.value()) ? null : projectionAnnotation.value();
 		

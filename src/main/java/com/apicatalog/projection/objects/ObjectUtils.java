@@ -8,12 +8,12 @@ import java.lang.reflect.Modifier;
 import org.apache.commons.lang3.StringUtils;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.objects.access.FieldGetter;
-import com.apicatalog.projection.objects.access.FieldSetter;
-import com.apicatalog.projection.objects.access.Getter;
-import com.apicatalog.projection.objects.access.MethodGetter;
-import com.apicatalog.projection.objects.access.MethodSetter;
-import com.apicatalog.projection.objects.access.Setter;
+import com.apicatalog.projection.beans.FieldGetter;
+import com.apicatalog.projection.beans.FieldSetter;
+import com.apicatalog.projection.beans.Getter;
+import com.apicatalog.projection.beans.MethodGetter;
+import com.apicatalog.projection.beans.MethodSetter;
+import com.apicatalog.projection.beans.Setter;
 
 public class ObjectUtils {
 
