@@ -164,7 +164,12 @@ public class ArraySource implements Source {
 		this.targetComponentClass = targetComponentClass;
 	}
 	
+
 	public ConverterMapping[] getConversions() {
 		return conversions;
+	}
+	
+	public ReductionMapping getReduction() {
+		return reduction;
 	}
 }

@@ -274,8 +274,9 @@ public class SourceMapper {
 		source.setOptional(sourcesAnnotation.optional());
 				
 		// set target class
-		Class<?> targetClass =  sources[sources.length - 1].getTargetClass();
-		Class<?> targetComponentClass = sources[sources.length - 1].getTargetComponentClass();
+		Class<?> targetClass =  source.getReduction().getTargetClass();
+		Class<?> targetComponentClass = source.getReduction().getTargetComponentClass();
+		
 		
 		source.setTargetClass(targetClass);
 		source.setTargetComponentClass(targetComponentClass);
