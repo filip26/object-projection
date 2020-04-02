@@ -30,6 +30,7 @@ import com.apicatalog.projection.property.ProvidedProjectionProperty;
 import com.apicatalog.projection.property.SourceProperty;
 import com.apicatalog.projection.source.SingleSource;
 import com.apicatalog.projection.target.TargetAdapter;
+import com.apicatalog.projection.target.TargetProjectedCollectionConverter;
 import com.apicatalog.projection.target.TargetProjectionConverter;
 import com.apicatalog.projection.target.TargetTypeConverter;
 
@@ -108,7 +109,7 @@ public class PropertyMapper {
 		property.setTargetGetter(targetGetter);
 		property.setTargetSetter(targetSetter);
 
-		property.setTargetAdapter(getTargetConverter(
+		property.setTargetAdapter(sourceMapper.getTargetConverter(
 							source.getTargetClass(), 
 							source.getTargetComponentClass(), 
 							targetSetter.getValueClass(), 
@@ -154,7 +155,7 @@ public class PropertyMapper {
 
 		property.setOptional(provided.optional());
 		
-		property.setTargetAdapter(getTargetConverter(null, null, targetSetter.getValueClass(), targetSetter.getValueComponentClass()));
+		property.setTargetAdapter(sourceMapper.getTargetConverter(null, null, targetSetter.getValueClass(), targetSetter.getValueComponentClass()));
 
 		return property;
 	}
@@ -201,21 +202,11 @@ public class PropertyMapper {
 			targetComponentClass = ((Class<?>)((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]);
 		}
 
-		property.setTargetAdapter(getTargetConverter(null, null, field.getType(), targetComponentClass));
+		property.setTargetAdapter(sourceMapper.getTargetConverter(null, null, field.getType(), targetComponentClass));
 
 		// set target setter
 		property.setTargetSetter(FieldSetter.from(field));
 		
 		return property;
-	}
-
-	TargetAdapter getTargetConverter(Class<?> sourceClass, Class<?> sourceComponentClass, Class<?> targetClass, Class<?> targetComponentClass) {
-
-		if (targetClass.isAnnotationPresent(Projection.class)) {
-			return new TargetProjectionConverter(factory, sourceClass, sourceComponentClass, targetClass, targetComponentClass);
-		}
-		
-		return new TargetTypeConverter(typeAdapters, sourceClass, sourceComponentClass, targetClass, targetComponentClass);
-
 	}
 }

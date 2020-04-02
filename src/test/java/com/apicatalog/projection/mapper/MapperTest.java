@@ -1,23 +1,6 @@
 package com.apicatalog.projection.mapper;
 
-import java.time.Instant;
-import java.util.Collection;
-import java.util.Iterator;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.apicatalog.projection.ObjectProjection;
 import com.apicatalog.projection.ProjectionFactory;
-import com.apicatalog.projection.mapper.mapping.TargetMappingImpl;
-import com.apicatalog.projection.mapping.ProjectionMapping;
-import com.apicatalog.projection.mapping.PropertyMapping;
-import com.apicatalog.projection.mapping.SourceMapping;
-import com.apicatalog.projection.mapping.TargetMapping;
-import com.apicatalog.projection.objects.BasicTypes;
-import com.apicatalog.projection.projections.TypeObjectTo;
-import com.apicatalog.projection.projections.TestProjectionAF;
 
 public class MapperTest {
 

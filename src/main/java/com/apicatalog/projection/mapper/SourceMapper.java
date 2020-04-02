@@ -26,6 +26,7 @@ import com.apicatalog.projection.property.SourceProperty;
 import com.apicatalog.projection.source.ArraySource;
 import com.apicatalog.projection.source.SingleSource;
 import com.apicatalog.projection.target.TargetAdapter;
+import com.apicatalog.projection.target.TargetProjectedCollectionConverter;
 import com.apicatalog.projection.target.TargetProjectionConverter;
 import com.apicatalog.projection.target.TargetTypeConverter;
 
@@ -197,9 +198,10 @@ public class SourceMapper {
 		}			
 
 		// set conversions to apply
-		Optional.ofNullable(conversions).ifPresent(c -> {
-			source.setConversions(conversionMapper.getConversionMapping(c));	
-		});
+		Optional.ofNullable(conversions)
+				.ifPresent(c -> 
+					source.setConversions(conversionMapper.getConversionMapping(c))	
+					);
 
 		// set optional 
 		source.setOptional(optional);
@@ -208,8 +210,8 @@ public class SourceMapper {
 		source.setQualifier(qualifier);
 		
 		// set target class
-		Class<?> targetClass = sourceGetter.getValueClass();
-		Class<?> targetComponentClass = sourceGetter.getValueComponentClass();
+		Class<?> targetClass = sourceGetter != null ? sourceGetter.getValueClass() : sourceSetter.getValueClass();
+		Class<?> targetComponentClass = sourceGetter != null ? sourceGetter.getValueComponentClass() : sourceSetter.getValueComponentClass();
 		
 		//TODO last conversion
 //		
@@ -279,12 +281,15 @@ public class SourceMapper {
 		source.setTargetComponentClass(targetComponentClass);
 		
 		return source;
-	}
+	}	
 	
 	TargetAdapter getTargetConverter(Class<?> sourceClass, Class<?> sourceComponentClass, Class<?> targetClass, Class<?> targetComponentClass) {
 
 		if (targetClass.isAnnotationPresent(Projection.class)) {
 			return new TargetProjectionConverter(factory, sourceClass, sourceComponentClass, targetClass, targetComponentClass);
+		}
+		if (targetComponentClass != null && targetComponentClass.isAnnotationPresent(Projection.class)) {
+			return new TargetProjectedCollectionConverter(factory, typeAdapters, sourceClass, sourceComponentClass, targetClass, targetComponentClass);
 		}
 		
 		return new TargetTypeConverter(typeAdapters, sourceClass, sourceComponentClass, targetClass, targetComponentClass);

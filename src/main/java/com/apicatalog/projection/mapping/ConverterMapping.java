@@ -2,6 +2,7 @@ package com.apicatalog.projection.mapping;
 
 import com.apicatalog.projection.converter.Converter;
 
+@Deprecated
 public class ConverterMapping {
 
 	Class<? extends Converter<?, ?>> converterClass;
