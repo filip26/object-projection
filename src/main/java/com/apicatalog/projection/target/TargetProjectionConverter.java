@@ -57,6 +57,7 @@ public class TargetProjectionConverter implements TargetAdapter {
 	public Object backward(Object object, ContextObjects context) throws ProjectionError {
 		logger.debug("Convert {} to {}, reference = true", targetClass.getSimpleName(), sourceClass != null ? sourceClass.getSimpleName() : "unknown");
 		
+		@SuppressWarnings("unchecked")
 		final Projection<Object> projection = (Projection<Object>) factory.get(targetClass); 
 		
 		if (projection != null) {

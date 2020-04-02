@@ -1,10 +1,10 @@
-package com.apicatalog.projection.converter;
+package com.apicatalog.projection.reducer;
 
-public class ConverterConfig {
+public class ReducerConfig {
 
 	String[] values;
 	
-	public ConverterConfig(String[] values) {
+	public ReducerConfig(String[] values) {
 		this.values = values;
 	}
 

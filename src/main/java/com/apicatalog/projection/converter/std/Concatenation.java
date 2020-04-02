@@ -1,13 +1,13 @@
 package com.apicatalog.projection.converter.std;
 
-import com.apicatalog.projection.converter.ConverterConfig;
-import com.apicatalog.projection.converter.Reducer;
-import com.apicatalog.projection.converter.ReducerError;
+import com.apicatalog.projection.reducer.Reducer;
+import com.apicatalog.projection.reducer.ReducerConfig;
+import com.apicatalog.projection.reducer.ReducerError;
 
 public class Concatenation implements Reducer<String, String> {
 
 	@Override
-	public void initReducer(final ConverterConfig ctx) {
+	public void initReducer(final ReducerConfig ctx) {
 		// no configuration
 	}
 

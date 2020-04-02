@@ -1,8 +1,8 @@
-package com.apicatalog.projection.converter;
+package com.apicatalog.projection.reducer;
 
 public interface Reducer<S, T> {
 
-	void initReducer(ConverterConfig ctx) throws ReducerError;
+	void initReducer(ReducerConfig ctx) throws ReducerError;
 	
 	T reduce(S[] objects) throws ReducerError;
 	

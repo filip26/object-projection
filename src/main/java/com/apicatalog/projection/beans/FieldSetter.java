@@ -39,12 +39,6 @@ public class FieldSetter implements Setter {
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			throw new ProjectionError(e);
 		}
-		
-//		ObjectUtils.setPropertyValue(
-//				object, 
-//				fieldName,
-//				typeAdapters.convert(valueClass, valueComponentClass, value)
-//				);
 	}
 
 	@Override
