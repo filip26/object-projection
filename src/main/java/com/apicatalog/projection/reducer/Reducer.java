@@ -1,4 +1,6 @@
-package com.apicatalog.projection.converter;
+package com.apicatalog.projection.reducer;
+
+import com.apicatalog.projection.converter.ConverterConfig;
 
 public interface Reducer<S, T> {
 

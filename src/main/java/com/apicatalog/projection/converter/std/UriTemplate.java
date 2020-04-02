@@ -3,8 +3,8 @@ package com.apicatalog.projection.converter.std;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterConfig;
 import com.apicatalog.projection.converter.ConverterError;
-import com.apicatalog.projection.converter.Reducer;
-import com.apicatalog.projection.converter.ReducerError;
+import com.apicatalog.projection.reducer.Reducer;
+import com.apicatalog.projection.reducer.ReducerError;
 import com.apicatalog.uritemplate.MalformedUriTemplate;
 import com.apicatalog.uritemplate.UriTemplateL1;
 

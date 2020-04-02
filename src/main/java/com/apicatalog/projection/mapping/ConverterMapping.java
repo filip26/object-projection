@@ -2,10 +2,9 @@ package com.apicatalog.projection.mapping;
 
 import com.apicatalog.projection.converter.Converter;
 
-@Deprecated
 public class ConverterMapping {
 
-	Class<? extends Converter<?, ?>> converterClass;
+	Converter<Object, Object> converter;
 	
 	Class<?> sourceClass;
 	Class<?> sourceComponentClass;
@@ -13,10 +12,6 @@ public class ConverterMapping {
 	Class<?> targetClass;
 	Class<?> targetComponentClass;
 	
-	public Class<? extends Converter<?, ?>> getConverterClass() {
-		return converterClass;
-	}
-
 	public Class<?> getSourceClass() {
 		return sourceClass;
 	}
@@ -33,10 +28,6 @@ public class ConverterMapping {
 		this.targetClass = targetClass;
 	}
 	
-	public void setConverterClass(Class<? extends Converter<? , ?>> converterClass) {
-		this.converterClass = converterClass;
-	}
-
 	public Class<?> getSourceComponentClass() {
 		return sourceComponentClass;
 	}
@@ -51,5 +42,11 @@ public class ConverterMapping {
 	
 	public void setTargetComponentClass(Class<?> targetComponentClass) {
 		this.targetComponentClass = targetComponentClass;
+	}
+	public Converter<Object, Object> getConverter() {
+		return converter;
+	}
+	public void setConverter(Converter<Object, Object> converter) {
+		this.converter = converter;
 	}
 }

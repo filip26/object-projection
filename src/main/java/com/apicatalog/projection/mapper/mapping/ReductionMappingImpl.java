@@ -6,12 +6,13 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.converter.ConverterConfig;
-import com.apicatalog.projection.converter.Reducer;
-import com.apicatalog.projection.converter.ReducerError;
 import com.apicatalog.projection.mapping.ReducerMapping;
 import com.apicatalog.projection.mapping.ReductionMapping;
 import com.apicatalog.projection.objects.ObjectUtils;
+import com.apicatalog.projection.reducer.Reducer;
+import com.apicatalog.projection.reducer.ReducerError;
 
+@Deprecated
 public class ReductionMappingImpl implements ReductionMapping {
 
 	final Logger logger = LoggerFactory.getLogger(ReductionMappingImpl.class);
@@ -36,8 +37,7 @@ public class ReductionMappingImpl implements ReductionMapping {
 		
 		final Reducer<Object, Object> reducer = (Reducer<Object, Object>) ObjectUtils.newInstance(reducerMapping.getReducerClass());	//TODO re-use preconstructed instances
 
-		ConverterConfig ctx = new ConverterConfig();
-		ctx.setValues(config);
+		ConverterConfig ctx = new ConverterConfig(config);
 
 		try {
 			reducer.initReducer(ctx);
@@ -61,8 +61,7 @@ public class ReductionMappingImpl implements ReductionMapping {
 		
 		final Reducer<Object, Object> reducer = (Reducer<Object, Object>) ObjectUtils.newInstance(reducerMapping.getReducerClass());	//TODO re-use preconstructed instances
 
-		ConverterConfig ctx = new ConverterConfig();
-		ctx.setValues(config);
+		ConverterConfig ctx = new ConverterConfig(config);
 
 		try {
 			reducer.initReducer(ctx);

@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.apicatalog.projection.converter.Reducer;
+import com.apicatalog.projection.reducer.Reducer;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
