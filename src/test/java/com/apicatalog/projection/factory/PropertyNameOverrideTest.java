@@ -1,4 +1,4 @@
-package com.apicatalog.projection;
+package com.apicatalog.projection.factory;
 
 import java.time.Instant;
 
@@ -6,6 +6,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.BasicTypes;
@@ -22,7 +24,7 @@ public class PropertyNameOverrideTest {
 		projections = new ProjectionFactory();
 		mapper = new ProjectionMapper(projections);
 		
-		projections.add(mapper.getMapping(NameOverrideTo.class));
+		projections.add(mapper.getProjection(NameOverrideTo.class));
 	}
 	
     @Test

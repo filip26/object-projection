@@ -1,9 +1,11 @@
-package com.apicatalog.projection;
+package com.apicatalog.projection.factory;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.BasicTypes;
@@ -20,7 +22,7 @@ public class SourcesWithConversionTest {
 		projections = new ProjectionFactory();
 		mapper = new ProjectionMapper(projections);		
 		
-		projections.add(mapper.getMapping(SourcesReduceMapTo.class));
+		projections.add(mapper.getProjection(SourcesReduceMapTo.class));
 	}
 		
     @Test

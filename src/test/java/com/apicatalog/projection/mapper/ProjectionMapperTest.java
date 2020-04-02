@@ -1,35 +1,46 @@
 package com.apicatalog.projection.mapper;
 
-import com.apicatalog.projection.ProjectionFactory;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class MapperTest {
+import com.apicatalog.projection.Projection;
+import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.objects.SimpleObject;
+
+public class ProjectionMapperTest {
 
 	ProjectionFactory projections;
 	ProjectionMapper mapper;
 	
-//	@Before
-//	public void setup() {
-////		projections = new ProjectionFactory();
-////		mapper = new ProjectionMapper(projections);	
-//	}
+	@Before
+	public void setup() {
+		projections = new ProjectionFactory();
+		mapper = new ProjectionMapper(projections);	
+	}
 
+	@Test
+	public void testUnmapped() {
+		Projection<SimpleObject> projection = mapper.getProjection(SimpleObject.class);
+		Assert.assertNull(projection);
+	}
+	
 //    @Test
 //    public void testBasicTypes1() {
-//    	
-//    	final ProjectionMapping<TypeObjectTo> projection = mapper.getMapping(TypeObjectTo.class);
+//
+//    	final ProjectionImpl<TypeObjectTo> projection = (ProjectionImpl<TypeObjectTo>) mapper.getProjection(TypeObjectTo.class);
 //    	
 //    	Assert.assertNotNull(projection);
 //    	Assert.assertEquals(TypeObjectTo.class, projection.getProjectionClass());
 //    	
 //    	Assert.assertNotNull(projection.getProperties());
-//    	Assert.assertEquals(7, projection.getProperties().size());
+//    	Assert.assertEquals(7, projection.getProperties().length);
 //    	
-//    	Iterator<PropertyMapping> it = projection.getProperties().iterator();
 //    	
-//    	PropertyMapping pm = it.next();
+//    	SourceProperty pm = (SourceProperty) projection.getProperties()[0];
 //		checkProperty(pm, "integerValue");
 //		checkSource(pm.getSource(), "integerValue", BasicTypes.class);
-//		checkTarget(pm.getTarget(), false, false, Integer.class, null);
+//		checkTarget(pm.getTargetAdapter(), false, false, Integer.class, null);
 //
 //    	pm = it.next();
 //		checkProperty(pm, "longValue");
@@ -93,12 +104,12 @@ public class MapperTest {
 //		checkTarget(pm3.getTarget(), false, false, String.class, null);
 //    }
 //    
-//    public void checkProperty(PropertyMapping property, String name) {
+//    public void checkProperty(ProjectionProperty property, String name) {
 //    	Assert.assertNotNull(property);
 //    	Assert.assertEquals(name, property.getName());
 //    }
 //
-//    public void checkSource(SourceMapping sources, String name, Class<?> sourceClass) {
+//    public void checkSource(Source sources, String name, Class<?> sourceClass) {
 //    	Assert.assertNotNull(sources);
 //    	//TODO
 //    }

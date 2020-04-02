@@ -1,9 +1,11 @@
-package com.apicatalog.projection;
+package com.apicatalog.projection.factory;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.InterwiredObject1;
@@ -22,8 +24,8 @@ public class CycleCheckTest {
 		projections = new ProjectionFactory();
 		mapper = new ProjectionMapper(projections);	
 		
-		projections.add(mapper.getMapping(InterwiredProjection1.class));
-		projections.add(mapper.getMapping(InterwiredProjection2.class));
+		projections.add(mapper.getProjection(InterwiredProjection1.class));
+		projections.add(mapper.getProjection(InterwiredProjection2.class));
 	}
 	
     @Test

@@ -94,4 +94,20 @@ public class SourceProperty implements ProjectionProperty {
 	public void setVisible(final Set<Integer> levels) {
 		this.visibleLevels = levels;
 	}
+	
+	public Source getSource() {
+		return source;
+	}
+	
+	public TargetAdapter getTargetAdapter() {
+		return targetAdapter;
+	}
+	
+	public Getter getTargetGetter() {
+		return targetGetter;
+	}
+	
+	public Setter getTargetSetter() {
+		return targetSetter;
+	}
 }

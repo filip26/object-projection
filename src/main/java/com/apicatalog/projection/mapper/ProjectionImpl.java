@@ -127,4 +127,8 @@ class ProjectionImpl<P> implements Projection<P> {
 	public void setProperties(ProjectionProperty[] properties) {
 		this.properties = properties;
 	}
+	
+	public ProjectionProperty[] getProperties() {
+		return properties;
+	}
 }

@@ -16,19 +16,25 @@ import com.apicatalog.projection.property.ProjectionProperty;
 public class ProjectionMapper {
 
 	final Logger logger = LoggerFactory.getLogger(ProjectionMapper.class);
-	
-	final TypeAdapters typeAdapters;
+
 	final ProjectionFactory factory;
 	
 	final PropertyMapper propertyMapper;
-	
+
 	public ProjectionMapper(ProjectionFactory factory) {
-		this.factory = factory;
-		this.typeAdapters = new TypeAdapters();
-		this.propertyMapper = new PropertyMapper(factory, typeAdapters);
+		this(factory, new PropertyMapper(factory, new TypeAdapters()));
 	}
-	
-	public <P> Projection<P> getMapping(final Class<P> targetProjectionClass) {
+
+	public ProjectionMapper(ProjectionFactory factory, TypeAdapters typeAdapters) {
+		this(factory, new PropertyMapper(factory, typeAdapters));
+	}
+
+	public ProjectionMapper(ProjectionFactory factory, PropertyMapper propertyMapper) {
+		this.factory = factory;
+		this.propertyMapper = propertyMapper;
+	}
+
+	public <P> Projection<P> getProjection(final Class<P> targetProjectionClass) {
 
 		if (targetProjectionClass == null) {
 			throw new IllegalArgumentException();

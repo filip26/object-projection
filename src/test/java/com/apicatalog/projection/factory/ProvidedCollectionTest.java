@@ -1,4 +1,4 @@
-package com.apicatalog.projection;
+package com.apicatalog.projection.factory;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -8,6 +8,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.NamedObject;
@@ -23,7 +25,7 @@ public class ProvidedCollectionTest {
 		projections = new ProjectionFactory();
 		mapper = new ProjectionMapper(projections);	
 		
-		projections.add(mapper.getMapping(StringCollectionTo.class));
+		projections.add(mapper.getProjection(StringCollectionTo.class));
 	}
 	
     @Test
