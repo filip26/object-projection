@@ -12,13 +12,12 @@ import com.apicatalog.projection.objects.SimpleObject;
 import com.apicatalog.projection.projections.Object1To;
 import com.apicatalog.projection.projections.SimpleObjectTo;
 import com.apicatalog.projection.property.SourceProperty;
-import com.apicatalog.projection.source.SingleSource;
 
 public class ProjectionBuilderTest {
 
 
 	@Test
-	public void test1() {
+	public void test1() throws ProjectionError {
 		final Projection<SimpleObjectTo> projection = 
 				ProjectionBuilder
 					.bind(SimpleObjectTo.class)
@@ -70,7 +69,7 @@ public class ProjectionBuilderTest {
 	}
 
 	@Test
-	public void test2() {
+	public void test2() throws ProjectionError {
 		final Projection<SimpleObjectTo> projection = 
 				ProjectionBuilder
 					.bind(SimpleObjectTo.class)
@@ -82,7 +81,7 @@ public class ProjectionBuilderTest {
 	}
 
 	@Test
-	public void test3() {
+	public void test3() throws ProjectionError {
 		final Projection<SimpleObjectTo> projection = 
 				ProjectionBuilder
 					.bind(SimpleObjectTo.class)
@@ -98,7 +97,7 @@ public class ProjectionBuilderTest {
 	}
 
 	@Test
-	public void test4() {
+	public void test4() throws ProjectionError {
 		final Projection<SimpleObjectTo> projection = 
 				ProjectionBuilder
 					.bind(SimpleObjectTo.class)
@@ -113,7 +112,7 @@ public class ProjectionBuilderTest {
 	}
 
 	@Test
-	public void test5() {
+	public void test5() throws ProjectionError {
 		final Projection<Object1To> projection = 
 				ProjectionBuilder
 					.bind(Object1To.class)
@@ -127,7 +126,7 @@ public class ProjectionBuilderTest {
 
 	
 	@Test
-	public void test6() {
+	public void test6() throws ProjectionError {
 		final Projection<Object1To> projection = 
 				ProjectionBuilder
 					.bind(Object1To.class)
@@ -139,7 +138,7 @@ public class ProjectionBuilderTest {
 
 
 	@Test
-	public void test7() {
+	public void test7() throws ProjectionError {
 		final Projection<Object1To> projection = 
 				ProjectionBuilder
 					.bind(Object1To.class)
@@ -154,7 +153,7 @@ public class ProjectionBuilderTest {
 	}
 
 	@Test
-	public void test8() {
+	public void test8() throws ProjectionError {
 		final Projection<SimpleObjectTo> projection = 
 				ProjectionBuilder
 					.bind(SimpleObjectTo.class)					

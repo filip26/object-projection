@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.annotation.AccessMode;
-import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.SourceProperty;
@@ -22,13 +21,11 @@ public class SourcePropertyBuilder {
 	
 	AccessMode mode;
 	
-	ObjectType targetType;
-	
 	Getter targetGetter;
 	Setter targetSetter;
 
 	protected SourcePropertyBuilder() {
-
+		this.mode = AccessMode.READ_WRITE;
 	}
 	
 	public static final SourcePropertyBuilder newInstance() {
@@ -36,9 +33,10 @@ public class SourcePropertyBuilder {
 	}
 			
 	public SourceProperty build(ProjectionFactory factory, TypeAdapters typeAdapters) {
-		
 
-		//TODO check target setter getter presence
+		if (targetGetter == null && targetSetter == null) {
+			return null;
+		}
 		
 		if (source == null) {
 			logger.warn(SOURCE_IS_MISSING, targetSetter != null ? targetSetter.getName() : targetGetter.getName());
@@ -85,11 +83,6 @@ public class SourcePropertyBuilder {
 		return this;
 	}
 	
-	public SourcePropertyBuilder targetType(ObjectType targetType) {
-		this.targetType = targetType;
-		return this;
-	}
-
 	public SourcePropertyBuilder targetGetter(Getter getter) {
 		this.targetGetter = getter;
 		return this;

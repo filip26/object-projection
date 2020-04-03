@@ -2,11 +2,9 @@ package com.apicatalog.projection;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.builder.PropertyBuilder;
 import com.apicatalog.projection.builder.api.NamedPropertyBuilderApi;
 import com.apicatalog.projection.mapper.ProjectionImpl;
 import com.apicatalog.projection.property.ProjectionProperty;
@@ -15,7 +13,7 @@ public class ProjectionBuilder<P> {
 	
 	final Class<P> projectionClass;
 	
-	final List<PropertyBuilder> propertyBuilders;
+	final List<NamedPropertyBuilderApi<P>> propertyBuilders;
 	
 	protected ProjectionBuilder(Class<P> projectionClass) {
 		this.projectionClass = projectionClass;
@@ -36,24 +34,26 @@ public class ProjectionBuilder<P> {
 		return propertyBuilder;
 	}
 	
-	public Projection<P> build(ProjectionFactory factory, TypeAdapters typeAdapters) {
+	public Projection<P> build(ProjectionFactory factory, TypeAdapters typeAdapters) throws ProjectionError {
 
-		ProjectionProperty[] properties = propertyBuilders
-												.stream()
-												.map(b -> b.getProperty(factory, typeAdapters))
-												.filter(Objects::nonNull)
-												.collect(Collectors.toList())
-												.toArray(new ProjectionProperty[0])
-												;
-		if (properties.length == 0) {
+		final List<ProjectionProperty> properties = new ArrayList<>(); 
+		
+		for (final NamedPropertyBuilderApi<P> propertyBuilder : propertyBuilders) {
+			Optional.ofNullable(propertyBuilder.getProperty(factory, typeAdapters))
+					.ifPresent(properties::add);
+		}
+		
+		if (properties.isEmpty()) {
 			return null;
 		}
 		
 		final ProjectionImpl<P> projection = new ProjectionImpl<>(projectionClass);
-		projection.setProperties(properties);
+		projection.setProperties(properties.toArray(new ProjectionProperty[0]));
 
 		return projection;
 	}
 
-	
+	public Class<?> projectionClass() {
+		return projectionClass;
+	}
 }

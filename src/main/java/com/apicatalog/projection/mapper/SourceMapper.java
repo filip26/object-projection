@@ -72,7 +72,6 @@ public class SourceMapper {
 		return SourcePropertyBuilder.newInstance()
 				.source(arraySource)
 				.mode(AccessMode.READ_WRITE)
-				.targetType(targetType)
 				.targetGetter(targetGetter)
 				.targetSetter(targetSetter)
 				.build(factory, typeAdapters);
@@ -103,7 +102,6 @@ public class SourceMapper {
 		return SourcePropertyBuilder.newInstance()
 					.source(source)
 					.mode(sourceAnnotation.mode())
-					.targetType(targetType)
 					.targetGetter(targetGetter)
 					.targetSetter(targetSetter)
 					.build(factory, typeAdapters);

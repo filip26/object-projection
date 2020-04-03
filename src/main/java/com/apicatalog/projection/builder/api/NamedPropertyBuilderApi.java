@@ -1,40 +1,60 @@
 package com.apicatalog.projection.builder.api;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.util.Collection;
 import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionBuilder;
+import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.builder.PropertyBuilder;
+import com.apicatalog.projection.objects.ObjectType;
+import com.apicatalog.projection.objects.ObjectUtils;
+import com.apicatalog.projection.objects.getter.FieldGetter;
+import com.apicatalog.projection.objects.getter.FieldSetter;
+import com.apicatalog.projection.objects.getter.Getter;
+import com.apicatalog.projection.objects.setter.MethodGetter;
+import com.apicatalog.projection.objects.setter.MethodSetter;
+import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.ProjectionProperty;
 
-public class NamedPropertyBuilderApi<P> implements PropertyBuilder {
+public class NamedPropertyBuilderApi<P> {
 	
 	final ProjectionBuilder<P> projectionBuilder;
-	final String propertyName;
-	final boolean reference;
 	
-	PropertyBuilder propertyBuilder;
+	SourcePropertyBuilderApi<P> sourcePropertyBuilder;
+
+	String targetPropertyName;
+	boolean reference;
 	
 	public NamedPropertyBuilderApi(ProjectionBuilder<P> projection, String propertyName, boolean reference) {
 		this.projectionBuilder = projection;
-		this.propertyName = propertyName;
+		this.targetPropertyName = propertyName;
 		this.reference = reference;
 	}
 	
 	public SourcePropertyBuilderApi<P> source(Class<?> sourceClass) {
-		return source(sourceClass, propertyName);
+		return source(sourceClass, null);
 	}
 
 	public SourcePropertyBuilderApi<P> source(Class<?> sourceClass, String sourceProperty) {
 
-		SourcePropertyBuilderApi<P> builder = new SourcePropertyBuilderApi<>(projectionBuilder, propertyName, reference, sourceClass, sourceProperty);
-		this.propertyBuilder = builder;
+		SourcePropertyBuilderApi<P> builder = new SourcePropertyBuilderApi<>(
+				projectionBuilder,
+				sourceClass,
+				// use the same name if source property name is not present
+				StringUtils.isNotBlank(sourceProperty) ? sourceProperty : targetPropertyName
+				);
+		this.sourcePropertyBuilder = builder;
 		return builder;
 	}
 	
-	public Projection<P> build(ProjectionFactory factory, TypeAdapters typeAdapters) {
+	public Projection<P> build(ProjectionFactory factory, TypeAdapters typeAdapters) throws ProjectionError {
 		return projectionBuilder.build(factory, typeAdapters);
 	}
 
@@ -44,17 +64,87 @@ public class NamedPropertyBuilderApi<P> implements PropertyBuilder {
 	}
 
 	public ProjectionBuilder<P> constant(String string) {
-		// TODO Auto-generated method stub
 		return projectionBuilder;
 	}
+	
+	public ProjectionProperty getProperty(ProjectionFactory factory, TypeAdapters typeAdapters) throws ProjectionError {
+		if  (Optional.ofNullable(sourcePropertyBuilder).isPresent()) {
 
-	public NamedPropertyBuilderApi<P> sources() {
-		// TODO Auto-generated method stub
+			final Field field = ObjectUtils.getProperty(projectionBuilder.projectionClass(), targetPropertyName);
+			
+			ObjectType targetType = getTypeOf(field, reference);
+			
+			// extract setter/getter
+			final Getter targetGetter = FieldGetter.from(field, targetType);
+			final Setter targetSetter = FieldSetter.from(field, targetType);
+
+			sourcePropertyBuilder.targetGetter(targetGetter);
+			sourcePropertyBuilder.targetSetter(targetSetter);
+			
+			return sourcePropertyBuilder.getProperty(factory, typeAdapters);
+		}
 		return null;
 	}
 	
-	public ProjectionProperty getProperty(ProjectionFactory factory, TypeAdapters typeAdapters) {
-		return Optional.ofNullable(propertyBuilder).map(b -> b.getProperty(factory, typeAdapters)).orElse(null);
+	protected static final ObjectType getTypeOf(Field field, boolean reference) {
+		
+		Class<?> objectClass = field.getType();
+		Class<?> componentClass = null;
+		
+		if (Collection.class.isAssignableFrom(field.getType())) {
+			componentClass = (Class<?>)((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+		}
+		
+		return ObjectType.of(objectClass, componentClass, reference);
+	}
+	
+	protected static final ObjectType getTypeOf(Method method, boolean reference) {
+		
+		Class<?> objectClass = method.getReturnType();
+		Class<?> componentClass = null;
+
+		if (Collection.class.isAssignableFrom(method.getReturnType())) {
+			componentClass = (Class<?>)((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0];
+		}
+		
+		return ObjectType.of(objectClass, componentClass, reference);
+	}
+
+
+	protected static final Getter getGetter(Class<?> objectClass, final String name, boolean reference) {
+
+		final Field sourceField = ObjectUtils.getProperty(objectClass, name);
+		
+		if (sourceField != null) {
+			return FieldGetter.from(sourceField, getTypeOf(sourceField, reference));
+		}
+
+		// look for getter method
+		final Method sourceGetter = ObjectUtils.getMethod(objectClass, "get".concat(StringUtils.capitalize(name)));
+		
+		if (sourceGetter != null) {
+			return MethodGetter.from(sourceGetter, name, getTypeOf(sourceGetter, reference));
+		}
+
+		return null;
+	}
+	
+	protected static final Setter getSetter(Class<?> objectClass, final String name, boolean reference) {
+
+		final Field sourceField = ObjectUtils.getProperty(objectClass, name);
+		
+		if (sourceField != null) {
+			return FieldSetter.from(sourceField, getTypeOf(sourceField, reference));
+		}
+
+		// look for getter method
+		final Method sourceGetter = ObjectUtils.getMethod(objectClass, "set".concat(StringUtils.capitalize(name)));
+		
+		if (sourceGetter != null) {
+			return MethodSetter.from(sourceGetter, name, getTypeOf(sourceGetter, reference));
+		}
+
+		return null;
 	}
 	
 }
