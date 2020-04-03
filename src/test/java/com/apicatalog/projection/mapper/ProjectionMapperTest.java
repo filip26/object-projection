@@ -15,8 +15,8 @@ public class ProjectionMapperTest {
 	
 	@Before
 	public void setup() {
-		projections = new ProjectionFactory();
-		mapper = new ProjectionMapper(projections);	
+		projections = ProjectionFactory.newInstance();
+		mapper = projections.getMapper();
 	}
 
 	@Test

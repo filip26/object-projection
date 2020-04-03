@@ -4,26 +4,23 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import com.apicatalog.projection.mapper.ProjectionMapper;
+
 public class ProjectionFactory {
 
+	final ProjectionMapper mapper;
+	
 	final Map<Class<?>, Projection<?>> index;
 	
-	public ProjectionFactory() {
-		this(new LinkedHashMap<>());
+	protected ProjectionFactory(final Map<Class<?>, Projection<?>> projections) {
+		this.index = projections;
+		this.mapper = new ProjectionMapper(this);
+	}
+
+	public static final ProjectionFactory newInstance() {
+		return new ProjectionFactory(new LinkedHashMap<>());
 	}
 	
-	public ProjectionFactory(final Map<Class<?>, Projection<?>> projections) {
-		this.index = projections;
-	}
-
-	public ProjectionFactory add(final Projection<?> projection) {
-		if (projection == null) {
-			throw new IllegalArgumentException();
-		}
-		index.put(projection.getProjectionClass(), projection);
-		return this;
-	}
-
 	@SuppressWarnings("unchecked")
 	public <P> Projection<P> get(final Class<P> projectionClass) {
 		return (Projection<P>) index.get(projectionClass);
@@ -51,6 +48,23 @@ public class ProjectionFactory {
 		return Optional.ofNullable(get((Class<Object>)projection.getClass()))
 				.orElseThrow(() -> new ProjectionError("The projection " + projection.getClass().getCanonicalName() + " is not present."))
 				.extract(sourceObjectClass, qualifier, projection);		
+	}
+
+	public ProjectionFactory add(final Projection<?> projection) {
+		if (projection == null) {
+			throw new IllegalArgumentException();
+		}
+		index.put(projection.getProjectionClass(), projection);
+		return this;
+	}
+
+	public ProjectionFactory add(Class<?> projectionClass) {
+		Optional.ofNullable(mapper.getProjection(projectionClass)).ifPresent(this::add);		
+		return this;
+	}
+
+	public ProjectionMapper getMapper() {
+		return mapper;
 	}
 	
 }

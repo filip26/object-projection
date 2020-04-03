@@ -7,21 +7,18 @@ import org.junit.Test;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.converter.ConverterError;
-import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.Interface1Impl;
 import com.apicatalog.projection.projections.Interface1To;
 
 public class InterfaceSourceTest {
 
 	ProjectionFactory projections;
-	ProjectionMapper mapper;
 	
 	@Before
 	public void setup() {
-		projections = new ProjectionFactory();
-		mapper = new ProjectionMapper(projections);	
+		projections = ProjectionFactory.newInstance();
 		
-		projections.add(mapper.getProjection(Interface1To.class));
+		projections.add(Interface1To.class);
 	}
 	
     @Test

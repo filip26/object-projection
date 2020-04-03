@@ -7,21 +7,18 @@ import org.junit.Test;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.converter.ConverterError;
-import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.projections.TestProjectionAF;
 
 public class OneToOneWithFncTest {
 
 	ProjectionFactory projections;
-	ProjectionMapper mapper;
 	
 	@Before
 	public void setup() {
-		projections = new ProjectionFactory();
-		mapper = new ProjectionMapper(projections);	
+		projections = ProjectionFactory.newInstance();
 		
-		projections.add(mapper.getProjection(TestProjectionAF.class));
+		projections.add(TestProjectionAF.class);
 	}
 			
     @Test

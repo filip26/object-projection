@@ -11,21 +11,18 @@ import org.junit.Test;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.converter.ConverterError;
-import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.projections.ImplicitConversionTo;
 
 public class ImplicitConversionTest {
 
 	ProjectionFactory projections;
-	ProjectionMapper mapper;
 	
 	@Before
 	public void setup() {
-		projections = new ProjectionFactory();
-		mapper = new ProjectionMapper(projections);		
-		
-		projections.add(mapper.getProjection(ImplicitConversionTo.class));
+		projections = ProjectionFactory.newInstance()
+						.add(ImplicitConversionTo.class)
+						;
 	}
 	
     @Test

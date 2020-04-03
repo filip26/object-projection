@@ -7,7 +7,6 @@ import org.junit.Test;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.converter.ConverterError;
-import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.Object3;
 import com.apicatalog.projection.objects.Object4;
 import com.apicatalog.projection.projections.Object3To;
@@ -16,15 +15,15 @@ import com.apicatalog.projection.projections.Object4To;
 public class MixedObjectsTest {
 
 	ProjectionFactory projections;
-	ProjectionMapper mapper;
 	
 	@Before
 	public void setup() {
-		projections = new ProjectionFactory();
-		mapper = new ProjectionMapper(projections);	
+		projections = ProjectionFactory.newInstance();
 		
-		projections.add(mapper.getProjection(Object3To.class));
-		projections.add(mapper.getProjection(Object4To.class));
+		projections
+			.add(Object3To.class)
+			.add(Object4To.class)
+			;
 	}
 	
     @Test

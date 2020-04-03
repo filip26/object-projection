@@ -11,7 +11,6 @@ import org.junit.Test;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.converter.ConverterError;
-import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.NamedObject;
 import com.apicatalog.projection.objects.SimpleObject;
 import com.apicatalog.projection.projections.ProvidedRefCollectionTo;
@@ -20,15 +19,14 @@ import com.apicatalog.projection.projections.SimpleObjectTo;
 public class ProvidedRefCollectionTest {
 
 	ProjectionFactory projections;
-	ProjectionMapper mapper;
 	
 	@Before
 	public void setup() {
-		projections = new ProjectionFactory();
-		mapper = new ProjectionMapper(projections);	
+		projections = ProjectionFactory.newInstance();		
 		
-		projections.add(mapper.getProjection(ProvidedRefCollectionTo.class));
-		projections.add(mapper.getProjection(SimpleObjectTo.class));
+		projections
+			.add(ProvidedRefCollectionTo.class)
+			.add(SimpleObjectTo.class);
 	}
 	
     @Test

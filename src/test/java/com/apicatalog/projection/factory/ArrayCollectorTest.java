@@ -10,21 +10,17 @@ import org.junit.Test;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.converter.ConverterError;
-import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.projections.ArrayCollectorTo;
 
 public class ArrayCollectorTest {
 
 	ProjectionFactory projections;
-	ProjectionMapper mapper;
 	
 	@Before
 	public void setup() {
-		projections = new ProjectionFactory();
-		mapper = new ProjectionMapper(projections);	
-		
-		projections.add(mapper.getProjection(ArrayCollectorTo.class));
+		projections = ProjectionFactory.newInstance()
+						.add(ArrayCollectorTo.class);
 	}
 	
     @Test

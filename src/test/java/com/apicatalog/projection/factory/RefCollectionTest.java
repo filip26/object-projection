@@ -10,7 +10,6 @@ import org.junit.Test;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.converter.ConverterError;
-import com.apicatalog.projection.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.objects.ObjectsCollection;
 import com.apicatalog.projection.projections.NameOverrideTo;
@@ -19,15 +18,13 @@ import com.apicatalog.projection.projections.RefCollectionTo;
 public class RefCollectionTest {
 
 	ProjectionFactory projections;
-	ProjectionMapper mapper;
 	
 	@Before
 	public void setup() {
-		projections = new ProjectionFactory();
-		mapper = new ProjectionMapper(projections);	
-		
-		projections.add(mapper.getProjection(RefCollectionTo.class));
-		projections.add(mapper.getProjection(NameOverrideTo.class));
+		projections = ProjectionFactory.newInstance()
+						.add(RefCollectionTo.class)
+						.add(NameOverrideTo.class)
+						;
 	}
 	
     @Test

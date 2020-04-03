@@ -5,6 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import com.apicatalog.projection.factory.AccessModeTest;
+import com.apicatalog.projection.factory.ArrayCollectorTest;
 import com.apicatalog.projection.factory.ConstantTest;
 import com.apicatalog.projection.factory.CycleCheckTest;
 import com.apicatalog.projection.factory.DirectMappingTest;
@@ -39,6 +40,7 @@ import com.apicatalog.projection.factory.VisibilityTest;
 	ConstantTest.class,
 	ProvidedRefCollectionTest.class,
 	AccessModeTest.class,
+	ArrayCollectorTest.class,
 })
 public class ProjectionFactoryTestSuite {
 
