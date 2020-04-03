@@ -14,22 +14,22 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.annotation.Constant;
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Provided;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.annotation.Visibility;
-import com.apicatalog.projection.beans.FieldGetter;
-import com.apicatalog.projection.beans.FieldSetter;
-import com.apicatalog.projection.beans.Getter;
-import com.apicatalog.projection.beans.MethodGetter;
-import com.apicatalog.projection.beans.MethodSetter;
-import com.apicatalog.projection.beans.Setter;
+import com.apicatalog.projection.builder.SingleSourceBuilder;
 import com.apicatalog.projection.builder.TargetBuilder;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ObjectUtils;
+import com.apicatalog.projection.objects.getter.FieldGetter;
+import com.apicatalog.projection.objects.getter.FieldSetter;
+import com.apicatalog.projection.objects.getter.Getter;
+import com.apicatalog.projection.objects.setter.MethodGetter;
+import com.apicatalog.projection.objects.setter.MethodSetter;
+import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.ConstantProperty;
 import com.apicatalog.projection.property.ProjectionProperty;
 import com.apicatalog.projection.property.ProvidedObjectProperty;
@@ -95,14 +95,18 @@ public class PropertyMapper {
 			return null;				
 		}
 
-		final SourceProperty property = new SourceProperty();
-
-		final SingleSource source = sourceMapper.getSingleSource(defaultSourceClass, field.getName(), true, null, AccessMode.READ_WRITE, null);
+		final SingleSourceBuilder sourceBuilder = SingleSourceBuilder.newInstance()
+				.objectClass(defaultSourceClass)
+				.optional(true);
+		
+		final SingleSource source = sourceMapper.getSingleSource(defaultSourceClass, field.getName(), sourceBuilder);
 		
 		if (source == null) {
 			logger.warn("Source is missing. Property {} is ignored.", field.getName());
 			return null;
 		}
+		
+		final SourceProperty property = new SourceProperty();
 		
 		property.setSource(source);
 		
@@ -114,7 +118,7 @@ public class PropertyMapper {
 		
 		property.setTargetAdapter(
 				TargetBuilder.newInstance()
-					.source(ObjectType.of(source.getTargetClass(), source.getTargetComponentClass()))
+					.source(source.getTargetType())
 					.target(targetSetter.getType())
 					.build(factory, typeAdapters)
 					);

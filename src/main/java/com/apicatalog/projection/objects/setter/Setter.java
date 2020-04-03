@@ -1,4 +1,4 @@
-package com.apicatalog.projection.beans;
+package com.apicatalog.projection.objects.setter;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.objects.ObjectType;

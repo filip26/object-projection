@@ -11,6 +11,7 @@ import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapping.ConverterMapping;
 import com.apicatalog.projection.mapping.ReductionMapping;
 import com.apicatalog.projection.objects.ContextObjects;
+import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.reducer.ReducerError;
 import com.apicatalog.projection.target.TargetAdapter;
@@ -29,8 +30,7 @@ public class ArraySource implements Source {
 	
 	TargetAdapter targetAdapter;
 
-	Class<?> targetClass;
-	Class<?> targetComponentClass;
+	ObjectType targetType;
 	
 	Set<Integer> visibleLevels;
 	
@@ -61,8 +61,8 @@ public class ArraySource implements Source {
 								.reduce((Object[])
 									typeAdapters
 										.convert(
-											reduction.getSourceClass(),
-											reduction.getSourceComponentClass(),
+											reduction.getSourceType().getObjectClass(),
+											reduction.getSourceType().getObjectComponentClass(),
 											sourceObjects
 											)
 									);
@@ -92,8 +92,8 @@ public class ArraySource implements Source {
 										.expand(
 											typeAdapters
 												.convert(
-													reduction.getTargetClass(),
-													reduction.getTargetComponentClass(),
+													reduction.getTargetType().getObjectClass(),
+													reduction.getTargetType().getObjectComponentClass(),
 													object
 													)
 												);
@@ -148,22 +148,9 @@ public class ArraySource implements Source {
 		return true;	//FIXME
 	}
 
-	public Class<?> getTargetClass() {
-		return targetClass;
+	public void setTargetType(ObjectType targetType) {
+		this.targetType = targetType;
 	}
-	
-	public Class<?> getTargetComponentClass() {
-		return targetComponentClass;
-	}
-	
-	public void setTargetClass(Class<?> targetClass) {
-		this.targetClass = targetClass;
-	}
-	
-	public void setTargetComponentClass(Class<?> targetComponentClass) {
-		this.targetComponentClass = targetComponentClass;
-	}
-	
 
 	public ConverterMapping[] getConversions() {
 		return conversions;
@@ -171,5 +158,10 @@ public class ArraySource implements Source {
 	
 	public ReductionMapping getReduction() {
 		return reduction;
+	}
+
+	@Override
+	public ObjectType getTargetType() {
+		return targetType;
 	}
 }

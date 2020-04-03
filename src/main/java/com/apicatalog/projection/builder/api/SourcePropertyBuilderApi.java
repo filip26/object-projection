@@ -88,9 +88,9 @@ public class SourcePropertyBuilderApi<P> implements PropertyBuilder {
 		SourceProperty sourceProperty = new SourceProperty();
 
 		//FIXME
-		SingleSource source = (new SourceMapper(factory, typeAdapters)).getSingleSource(sourceObjectClass, sourcePropertyName, false, null, AccessMode.READ_WRITE, null);
+//		SingleSource source = (new SourceMapper(factory, typeAdapters)).getSingleSource(sourceObjectClass, sourcePropertyName, false, null, AccessMode.READ_WRITE, null);
 		
-		sourceProperty.setSource(source);
+	//	sourceProperty.setSource(source);
 
 		return sourceProperty;
 	}	

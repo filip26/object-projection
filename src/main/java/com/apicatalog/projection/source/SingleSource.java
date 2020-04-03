@@ -7,13 +7,14 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.beans.Getter;
-import com.apicatalog.projection.beans.Setter;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapping.ConverterMapping;
 import com.apicatalog.projection.objects.ContextObjects;
+import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.objects.ProjectionQueue;
+import com.apicatalog.projection.objects.getter.Getter;
+import com.apicatalog.projection.objects.setter.Setter;
 
 public class SingleSource implements Source {
 
@@ -26,8 +27,7 @@ public class SingleSource implements Source {
 	
 	Class<?> objectClass;
 	
-	Class<?> targetClass;
-	Class<?> targetComponentClass;
+	ObjectType targetType;
 	
 	String qualifier;
 
@@ -152,21 +152,13 @@ public class SingleSource implements Source {
 	public Getter getGetter() {
 		return getter;
 	}
-
-	public Class<?> getTargetClass() {
-		return targetClass;
+	
+	public void setTargetType(ObjectType targetType) {
+		this.targetType = targetType;
 	}
 	
-	public Class<?> getTargetComponentClass() {
-		return targetComponentClass;
-	}
-	
-	public void setTargetClass(Class<?> targetClass) {
-		this.targetClass = targetClass;
-	}
-	
-	public void setTargetComponentClass(Class<?> targetComponentClass) {
-		this.targetComponentClass = targetComponentClass;
+	public ObjectType getTargetType() {
+		return targetType;
 	}
 	
 	public ConverterMapping[] getConversions() {

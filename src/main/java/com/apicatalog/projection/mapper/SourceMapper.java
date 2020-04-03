@@ -1,10 +1,11 @@
 package com.apicatalog.projection.mapper;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -17,15 +18,18 @@ import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.annotation.Conversion;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
-import com.apicatalog.projection.beans.FieldGetter;
-import com.apicatalog.projection.beans.FieldSetter;
-import com.apicatalog.projection.beans.Getter;
-import com.apicatalog.projection.beans.Setter;
-import com.apicatalog.projection.builder.TargetBuilder;
+import com.apicatalog.projection.builder.ArraySourceBuilder;
+import com.apicatalog.projection.builder.ConversionBuilder;
+import com.apicatalog.projection.builder.SingleSourceBuilder;
+import com.apicatalog.projection.builder.SourcePropertyBuilder;
 import com.apicatalog.projection.converter.ConverterError;
+import com.apicatalog.projection.mapping.ConverterMapping;
 import com.apicatalog.projection.objects.ObjectType;
+import com.apicatalog.projection.objects.getter.FieldGetter;
+import com.apicatalog.projection.objects.getter.FieldSetter;
+import com.apicatalog.projection.objects.getter.Getter;
+import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.ProjectionProperty;
-import com.apicatalog.projection.property.SourceProperty;
 import com.apicatalog.projection.reducer.ReducerError;
 import com.apicatalog.projection.source.ArraySource;
 import com.apicatalog.projection.source.SingleSource;
@@ -39,22 +43,18 @@ public class SourceMapper {
 	final TypeAdapters typeAdapters;
 	final ProjectionFactory factory;
 	
-	final ConversionMapper conversionMapper;
 	final ReductionMapper reductionMapper;
 	
 	public SourceMapper(ProjectionFactory index, TypeAdapters typeAdapters) {
 		this.factory = index;
 		this.typeAdapters = typeAdapters;
 		
-		this.conversionMapper = new ConversionMapper(index, typeAdapters);
 		this.reductionMapper = new ReductionMapper(index, typeAdapters);
 	}
 		
 	ProjectionProperty getSourcesPropertyMapping(final Field field, final Class<?> defaultSourceClass) {
 		
 		final Sources sourcesAnnotation = field.getAnnotation(Sources.class);
-
-		final SourceProperty property = new SourceProperty();
 
 		final ArraySource arraySource = getArraySource(sourcesAnnotation, field, defaultSourceClass);
 
@@ -63,32 +63,25 @@ public class SourceMapper {
 			return null;				
 		}
 		
-		property.setSource(arraySource);
+		ObjectType targetType = PropertyMapper.getTypeOf(field);
 
 		// extract setter/getter
-		final Getter targetGetter = FieldGetter.from(field, PropertyMapper.getTypeOf(field));
-		final Setter targetSetter = FieldSetter.from(field, PropertyMapper.getTypeOf(field));
+		final Getter targetGetter = FieldGetter.from(field, targetType);
+		final Setter targetSetter = FieldSetter.from(field, targetType);
 
-		property.setTargetSetter(targetSetter);			
-		property.setTargetGetter(targetGetter);
-		
-		property.setTargetAdapter(
-				TargetBuilder.newInstance()
-					.source(ObjectType.of(arraySource.getTargetClass(), arraySource.getTargetComponentClass()))
-					.target(targetSetter.getType())
-					.build(factory, typeAdapters)
-					);
-
-		return property;
+		return SourcePropertyBuilder.newInstance()
+				.source(arraySource)
+				.mode(AccessMode.READ_WRITE)
+				.targetType(targetType)
+				.targetGetter(targetGetter)
+				.targetSetter(targetSetter)
+				.build(factory, typeAdapters);
 	}
 	
 	ProjectionProperty getSourcePropertyMapping(final Field field, final Class<?> defaultSourceClass) {
 		
 		final Source sourceAnnotation = field.getAnnotation(Source.class);
 		
-		final SourceProperty property = new SourceProperty();
-
-
 		final SingleSource source = 
 					getSingleSource( 
 						sourceAnnotation,
@@ -100,37 +93,20 @@ public class SourceMapper {
 			logger.warn(SOURCE_IS_MISSING, field.getName());
 			return null;
 		}
-
-		property.setSource(source);
-
-		// extract setter/getter
-		final Getter targetGetter = FieldGetter.from(field, PropertyMapper.getTypeOf(field));
-		final Setter targetSetter = FieldSetter.from(field, PropertyMapper.getTypeOf(field));
-
-		// set access mode
-		switch (sourceAnnotation.mode()) {
-		case READ_ONLY:
-			property.setTargetSetter(targetSetter);
-			break;
-			
-		case WRITE_ONLY:
-			property.setTargetGetter(targetGetter);
-			break;
 		
-		case READ_WRITE:
-			property.setTargetSetter(targetSetter);			
-			property.setTargetGetter(targetGetter);
-			break;
-		}			
+		ObjectType targetType = PropertyMapper.getTypeOf(field);
+		
+		// extract setter/getter
+		final Getter targetGetter = FieldGetter.from(field, targetType);
+		final Setter targetSetter = FieldSetter.from(field, targetType);
 
-		property.setTargetAdapter(
-				TargetBuilder.newInstance()
-					.source(ObjectType.of(source.getTargetClass(), source.getTargetComponentClass()))
-					.target(targetSetter.getType())
-					.build(factory, typeAdapters)
-					);
-
-		return property;		
+		return SourcePropertyBuilder.newInstance()
+					.source(source)
+					.mode(sourceAnnotation.mode())
+					.targetType(targetType)
+					.targetGetter(targetGetter)
+					.targetSetter(targetSetter)
+					.build(factory, typeAdapters);
 	}
 
 	SingleSource getSingleSource(Source sourceAnnotation, Field field, Class<?> defaultSourceClass) {
@@ -155,52 +131,17 @@ public class SourceMapper {
 			sourceFieldName = sourceAnnotation.value();
 		}
 		
-		return getSingleSource(
-					sourceObjectClass, 
-					sourceFieldName, 
-					sourceAnnotation.optional(), 
-					sourceAnnotation.qualifier(), 
-					sourceAnnotation.mode(),
-					sourceAnnotation.map()
-					);
-	}
-	
-	public SingleSource getSingleSource(Class<?> sourceObjectClass, String sourceFieldName, boolean optional, String qualifier, AccessMode mode, Conversion[] conversions) {
-		
-		final SingleSource source = new SingleSource(typeAdapters);
-
-		source.setObjectClass(sourceObjectClass);
-
-		// extract setter/getter
-		final Getter sourceGetter = PropertyMapper.getGetter(sourceObjectClass, sourceFieldName);
-		final Setter sourceSetter = PropertyMapper.getSetter(sourceObjectClass, sourceFieldName);
-
-		// no setter nor getter? 
-		if (sourceGetter == null && sourceSetter == null) {
-			// nothing to do with this
-			return null;
-		}
-		
-		// set source access
-		switch (mode) {
-		case READ_ONLY:
-			source.setGetter(sourceGetter);
-			break;
-			
-		case WRITE_ONLY:
-			source.setSetter(sourceSetter);
-			break;
-		
-		case READ_WRITE:
-			source.setGetter(sourceGetter);
-			source.setSetter(sourceSetter);
-			break;
-		}			
+		SingleSourceBuilder sourceBuilder = SingleSourceBuilder.newInstance()
+				.objectClass(sourceObjectClass)
+				.optional(sourceAnnotation.optional())
+				.qualifier(sourceAnnotation.qualifier())
+				.mode(sourceAnnotation.mode())
+				;
 
 		// set conversions to apply
-		if (Optional.ofNullable(conversions).isPresent()) {
+		if (Optional.ofNullable(sourceAnnotation.map()).isPresent()) {
 			try {
-				source.setConversions(conversionMapper.getConverterMapping(conversions));
+				sourceBuilder = sourceBuilder.converters(getConverterMapping(sourceAnnotation.map()));
 				
 			} catch (ConverterError | ProjectionError e) {
 				logger.error("Property " + sourceFieldName + " is ignored.", e);
@@ -208,36 +149,26 @@ public class SourceMapper {
 			}
 		}
 
-		// set optional 
-		source.setOptional(optional);
+		return getSingleSource(
+					sourceObjectClass, 
+					sourceFieldName, 
+					sourceBuilder
+					);
+	}
+	
+	public SingleSource getSingleSource(Class<?> sourceObjectClass, String sourceFieldName, SingleSourceBuilder sourceBuilder) {
 		
-		// set qualifier
-		source.setQualifier(qualifier);
-		
-		// set target class
-		Class<?> targetClass = sourceGetter != null ? sourceGetter.getType().getObjectClass() : sourceSetter.getType().getObjectClass();
-		Class<?> targetComponentClass = sourceGetter != null ? sourceGetter.getType().getObjectComponentClass() : sourceSetter.getType().getObjectComponentClass();
+		// extract setter/getter
+		final Getter sourceGetter = PropertyMapper.getGetter(sourceObjectClass, sourceFieldName);
+		final Setter sourceSetter = PropertyMapper.getSetter(sourceObjectClass, sourceFieldName);
 
-		source.setTargetClass(targetClass);
-		source.setTargetComponentClass(targetComponentClass);
-
-		// extract actual target object class 
-		if (source.getConversions() != null) {
-			Stream.of(source.getConversions())
-					.reduce((first, second) -> second)
-					.ifPresent(m -> { 
- 
-								source.setTargetClass(m.getSourceClass());
-								source.setTargetComponentClass(m.getSourceComponentClass());
-								});
-					}
-		
-		return source;
+		return sourceBuilder
+				.getter(sourceGetter)
+				.setter(sourceSetter)
+				.build(typeAdapters);
 	}
 
 	ArraySource getArraySource(final Sources sourcesAnnotation, final Field field, final Class<?> defaultSourceObjectClass) {
-		
-		final ArraySource source = new ArraySource(typeAdapters);
 		
 		SingleSource[] sources = Arrays.stream(sourcesAnnotation.value())
 										.map(s -> getSingleSource(s, field, defaultSourceObjectClass))
@@ -250,42 +181,43 @@ public class SourceMapper {
 			return null;
 		}
 
-		source.setSources(sources);
-		
+		ArraySourceBuilder builder = 
+				ArraySourceBuilder.newInstance()
+					.optional(sourcesAnnotation.optional())
+					.sources(sources)
+					;
+
 		try {
-			// set reduction
-			source.setReduction(reductionMapper.getReductionMapping(sourcesAnnotation.reduce()));
-			
-			// set conversions to apply
-			source.setConversions(conversionMapper.getConverterMapping(sourcesAnnotation.map()));
+			return builder
+						.reducer(reductionMapper.getReductionMapping(sourcesAnnotation.reduce()))	// set reduction
+						.converters(getConverterMapping(sourcesAnnotation.map()))	// set conversions to apply
+						.build(typeAdapters);
 			
 		} catch (ConverterError | ReducerError | ProjectionError e) {
 			logger.error("Property " + field.getName() + " is ignored.", e);
 			return null;
+		}				
+	}	
+	
+	public ConverterMapping[] getConverterMapping(Conversion[] conversions) throws ConverterError, ProjectionError {
+
+		if (conversions.length == 0) {
+			return new ConverterMapping[0];
 		}
 
-		// set optional 
-		source.setOptional(sourcesAnnotation.optional());
-				
-		// set target class
-		Class<?> targetClass =  source.getReduction().getTargetClass();
-		Class<?> targetComponentClass = source.getReduction().getTargetComponentClass();
+		final List<ConverterMapping> converters = new ArrayList<>();
 		
-		
-		source.setTargetClass(targetClass);
-		source.setTargetComponentClass(targetComponentClass);
-		
-		// extract actual target object class 
-		if (source.getConversions() != null) {
-			Stream.of(source.getConversions())
-					.reduce((first, second) -> second)
-					.ifPresent(m -> { 
- 
-								source.setTargetClass(m.getSourceClass());
-								source.setTargetComponentClass(m.getSourceComponentClass());
-								});
-					}
-		
-		return source;
-	}	
+		for (final Conversion conversion : conversions) {
+			converters.add(
+					ConversionBuilder
+							.newInstance()
+							.converter(conversion.type())
+							.parameters(conversion.value())
+							.build(typeAdapters)
+							);
+		}
+
+		return converters.isEmpty() ? null : converters.toArray(new ConverterMapping[0]);
+	}
+
 }

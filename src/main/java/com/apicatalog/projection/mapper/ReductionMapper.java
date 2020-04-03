@@ -11,6 +11,7 @@ import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.annotation.Reduction;
 import com.apicatalog.projection.mapping.ReductionMapping;
+import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.reducer.Reducer;
 import com.apicatalog.projection.reducer.ReducerConfig;
@@ -46,9 +47,9 @@ public class ReductionMapper {
 		// get an array of it
 		sourceClass = Array.newInstance(sourceClass, 0).getClass();
 		
-		reducer.setSourceClass(sourceClass);
-		reducer.setTargetClass((Class<?>)(((ParameterizedType) reduction.type().getGenericInterfaces()[0]).getActualTypeArguments()[1]));
-
+		reducer.setSourceType(ObjectType.of(sourceClass));
+		reducer.setTargetType(ObjectType.of((Class<?>)(((ParameterizedType) reduction.type().getGenericInterfaces()[0]).getActualTypeArguments()[1])));
+		
 		return reducer;
 	}	
 }

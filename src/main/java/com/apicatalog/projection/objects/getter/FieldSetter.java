@@ -1,9 +1,10 @@
-package com.apicatalog.projection.beans;
+package com.apicatalog.projection.objects.getter;
 
 import java.lang.reflect.Field;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.objects.ObjectType;
+import com.apicatalog.projection.objects.setter.Setter;
 
 public class FieldSetter implements Setter {
 

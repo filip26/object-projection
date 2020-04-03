@@ -2,6 +2,7 @@ package com.apicatalog.projection.source;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.objects.ContextObjects;
+import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ProjectionQueue;
 
 public interface Source  {
@@ -13,5 +14,7 @@ public interface Source  {
 	boolean isReadable();
 
 	boolean isWritable();
+	
+	ObjectType getTargetType();
 
 }

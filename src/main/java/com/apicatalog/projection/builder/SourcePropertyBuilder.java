@@ -1,18 +1,14 @@
 package com.apicatalog.projection.builder;
 
-import java.lang.reflect.Field;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.annotation.AccessMode;
-import com.apicatalog.projection.beans.FieldGetter;
-import com.apicatalog.projection.beans.FieldSetter;
-import com.apicatalog.projection.beans.Getter;
-import com.apicatalog.projection.beans.Setter;
 import com.apicatalog.projection.objects.ObjectType;
+import com.apicatalog.projection.objects.getter.Getter;
+import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.SourceProperty;
 import com.apicatalog.projection.source.Source;
 
@@ -22,14 +18,15 @@ public class SourcePropertyBuilder {
 	
 	static final String SOURCE_IS_MISSING = "Source is missing. Property {} is ignored."; 
 	
-	Field field;
-	
 	Source source;
 	
 	AccessMode mode;
 	
 	ObjectType targetType;
 	
+	Getter targetGetter;
+	Setter targetSetter;
+
 	protected SourcePropertyBuilder() {
 
 	}
@@ -40,19 +37,18 @@ public class SourcePropertyBuilder {
 			
 	public SourceProperty build(ProjectionFactory factory, TypeAdapters typeAdapters) {
 		
-		final SourceProperty property = new SourceProperty();
-							
+
+		//TODO check target setter getter presence
+		
 		if (source == null) {
-			logger.warn(SOURCE_IS_MISSING, field.getName());
+			logger.warn(SOURCE_IS_MISSING, targetSetter != null ? targetSetter.getName() : targetGetter.getName());
 			return null;
 		}
 
+		final SourceProperty property = new SourceProperty();
+
 		property.setSource(source);
-
-		// extract setter/getter
-		final Getter targetGetter = FieldGetter.from(field, targetType);
-		final Setter targetSetter = FieldSetter.from(field, targetType);
-
+		
 		// set access mode
 		switch (mode) {
 		case READ_ONLY:
@@ -69,12 +65,12 @@ public class SourcePropertyBuilder {
 			break;
 		}			
 
-//		property.setTargetAdapter(
-//				TargetBuilder.newInstance()
-//					.source(source.getType())
-//					.target(ObjectType.of(targetSetter.getValueClass(), targetSetter.getValueComponentClass()))
-//					.build(factory, typeAdapters)
-//					);
+		property.setTargetAdapter(
+				TargetBuilder.newInstance()
+					.source(source.getTargetType())
+					.target(targetSetter.getType())
+					.build(factory, typeAdapters)
+					);
 
 		return property;		
 	}
@@ -84,8 +80,23 @@ public class SourcePropertyBuilder {
 		return this;
 	}
 	
-	public SourcePropertyBuilder source(AccessMode mode) {
+	public SourcePropertyBuilder mode(AccessMode mode) {
 		this.mode = mode;
+		return this;
+	}
+	
+	public SourcePropertyBuilder targetType(ObjectType targetType) {
+		this.targetType = targetType;
+		return this;
+	}
+
+	public SourcePropertyBuilder targetGetter(Getter getter) {
+		this.targetGetter = getter;
+		return this;
+	}
+
+	public SourcePropertyBuilder targetSetter(Setter setter) {
+		this.targetSetter = setter;
 		return this;
 	}
 

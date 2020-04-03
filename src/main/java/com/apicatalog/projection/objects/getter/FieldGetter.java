@@ -1,4 +1,4 @@
-package com.apicatalog.projection.beans;
+package com.apicatalog.projection.objects.getter;
 
 import java.lang.reflect.Field;
 

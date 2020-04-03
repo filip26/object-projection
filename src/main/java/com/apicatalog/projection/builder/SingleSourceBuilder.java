@@ -1,16 +1,26 @@
 package com.apicatalog.projection.builder;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.util.Collection;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.annotation.AccessMode;
-import com.apicatalog.projection.beans.Getter;
-import com.apicatalog.projection.beans.Setter;
 import com.apicatalog.projection.mapping.ConverterMapping;
+import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ObjectUtils;
+import com.apicatalog.projection.objects.getter.FieldGetter;
+import com.apicatalog.projection.objects.getter.FieldSetter;
+import com.apicatalog.projection.objects.getter.Getter;
+import com.apicatalog.projection.objects.setter.MethodGetter;
+import com.apicatalog.projection.objects.setter.MethodSetter;
+import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.source.SingleSource;
 
 public class SingleSourceBuilder {
@@ -28,7 +38,9 @@ public class SingleSourceBuilder {
 	ConverterMapping[] converters;
 	
 	Class<?> sourceObjectClass;
-	String sourcePropertyName;
+
+	Getter sourceGetter;
+	Setter sourceSetter;
 	
 	protected SingleSourceBuilder() {		
 		this.mode = AccessMode.READ_WRITE;
@@ -45,59 +57,50 @@ public class SingleSourceBuilder {
 
 		source.setObjectClass(sourceObjectClass);
 
-		// extract setter/getter
-//		final Getter sourceGetter = ObjectUtils.getGetter(sourceObjectClass, sourcePropertyName);
-//		final Setter sourceSetter = ObjectUtils.getSetter(sourceObjectClass, sourcePropertyName);
-//
-//		// no setter nor getter? 
-//		if (sourceGetter == null && sourceSetter == null) {
-//			// nothing to do with this
-//			return null;
-//		}
-//		
-//		// set source access
-//		switch (mode) {
-//		case READ_ONLY:
-//			source.setGetter(sourceGetter);
-//			break;
-//			
-//		case WRITE_ONLY:
-//			source.setSetter(sourceSetter);
-//			break;
-//		
-//		case READ_WRITE:
-//			source.setGetter(sourceGetter);
-//			source.setSetter(sourceSetter);
-//			break;
-//		}			
-//
-//		// set conversions to apply
-//		source.setConversions(converters);
-//
-//		// set optional 
-//		source.setOptional(optional);
-//		
-//		// set qualifier
-//		source.setQualifier(qualifier);
-//		
-//		// set target class
-//		Class<?> targetClass = sourceGetter != null ? sourceGetter.getType().getObjectClass() : sourceSetter.getType().getObjectClass();
-//		Class<?> targetComponentClass = sourceGetter != null ? sourceGetter.getType().getObjectComponentClass() : sourceSetter.getType().getObjectComponentClass();
-//
-//		source.setTargetClass(targetClass);
-//		source.setTargetComponentClass(targetComponentClass);
-//
-//		// extract actual target object class 
-//		if (source.getConversions() != null) {
-//			Stream.of(source.getConversions())
-//					.reduce((first, second) -> second)
-//					.ifPresent(m -> { 
-// 
-//								source.setTargetClass(m.getSourceClass());
-//								source.setTargetComponentClass(m.getSourceComponentClass());
-//								});
-//					}
+		// no setter nor getter? 
+		if (sourceGetter == null && sourceSetter == null) {
+			// nothing to do with this
+			return null;
+		}
 		
+		// set source access
+		switch (mode) {
+		case READ_ONLY:
+			source.setGetter(sourceGetter);
+			break;
+			
+		case WRITE_ONLY:
+			source.setSetter(sourceSetter);
+			break;
+		
+		case READ_WRITE:
+			source.setGetter(sourceGetter);
+			source.setSetter(sourceSetter);
+			break;
+		}			
+
+		// set conversions to apply
+		source.setConversions(converters);
+
+		// set optional 
+		source.setOptional(optional);
+		
+		// set qualifier
+		source.setQualifier(qualifier);
+		
+		// set target class
+		ObjectType targetType = sourceGetter != null ? sourceGetter.getType() : sourceSetter.getType(); 
+
+		source.setTargetType(targetType);
+
+		// extract actual target object class 
+		if (source.getConversions() != null) {
+			
+			Stream.of(source.getConversions())
+					.reduce((first, second) -> second)
+					.ifPresent(m -> source.setTargetType(ObjectType.of(m.getSourceClass(), m.getSourceComponentClass())));
+
+		}
 		return source;
 	}
 	
@@ -126,8 +129,74 @@ public class SingleSourceBuilder {
 		return this;
 	}
 	
-	public SingleSourceBuilder property(String sourcePropertyName) {
-		this.sourcePropertyName = sourcePropertyName;
+	public SingleSourceBuilder setter(Setter setter) {
+		this.sourceSetter = setter;
 		return this;
+	}
+	
+	public SingleSourceBuilder getter(Getter getter) {
+		this.sourceGetter = getter;
+		return this;
+	}	
+	
+	protected static final ObjectType getTypeOf(Field field, boolean reference) {
+		
+		Class<?> objectClass = field.getType();
+		Class<?> componentClass = null;
+		
+		if (Collection.class.isAssignableFrom(field.getType())) {
+			componentClass = (Class<?>)((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+		}
+		
+		return ObjectType.of(objectClass, componentClass, reference);
+	}
+	
+	protected static final ObjectType getTypeOf(Method method, boolean reference) {
+		
+		Class<?> objectClass = method.getReturnType();
+		Class<?> componentClass = null;
+
+		if (Collection.class.isAssignableFrom(method.getReturnType())) {
+			componentClass = (Class<?>)((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0];
+		}
+		
+		return ObjectType.of(objectClass, componentClass, reference);
+	}
+
+
+	protected static final Getter getGetter(Class<?> objectClass, final String name, boolean reference) {
+
+		final Field sourceField = ObjectUtils.getProperty(objectClass, name);
+		
+		if (sourceField != null) {
+			return FieldGetter.from(sourceField, getTypeOf(sourceField, reference));
+		}
+
+		// look for getter method
+		final Method sourceGetter = ObjectUtils.getMethod(objectClass, "get".concat(StringUtils.capitalize(name)));
+		
+		if (sourceGetter != null) {
+			return MethodGetter.from(sourceGetter, name, getTypeOf(sourceGetter, reference));
+		}
+
+		return null;
+	}
+	
+	protected static final Setter getSetter(Class<?> objectClass, final String name, boolean reference) {
+
+		final Field sourceField = ObjectUtils.getProperty(objectClass, name);
+		
+		if (sourceField != null) {
+			return FieldSetter.from(sourceField, getTypeOf(sourceField, reference));
+		}
+
+		// look for getter method
+		final Method sourceGetter = ObjectUtils.getMethod(objectClass, "set".concat(StringUtils.capitalize(name)));
+		
+		if (sourceGetter != null) {
+			return MethodSetter.from(sourceGetter, name, getTypeOf(sourceGetter, reference));
+		}
+
+		return null;
 	}
 }
