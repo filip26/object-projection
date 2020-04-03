@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.mapping.ConverterMapping;
-import com.apicatalog.projection.mapping.ReductionMapping;
+import com.apicatalog.projection.mapping.ReducerMapping;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.source.ArraySource;
 import com.apicatalog.projection.source.SingleSource;
@@ -20,7 +20,7 @@ public class ArraySourceBuilder {
 	
 	boolean optional;
 	
-	ReductionMapping reduction;
+	ReducerMapping reduction;
 	
 	ConverterMapping[] converters;
 	
@@ -74,7 +74,7 @@ public class ArraySourceBuilder {
 		return this;
 	}
 
-	public ArraySourceBuilder reducer(ReductionMapping reduction) {
+	public ArraySourceBuilder reducer(ReducerMapping reduction) {
 		this.reduction = reduction;
 		return this;
 	}

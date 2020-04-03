@@ -4,7 +4,7 @@ import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.reducer.Reducer;
 
 
-public class ReductionMapping {
+public class ReducerMapping {
 
 	Reducer<Object, Object> reducer;
 	

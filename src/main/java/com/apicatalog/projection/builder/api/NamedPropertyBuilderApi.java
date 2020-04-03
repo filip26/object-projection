@@ -9,7 +9,6 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionBuilder;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
@@ -28,6 +27,7 @@ public class NamedPropertyBuilderApi<P> {
 	final ProjectionBuilder<P> projectionBuilder;
 	
 	SourcePropertyBuilderApi<P> sourcePropertyBuilder;
+	ProvidedPropertyBuilderApi<P> providedPropertyBuilder;
 
 	String targetPropertyName;
 	boolean reference;
@@ -59,15 +59,16 @@ public class NamedPropertyBuilderApi<P> {
 	}
 
 	public ProvidedPropertyBuilderApi<P> provided() {
-
-		return new ProvidedPropertyBuilderApi<>(projectionBuilder);
+		ProvidedPropertyBuilderApi<P> builder = new ProvidedPropertyBuilderApi<>(projectionBuilder);
+		this.providedPropertyBuilder = builder;
+		return builder;
 	}
 
 	public ProjectionBuilder<P> constant(String string) {
 		return projectionBuilder;
 	}
 	
-	public ProjectionProperty getProperty(ProjectionFactory factory, TypeAdapters typeAdapters) throws ProjectionError {
+	protected ProjectionProperty buildProperty(ProjectionFactory factory, TypeAdapters typeAdapters) throws ProjectionError {
 		if  (Optional.ofNullable(sourcePropertyBuilder).isPresent()) {
 
 			final Field field = ObjectUtils.getProperty(projectionBuilder.projectionClass(), targetPropertyName);
@@ -81,7 +82,23 @@ public class NamedPropertyBuilderApi<P> {
 			sourcePropertyBuilder.targetGetter(targetGetter);
 			sourcePropertyBuilder.targetSetter(targetSetter);
 			
-			return sourcePropertyBuilder.getProperty(factory, typeAdapters);
+			return sourcePropertyBuilder.buildProperty(factory, typeAdapters);
+			
+		} else 	if (Optional.ofNullable(providedPropertyBuilder).isPresent()) {
+
+			final Field field = ObjectUtils.getProperty(projectionBuilder.projectionClass(), targetPropertyName);
+			
+			ObjectType targetType = getTypeOf(field, reference);
+			
+			// extract setter/getter
+			final Getter targetGetter = FieldGetter.from(field, targetType);
+			final Setter targetSetter = FieldSetter.from(field, targetType);
+
+			providedPropertyBuilder.targetGetter(targetGetter);
+			providedPropertyBuilder.targetSetter(targetSetter);
+			
+			return providedPropertyBuilder.buildProperty(factory, typeAdapters);
+			
 		}
 		return null;
 	}

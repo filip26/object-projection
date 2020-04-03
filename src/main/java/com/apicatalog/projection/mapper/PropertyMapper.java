@@ -20,6 +20,7 @@ import com.apicatalog.projection.annotation.Provided;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.annotation.Visibility;
+import com.apicatalog.projection.builder.ProvidedPropertyBuilder;
 import com.apicatalog.projection.builder.SingleSourceBuilder;
 import com.apicatalog.projection.builder.TargetBuilder;
 import com.apicatalog.projection.objects.ObjectType;
@@ -32,8 +33,6 @@ import com.apicatalog.projection.objects.setter.MethodSetter;
 import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.ConstantProperty;
 import com.apicatalog.projection.property.ProjectionProperty;
-import com.apicatalog.projection.property.ProvidedObjectProperty;
-import com.apicatalog.projection.property.ProvidedProjectionProperty;
 import com.apicatalog.projection.property.SourceProperty;
 import com.apicatalog.projection.source.SingleSource;
 
@@ -126,76 +125,22 @@ public class PropertyMapper {
 		return property;
 	}
 
-
 	ProjectionProperty getProvidedMapping(Field field) {
 		
 		final Provided provided = field.getAnnotation(Provided.class);
-		
-		if (field.getType().isAnnotationPresent(Projection.class)) {
-			return getProvidedProjection(provided, field);
-		}
-		
-		final ProvidedObjectProperty property = new ProvidedObjectProperty();
-		
+			
 		final Getter targetGetter = FieldGetter.from(field, getTypeOf(field));
 		final Setter targetSetter = FieldSetter.from(field, getTypeOf(field));
-		
-		// set access mode
-		switch (provided.mode()) {
-		case READ_ONLY:
-			property.setTargetSetter(targetSetter);
-			break;
-			
-		case WRITE_ONLY:
-			property.setTargetGetter(targetGetter);
-			break;
-		
-		case READ_WRITE:
-			property.setTargetGetter(targetGetter);
-			property.setTargetSetter(targetSetter);
-			break;
-		}			
 
-		// set qualifier
-		property.setSourceObjectQualifier(provided.qualifier());
-
-		property.setOptional(provided.optional());
-
-		property.setTargetAdapter(
-					TargetBuilder.newInstance()
-						.source(targetSetter.getType())
-						.target(targetSetter.getType())
-						.build(factory, typeAdapters)
-						);
-
-		return property;
-	}
-	
-	ProjectionProperty getProvidedProjection(Provided provided, Field field) {
-		
-		final ProvidedProjectionProperty property = new ProvidedProjectionProperty(factory);
-
-		// set access mode
-		switch (provided.mode()) {
-		case READ_ONLY:
-			property.setTargetSetter(FieldSetter.from(field, getTypeOf(field)));
-			break;
-			
-		case WRITE_ONLY:
-			property.setTargetGetter(FieldGetter.from(field, getTypeOf(field)));
-			break;
-		
-		case READ_WRITE:
-			property.setTargetGetter(FieldGetter.from(field, getTypeOf(field)));
-			property.setTargetSetter(FieldSetter.from(field, getTypeOf(field)));
-			break;
-		}	
-
-		// set qualifier
-		property.setSourceObjectQualifier(provided.qualifier());
-
-		return property;
-	}
+		return ProvidedPropertyBuilder
+					.newInstance()
+					.mode(provided.mode())
+					.optional(provided.optional())
+					.qualifier(provided.qualifier())
+					.targetGetter(targetGetter)
+					.targetSetter(targetSetter)
+					.build(factory, typeAdapters);
+	}				
 
 	ProjectionProperty getConstantMapping(Field field) {
 		

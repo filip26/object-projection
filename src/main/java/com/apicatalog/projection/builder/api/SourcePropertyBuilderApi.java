@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionBuilder;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
@@ -104,7 +103,7 @@ public class SourcePropertyBuilderApi<P> {
 		return sourcesApi;
 	}
 
-	protected ProjectionProperty getProperty(ProjectionFactory factory, TypeAdapters typeAdapters) throws ProjectionError {
+	protected ProjectionProperty buildProperty(ProjectionFactory factory, TypeAdapters typeAdapters) throws ProjectionError {
 
 		ConverterMapping[] converters = new ConverterMapping[conversionBuilder.size()];
 		

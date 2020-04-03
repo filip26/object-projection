@@ -1,11 +1,13 @@
-package com.apicatalog.projection;
+package com.apicatalog.projection.builder.api;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.apicatalog.projection.Projection;
+import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.builder.api.NamedPropertyBuilderApi;
 import com.apicatalog.projection.mapper.ProjectionImpl;
 import com.apicatalog.projection.property.ProjectionProperty;
 
@@ -39,7 +41,7 @@ public class ProjectionBuilder<P> {
 		final List<ProjectionProperty> properties = new ArrayList<>(); 
 		
 		for (final NamedPropertyBuilderApi<P> propertyBuilder : propertyBuilders) {
-			Optional.ofNullable(propertyBuilder.getProperty(factory, typeAdapters))
+			Optional.ofNullable(propertyBuilder.buildProperty(factory, typeAdapters))
 					.ifPresent(properties::add);
 		}
 		

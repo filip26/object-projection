@@ -16,14 +16,17 @@ import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.annotation.Conversion;
+import com.apicatalog.projection.annotation.Reduction;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.builder.ArraySourceBuilder;
 import com.apicatalog.projection.builder.ConversionBuilder;
+import com.apicatalog.projection.builder.ReductionBuilder;
 import com.apicatalog.projection.builder.SingleSourceBuilder;
 import com.apicatalog.projection.builder.SourcePropertyBuilder;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapping.ConverterMapping;
+import com.apicatalog.projection.mapping.ReducerMapping;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.getter.FieldGetter;
 import com.apicatalog.projection.objects.getter.FieldSetter;
@@ -34,7 +37,7 @@ import com.apicatalog.projection.reducer.ReducerError;
 import com.apicatalog.projection.source.ArraySource;
 import com.apicatalog.projection.source.SingleSource;
 
-public class SourceMapper {
+class SourceMapper {
 
 	final Logger logger = LoggerFactory.getLogger(SourceMapper.class);
 	
@@ -43,13 +46,9 @@ public class SourceMapper {
 	final TypeAdapters typeAdapters;
 	final ProjectionFactory factory;
 	
-	final ReductionMapper reductionMapper;
-	
 	public SourceMapper(ProjectionFactory index, TypeAdapters typeAdapters) {
 		this.factory = index;
 		this.typeAdapters = typeAdapters;
-		
-		this.reductionMapper = new ReductionMapper(index, typeAdapters);
 	}
 		
 	ProjectionProperty getSourcesPropertyMapping(final Field field, final Class<?> defaultSourceClass) {
@@ -154,7 +153,7 @@ public class SourceMapper {
 					);
 	}
 	
-	public SingleSource getSingleSource(Class<?> sourceObjectClass, String sourceFieldName, SingleSourceBuilder sourceBuilder) {
+	SingleSource getSingleSource(Class<?> sourceObjectClass, String sourceFieldName, SingleSourceBuilder sourceBuilder) {
 		
 		// extract setter/getter
 		final Getter sourceGetter = PropertyMapper.getGetter(sourceObjectClass, sourceFieldName);
@@ -187,7 +186,7 @@ public class SourceMapper {
 
 		try {
 			return builder
-						.reducer(reductionMapper.getReductionMapping(sourcesAnnotation.reduce()))	// set reduction
+						.reducer(getReductionMapping(sourcesAnnotation.reduce()))	// set reduction
 						.converters(getConverterMapping(sourcesAnnotation.map()))	// set conversions to apply
 						.build(typeAdapters);
 			
@@ -197,7 +196,7 @@ public class SourceMapper {
 		}				
 	}	
 	
-	public ConverterMapping[] getConverterMapping(Conversion[] conversions) throws ConverterError, ProjectionError {
+	ConverterMapping[] getConverterMapping(Conversion[] conversions) throws ConverterError, ProjectionError {
 
 		if (conversions.length == 0) {
 			return new ConverterMapping[0];
@@ -218,4 +217,13 @@ public class SourceMapper {
 		return converters.isEmpty() ? null : converters.toArray(new ConverterMapping[0]);
 	}
 
+	ReducerMapping getReductionMapping(Reduction reduction) throws ProjectionError, ReducerError {
+		
+		return ReductionBuilder
+					.newInstance()
+					.converter(reduction.type())
+					.parameters(reduction.value())
+					.build(typeAdapters)
+					;
+	}	
 }

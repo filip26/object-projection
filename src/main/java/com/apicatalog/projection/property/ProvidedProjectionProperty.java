@@ -94,4 +94,8 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 	public void setSourceObjectQualifier(String sourceObjectQualifier) {
 		this.sourceObjectQualifier = sourceObjectQualifier;
 	}
+	
+	public void setOptional(boolean optional) {
+		this.optional = optional;
+	}
 }

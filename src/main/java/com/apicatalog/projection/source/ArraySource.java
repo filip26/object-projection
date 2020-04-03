@@ -9,7 +9,7 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.mapping.ConverterMapping;
-import com.apicatalog.projection.mapping.ReductionMapping;
+import com.apicatalog.projection.mapping.ReducerMapping;
 import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ProjectionQueue;
@@ -24,7 +24,7 @@ public class ArraySource implements Source {
 	
 	Source[] sources;
 	
-	ReductionMapping reduction;
+	ReducerMapping reduction;
 	
 	ConverterMapping[] conversions;
 	
@@ -134,7 +134,7 @@ public class ArraySource implements Source {
 		this.conversions = conversions;
 	}
 	
-	public void setReduction(ReductionMapping reduction) {
+	public void setReduction(ReducerMapping reduction) {
 		this.reduction = reduction;
 	}
 
@@ -156,7 +156,7 @@ public class ArraySource implements Source {
 		return conversions;
 	}
 	
-	public ReductionMapping getReduction() {
+	public ReducerMapping getReduction() {
 		return reduction;
 	}
 

@@ -4,14 +4,15 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.apicatalog.projection.adapter.TypeAdapters;
+import com.apicatalog.projection.builder.api.ProjectionBuilder;
 import com.apicatalog.projection.converter.std.Prefix;
 import com.apicatalog.projection.converter.std.Suffix;
 import com.apicatalog.projection.converter.std.UriTemplate;
+import com.apicatalog.projection.objects.NamedObject;
 import com.apicatalog.projection.objects.Object1;
 import com.apicatalog.projection.objects.SimpleObject;
 import com.apicatalog.projection.projections.Object1To;
 import com.apicatalog.projection.projections.SimpleObjectTo;
-import com.apicatalog.projection.property.SourceProperty;
 
 public class ProjectionBuilderTest {
 
@@ -23,49 +24,21 @@ public class ProjectionBuilderTest {
 					.bind(SimpleObjectTo.class)
 					
 					.map("i1").source(SimpleObject.class)
+					.map("s1").source(SimpleObject.class)
 					
 					.build(ProjectionFactory.newInstance(), new TypeAdapters());
 		
 		Assert.assertNotNull(projection);
+
+		SimpleObject object1 = new SimpleObject();
+		object1.i1 = 443546356;
+		object1.s1 = "string-1";
 		
-		Assert.assertEquals(SimpleObjectTo.class, projection.getProjectionClass());
+		SimpleObjectTo to = projection.compose(object1);
 		
-		Assert.assertNotNull(projection.getProperties());
-		
-		Assert.assertEquals(1, projection.getProperties().length);
-		
-		Assert.assertNotNull(projection.getProperties()[0]);
-		Assert.assertTrue(SourceProperty.class.isInstance(projection.getProperties()[0]));
-		
-		SourceProperty sourceProperty = (SourceProperty)projection.getProperties()[0];
-		
-//		Assert.assertNotNull(sourceProperty.getSource());
-//		Assert.assertTrue(SingleSource.class.isInstance(sourceProperty.getSource()));
-//		
-//		SingleSource singleSource = (SingleSource)sourceProperty.getSource();
-//		
-//		Assert.assertEquals(SimpleObject.class, singleSource.getObjectClass());
-//		
-//		Assert.assertNotNull(singleSource.getGetter());
-//		Assert.assertEquals("i1", singleSource.getGetter().getName());
-//		Assert.assertEquals(Integer.class, singleSource.getGetter().getType().getObjectClass());
-//		Assert.assertNull(singleSource.getGetter().getType().getObjectComponentClass());
-//		
-//		Assert.assertEquals(Integer.class, singleSource.getTargetType().getObjectClass());
-//		Assert.assertNull(singleSource.getTargetType().getObjectComponentClass());
-//		
-//		Assert.assertTrue(singleSource.isReadable());
-//		Assert.assertTrue(singleSource.isWritable());
-//		
-//		Assert.assertNull(singleSource.getConversions());
-//		
-//		Assert.assertNull(sourceProperty.getTargetAdapter());
-		
-//FIXME		Assert.assertNotNull(sourceProperty.getTargetGetter());
-		
-		
-		
-//FIXME		Assert.assertNotNull(sourceProperty.getTargetSetter());
+		Assert.assertNotNull(to);;
+		Assert.assertEquals(object1.i1, to.i1);
+		Assert.assertEquals(object1.s1, to.s1);
 	}
 
 	@Test
@@ -78,6 +51,18 @@ public class ProjectionBuilderTest {
 					.map("s1").source(SimpleObject.class, "i1")
 					
 					.build(ProjectionFactory.newInstance(), new TypeAdapters());
+		
+		Assert.assertNotNull(projection);
+
+		SimpleObject object1 = new SimpleObject();
+		object1.i1 = 443546356;
+		object1.s1 = "57566735";
+		
+		SimpleObjectTo to = projection.compose(object1);
+		
+		Assert.assertNotNull(to);;
+		Assert.assertEquals(Integer.valueOf(object1.s1), to.i1);
+		Assert.assertEquals(String.valueOf(object1.i1), to.s1);
 	}
 
 	@Test
@@ -94,6 +79,18 @@ public class ProjectionBuilderTest {
 					.map("i1").source(SimpleObject.class)
 					
 					.build(ProjectionFactory.newInstance(), new TypeAdapters());
+
+		Assert.assertNotNull(projection);
+
+		SimpleObject object1 = new SimpleObject();
+		object1.i1 = 443546356;
+		object1.s1 = "57566735";
+		
+		SimpleObjectTo to = projection.compose(object1);
+		
+		Assert.assertNotNull(to);;
+		Assert.assertEquals(object1.i1, to.i1);
+		Assert.assertEquals("StringToPrepend" + object1.s1 + "StringToAppend", to.s1);
 	}
 
 	@Test
@@ -109,6 +106,17 @@ public class ProjectionBuilderTest {
 					.map("i1").source(SimpleObject.class)
 					
 					.build(ProjectionFactory.newInstance(), new TypeAdapters());
+
+		Assert.assertNotNull(projection);
+
+		SimpleObject object1 = new SimpleObject();
+		object1.i1 = 443546356;
+		
+		SimpleObjectTo to = projection.compose(object1, NamedObject.of("string1", "provided-string"));
+		
+		Assert.assertNotNull(to);;
+		Assert.assertEquals(object1.i1, to.i1);
+		Assert.assertEquals("provided-string", to.s1);
 	}
 
 	@Test

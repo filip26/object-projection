@@ -1,7 +1,6 @@
 package com.apicatalog.projection.builder.api;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionBuilder;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
