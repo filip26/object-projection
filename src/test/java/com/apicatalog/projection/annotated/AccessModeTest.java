@@ -1,22 +1,22 @@
-package com.apicatalog.projection.factory;
+package com.apicatalog.projection.annotated;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.projections.AccessModeTo;
 
 public class AccessModeTest {
 
-	ProjectionFactory projections;
+	ProjectionRegistry projections;
 	
 	@Before
 	public void setup() {
-		projections = ProjectionFactory.newInstance()
+		projections = ProjectionRegistry.newInstance()
 						.add(AccessModeTo.class);
 	}
 	

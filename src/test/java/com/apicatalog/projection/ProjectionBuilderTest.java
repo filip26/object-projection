@@ -10,8 +10,10 @@ import com.apicatalog.projection.converter.std.Suffix;
 import com.apicatalog.projection.converter.std.UriTemplate;
 import com.apicatalog.projection.objects.NamedObject;
 import com.apicatalog.projection.objects.Object1;
+import com.apicatalog.projection.objects.Object2;
 import com.apicatalog.projection.objects.SimpleObject;
 import com.apicatalog.projection.projections.Object1To;
+import com.apicatalog.projection.projections.Object2To;
 import com.apicatalog.projection.projections.SimpleObjectTo;
 
 public class ProjectionBuilderTest {
@@ -26,7 +28,7 @@ public class ProjectionBuilderTest {
 					.map("i1").source(SimpleObject.class)
 					.map("s1").source(SimpleObject.class)
 					
-					.build(ProjectionFactory.newInstance(), new TypeAdapters());
+					.build(ProjectionRegistry.newInstance(), new TypeAdapters());
 		
 		Assert.assertNotNull(projection);
 
@@ -50,7 +52,7 @@ public class ProjectionBuilderTest {
 					.map("i1").source(SimpleObject.class, "s1")
 					.map("s1").source(SimpleObject.class, "i1")
 					
-					.build(ProjectionFactory.newInstance(), new TypeAdapters());
+					.build(ProjectionRegistry.newInstance(), new TypeAdapters());
 		
 		Assert.assertNotNull(projection);
 
@@ -78,7 +80,7 @@ public class ProjectionBuilderTest {
 								
 					.map("i1").source(SimpleObject.class)
 					
-					.build(ProjectionFactory.newInstance(), new TypeAdapters());
+					.build(ProjectionRegistry.newInstance(), new TypeAdapters());
 
 		Assert.assertNotNull(projection);
 
@@ -105,7 +107,7 @@ public class ProjectionBuilderTest {
 								
 					.map("i1").source(SimpleObject.class)
 					
-					.build(ProjectionFactory.newInstance(), new TypeAdapters());
+					.build(ProjectionRegistry.newInstance(), new TypeAdapters());
 
 		Assert.assertNotNull(projection);
 
@@ -120,19 +122,87 @@ public class ProjectionBuilderTest {
 	}
 
 	@Test
-	public void test5() throws ProjectionError {
-		final Projection<Object1To> projection = 
+	public void test51() throws ProjectionError {
+		
+		ProjectionRegistry factory = ProjectionRegistry.newInstance();
+		
+		final Projection<Object1To> projection1 = 
 				ProjectionBuilder
 					.bind(Object1To.class)
 					
-					.map("object2").source(Object1.class).optional()
+					.map("object2", true).source(Object1.class).optional()
 
 					.map("id").source(Object1.class)
 					
-					.build(ProjectionFactory.newInstance(), new TypeAdapters());
+					.build(factory, new TypeAdapters());
+
+		Assert.assertNotNull(projection1);
+
+		final Projection<Object2To> projection2 = 
+				ProjectionBuilder
+					.bind(Object2To.class)
+					
+					.map("id").source(Object2.class)
+					
+					.build(factory, new TypeAdapters());
+
+		Assert.assertNotNull(projection2);
+		
+		Object1 object1 = new Object1();
+		object1.id = "AREW2324E";
+		
+		Object2 object2 = new Object2();
+		object2.id = "3GFD42E";
+		
+		object1.object2 = object2;
+		
+		Object1To to = projection1.compose(object1);
+		
+		Assert.assertNotNull(to);;
+		Assert.assertEquals(object1.id, to.id);
+		
+		Assert.assertNotNull(to.object2);
+		Assert.assertEquals(object2.id, to.object2.id);		
 	}
 
-	
+	@Test
+	public void test52() throws ProjectionError {
+		
+		ProjectionRegistry factory = ProjectionRegistry.newInstance();
+		
+		final Projection<Object1To> projection1 = 
+				ProjectionBuilder
+					.bind(Object1To.class)
+					
+					.map("object2", true).source(Object1.class).optional()
+
+					.map("id").source(Object1.class)
+					
+					.build(factory, new TypeAdapters());
+
+		Assert.assertNotNull(projection1);
+
+		final Projection<Object2To> projection2 = 
+				ProjectionBuilder
+					.bind(Object2To.class)
+					
+					.map("id").source(Object2.class)
+					
+					.build(factory, new TypeAdapters());
+
+		Assert.assertNotNull(projection2);
+
+		Object1 object1 = new Object1();
+		object1.id = "AREW2324E";	
+		object1.object2 = null;
+		
+		Object1To to = projection1.compose(object1);
+		
+		Assert.assertNotNull(to);;
+		Assert.assertEquals(object1.id, to.id);
+		
+		Assert.assertNull(to.object2);
+	}
 	@Test
 	public void test6() throws ProjectionError {
 		final Projection<Object1To> projection = 
@@ -141,9 +211,14 @@ public class ProjectionBuilderTest {
 					
 					.map("id").constant("StringContant")
 					
-					.build(ProjectionFactory.newInstance(), new TypeAdapters());
+					.build(ProjectionRegistry.newInstance(), new TypeAdapters());
+		
+		Assert.assertNotNull(projection);
+		
+		Object1To to = projection.compose();
+		Assert.assertNotNull(to);;
+		Assert.assertEquals("StringContant", to.id);
 	}
-
 
 	@Test
 	public void test7() throws ProjectionError {
@@ -157,7 +232,7 @@ public class ProjectionBuilderTest {
 						.reduce(UriTemplate.class, "/{}/{}")
 						.conversion(Prefix.class, "https://example.org")
 						
-					.build(ProjectionFactory.newInstance(), new TypeAdapters());
+					.build(ProjectionRegistry.newInstance(), new TypeAdapters());
 	}
 
 	@Test
@@ -165,7 +240,7 @@ public class ProjectionBuilderTest {
 		final Projection<SimpleObjectTo> projection = 
 				ProjectionBuilder
 					.bind(SimpleObjectTo.class)					
-					.build(ProjectionFactory.newInstance(), new TypeAdapters());
+					.build(ProjectionRegistry.newInstance(), new TypeAdapters());
 		
 		Assert.assertNull(projection);
 	}

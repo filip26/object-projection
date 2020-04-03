@@ -3,7 +3,7 @@ package com.apicatalog.projection.builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.objects.ObjectType;
@@ -35,7 +35,7 @@ public class ProvidedPropertyBuilder {
 		return new ProvidedPropertyBuilder();
 	}
 	
-	public ProjectionProperty build(ProjectionFactory factory, TypeAdapters typeAdapters) {
+	public ProjectionProperty build(ProjectionRegistry factory, TypeAdapters typeAdapters) {
 
 		if (targetSetter == null && targetGetter == null) {
 			return null;
@@ -80,7 +80,7 @@ public class ProvidedPropertyBuilder {
 		return property;
 	}
 	
-	ProjectionProperty buildReference(ProjectionFactory factory, TypeAdapters typeAdapters) {
+	ProjectionProperty buildReference(ProjectionRegistry factory, TypeAdapters typeAdapters) {
 		
 		final ProvidedProjectionProperty property = new ProvidedProjectionProperty(factory);
 

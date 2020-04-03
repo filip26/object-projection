@@ -2,7 +2,7 @@ package com.apicatalog.projection.builder.api;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.std.UriTemplate;
@@ -51,7 +51,7 @@ public class SourcesPropertyBuilderApi<P> {
 	}
 
 	
-	public Projection<P> build(ProjectionFactory factory, TypeAdapters typeAdapters) throws ProjectionError {
+	public Projection<P> build(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
 		return projectionBuilder.build(factory, typeAdapters);
 	}
 

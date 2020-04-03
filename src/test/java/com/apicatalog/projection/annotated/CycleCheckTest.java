@@ -1,11 +1,11 @@
-package com.apicatalog.projection.factory;
+package com.apicatalog.projection.annotated;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.InterwiredObject1;
 import com.apicatalog.projection.objects.InterwiredObject2;
@@ -15,11 +15,11 @@ import com.apicatalog.projection.projections.InterwiredProjection2;
 
 public class CycleCheckTest {
 
-	ProjectionFactory projections;
+	ProjectionRegistry projections;
 	
 	@Before
 	public void setup() {
-		projections = ProjectionFactory.newInstance()		
+		projections = ProjectionRegistry.newInstance()		
 						.add(InterwiredProjection1.class)
 						.add(InterwiredProjection2.class)
 						;

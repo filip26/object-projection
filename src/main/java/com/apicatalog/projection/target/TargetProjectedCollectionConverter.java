@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.ObjectType;
@@ -19,7 +19,7 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 
 	final Logger logger = LoggerFactory.getLogger(TargetProjectedCollectionConverter.class);
 
-	final ProjectionFactory factory;
+	final ProjectionRegistry factory;
 	
 	final TypeAdapters typeAdapters;	//TODO use just concrete adapter(s), not whole factory
 	
@@ -27,7 +27,7 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 	
 	final ObjectType targetType;
 	
-	public TargetProjectedCollectionConverter(ProjectionFactory factory, TypeAdapters typeAdapters, ObjectType sourceType, ObjectType targetType) {
+	public TargetProjectedCollectionConverter(ProjectionRegistry factory, TypeAdapters typeAdapters, ObjectType sourceType, ObjectType targetType) {
 		this.factory = factory;
 		this.typeAdapters = typeAdapters;
 		

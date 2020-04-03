@@ -1,4 +1,4 @@
-package com.apicatalog.projection.factory;
+package com.apicatalog.projection.annotated;
 
 import java.util.Arrays;
 
@@ -7,18 +7,18 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.Object1;
 import com.apicatalog.projection.projections.ConstantTo;
 
 public class ConstantTest {
 
-	ProjectionFactory projections;
+	ProjectionRegistry projections;
 	
 	@Before
 	public void setup() {
-		projections = ProjectionFactory.newInstance()
+		projections = ProjectionRegistry.newInstance()
 						.add(ConstantTo.class);
 	}
 	

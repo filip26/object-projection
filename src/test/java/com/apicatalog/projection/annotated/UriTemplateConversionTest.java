@@ -1,4 +1,4 @@
-package com.apicatalog.projection.factory;
+package com.apicatalog.projection.annotated;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -7,61 +7,57 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.objects.Reference;
-import com.apicatalog.projection.projections.CompositeTo;
+import com.apicatalog.projection.projections.UriTemplateConversion;
 
-public class TwoSourceCompositeTest {
+public class UriTemplateConversionTest {
 
-	ProjectionFactory projections;
-
+	ProjectionRegistry projections;
+	
 	@Before
 	public void setup() {
-		projections = ProjectionFactory.newInstance()				
-						.add(CompositeTo.class)
+		projections = ProjectionRegistry.newInstance()
+						.add(UriTemplateConversion.class)
 						;
-	}	
-	
+	}
+		
     @Test
     public void testComposition() throws ProjectionError, ConverterError {
     	
-    	BasicTypes source1 = new BasicTypes();
-    	source1.longValue = 123456l;
+    	BasicTypes oa = new BasicTypes();
+    	oa.longValue = 123l;
 
-    	Reference source2 = new Reference();
-    	source2.stringValue = "s2value";
+    	Reference oaa = new Reference();
+    	oaa.stringValue = "ABC"; 
 
-    	CompositeTo projection = projections.compose(CompositeTo.class, source1, source2);
+    	UriTemplateConversion pa = projections.compose(UriTemplateConversion.class, oa, oaa);
     	
-    	Assert.assertNotNull(projection);
-    	
-    	Assert.assertEquals(source1.longValue, projection.source1);
-    	Assert.assertEquals(source2.stringValue, projection.source2);    	
+    	Assert.assertNotNull(pa);
+    	Assert.assertEquals("https://www.example.org/" + oa.longValue + "/" + oaa.stringValue, pa.href);    	
     }
-    
+
     @Test
     public void testDecomposition() throws ProjectionError, ConverterError {
+    	UriTemplateConversion projection = new UriTemplateConversion();
+    	projection.href = "https://www.example.org/123456/ABC";
     	
-    	CompositeTo projection = new CompositeTo();
-    	projection.source1 = 123456l;
-    	projection.source2 = "source 2 value";
-
     	Object[] objects = projections.decompose(projection);
     	
     	Assert.assertNotNull(objects);
     	Assert.assertEquals(2, objects.length);
-
+    	
     	assertNotNull(objects[0]);
     	assertNotNull(objects[1]);
     	
     	if (BasicTypes.class.isInstance(objects[0])) {
-    		checkBasic(objects[0], projection.source1);
-    		checkReference(objects[1], projection.source2);
+    		checkBasic(objects[0], 123456l);
+    		checkReference(objects[1], "ABC");
     	} else {
-    		checkReference(objects[0], projection.source2);
-    		checkBasic(objects[1], projection.source1);
+    		checkReference(objects[0], "ABC");
+    		checkBasic(objects[1], 123456l);
     	}
     }
     
@@ -77,5 +73,5 @@ public class TwoSourceCompositeTest {
     	Assert.assertEquals(ref, source1.longValue);    	
     }
     
+    	
 }
-

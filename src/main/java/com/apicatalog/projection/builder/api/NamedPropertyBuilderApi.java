@@ -10,8 +10,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.TypeAdapters;
+import com.apicatalog.projection.builder.ConstantPropertyBuilder;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.objects.getter.FieldGetter;
@@ -29,6 +30,8 @@ public class NamedPropertyBuilderApi<P> {
 	SourcePropertyBuilderApi<P> sourcePropertyBuilder;
 	ProvidedPropertyBuilderApi<P> providedPropertyBuilder;
 
+	ConstantPropertyBuilder constantBuilder;
+	
 	String targetPropertyName;
 	boolean reference;
 	
@@ -54,7 +57,7 @@ public class NamedPropertyBuilderApi<P> {
 		return builder;
 	}
 	
-	public Projection<P> build(ProjectionFactory factory, TypeAdapters typeAdapters) throws ProjectionError {
+	public Projection<P> build(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
 		return projectionBuilder.build(factory, typeAdapters);
 	}
 
@@ -64,40 +67,46 @@ public class NamedPropertyBuilderApi<P> {
 		return builder;
 	}
 
-	public ProjectionBuilder<P> constant(String string) {
+	public ProjectionBuilder<P> constant(String...values) {
+		this.constantBuilder = ConstantPropertyBuilder.newInstance().constants(values);
+		
 		return projectionBuilder;
 	}
 	
-	protected ProjectionProperty buildProperty(ProjectionFactory factory, TypeAdapters typeAdapters) throws ProjectionError {
+	protected ProjectionProperty buildProperty(ProjectionRegistry registry, TypeAdapters typeAdapters) throws ProjectionError {
+		
+		final Field field = ObjectUtils.getProperty(projectionBuilder.projectionClass(), targetPropertyName);
+		
+		ObjectType targetType = getTypeOf(field, reference);
+
+		// extract setter
+		final Setter targetSetter = FieldSetter.from(field, targetType);
+
+		
 		if  (Optional.ofNullable(sourcePropertyBuilder).isPresent()) {
 
-			final Field field = ObjectUtils.getProperty(projectionBuilder.projectionClass(), targetPropertyName);
-			
-			ObjectType targetType = getTypeOf(field, reference);
-			
-			// extract setter/getter
+			// extract getter
 			final Getter targetGetter = FieldGetter.from(field, targetType);
-			final Setter targetSetter = FieldSetter.from(field, targetType);
 
 			sourcePropertyBuilder.targetGetter(targetGetter);
 			sourcePropertyBuilder.targetSetter(targetSetter);
 			
-			return sourcePropertyBuilder.buildProperty(factory, typeAdapters);
+			return sourcePropertyBuilder.buildProperty(registry, typeAdapters);
 			
 		} else 	if (Optional.ofNullable(providedPropertyBuilder).isPresent()) {
 
-			final Field field = ObjectUtils.getProperty(projectionBuilder.projectionClass(), targetPropertyName);
-			
-			ObjectType targetType = getTypeOf(field, reference);
-			
-			// extract setter/getter
+			// extract getter
 			final Getter targetGetter = FieldGetter.from(field, targetType);
-			final Setter targetSetter = FieldSetter.from(field, targetType);
 
 			providedPropertyBuilder.targetGetter(targetGetter);
 			providedPropertyBuilder.targetSetter(targetSetter);
 			
-			return providedPropertyBuilder.buildProperty(factory, typeAdapters);
+			return providedPropertyBuilder.buildProperty(registry, typeAdapters);
+			
+		} else 	if (Optional.ofNullable(constantBuilder).isPresent()) {
+			
+			constantBuilder.targetSetter(targetSetter);
+			return constantBuilder.build(registry, typeAdapters);
 			
 		}
 		return null;

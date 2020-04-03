@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.annotation.Conversion;
@@ -44,9 +44,9 @@ class SourceMapper {
 	static final String SOURCE_IS_MISSING = "Source is missing. Property {} is ignored."; 
 	
 	final TypeAdapters typeAdapters;
-	final ProjectionFactory factory;
+	final ProjectionRegistry factory;
 	
-	public SourceMapper(ProjectionFactory index, TypeAdapters typeAdapters) {
+	public SourceMapper(ProjectionRegistry index, TypeAdapters typeAdapters) {
 		this.factory = index;
 		this.typeAdapters = typeAdapters;
 	}

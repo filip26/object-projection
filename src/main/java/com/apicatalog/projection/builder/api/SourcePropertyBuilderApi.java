@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.builder.ConversionBuilder;
@@ -84,7 +84,7 @@ public class SourcePropertyBuilderApi<P> {
 		return projectionBuilder.map(propertyName);
 	}
 
-	public Projection<P> build(ProjectionFactory factory, TypeAdapters typeAdapters) throws ProjectionError {
+	public Projection<P> build(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
 		return projectionBuilder.build(factory, typeAdapters);
 	}
 
@@ -103,7 +103,7 @@ public class SourcePropertyBuilderApi<P> {
 		return sourcesApi;
 	}
 
-	protected ProjectionProperty buildProperty(ProjectionFactory factory, TypeAdapters typeAdapters) throws ProjectionError {
+	protected ProjectionProperty buildProperty(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
 
 		ConverterMapping[] converters = new ConverterMapping[conversionBuilder.size()];
 		

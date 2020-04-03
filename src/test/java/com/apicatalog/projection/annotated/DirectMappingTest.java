@@ -1,4 +1,4 @@
-package com.apicatalog.projection.factory;
+package com.apicatalog.projection.annotated;
 
 import java.time.Instant;
 
@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.projections.TypeObjectTo;
@@ -15,11 +15,11 @@ import com.apicatalog.projection.projections.TypeObjectTo;
 
 public class DirectMappingTest {
 
-	ProjectionFactory projections;
+	ProjectionRegistry projections;
 	
 	@Before
 	public void setup() {
-		projections = ProjectionFactory.newInstance()
+		projections = ProjectionRegistry.newInstance()
 						.add(TypeObjectTo.class);
 	}
 	

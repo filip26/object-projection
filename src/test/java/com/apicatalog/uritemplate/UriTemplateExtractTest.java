@@ -3,11 +3,11 @@ package com.apicatalog.uritemplate;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionRegistry;
 
 public class UriTemplateExtractTest {
 
-	ProjectionFactory projection;
+	ProjectionRegistry projection;
 
     @Test
     public void testExtractNoVar() throws MalformedUriTemplate {

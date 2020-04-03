@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.mapper.ProjectionImpl;
 import com.apicatalog.projection.property.ProjectionProperty;
@@ -36,7 +36,7 @@ public class ProjectionBuilder<P> {
 		return propertyBuilder;
 	}
 	
-	public Projection<P> build(ProjectionFactory factory, TypeAdapters typeAdapters) throws ProjectionError {
+	public Projection<P> build(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
 
 		final List<ProjectionProperty> properties = new ArrayList<>(); 
 		
@@ -52,6 +52,8 @@ public class ProjectionBuilder<P> {
 		final ProjectionImpl<P> projection = new ProjectionImpl<>(projectionClass);
 		projection.setProperties(properties.toArray(new ProjectionProperty[0]));
 
+		factory.add(projection);
+		
 		return projection;
 	}
 

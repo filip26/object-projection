@@ -1,11 +1,11 @@
-package com.apicatalog.projection.factory;
+package com.apicatalog.projection.annotated;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.Object3;
 import com.apicatalog.projection.objects.Object4;
@@ -14,11 +14,11 @@ import com.apicatalog.projection.projections.Object4To;
 
 public class MixedObjectsTest {
 
-	ProjectionFactory projections;
+	ProjectionRegistry projections;
 	
 	@Before
 	public void setup() {
-		projections = ProjectionFactory.newInstance();
+		projections = ProjectionRegistry.newInstance();
 		
 		projections
 			.add(Object3To.class)

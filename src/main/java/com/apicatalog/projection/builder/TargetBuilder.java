@@ -3,7 +3,7 @@ package com.apicatalog.projection.builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.target.TargetAdapter;
@@ -27,7 +27,7 @@ public class TargetBuilder {
 		return new TargetBuilder();
 	}
 		
-	public TargetAdapter build(ProjectionFactory factory, TypeAdapters typeAdapters) {
+	public TargetAdapter build(ProjectionRegistry factory, TypeAdapters typeAdapters) {
 
 		if (targetType.isReference()) {
 

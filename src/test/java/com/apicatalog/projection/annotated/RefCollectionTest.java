@@ -1,4 +1,4 @@
-package com.apicatalog.projection.factory;
+package com.apicatalog.projection.annotated;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.objects.ObjectsCollection;
@@ -17,11 +17,11 @@ import com.apicatalog.projection.projections.RefCollectionTo;
 
 public class RefCollectionTest {
 
-	ProjectionFactory projections;
+	ProjectionRegistry projections;
 	
 	@Before
 	public void setup() {
-		projections = ProjectionFactory.newInstance()
+		projections = ProjectionRegistry.newInstance()
 						.add(RefCollectionTo.class)
 						.add(NameOverrideTo.class)
 						;

@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.objects.getter.Getter;
@@ -18,7 +18,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 
 	final Logger logger = LoggerFactory.getLogger(ProvidedProjectionProperty.class);
 
-	final ProjectionFactory factory;
+	final ProjectionRegistry factory;
 	
 	Getter targetGetter;
 	Setter targetSetter;
@@ -29,7 +29,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 	
 	boolean optional;
 	
-	public ProvidedProjectionProperty(ProjectionFactory factory) {
+	public ProvidedProjectionProperty(ProjectionRegistry factory) {
 		this.factory = factory;
 	}
 	

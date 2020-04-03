@@ -1,25 +1,27 @@
-package com.apicatalog.projection.factory;
+package com.apicatalog.projection.annotated;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.objects.SimpleObject;
-import com.apicatalog.projection.projections.ProvidedObjectTo;
+import com.apicatalog.projection.projections.ProvidedReferefenceTo;
+import com.apicatalog.projection.projections.SimpleObjectTo;
 
-public class ProvidedObjectTest {
+public class ProvidedRefTest {
 
-	ProjectionFactory projections;
+	ProjectionRegistry projections;
 	
 	@Before
 	public void setup() {
-		projections = ProjectionFactory.newInstance();
-		
-		projections.add(ProvidedObjectTo.class);
+		projections = ProjectionRegistry.newInstance()
+						.add(ProvidedReferefenceTo.class)
+						.add(SimpleObjectTo.class)
+						;
 	}
 	
     @Test
@@ -32,32 +34,32 @@ public class ProvidedObjectTest {
     	object2.i1 = 13;
     	object2.s1 = "! @ #";
     	
-    	ProvidedObjectTo projection = projections.compose(ProvidedObjectTo.class, object1, object2);
+    	ProvidedReferefenceTo projection = projections.compose(ProvidedReferefenceTo.class, object1, object2);
     	
     	Assert.assertNotNull(projection);
     	
     	Assert.assertEquals(object1.stringValue, projection.title);
     	
-    	Assert.assertNotNull(projection.object);
+    	Assert.assertNotNull(projection.projection);
     	
-    	Assert.assertEquals(object2.i1, projection.object.i1);
-    	Assert.assertEquals(object2.s1, projection.object.s1);
+    	Assert.assertEquals(object2.i1, projection.projection.i1);
+    	Assert.assertEquals(object2.s1, projection.projection.s1);
 
     }
     
     @Test
     public void testDecomposition() throws ProjectionError, ConverterError {
     	
-    	ProvidedObjectTo projection = new ProvidedObjectTo();
-    	projection.title = "QWERTY ZXCVBN";
+    	ProvidedReferefenceTo projection1 = new ProvidedReferefenceTo();
+    	projection1.title = "QWERTY ZXCVBN";
 
-    	SimpleObject object2 = new SimpleObject();
-    	object2.i1 = 13;
-    	object2.s1 = "! @ #";
+    	SimpleObjectTo projection2 = new SimpleObjectTo();
+    	projection2.i1 = 13;
+    	projection2.s1 = "! @ #";
 
-    	projection.object = object2;
+    	projection1.projection = projection2;
     	
-    	Object[] objects = projections.decompose(projection);
+    	Object[] objects = projections.decompose(projection1);
     	
     	Assert.assertNotNull(objects);
     	Assert.assertEquals(2, objects.length);
@@ -75,14 +77,14 @@ public class ProvidedObjectTest {
     	
     	BasicTypes object1ref = (BasicTypes)objects[0];
 
-    	Assert.assertEquals(projection.title, object1ref.stringValue);    	
+    	Assert.assertEquals(projection1.title, object1ref.stringValue);    	
     	
     	Assert.assertEquals(SimpleObject.class, objects[1].getClass());
     	
     	SimpleObject object2ref = (SimpleObject)objects[1];
     	
-    	Assert.assertEquals(object2.i1, object2ref.i1);
-    	Assert.assertEquals(object2.s1, object2ref.s1);
+    	Assert.assertEquals(projection2.i1, object2ref.i1);
+    	Assert.assertEquals(projection2.s1, object2ref.s1);
 
     }
 }

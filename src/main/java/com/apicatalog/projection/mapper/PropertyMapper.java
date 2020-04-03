@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.annotation.Constant;
 import com.apicatalog.projection.annotation.Projection;
@@ -20,6 +20,7 @@ import com.apicatalog.projection.annotation.Provided;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.annotation.Visibility;
+import com.apicatalog.projection.builder.ConstantPropertyBuilder;
 import com.apicatalog.projection.builder.ProvidedPropertyBuilder;
 import com.apicatalog.projection.builder.SingleSourceBuilder;
 import com.apicatalog.projection.builder.TargetBuilder;
@@ -31,7 +32,6 @@ import com.apicatalog.projection.objects.getter.MethodGetter;
 import com.apicatalog.projection.objects.setter.FieldSetter;
 import com.apicatalog.projection.objects.setter.MethodSetter;
 import com.apicatalog.projection.objects.setter.Setter;
-import com.apicatalog.projection.property.ConstantProperty;
 import com.apicatalog.projection.property.ProjectionProperty;
 import com.apicatalog.projection.property.SourceProperty;
 import com.apicatalog.projection.source.SingleSource;
@@ -41,12 +41,12 @@ public class PropertyMapper {
 	final Logger logger = LoggerFactory.getLogger(PropertyMapper.class);
 	
 	final TypeAdapters typeAdapters;
-	final ProjectionFactory factory;
+	final ProjectionRegistry registry;
 	
 	final SourceMapper sourceMapper;
 	
-	public PropertyMapper(ProjectionFactory factory, TypeAdapters typeAdapters) {
-		this.factory = factory;
+	public PropertyMapper(ProjectionRegistry factory, TypeAdapters typeAdapters) {
+		this.registry = factory;
 		this.typeAdapters = typeAdapters;
 		this.sourceMapper = new SourceMapper(factory, typeAdapters);
 	}
@@ -119,7 +119,7 @@ public class PropertyMapper {
 				TargetBuilder.newInstance()
 					.source(source.getTargetType())
 					.target(targetSetter.getType())
-					.build(factory, typeAdapters)
+					.build(registry, typeAdapters)
 					);
 
 		return property;
@@ -139,35 +139,18 @@ public class PropertyMapper {
 					.qualifier(provided.qualifier())
 					.targetGetter(targetGetter)
 					.targetSetter(targetSetter)
-					.build(factory, typeAdapters);
+					.build(registry, typeAdapters);
 	}				
 
 	ProjectionProperty getConstantMapping(Field field) {
 		
 		final Constant constant = field.getAnnotation(Constant.class);
 		
-		final ConstantProperty property = new ConstantProperty();
-		
-		// set constant values
-		property.setConstants(constant.value());
-		
-		Class<?> targetComponentClass = null; 
-		
-		if (Collection.class.isAssignableFrom(field.getType())) {
-			// set target component class
-			targetComponentClass = ((Class<?>)((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]);
-		}
-
-		property.setTargetAdapter(
-				TargetBuilder.newInstance()
-					.target(ObjectType.of(field.getType(), targetComponentClass))
-					.build(factory, typeAdapters)
-					);
-
-		// set target setter
-		property.setTargetSetter(FieldSetter.from(field, getTypeOf(field)));
-		
-		return property;
+		return ConstantPropertyBuilder
+					.newInstance()
+					.constants(constant.value())
+					.targetSetter(FieldSetter.from(field, getTypeOf(field)))
+					.build(registry, typeAdapters);
 	}
 	
 	protected static final ObjectType getTypeOf(Field field) {

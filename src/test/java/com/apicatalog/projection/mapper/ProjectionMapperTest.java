@@ -5,17 +5,17 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.objects.SimpleObject;
 
 public class ProjectionMapperTest {
 
-	ProjectionFactory projections;
+	ProjectionRegistry projections;
 	ProjectionMapper mapper;
 	
 	@Before
 	public void setup() {
-		projections = ProjectionFactory.newInstance();
+		projections = ProjectionRegistry.newInstance();
 		mapper = projections.getMapper();
 	}
 

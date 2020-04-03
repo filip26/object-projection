@@ -6,19 +6,19 @@ import java.util.Optional;
 
 import com.apicatalog.projection.mapper.ProjectionMapper;
 
-public class ProjectionFactory {
+public class ProjectionRegistry {
 
 	final ProjectionMapper mapper;
 	
 	final Map<Class<?>, Projection<?>> index;
 	
-	protected ProjectionFactory(final Map<Class<?>, Projection<?>> projections) {
+	protected ProjectionRegistry(final Map<Class<?>, Projection<?>> projections) {
 		this.index = projections;
 		this.mapper = new ProjectionMapper(this);
 	}
 
-	public static final ProjectionFactory newInstance() {
-		return new ProjectionFactory(new LinkedHashMap<>());
+	public static final ProjectionRegistry newInstance() {
+		return new ProjectionRegistry(new LinkedHashMap<>());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -50,7 +50,7 @@ public class ProjectionFactory {
 				.extract(sourceObjectClass, qualifier, projection);		
 	}
 
-	public ProjectionFactory add(final Projection<?> projection) {
+	public ProjectionRegistry add(final Projection<?> projection) {
 		if (projection == null) {
 			throw new IllegalArgumentException();
 		}
@@ -58,7 +58,7 @@ public class ProjectionFactory {
 		return this;
 	}
 
-	public ProjectionFactory add(Class<?> projectionClass) {
+	public ProjectionRegistry add(Class<?> projectionClass) {
 		Optional.ofNullable(mapper.getProjection(projectionClass)).ifPresent(this::add);		
 		return this;
 	}

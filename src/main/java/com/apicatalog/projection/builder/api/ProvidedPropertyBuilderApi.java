@@ -2,7 +2,7 @@ package com.apicatalog.projection.builder.api;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.builder.ProvidedPropertyBuilder;
 import com.apicatalog.projection.objects.getter.Getter;
@@ -51,11 +51,11 @@ public class ProvidedPropertyBuilderApi<P> {
 		return projectionBuilder.map(propertyName);
 	}
 
-	public Projection<P> build(ProjectionFactory factory, TypeAdapters typeAdapters) throws ProjectionError {
+	public Projection<P> build(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
 		return projectionBuilder.build(factory, typeAdapters);
 	}	
 	
-	protected ProjectionProperty buildProperty(ProjectionFactory factory, TypeAdapters typeAdapters) {
+	protected ProjectionProperty buildProperty(ProjectionRegistry factory, TypeAdapters typeAdapters) {
 		return providedPropertyBuilder.build(factory, typeAdapters);
 	}
 }

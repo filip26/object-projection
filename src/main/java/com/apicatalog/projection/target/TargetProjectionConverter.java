@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.ProjectionFactory;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ProjectionQueue;
@@ -16,12 +16,12 @@ public class TargetProjectionConverter implements TargetAdapter {
 
 	final Logger logger = LoggerFactory.getLogger(TargetProjectionConverter.class);
 
-	final ProjectionFactory factory;
+	final ProjectionRegistry factory;
 	
 	final ObjectType sourceType;
 	final ObjectType targetType;
 		
-	public TargetProjectionConverter(ProjectionFactory factory, ObjectType sourceType, ObjectType targetType) {
+	public TargetProjectionConverter(ProjectionRegistry factory, ObjectType sourceType, ObjectType targetType) {
 		this.factory = factory;
 		this.sourceType = sourceType;
 		this.targetType = targetType;
