@@ -1,6 +1,4 @@
-package com.apicatalog.projection.mapping;
-
-import com.apicatalog.projection.converter.Converter;
+package com.apicatalog.projection.converter;
 
 public class ConverterMapping {
 

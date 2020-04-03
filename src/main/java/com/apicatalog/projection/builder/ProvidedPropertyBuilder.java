@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.annotation.AccessMode;
+import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.ProjectionProperty;
@@ -40,7 +41,9 @@ public class ProvidedPropertyBuilder {
 			return null;
 		}
 		
-		if (targetGetter != null ? targetGetter.getType().isReference() : targetSetter.getType().isReference()) {
+		final ObjectType targetType = targetGetter != null ? targetGetter.getType() : targetSetter.getType(); 
+		
+		if (targetType.isReference() && !targetType.isCollection()) {
 			return buildReference(factory, typeAdapters);
 		}
 		

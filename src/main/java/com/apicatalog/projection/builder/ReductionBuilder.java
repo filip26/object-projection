@@ -8,12 +8,12 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.mapping.ReducerMapping;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.reducer.Reducer;
 import com.apicatalog.projection.reducer.ReducerConfig;
 import com.apicatalog.projection.reducer.ReducerError;
+import com.apicatalog.projection.reducer.ReducerMapping;
 
 public class ReductionBuilder {
 
@@ -42,19 +42,17 @@ public class ReductionBuilder {
 
 		Type sourceType = ((ParameterizedType) reducerClass.getGenericInterfaces()[0]).getActualTypeArguments()[0];
 		
-		Class<?> sourceClass = null;
+//		Class<?> sourceClass = null;
 		Class<?> sourceComponentClass = null;
 		
 		if (ParameterizedType.class.isInstance(sourceType)) {
-			sourceClass = (Class<?>)((ParameterizedType)sourceType).getRawType();
+//			sourceClass = (Class<?>)((ParameterizedType)sourceType).getRawType();
 			sourceComponentClass = (Class<?>)((ParameterizedType)sourceType).getActualTypeArguments()[0];
 			
 		} else {
-			sourceClass = (Class<?>) sourceType;
+//			sourceClass = (Class<?>) sourceType;
 		}
 		
-		reducer.setSourceType(ObjectType.of(sourceClass, sourceComponentClass));
-
 		Type targetType = ((ParameterizedType) reducerClass.getGenericInterfaces()[0]).getActualTypeArguments()[1];
 		
 		Class<?> targetClass = null;
@@ -68,6 +66,14 @@ public class ReductionBuilder {
 			targetClass = (Class<?>) targetType;
 		}
 
+		//FIXME hack
+		try {
+			reducer.setSourceType(ObjectType.of(reducerClass.getMethod("expand", (Class<?>)targetType).getReturnType(), sourceComponentClass));
+			
+		} catch (NoSuchMethodException e) {
+			throw new IllegalStateException();
+		}
+		
 		reducer.setTargetType(ObjectType.of(targetClass, targetComponentClass));
 		
 		return reducer;		

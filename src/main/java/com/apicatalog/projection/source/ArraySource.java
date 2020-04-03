@@ -8,12 +8,12 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.converter.ConverterError;
-import com.apicatalog.projection.mapping.ConverterMapping;
-import com.apicatalog.projection.mapping.ReducerMapping;
+import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.reducer.ReducerError;
+import com.apicatalog.projection.reducer.ReducerMapping;
 import com.apicatalog.projection.target.TargetAdapter;
 
 public class ArraySource implements Source {
@@ -55,6 +55,8 @@ public class ArraySource implements Source {
 			sourceObjects[i] = sources[i].read(queue, context);
 		}
 		
+		System.out.println(">>> " + reduction.getSourceType());
+		System.out.println(">>> " + reduction.getTargetType());
 		try {
 			Object object = reduction
 								.getReducer()

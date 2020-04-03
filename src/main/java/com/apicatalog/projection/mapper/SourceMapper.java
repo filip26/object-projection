@@ -25,15 +25,15 @@ import com.apicatalog.projection.builder.ReductionBuilder;
 import com.apicatalog.projection.builder.SingleSourceBuilder;
 import com.apicatalog.projection.builder.SourcePropertyBuilder;
 import com.apicatalog.projection.converter.ConverterError;
-import com.apicatalog.projection.mapping.ConverterMapping;
-import com.apicatalog.projection.mapping.ReducerMapping;
+import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.getter.FieldGetter;
-import com.apicatalog.projection.objects.getter.FieldSetter;
 import com.apicatalog.projection.objects.getter.Getter;
+import com.apicatalog.projection.objects.setter.FieldSetter;
 import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.ProjectionProperty;
 import com.apicatalog.projection.reducer.ReducerError;
+import com.apicatalog.projection.reducer.ReducerMapping;
 import com.apicatalog.projection.source.ArraySource;
 import com.apicatalog.projection.source.SingleSource;
 

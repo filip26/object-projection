@@ -11,7 +11,7 @@ import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterConfig;
 import com.apicatalog.projection.converter.ConverterError;
-import com.apicatalog.projection.mapping.ConverterMapping;
+import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.objects.ObjectUtils;
 
 public class ConversionBuilder {

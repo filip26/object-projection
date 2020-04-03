@@ -6,9 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.mapping.ConverterMapping;
-import com.apicatalog.projection.mapping.ReducerMapping;
+import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.objects.ObjectType;
+import com.apicatalog.projection.reducer.ReducerMapping;
 import com.apicatalog.projection.source.ArraySource;
 import com.apicatalog.projection.source.SingleSource;
 

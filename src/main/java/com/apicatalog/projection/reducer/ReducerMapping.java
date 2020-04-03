@@ -1,7 +1,6 @@
-package com.apicatalog.projection.mapping;
+package com.apicatalog.projection.reducer;
 
 import com.apicatalog.projection.objects.ObjectType;
-import com.apicatalog.projection.reducer.Reducer;
 
 
 public class ReducerMapping {
