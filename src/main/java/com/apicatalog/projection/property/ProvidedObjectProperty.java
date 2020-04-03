@@ -34,9 +34,9 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 			return;
 		}
 		
-		logger.debug("Forward {} : {}, qualifier = {}, optional = {}, depth = {}", targetSetter.getName(), targetSetter.getValueClass().getSimpleName(), sourceObjectQualifier, optional, queue.length());
+		logger.debug("Forward {} : {}, qualifier = {}, optional = {}, depth = {}", targetSetter.getName(), targetSetter.getType(), sourceObjectQualifier, optional, queue.length());
 		
-		Object object = context.get(targetSetter.getValueClass(), sourceObjectQualifier);
+		Object object = context.get(targetSetter.getType().getObjectClass(), sourceObjectQualifier);
 		
 		if (object == null) {
 			return;
@@ -56,7 +56,7 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 			return;
 		}
 
-		logger.debug("Backward {} : {}, qualifier = {}, optional = {}, depth = {}", targetGetter.getName(), targetGetter.getValueClass().getSimpleName(), sourceObjectQualifier, optional, queue.length());
+		logger.debug("Backward {} : {}, qualifier = {}, optional = {}, depth = {}", targetGetter.getName(), targetGetter.getType(), sourceObjectQualifier, optional, queue.length());
 
 		Object object = targetGetter.get(queue.peek());
 

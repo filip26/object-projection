@@ -1,12 +1,14 @@
 package com.apicatalog.projection.mapper;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +24,12 @@ import com.apicatalog.projection.annotation.Visibility;
 import com.apicatalog.projection.beans.FieldGetter;
 import com.apicatalog.projection.beans.FieldSetter;
 import com.apicatalog.projection.beans.Getter;
+import com.apicatalog.projection.beans.MethodGetter;
+import com.apicatalog.projection.beans.MethodSetter;
 import com.apicatalog.projection.beans.Setter;
+import com.apicatalog.projection.builder.TargetBuilder;
+import com.apicatalog.projection.objects.ObjectType;
+import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.property.ConstantProperty;
 import com.apicatalog.projection.property.ProjectionProperty;
 import com.apicatalog.projection.property.ProvidedObjectProperty;
@@ -99,19 +106,18 @@ public class PropertyMapper {
 		
 		property.setSource(source);
 		
-		final Getter targetGetter = FieldGetter.from(field);
-		final Setter targetSetter = FieldSetter.from(field);
+		final Getter targetGetter = FieldGetter.from(field, getTypeOf(field));
+		final Setter targetSetter = FieldSetter.from(field, getTypeOf(field));
 
 		property.setTargetGetter(targetGetter);
 		property.setTargetSetter(targetSetter);
-
-		property.setTargetAdapter(sourceMapper.getTargetConverter(
-							source.getTargetClass(), 
-							source.getTargetComponentClass(), 
-							targetSetter.getValueClass(), 
-							targetSetter.getValueComponentClass()
-						)
-				);
+		
+		property.setTargetAdapter(
+				TargetBuilder.newInstance()
+					.source(ObjectType.of(source.getTargetClass(), source.getTargetComponentClass()))
+					.target(targetSetter.getType())
+					.build(factory, typeAdapters)
+					);
 
 		return property;
 	}
@@ -127,8 +133,8 @@ public class PropertyMapper {
 		
 		final ProvidedObjectProperty property = new ProvidedObjectProperty();
 		
-		final Getter targetGetter = FieldGetter.from(field);
-		final Setter targetSetter = FieldSetter.from(field);
+		final Getter targetGetter = FieldGetter.from(field, getTypeOf(field));
+		final Setter targetSetter = FieldSetter.from(field, getTypeOf(field));
 		
 		// set access mode
 		switch (provided.mode()) {
@@ -150,8 +156,13 @@ public class PropertyMapper {
 		property.setSourceObjectQualifier(provided.qualifier());
 
 		property.setOptional(provided.optional());
-		
-		property.setTargetAdapter(sourceMapper.getTargetConverter(targetSetter.getValueClass(), targetSetter.getValueComponentClass(), targetSetter.getValueClass(), targetSetter.getValueComponentClass()));
+
+		property.setTargetAdapter(
+					TargetBuilder.newInstance()
+						.source(targetSetter.getType())
+						.target(targetSetter.getType())
+						.build(factory, typeAdapters)
+						);
 
 		return property;
 	}
@@ -163,16 +174,16 @@ public class PropertyMapper {
 		// set access mode
 		switch (provided.mode()) {
 		case READ_ONLY:
-			property.setTargetSetter(FieldSetter.from(field));
+			property.setTargetSetter(FieldSetter.from(field, getTypeOf(field)));
 			break;
 			
 		case WRITE_ONLY:
-			property.setTargetGetter(FieldGetter.from(field));
+			property.setTargetGetter(FieldGetter.from(field, getTypeOf(field)));
 			break;
 		
 		case READ_WRITE:
-			property.setTargetGetter(FieldGetter.from(field));
-			property.setTargetSetter(FieldSetter.from(field));
+			property.setTargetGetter(FieldGetter.from(field, getTypeOf(field)));
+			property.setTargetSetter(FieldSetter.from(field, getTypeOf(field)));
 			break;
 		}	
 
@@ -198,11 +209,79 @@ public class PropertyMapper {
 			targetComponentClass = ((Class<?>)((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]);
 		}
 
-		property.setTargetAdapter(sourceMapper.getTargetConverter(null, null, field.getType(), targetComponentClass));
+		property.setTargetAdapter(
+				TargetBuilder.newInstance()
+					.target(ObjectType.of(field.getType(), targetComponentClass))
+					.build(factory, typeAdapters)
+					);
 
 		// set target setter
-		property.setTargetSetter(FieldSetter.from(field));
+		property.setTargetSetter(FieldSetter.from(field, getTypeOf(field)));
 		
 		return property;
+	}
+	
+	protected static final ObjectType getTypeOf(Field field) {
+		
+		Class<?> objectClass = field.getType();
+		Class<?> componentClass = null;
+		boolean reference = objectClass.isAnnotationPresent(Projection.class);
+		
+		if (Collection.class.isAssignableFrom(field.getType())) {
+			componentClass = (Class<?>)((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+			reference = componentClass.isAnnotationPresent(Projection.class);
+		}
+		
+		return ObjectType.of(objectClass, componentClass, reference);
+	}
+
+	protected static final ObjectType getTypeOf(Method method) {
+		
+		Class<?> objectClass = method.getReturnType();
+		Class<?> componentClass = null;
+		boolean reference = objectClass.isAnnotationPresent(Projection.class);
+
+		if (Collection.class.isAssignableFrom(method.getReturnType())) {
+			componentClass = (Class<?>)((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0];
+			reference = componentClass.isAnnotationPresent(Projection.class);
+		}
+		
+		return ObjectType.of(objectClass, componentClass, reference);
+	}
+
+	protected static final Getter getGetter(Class<?> objectClass, final String name) {
+
+		final Field sourceField = ObjectUtils.getProperty(objectClass, name);
+		
+		if (sourceField != null) {
+			return FieldGetter.from(sourceField, getTypeOf(sourceField));
+		}
+
+		// look for getter method
+		final Method sourceGetter = ObjectUtils.getMethod(objectClass, "get".concat(StringUtils.capitalize(name)));
+		
+		if (sourceGetter != null) {
+			return MethodGetter.from(sourceGetter, name, getTypeOf(sourceGetter));
+		}
+
+		return null;
+	}
+	
+	protected static final Setter getSetter(Class<?> objectClass, final String name) {
+
+		final Field sourceField = ObjectUtils.getProperty(objectClass, name);
+		
+		if (sourceField != null) {
+			return FieldSetter.from(sourceField, getTypeOf(sourceField));
+		}
+
+		// look for getter method
+		final Method sourceGetter = ObjectUtils.getMethod(objectClass, "set".concat(StringUtils.capitalize(name)));
+		
+		if (sourceGetter != null) {
+			return MethodSetter.from(sourceGetter, name, getTypeOf(sourceGetter));
+		}
+
+		return null;
 	}
 }

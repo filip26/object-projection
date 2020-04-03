@@ -1,5 +1,6 @@
 package com.apicatalog.projection;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.apicatalog.projection.adapter.TypeAdapters;
@@ -10,6 +11,8 @@ import com.apicatalog.projection.objects.Object1;
 import com.apicatalog.projection.objects.SimpleObject;
 import com.apicatalog.projection.projections.Object1To;
 import com.apicatalog.projection.projections.SimpleObjectTo;
+import com.apicatalog.projection.property.SourceProperty;
+import com.apicatalog.projection.source.SingleSource;
 
 public class ProjectionBuilderTest {
 
@@ -18,33 +21,71 @@ public class ProjectionBuilderTest {
 	public void test1() {
 		final Projection<SimpleObjectTo> projection = 
 				ProjectionBuilder
-					.of(SimpleObjectTo.class)
+					.bind(SimpleObjectTo.class)
 					
 					.map("i1").source(SimpleObject.class)
-					.map("s1").source(SimpleObject.class)
 					
-					.build(new TypeAdapters());
+					.build(ProjectionFactory.newInstance(), new TypeAdapters());
 		
-
+		Assert.assertNotNull(projection);
+		
+		Assert.assertEquals(SimpleObjectTo.class, projection.getProjectionClass());
+		
+		Assert.assertNotNull(projection.getProperties());
+		
+		Assert.assertEquals(1, projection.getProperties().length);
+		
+		Assert.assertNotNull(projection.getProperties()[0]);
+		Assert.assertTrue(SourceProperty.class.isInstance(projection.getProperties()[0]));
+		
+		SourceProperty sourceProperty = (SourceProperty)projection.getProperties()[0];
+		
+		Assert.assertNotNull(sourceProperty.getSource());
+		Assert.assertTrue(SingleSource.class.isInstance(sourceProperty.getSource()));
+		
+		SingleSource singleSource = (SingleSource)sourceProperty.getSource();
+		
+		Assert.assertEquals(SimpleObject.class, singleSource.getObjectClass());
+		
+		Assert.assertNotNull(singleSource.getGetter());
+		Assert.assertEquals("i1", singleSource.getGetter().getName());
+		Assert.assertEquals(Integer.class, singleSource.getGetter().getType().getObjectClass());
+		Assert.assertNull(singleSource.getGetter().getType().getObjectComponentClass());
+		
+		Assert.assertEquals(Integer.class, singleSource.getTargetClass());
+		Assert.assertNull(singleSource.getTargetComponentClass());
+		
+		Assert.assertTrue(singleSource.isReadable());
+		Assert.assertTrue(singleSource.isWritable());
+		
+		Assert.assertNull(singleSource.getConversions());
+		
+		Assert.assertNull(sourceProperty.getTargetAdapter());
+		
+//FIXME		Assert.assertNotNull(sourceProperty.getTargetGetter());
+		
+		
+		
+//FIXME		Assert.assertNotNull(sourceProperty.getTargetSetter());
 	}
 
 	@Test
 	public void test2() {
 		final Projection<SimpleObjectTo> projection = 
 				ProjectionBuilder
-					.of(SimpleObjectTo.class)
+					.bind(SimpleObjectTo.class)
 					
 					.map("i1").source(SimpleObject.class, "s1")
 					.map("s1").source(SimpleObject.class, "i1")
 					
-					.build(new TypeAdapters());
+					.build(ProjectionFactory.newInstance(), new TypeAdapters());
 	}
 
 	@Test
 	public void test3() {
 		final Projection<SimpleObjectTo> projection = 
 				ProjectionBuilder
-					.of(SimpleObjectTo.class)
+					.bind(SimpleObjectTo.class)
 					
 					.map("s1").source(SimpleObject.class)
 								.conversion(Prefix.class, "StringToPrepend")
@@ -53,14 +94,14 @@ public class ProjectionBuilderTest {
 								
 					.map("i1").source(SimpleObject.class)
 					
-					.build(new TypeAdapters());
+					.build(ProjectionFactory.newInstance(), new TypeAdapters());
 	}
 
 	@Test
 	public void test4() {
 		final Projection<SimpleObjectTo> projection = 
 				ProjectionBuilder
-					.of(SimpleObjectTo.class)
+					.bind(SimpleObjectTo.class)
 					
 					.map("s1").provided()
 								.optional()
@@ -68,20 +109,20 @@ public class ProjectionBuilderTest {
 								
 					.map("i1").source(SimpleObject.class)
 					
-					.build(new TypeAdapters());
+					.build(ProjectionFactory.newInstance(), new TypeAdapters());
 	}
 
 	@Test
 	public void test5() {
 		final Projection<Object1To> projection = 
 				ProjectionBuilder
-					.of(Object1To.class)
+					.bind(Object1To.class)
 					
-					.ref("object2").source(Object1.class).optional()
+					.map("object2").source(Object1.class).optional()
 
 					.map("id").source(Object1.class)
 					
-					.build(new TypeAdapters());
+					.build(ProjectionFactory.newInstance(), new TypeAdapters());
 	}
 
 	
@@ -89,11 +130,11 @@ public class ProjectionBuilderTest {
 	public void test6() {
 		final Projection<Object1To> projection = 
 				ProjectionBuilder
-					.of(Object1To.class)
+					.bind(Object1To.class)
 					
 					.map("id").constant("StringContant")
 					
-					.build(new TypeAdapters());
+					.build(ProjectionFactory.newInstance(), new TypeAdapters());
 	}
 
 
@@ -101,7 +142,7 @@ public class ProjectionBuilderTest {
 	public void test7() {
 		final Projection<Object1To> projection = 
 				ProjectionBuilder
-					.of(Object1To.class)
+					.bind(Object1To.class)
 					
 					.map("id")
 						.source(Object1.class)
@@ -109,7 +150,17 @@ public class ProjectionBuilderTest {
 						.reduce(UriTemplate.class, "/{}/{}")
 						.conversion(Prefix.class, "https://example.org")
 						
-					.build(new TypeAdapters());
+					.build(ProjectionFactory.newInstance(), new TypeAdapters());
+	}
+
+	@Test
+	public void test8() {
+		final Projection<SimpleObjectTo> projection = 
+				ProjectionBuilder
+					.bind(SimpleObjectTo.class)					
+					.build(ProjectionFactory.newInstance(), new TypeAdapters());
+		
+		Assert.assertNull(projection);
 	}
 
 }

@@ -108,7 +108,7 @@ public class SingleSource implements Source {
 			context.addOrReplace(instance, qualifier);
 		}
 		
-		setter.set(instance, typeAdapters.convert(setter.getValueClass(), setter.getValueComponentClass(), object));		
+		setter.set(instance, typeAdapters.convert(setter.getType().getObjectClass(), setter.getType().getObjectComponentClass(), object));		
 	}
 	
 	public void setConversions(ConverterMapping[] conversions) {

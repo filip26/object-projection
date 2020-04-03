@@ -1,33 +1,23 @@
 package com.apicatalog.projection.beans;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.util.Collection;
 
 import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.objects.ObjectType;
 
 public class FieldGetter implements Getter {
 
 	final Field field;
 	
-	Class<?> valueClass;
-	Class<?> valueComponentClass;
+	final ObjectType type;
 		
-	protected FieldGetter(Field field) {
+	protected FieldGetter(Field field, ObjectType type) {
 		this.field = field;
+		this.type = type;
 	}
 	
-	public static final FieldGetter from(Field field) {
-		
-		final FieldGetter getter = new FieldGetter(field);
-		
-		getter.setValueClass(field.getType());
-
-		if (Collection.class.isAssignableFrom(field.getType())) {
-			getter.setValueComponentClass((Class<?>)((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]);
-		}
-		
-		return getter;
+	public static final FieldGetter from(Field field, ObjectType type) {
+		return new FieldGetter(field, type);
 	}
 	
 	@Override
@@ -36,31 +26,17 @@ public class FieldGetter implements Getter {
 			return field.get(object);
 			
 		} catch (IllegalArgumentException | IllegalAccessException e) {
-			
 			throw new ProjectionError(e);
 		}
 	}
 
 	@Override
-	public Class<?> getValueClass() {
-		return valueClass;
-	}
-	
-	@Override
-	public Class<?> getValueComponentClass() {
-		return valueComponentClass;
-	}
-	
-	public void setValueClass(Class<?> valueClass) {
-		this.valueClass = valueClass;
-	}
-	
-	public void setValueComponentClass(Class<?> valueComponentClass) {
-		this.valueComponentClass = valueComponentClass;
-	}
-
-	@Override
 	public String getName() {
 		return field.getName();
-	}	
+	}
+	
+	@Override
+	public ObjectType getType() {
+		return type;
+	}
 }

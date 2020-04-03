@@ -1,66 +1,41 @@
 package com.apicatalog.projection.beans;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.util.Collection;
 
 import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.objects.ObjectType;
 
 public class FieldSetter implements Setter {
 
-	Class<?> valueClass;
-	Class<?> valueComponentClass;
-
 	final Field field;
+	
+	final ObjectType type; 
 
-	protected FieldSetter(Field field) {
+	protected FieldSetter(Field field, ObjectType type) {
 		this.field = field;
+		this.type = type;
 	}
 	
-	public static final FieldSetter from(Field field) {
-		
-		final FieldSetter setter = new FieldSetter(field);
-		
-		setter.setValueClass(field.getType());
-
-		if (Collection.class.isAssignableFrom(field.getType())) {
-			setter.setValueComponentClass((Class<?>)((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]);
-		}
-		
-		return setter;
+	public static final FieldSetter from(Field field, ObjectType type) {
+		return new FieldSetter(field, type);
 	}
 
-
 	@Override
-	public void set(final Object object, final Object value) throws ProjectionError {
-		
+	public void set(final Object object, final Object value) throws ProjectionError {	
 		try {
 			field.set(object, value);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			throw new ProjectionError(e);
 		}
 	}
-
-	@Override
-	public Class<?> getValueClass() {
-		return valueClass;
-	}
-
-	@Override
-	public Class<?> getValueComponentClass() {
-		return valueComponentClass;
-	}
-	
-	public void setValueClass(final Class<?> valueClass) {
-		this.valueClass = valueClass;
-	}
-	
-	public void setValueComponentClass(final Class<?> valueComponentClass) {
-		this.valueComponentClass = valueComponentClass;
-	}
 	
 	@Override
 	public Object getName() {
 		return field.getName();
-	}	
+	}
+	
+	@Override
+	public ObjectType getType() {
+		return type;
+	}
 }

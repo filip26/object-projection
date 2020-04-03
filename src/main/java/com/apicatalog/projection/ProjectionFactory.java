@@ -29,13 +29,13 @@ public class ProjectionFactory {
 	@SuppressWarnings("unchecked")
 	public Object[] decompose(Object projection) throws ProjectionError {
 		return Optional.ofNullable(get((Class<Object>)projection.getClass()))
-					.orElseThrow(() -> new ProjectionError("Projection " + projection.getClass().getCanonicalName() + " is not present."))
+					.orElseThrow(() -> unknownProjection(projection.getClass()))
 					.decompose(projection);
 	}
 
 	public <P> P compose(Class<P> projectionClass, Object...values) throws ProjectionError {
 		return Optional.ofNullable(get(projectionClass))
-					.orElseThrow(() -> new ProjectionError("Projection " + projectionClass.getCanonicalName() + " is not present."))
+					.orElseThrow(() -> unknownProjection(projectionClass))
 					.compose(values);					
 	}
 	
@@ -44,9 +44,9 @@ public class ProjectionFactory {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <P> P extract(Class<P> sourceObjectClass, String qualifier, Object projection) throws ProjectionError {
+	public <P> P extract(final Class<P> sourceObjectClass, final String qualifier, final Object projection) throws ProjectionError {
 		return Optional.ofNullable(get((Class<Object>)projection.getClass()))
-				.orElseThrow(() -> new ProjectionError("The projection " + projection.getClass().getCanonicalName() + " is not present."))
+				.orElseThrow(() -> unknownProjection(projection.getClass()))
 				.extract(sourceObjectClass, qualifier, projection);		
 	}
 
@@ -65,6 +65,10 @@ public class ProjectionFactory {
 
 	public ProjectionMapper getMapper() {
 		return mapper;
+	}
+	
+	ProjectionError unknownProjection(Class<?> projectionClass) {
+		return new ProjectionError("Projection " + projectionClass.getCanonicalName() + " is not present.");
 	}
 	
 }

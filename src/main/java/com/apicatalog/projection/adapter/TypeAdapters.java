@@ -20,6 +20,7 @@ import com.apicatalog.projection.adapter.std.IntegerAdapter;
 import com.apicatalog.projection.adapter.std.LongAdapter;
 import com.apicatalog.projection.adapter.std.StringAdapter;
 import com.apicatalog.projection.adapter.std.UriAdapter;
+import com.apicatalog.projection.objects.ObjectType;
 
 public class TypeAdapters {
 
@@ -49,6 +50,10 @@ public class TypeAdapters {
 	public TypeAdapters add(TypeAdapter<?> adapter) {
 		adapters.put(adapter.consumes(), adapter);
 		return this;
+	}
+
+	public Object convert(ObjectType objectType, Object object) throws ProjectionError {
+		return convert(objectType.getObjectClass(),objectType.getObjectComponentClass(), object);
 	}
 	
 	public Object convert(Class<?> targetClass, Object object) throws ProjectionError {

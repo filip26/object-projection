@@ -15,24 +15,20 @@ import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.annotation.Conversion;
-import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.beans.FieldGetter;
 import com.apicatalog.projection.beans.FieldSetter;
 import com.apicatalog.projection.beans.Getter;
 import com.apicatalog.projection.beans.Setter;
+import com.apicatalog.projection.builder.TargetBuilder;
 import com.apicatalog.projection.converter.ConverterError;
-import com.apicatalog.projection.objects.ObjectUtils;
+import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.property.ProjectionProperty;
 import com.apicatalog.projection.property.SourceProperty;
 import com.apicatalog.projection.reducer.ReducerError;
 import com.apicatalog.projection.source.ArraySource;
 import com.apicatalog.projection.source.SingleSource;
-import com.apicatalog.projection.target.TargetAdapter;
-import com.apicatalog.projection.target.TargetProjectedCollectionConverter;
-import com.apicatalog.projection.target.TargetProjectionConverter;
-import com.apicatalog.projection.target.TargetTypeConverter;
 
 public class SourceMapper {
 
@@ -70,19 +66,18 @@ public class SourceMapper {
 		property.setSource(arraySource);
 
 		// extract setter/getter
-		final Getter targetGetter = FieldGetter.from(field);
-		final Setter targetSetter = FieldSetter.from(field);
+		final Getter targetGetter = FieldGetter.from(field, PropertyMapper.getTypeOf(field));
+		final Setter targetSetter = FieldSetter.from(field, PropertyMapper.getTypeOf(field));
 
 		property.setTargetSetter(targetSetter);			
 		property.setTargetGetter(targetGetter);
 		
-		property.setTargetAdapter(getTargetConverter(
-										arraySource.getTargetClass(), 
-										arraySource.getTargetComponentClass(), 
-										targetSetter.getValueClass(), 
-										targetSetter.getValueComponentClass()
-										)
-				);
+		property.setTargetAdapter(
+				TargetBuilder.newInstance()
+					.source(ObjectType.of(arraySource.getTargetClass(), arraySource.getTargetComponentClass()))
+					.target(targetSetter.getType())
+					.build(factory, typeAdapters)
+					);
 
 		return property;
 	}
@@ -109,8 +104,8 @@ public class SourceMapper {
 		property.setSource(source);
 
 		// extract setter/getter
-		final Getter targetGetter = FieldGetter.from(field);
-		final Setter targetSetter = FieldSetter.from(field);
+		final Getter targetGetter = FieldGetter.from(field, PropertyMapper.getTypeOf(field));
+		final Setter targetSetter = FieldSetter.from(field, PropertyMapper.getTypeOf(field));
 
 		// set access mode
 		switch (sourceAnnotation.mode()) {
@@ -127,14 +122,13 @@ public class SourceMapper {
 			property.setTargetGetter(targetGetter);
 			break;
 		}			
-		
-		property.setTargetAdapter(getTargetConverter(
-										source.getTargetClass(), 
-										source.getTargetComponentClass(), 
-										targetSetter.getValueClass(), 
-										targetSetter.getValueComponentClass()
-										)
-				);
+
+		property.setTargetAdapter(
+				TargetBuilder.newInstance()
+					.source(ObjectType.of(source.getTargetClass(), source.getTargetComponentClass()))
+					.target(targetSetter.getType())
+					.build(factory, typeAdapters)
+					);
 
 		return property;		
 	}
@@ -178,8 +172,8 @@ public class SourceMapper {
 		source.setObjectClass(sourceObjectClass);
 
 		// extract setter/getter
-		final Getter sourceGetter = ObjectUtils.getGetter(sourceObjectClass, sourceFieldName);
-		final Setter sourceSetter = ObjectUtils.getSetter(sourceObjectClass, sourceFieldName);
+		final Getter sourceGetter = PropertyMapper.getGetter(sourceObjectClass, sourceFieldName);
+		final Setter sourceSetter = PropertyMapper.getSetter(sourceObjectClass, sourceFieldName);
 
 		// no setter nor getter? 
 		if (sourceGetter == null && sourceSetter == null) {
@@ -221,8 +215,8 @@ public class SourceMapper {
 		source.setQualifier(qualifier);
 		
 		// set target class
-		Class<?> targetClass = sourceGetter != null ? sourceGetter.getValueClass() : sourceSetter.getValueClass();
-		Class<?> targetComponentClass = sourceGetter != null ? sourceGetter.getValueComponentClass() : sourceSetter.getValueComponentClass();
+		Class<?> targetClass = sourceGetter != null ? sourceGetter.getType().getObjectClass() : sourceSetter.getType().getObjectClass();
+		Class<?> targetComponentClass = sourceGetter != null ? sourceGetter.getType().getObjectComponentClass() : sourceSetter.getType().getObjectComponentClass();
 
 		source.setTargetClass(targetClass);
 		source.setTargetComponentClass(targetComponentClass);
@@ -294,17 +288,4 @@ public class SourceMapper {
 		
 		return source;
 	}	
-	
-	TargetAdapter getTargetConverter(Class<?> sourceClass, Class<?> sourceComponentClass, Class<?> targetClass, Class<?> targetComponentClass) {
-
-		if (targetClass.isAnnotationPresent(Projection.class)) {
-			return new TargetProjectionConverter(factory, sourceClass, sourceComponentClass, targetClass, targetComponentClass);
-		}
-		if (targetComponentClass != null && targetComponentClass.isAnnotationPresent(Projection.class)) {
-			return new TargetProjectedCollectionConverter(factory, typeAdapters, sourceClass, sourceComponentClass, targetClass, targetComponentClass);
-		}
-		
-		return new TargetTypeConverter(typeAdapters, sourceClass, sourceComponentClass, targetClass, targetComponentClass);
-
-	}
 }

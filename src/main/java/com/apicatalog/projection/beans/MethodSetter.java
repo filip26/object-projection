@@ -2,35 +2,26 @@ package com.apicatalog.projection.beans;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.util.Collection;
 
 import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.objects.ObjectType;
 
 public class MethodSetter implements Setter {
 
 	final Method method;
+	
 	final String name;
 	
-	Class<?> valueClass;
-	Class<?> valueComponentClass;
+	final ObjectType type;
 	
-	protected MethodSetter(Method method, String name) {
+	protected MethodSetter(Method method, String name, ObjectType type) {
 		this.method = method;
 		this.name = name;
+		this.type = type;
 	}
 	
-	public static final MethodSetter from(Method method, String name) {
-		
-		final MethodSetter setter = new MethodSetter(method, name);
-		
-		setter.setValueClass(method.getReturnType());
-
-		if (Collection.class.isAssignableFrom(method.getReturnType())) {
-			setter.setValueComponentClass((Class<?>)((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0]);
-		}
-		
-		return setter;
+	public static final MethodSetter from(Method method, String name, ObjectType type) {		
+		return new MethodSetter(method, name, type);
 	}
 
 	@Override
@@ -45,26 +36,13 @@ public class MethodSetter implements Setter {
 	}
 
 	@Override
-	public Class<?> getValueClass() {
-		return valueClass;
-	}
-	
-	@Override
-	public Class<?> getValueComponentClass() {
-		return valueComponentClass;
-	}
-	
-	public void setValueClass(Class<?> valueClass) {
-		this.valueClass = valueClass;
-	}
-	
-	public void setValueComponentClass(Class<?> valueComponentClass) {
-		this.valueComponentClass = valueComponentClass;
-	}
-
-	@Override
 	public Object getName() {
 		return name;
+	}
+	
+	@Override
+	public ObjectType getType() {
+		return type;
 	}
 	
 }

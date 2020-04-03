@@ -33,7 +33,7 @@ public class SourceProperty implements ProjectionProperty {
 			return;
 		}
 		
-		logger.debug("Forward {} : {}, depth = {}", targetSetter.getName(), targetSetter.getValueClass().getSimpleName(), queue.length());
+		logger.debug("Forward {} : {}, depth = {}", targetSetter.getName(), targetSetter.getType(), queue.length());
 
 		// get source value
 		Object object = source.read(queue, context);
@@ -44,7 +44,7 @@ public class SourceProperty implements ProjectionProperty {
 
 		object = targetAdapter.forward(queue, object, context);
 
-		logger.trace("{} : {} = {}", targetSetter.getName(), targetSetter.getValueClass().getSimpleName(), object);
+		logger.trace("{} : {} = {}", targetSetter.getName(), targetSetter.getType(), object);
 
 		targetSetter.set(queue.peek(), object);
 		
@@ -57,7 +57,7 @@ public class SourceProperty implements ProjectionProperty {
 			return;
 		}
 		
-		logger.debug("Backward {} : {}, depth = {}", targetGetter.getName(), targetGetter.getValueClass().getSimpleName(), queue.length());
+		logger.debug("Backward {} : {}, depth = {}", targetGetter.getName(), targetGetter.getType(), queue.length());
 
 		Object object = targetGetter.get(queue.peek());
 		

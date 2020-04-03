@@ -12,6 +12,7 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.objects.ContextObjects;
+import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ProjectionQueue;
 
 public class TargetProjectedCollectionConverter implements TargetAdapter {
@@ -22,39 +23,32 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 	
 	final TypeAdapters typeAdapters;	//TODO use just concrete adapter(s), not whole factory
 	
-	final Class<?> sourceClass;
+	final ObjectType sourceType;
 	
-	final Class<?> sourceComponentClass;
-
-	final Class<?> targetClass;
+	final ObjectType targetType;
 	
-	final Class<?> targetComponentClass;
-	
-	public TargetProjectedCollectionConverter(ProjectionFactory factory, TypeAdapters typeAdapters, Class<?> sourceClass, Class<?> sourceComponentClass, Class<?> targetClass, Class<?> targetComponentClass) {
+	public TargetProjectedCollectionConverter(ProjectionFactory factory, TypeAdapters typeAdapters, ObjectType sourceType, ObjectType targetType) {
 		this.factory = factory;
 		this.typeAdapters = typeAdapters;
 		
-		this.sourceClass = sourceClass;
-		this.sourceComponentClass = sourceComponentClass;
-		
-		this.targetClass = targetClass;
-		this.targetComponentClass = targetComponentClass;
+		this.sourceType = sourceType;
+		this.targetType = targetType;
 	}
 	
 	@Override
 	public Object forward(ProjectionQueue queue, Object object, ContextObjects context) throws ProjectionError {
 		
-		logger.debug("Convert {} to {}, depth = {}, reference = true, collection = true", sourceClass != null ? sourceClass.getSimpleName() : "unknown", targetClass.getSimpleName(), queue.length());
+		logger.debug("Convert {} to {}, depth = {}, reference = true, collection = true", sourceType, targetType, queue.length());
 
 		final Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, Object.class, object);
 		
 		final Collection<Object> collection = new ArrayList<>();
 
 		@SuppressWarnings("unchecked")
-		final Projection<Object> projection = (Projection<Object>) factory.get(targetComponentClass);
+		final Projection<Object> projection = (Projection<Object>) factory.get(targetType.getObjectComponentClass());
 		
 		if (projection == null) {
-			throw new ProjectionError("Projection " + targetComponentClass.getCanonicalName() +  " is not present.");
+			throw new ProjectionError("Projection " + targetType.getObjectComponentClass().getCanonicalName() +  " is not present.");
 		}
 		
 		// compose a projection from each object in the collection
@@ -72,18 +66,18 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 
 	@Override
 	public Object backward(Object object, ContextObjects context) throws ProjectionError {
-		logger.debug("Convert {} to {}, reference = true, collection = true", targetClass.getSimpleName(), sourceClass != null ? sourceClass.getSimpleName() : "unknown");
+		logger.debug("Convert {} to {}, reference = true, collection = true", targetType, sourceType);
 		
 		@SuppressWarnings("unchecked")
-		final Projection<Object> projection = (Projection<Object>) factory.get(targetComponentClass); 
+		final Projection<Object> projection = (Projection<Object>) factory.get(targetType.getObjectComponentClass()); 
 		
 		if (projection == null) {
-			throw new ProjectionError("Projection " + targetComponentClass.getCanonicalName() +  " is not present.");
+			throw new ProjectionError("Projection " + targetType.getObjectComponentClass().getCanonicalName() +  " is not present.");
 		}
 		
 		final Collection<Object> collection = new ArrayList<>();
 
-		Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, targetComponentClass, object);
+		Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, targetType.getObjectComponentClass(), object);
 		
 		// extract objects from each projection in the collection
 		for (final Object item : sourceCollection) {
@@ -93,7 +87,7 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 		return collection;
 	}
 
-	Object filterComponent(Object[] objects, ContextObjects context) {
+	Object filterComponent(final Object[] objects, final ContextObjects context) {
 		if (objects == null) {
 			return null;
 		}
@@ -104,11 +98,9 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 
 		Optional<Object> value = Optional.empty();
 
-		for (Object object : objects) {
+		for (final Object object : objects) {
 
-			if (value.isEmpty() 
-					&& (sourceComponentClass != null && sourceComponentClass.isInstance(object))
-				) {
+			if (value.isEmpty() && sourceType.isInstance(objects)) {
 				
 				value = Optional.ofNullable(object);
 				

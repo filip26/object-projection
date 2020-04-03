@@ -40,16 +40,16 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 			return;
 		}
 		
-		logger.debug("Forward {} : {}, qualifier = {}, optional = {}, depth = {}", targetSetter.getName(), targetSetter.getValueClass().getSimpleName(), sourceObjectQualifier, optional, queue.length());
+		logger.debug("Forward {} : {}, qualifier = {}, optional = {}, depth = {}", targetSetter.getName(), targetSetter.getType(), sourceObjectQualifier, optional, queue.length());
 
 		final ContextObjects clonedSources = new ContextObjects(context);
 		
 		Optional.ofNullable(sourceObjectQualifier).ifPresent(clonedSources::pushNamespace);
 		
-		final Projection<?> projection = factory.get(targetSetter.getValueClass()); 
+		final Projection<?> projection = factory.get(targetSetter.getType().getObjectClass()); 
 		
 		if (projection == null) {
-			throw new ProjectionError("Projection " + targetSetter.getValueClass().getCanonicalName() +  " is not present.");
+			throw new ProjectionError("Projection " + targetSetter.getType().getObjectClass() +  " is not present.");
 		}
 			
 		Object object = projection.compose(queue, clonedSources.getValues());
@@ -63,10 +63,10 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 	public void backward(ProjectionQueue queue, ContextObjects context) throws ProjectionError {
 		
 		@SuppressWarnings("unchecked")
-		final Projection<Object> projection = (Projection<Object>) factory.get(targetGetter.getValueClass()); 
+		final Projection<Object> projection = (Projection<Object>) factory.get(targetGetter.getType().getObjectClass()); 
 		
 		if (projection == null) {
-			throw new ProjectionError("Projection " + targetGetter.getValueClass().getCanonicalName() +  " is not present.");			
+			throw new ProjectionError("Projection " + targetGetter.getType().getObjectClass() +  " is not present.");			
 		}
 		
 		Object object = targetGetter.get(queue.peek());

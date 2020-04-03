@@ -13,7 +13,7 @@ import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.property.ProjectionProperty;
 
-class ProjectionImpl<P> implements Projection<P> {
+public class ProjectionImpl<P> implements Projection<P> {
 	
 	final Logger logger = LoggerFactory.getLogger(ProjectionImpl.class);
 
