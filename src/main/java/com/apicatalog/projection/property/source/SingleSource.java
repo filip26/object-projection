@@ -1,4 +1,4 @@
-package com.apicatalog.projection.source;
+package com.apicatalog.projection.property.source;
 
 import java.util.Optional;
 

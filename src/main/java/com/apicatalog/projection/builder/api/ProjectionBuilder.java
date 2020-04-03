@@ -8,7 +8,7 @@ import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.mapper.ProjectionImpl;
+import com.apicatalog.projection.builder.ProjectionImpl;
 import com.apicatalog.projection.property.ProjectionProperty;
 
 public class ProjectionBuilder<P> {

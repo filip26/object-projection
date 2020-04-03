@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.objects.ObjectType;
+import com.apicatalog.projection.property.source.ArraySource;
+import com.apicatalog.projection.property.source.SingleSource;
 import com.apicatalog.projection.reducer.ReducerMapping;
-import com.apicatalog.projection.source.ArraySource;
-import com.apicatalog.projection.source.SingleSource;
 
 public class ArraySourceBuilder {
 

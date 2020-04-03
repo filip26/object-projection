@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.annotation.mapper.ProjectionMapper;
 import com.apicatalog.projection.objects.SimpleObject;
 
 public class ProjectionMapperTest {

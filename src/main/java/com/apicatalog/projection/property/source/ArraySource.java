@@ -1,4 +1,4 @@
-package com.apicatalog.projection.source;
+package com.apicatalog.projection.property.source;
 
 import java.util.Set;
 
@@ -12,9 +12,9 @@ import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ProjectionQueue;
+import com.apicatalog.projection.property.target.TargetAdapter;
 import com.apicatalog.projection.reducer.ReducerError;
 import com.apicatalog.projection.reducer.ReducerMapping;
-import com.apicatalog.projection.target.TargetAdapter;
 
 public class ArraySource implements Source {
 

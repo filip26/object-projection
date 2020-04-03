@@ -1,4 +1,4 @@
-package com.apicatalog.projection.mapper;
+package com.apicatalog.projection.annotation.mapper;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -32,10 +32,10 @@ import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.FieldSetter;
 import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.ProjectionProperty;
+import com.apicatalog.projection.property.source.ArraySource;
+import com.apicatalog.projection.property.source.SingleSource;
 import com.apicatalog.projection.reducer.ReducerError;
 import com.apicatalog.projection.reducer.ReducerMapping;
-import com.apicatalog.projection.source.ArraySource;
-import com.apicatalog.projection.source.SingleSource;
 
 class SourceMapper {
 

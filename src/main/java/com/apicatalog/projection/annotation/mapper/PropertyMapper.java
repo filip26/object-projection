@@ -1,4 +1,4 @@
-package com.apicatalog.projection.mapper;
+package com.apicatalog.projection.annotation.mapper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -34,7 +34,7 @@ import com.apicatalog.projection.objects.setter.MethodSetter;
 import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.ProjectionProperty;
 import com.apicatalog.projection.property.SourceProperty;
-import com.apicatalog.projection.source.SingleSource;
+import com.apicatalog.projection.property.source.SingleSource;
 
 public class PropertyMapper {
 

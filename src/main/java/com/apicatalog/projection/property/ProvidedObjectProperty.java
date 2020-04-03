@@ -10,7 +10,7 @@ import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
-import com.apicatalog.projection.target.TargetAdapter;
+import com.apicatalog.projection.property.target.TargetAdapter;
 
 public class ProvidedObjectProperty implements ProjectionProperty {
 

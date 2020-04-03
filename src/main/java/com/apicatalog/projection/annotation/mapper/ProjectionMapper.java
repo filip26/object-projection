@@ -1,4 +1,4 @@
-package com.apicatalog.projection.mapper;
+package com.apicatalog.projection.annotation.mapper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.TypeAdapters;
+import com.apicatalog.projection.builder.ProjectionImpl;
 import com.apicatalog.projection.property.ProjectionProperty;
 
 public class ProjectionMapper {

@@ -1,4 +1,4 @@
-package com.apicatalog.projection.mapper;
+package com.apicatalog.projection.builder;
 
 import java.util.Arrays;
 import java.util.stream.Stream;

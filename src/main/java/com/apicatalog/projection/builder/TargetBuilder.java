@@ -6,10 +6,10 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.objects.ObjectType;
-import com.apicatalog.projection.target.TargetAdapter;
-import com.apicatalog.projection.target.TargetProjectedCollectionConverter;
-import com.apicatalog.projection.target.TargetProjectionConverter;
-import com.apicatalog.projection.target.TargetTypeConverter;
+import com.apicatalog.projection.property.target.TargetAdapter;
+import com.apicatalog.projection.property.target.TargetProjectedCollectionConverter;
+import com.apicatalog.projection.property.target.TargetProjectionConverter;
+import com.apicatalog.projection.property.target.TargetTypeConverter;
 
 public class TargetBuilder {
 

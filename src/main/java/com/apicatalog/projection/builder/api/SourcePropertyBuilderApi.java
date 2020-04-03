@@ -17,7 +17,7 @@ import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.ProjectionProperty;
-import com.apicatalog.projection.source.Source;
+import com.apicatalog.projection.property.source.Source;
 
 public class SourcePropertyBuilderApi<P> {
 	

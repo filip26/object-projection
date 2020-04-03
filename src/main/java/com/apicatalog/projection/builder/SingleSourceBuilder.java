@@ -11,7 +11,7 @@ import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
-import com.apicatalog.projection.source.SingleSource;
+import com.apicatalog.projection.property.source.SingleSource;
 
 public class SingleSourceBuilder {
 

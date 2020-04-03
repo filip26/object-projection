@@ -9,7 +9,7 @@ import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.SourceProperty;
-import com.apicatalog.projection.source.Source;
+import com.apicatalog.projection.property.source.Source;
 
 public class SourcePropertyBuilder {
 

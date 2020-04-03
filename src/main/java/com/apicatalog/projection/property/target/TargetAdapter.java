@@ -1,4 +1,4 @@
-package com.apicatalog.projection.target;
+package com.apicatalog.projection.property.target;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.objects.ContextObjects;
