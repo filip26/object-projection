@@ -52,7 +52,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 			throw new ProjectionError("Projection " + targetSetter.getType().getObjectClass() +  " is not present.");
 		}
 			
-		Object object = projection.compose(queue, clonedSources.getValues());
+		Object object = projection.compose(queue, clonedSources);
 		
 		if (object != null) {
 			targetSetter.set(queue.peek(), object);

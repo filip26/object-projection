@@ -2,6 +2,7 @@ package com.apicatalog.projection.objects;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -14,13 +15,17 @@ public class ContextObjects {
 	final Logger logger = LoggerFactory.getLogger(ContextObjects.class);
 	
 	final Map<ObjectKey, Object> index;
+
+	final ContextNamespace namespace;
 	
 	protected ContextObjects(Map<ObjectKey, Object> index) {
 		this.index = index;
+		this.namespace = new ContextNamespace();
 	}
 	
 	public ContextObjects(ContextObjects sources) {
 		this.index = new LinkedHashMap<>(sources.index);
+		this.namespace = new ContextNamespace(sources.namespace);
 	}
 	
 	public static ContextObjects of(Object...objects) {		
@@ -36,20 +41,22 @@ public class ContextObjects {
 	}
 	
 	public Object get(Class<?> clazz, String name) {
-		Object object =  index.get(ObjectKey.of(clazz, name));
-		
 		//FIXME optimize
-		if (object == null) {
-			for (Map.Entry<ObjectKey, Object> entry : index.entrySet()) {
-				if (clazz.isAssignableFrom(entry.getKey().getClazz()) && ((StringUtils.isBlank(name) && StringUtils.isBlank(entry.getKey().getQualifier()))
-							|| StringUtils.isNotBlank(name) && name.equals(entry.getKey().getQualifier())
-							)) {
-						return entry.getValue();
+		
+		String qualifiedName = Optional.ofNullable(name).map(n -> namespace.getQName(name)).orElse(null);
 				
-				}
-			}
-		}
-		return object;
+		return Optional.ofNullable(index.get(ObjectKey.of(clazz, qualifiedName)))
+				.orElseGet(() -> {
+					for (Map.Entry<ObjectKey, Object> entry : index.entrySet()) {
+						if (clazz.isAssignableFrom(entry.getKey().getClazz()) && ((StringUtils.isBlank(qualifiedName) && StringUtils.isBlank(entry.getKey().getQualifier()))
+									|| StringUtils.isNotBlank(qualifiedName) && qualifiedName.equals(entry.getKey().getQualifier())
+									)) {
+								return entry.getValue();
+						
+						}
+					}
+					return null;
+				});
 	}
 
 	public Object[] getValues() {
@@ -73,7 +80,11 @@ public class ContextObjects {
 		return index.containsKey(ObjectKey.of(class1, qualifier));
 	}
 	
-	public void pushNamespace(String namespace) {
-		//TODO
+	public void pushNamespace(String name) {
+		this.namespace.push(name);
+	}
+
+	public int size() {
+		return index.size();
 	}
 }

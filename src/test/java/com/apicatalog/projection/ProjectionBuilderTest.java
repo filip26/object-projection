@@ -336,4 +336,48 @@ public class ProjectionBuilderTest {
 		Assert.assertNotNull(to.object2);
 		Assert.assertEquals("AREW2324E", to.object2.id);		
 	}
+	
+	@Test
+	public void test11() throws ProjectionError {
+		
+		ProjectionRegistry registry = ProjectionRegistry.newInstance();
+		
+		Assert.assertNotNull( 
+				ProjectionBuilder
+					.bind(Object1To.class)
+					
+					.map("object2", true).provided("obj2")
+
+					.map("id").provided("id")
+					
+					.build(registry, new TypeAdapters())
+					);
+
+		Assert.assertNotNull(
+				ProjectionBuilder
+					.bind(Object2To.class)
+					
+					.map("id").provided("id")
+					
+					.build(registry, new TypeAdapters())
+					);
+		
+		Object1 object1 = new Object1();
+		
+		Object2 object2 = new Object2();
+				
+		Object1To to = registry.compose(
+							Object1To.class, 
+							object1,
+							NamedObject.of("obj2", object2),
+							NamedObject.of("id", "AREW2324E"),
+							NamedObject.of("obj2.id", "3GFD42EE7")
+							);
+		
+		Assert.assertNotNull(to);;
+		Assert.assertEquals("AREW2324E", to.id);
+		
+		Assert.assertNotNull(to.object2);
+		Assert.assertEquals("3GFD42EE7", to.object2.id);		
+	}
 }

@@ -1,7 +1,6 @@
 package com.apicatalog.projection.builder;
 
 import java.util.Arrays;
-import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,17 +31,17 @@ public class ProjectionImpl<P> implements Projection<P> {
 
 	@Override
 	public P compose(Object... objects) throws ProjectionError {
-		return compose(ProjectionQueue.create(), objects);
+		return compose(ProjectionQueue.create(), ContextObjects.of(objects));
 	}
 	
 	@Override
-	public P compose(ProjectionQueue queue, Object... objects) throws ProjectionError {
+	public P compose(ProjectionQueue queue, ContextObjects context) throws ProjectionError {
 		
-		logger.debug("Compose {} of {} object(s), depth = {}", projectionClass.getSimpleName(), objects.length, queue.length());
+		logger.debug("Compose {} of {} object(s), depth = {}", projectionClass.getSimpleName(), context.size(), queue.length());
 		
-		if (logger.isTraceEnabled()) {
-			Stream.of(objects).forEach(v -> logger.trace("  {}", v.getClass().getSimpleName()));
-		}
+//TODO		if (logger.isTraceEnabled()) {
+//			Stream.of(objects).forEach(v -> logger.trace("  {}", v.getClass().getSimpleName()));
+//		}
 		
 		// check for cycles
 		if (queue.contains(projectionClass)) {
@@ -54,8 +53,6 @@ public class ProjectionImpl<P> implements Projection<P> {
 		
 		queue.push(projection);
 
-		final ContextObjects context = ContextObjects.of(objects);
-		
 		for (int i = 0; i < properties.length; i++) {
 			
 			// limit property visibility

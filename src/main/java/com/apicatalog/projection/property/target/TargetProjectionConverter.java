@@ -39,7 +39,7 @@ public class TargetProjectionConverter implements TargetAdapter {
 		final Projection<?> projection = factory.get(targetType.getObjectClass()); 
 		
 		if (projection != null) {
-			return projection.compose(queue, clonedSources.getValues());
+			return projection.compose(queue, clonedSources);
 		}
 		
 		throw new ProjectionError("Projection " + targetType.getObjectClass() +  " is not present.");

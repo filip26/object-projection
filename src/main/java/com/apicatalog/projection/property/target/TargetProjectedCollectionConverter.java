@@ -56,7 +56,7 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 			collection.add(projection
 							.compose(
 								queue,										
-								(new ContextObjects(context)).addOrReplace(item, null).getValues()
+								(new ContextObjects(context)).addOrReplace(item, null)
 								)
 							);
 		}

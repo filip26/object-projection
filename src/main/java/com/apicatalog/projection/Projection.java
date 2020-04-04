@@ -17,7 +17,7 @@ public interface Projection<P> {
 	 */
 	P compose(Object...objects) throws ProjectionError;
 	
-	P compose(ProjectionQueue queue, Object...objects) throws ProjectionError;
+	P compose(ProjectionQueue queue, ContextObjects context) throws ProjectionError;
 	
 	/**
 	 * Decompose a projection into a source of values
