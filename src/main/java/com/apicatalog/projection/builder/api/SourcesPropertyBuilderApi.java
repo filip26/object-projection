@@ -30,7 +30,7 @@ public class SourcesPropertyBuilderApi<P> {
 
 	final List<ConversionBuilder> conversionBuilder;
 
-	ArraySourceBuilderApi<P> arraySourceApi;
+	SourcesBuilderApi<P> sourcesBuilderApi;
 	
 	SourcePropertyBuilder sourcePropertyBuilder;
 	
@@ -59,19 +59,18 @@ public class SourcesPropertyBuilderApi<P> {
 		return this;
 	}
 
-	public ArraySourceBuilderApi<P> source(Class<?> sourceClass, String sourceProperty) {
+	public SourcesBuilderApi<P> source(Class<?> sourceClass, String sourceProperty) {
 
-		arraySourceApi = new ArraySourceBuilderApi<>(projectionBuilder, projectionPropertyName)
+		sourcesBuilderApi = new SourcesBuilderApi<>(projectionBuilder, projectionPropertyName)
 								.source(sourceClass, sourceProperty);
-		
-		return arraySourceApi;
+		return sourcesBuilderApi;
 	}
 
-	public ArraySourceBuilderApi<P> source(Class<?> sourceClass) {
+	public SourcesBuilderApi<P> source(Class<?> sourceClass) {
 		return source(sourceClass, null);
 	}
 	
-	public NamedPropertyBuilderApi<P> map(String propertyName) {
+	public MappedPropertyBuilderApi<P> map(String propertyName) {
 		return projectionBuilder.map(propertyName);
 	}
 	
@@ -101,7 +100,7 @@ public class SourcesPropertyBuilderApi<P> {
 
 	protected ProjectionProperty buildProperty(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
 
-		if (Optional.ofNullable(arraySourceApi).isEmpty()) {
+		if (Optional.ofNullable(sourcesBuilderApi).isEmpty()) {
 			return null;
 		}
 		
@@ -121,7 +120,7 @@ public class SourcesPropertyBuilderApi<P> {
 			throw new ProjectionError(e);
 		}
 
-		Source[] sources = arraySourceApi.buildSources(typeAdapters);
+		Source[] sources = sourcesBuilderApi.buildSources(typeAdapters);
 
 		ArraySource source = arraySourceBuilder
 								.sources(sources)
@@ -132,7 +131,5 @@ public class SourcesPropertyBuilderApi<P> {
 		return sourcePropertyBuilder
 				.source(source)
 				.build(factory, typeAdapters);
-
 	}
-	
 }

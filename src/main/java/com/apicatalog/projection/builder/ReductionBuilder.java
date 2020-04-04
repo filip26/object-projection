@@ -41,15 +41,10 @@ public class ReductionBuilder {
 
 		Type sourceType = ((ParameterizedType) reducerClass.getGenericInterfaces()[0]).getActualTypeArguments()[0];
 		
-//		Class<?> sourceClass = null;
 		Class<?> sourceComponentClass = null;
 		
 		if (ParameterizedType.class.isInstance(sourceType)) {
-//			sourceClass = (Class<?>)((ParameterizedType)sourceType).getRawType();
-			sourceComponentClass = (Class<?>)((ParameterizedType)sourceType).getActualTypeArguments()[0];
-			
-		} else {
-//			sourceClass = (Class<?>) sourceType;
+			sourceComponentClass = (Class<?>)((ParameterizedType)sourceType).getActualTypeArguments()[0];			
 		}
 		
 		Type targetType = ((ParameterizedType) reducerClass.getGenericInterfaces()[0]).getActualTypeArguments()[1];

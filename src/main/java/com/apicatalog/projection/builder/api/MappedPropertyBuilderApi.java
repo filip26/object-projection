@@ -23,7 +23,7 @@ import com.apicatalog.projection.objects.setter.MethodSetter;
 import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.ProjectionProperty;
 
-public class NamedPropertyBuilderApi<P> {
+public class MappedPropertyBuilderApi<P> {
 	
 	final ProjectionBuilder<P> projectionBuilder;
 	
@@ -34,9 +34,10 @@ public class NamedPropertyBuilderApi<P> {
 	ConstantPropertyBuilder constantBuilder;
 	
 	String targetPropertyName;
+	
 	boolean reference;
 	
-	public NamedPropertyBuilderApi(ProjectionBuilder<P> projection, String propertyName, boolean reference) {
+	protected MappedPropertyBuilderApi(ProjectionBuilder<P> projection, String propertyName, boolean reference) {
 		this.projectionBuilder = projection;
 		this.targetPropertyName = propertyName;
 		this.reference = reference;
@@ -88,7 +89,6 @@ public class NamedPropertyBuilderApi<P> {
 
 		// extract setter
 		final Setter targetSetter = FieldSetter.from(field, targetType);
-
 		
 		if  (Optional.ofNullable(sourcePropertyBuilder).isPresent()) {
 

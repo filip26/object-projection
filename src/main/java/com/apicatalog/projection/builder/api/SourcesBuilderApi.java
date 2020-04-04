@@ -20,7 +20,7 @@ import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.source.Source;
 
-public class ArraySourceBuilderApi<P> {
+public class SourcesBuilderApi<P> {
 	
 	ProjectionBuilder<P> projectionBuilder;
 
@@ -28,42 +28,42 @@ public class ArraySourceBuilderApi<P> {
 	
 	final String targetPropertyName;
 	
-	protected ArraySourceBuilderApi(ProjectionBuilder<P> projection, String targetPropertyName) {
+	protected SourcesBuilderApi(ProjectionBuilder<P> projection, String targetPropertyName) {
 		this.projectionBuilder = projection;
 		this.sourceHolders = new LinkedList<>();
 		this.targetPropertyName = targetPropertyName;
 	}
 
-	public ArraySourceBuilderApi<P> optional() {
+	public SourcesBuilderApi<P> optional() {
 		sourceHolders.getLast().builder.optional(true);		
 		return this;
 	}
 
-	public ArraySourceBuilderApi<P> required() {
+	public SourcesBuilderApi<P> required() {
 		sourceHolders.getLast().builder.optional(false);
 		return this;
 	}
 	
-	public ArraySourceBuilderApi<P> readOnly() {
+	public SourcesBuilderApi<P> readOnly() {
 		sourceHolders.getLast().builder.mode(AccessMode.READ_ONLY);
 		return this;
 	}
 
-	public ArraySourceBuilderApi<P> writeOnly() {
+	public SourcesBuilderApi<P> writeOnly() {
 		sourceHolders.getLast().builder.mode(AccessMode.WRITE_ONLY);
 		return this;
 	}
 
-	public ArraySourceBuilderApi<P> source(Class<?> sourceClass, String sourceProperty) {
+	public SourcesBuilderApi<P> source(Class<?> sourceClass, String sourceProperty) {
 		sourceHolders.add(new SourceHolder(sourceClass, StringUtils.isNotBlank(sourceProperty) ? sourceProperty : targetPropertyName));
 		return this;
 	}
 
-	public ArraySourceBuilderApi<P> source(Class<?> sourceClass) {
+	public SourcesBuilderApi<P> source(Class<?> sourceClass) {
 		return source(sourceClass, null);
 	}
 	
-	public NamedPropertyBuilderApi<P> map(String propertyName) {
+	public MappedPropertyBuilderApi<P> map(String propertyName) {
 		return projectionBuilder.map(propertyName);
 	}
 	
@@ -71,7 +71,7 @@ public class ArraySourceBuilderApi<P> {
 		return projectionBuilder.build(factory, typeAdapters);
 	}
 
-	public ArraySourceBuilderApi<P> conversion(Class<? extends Converter<?, ?>> converter, String...params) {
+	public SourcesBuilderApi<P> conversion(Class<? extends Converter<?, ?>> converter, String...params) {
 		sourceHolders.getLast().conversions.add(ConversionBuilder.newInstance().converter(converter).parameters(params));
 		return this;
 	}
@@ -91,8 +91,8 @@ public class ArraySourceBuilderApi<P> {
 		}
 		
 		// extract setter/getter
-		final Getter sourceGetter = NamedPropertyBuilderApi.getGetter(sourceHolder.objectClass, sourceHolder.propertyName, false);
-		final Setter sourceSetter = NamedPropertyBuilderApi.getSetter(sourceHolder.objectClass, sourceHolder.propertyName, false);
+		final Getter sourceGetter = MappedPropertyBuilderApi.getGetter(sourceHolder.objectClass, sourceHolder.propertyName, false);
+		final Setter sourceSetter = MappedPropertyBuilderApi.getSetter(sourceHolder.objectClass, sourceHolder.propertyName, false);
 		
 		return sourceHolder.builder
 							.objectClass(sourceHolder.objectClass)

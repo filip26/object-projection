@@ -78,7 +78,7 @@ public class SourcePropertyBuilderApi<P> {
 		return this;
 	}
 	
-	public NamedPropertyBuilderApi<P> map(String propertyName) {
+	public MappedPropertyBuilderApi<P> map(String propertyName) {
 		return projectionBuilder.map(propertyName);
 	}
 
@@ -106,8 +106,8 @@ public class SourcePropertyBuilderApi<P> {
 		}
 		
 		// extract setter/getter
-		final Getter sourceGetter = NamedPropertyBuilderApi.getGetter(sourceObjectClass, sourcePropertyName, false);
-		final Setter sourceSetter = NamedPropertyBuilderApi.getSetter(sourceObjectClass, sourcePropertyName, false);
+		final Getter sourceGetter = MappedPropertyBuilderApi.getGetter(sourceObjectClass, sourcePropertyName, false);
+		final Setter sourceSetter = MappedPropertyBuilderApi.getSetter(sourceObjectClass, sourcePropertyName, false);
 		
 		return sourceBuilder
 							.getter(sourceGetter)

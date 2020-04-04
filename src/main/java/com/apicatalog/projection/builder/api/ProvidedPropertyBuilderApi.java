@@ -20,7 +20,6 @@ public class ProvidedPropertyBuilderApi<P> {
 		this.providedPropertyBuilder = ProvidedPropertyBuilder.newInstance();
 	}
 	
-
 	public ProvidedPropertyBuilderApi<P> optional() {
 		providedPropertyBuilder.optional(true);
 		return this;
@@ -47,7 +46,7 @@ public class ProvidedPropertyBuilderApi<P> {
 		return this;
 	}
 	
-	public NamedPropertyBuilderApi<P> map(String propertyName) {
+	public MappedPropertyBuilderApi<P> map(String propertyName) {
 		return projectionBuilder.map(propertyName);
 	}
 
