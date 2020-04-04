@@ -6,11 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.beans.Getter;
-import com.apicatalog.projection.beans.Setter;
 import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.ProjectionQueue;
-import com.apicatalog.projection.target.TargetAdapter;
+import com.apicatalog.projection.objects.getter.Getter;
+import com.apicatalog.projection.objects.setter.Setter;
+import com.apicatalog.projection.property.target.TargetAdapter;
 
 public class ProvidedObjectProperty implements ProjectionProperty {
 
@@ -34,9 +34,9 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 			return;
 		}
 		
-		logger.debug("Forward {} : {}, qualifier = {}, optional = {}, depth = {}", targetSetter.getName(), targetSetter.getValueClass().getSimpleName(), sourceObjectQualifier, optional, queue.length());
+		logger.debug("Forward {} : {}, qualifier = {}, optional = {}, depth = {}", targetSetter.getName(), targetSetter.getType(), sourceObjectQualifier, optional, queue.length());
 		
-		Object object = context.get(targetSetter.getValueClass(), sourceObjectQualifier);
+		Object object = context.get(targetSetter.getType().getObjectClass(), sourceObjectQualifier);
 		
 		if (object == null) {
 			return;
@@ -56,7 +56,7 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 			return;
 		}
 
-		logger.debug("Backward {} : {}, qualifier = {}, optional = {}, depth = {}", targetGetter.getName(), targetGetter.getValueClass().getSimpleName(), sourceObjectQualifier, optional, queue.length());
+		logger.debug("Backward {} : {}, qualifier = {}, optional = {}, depth = {}", targetGetter.getName(), targetGetter.getType(), sourceObjectQualifier, optional, queue.length());
 
 		Object object = targetGetter.get(queue.peek());
 

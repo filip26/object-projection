@@ -6,12 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.beans.Getter;
-import com.apicatalog.projection.beans.Setter;
 import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.ProjectionQueue;
-import com.apicatalog.projection.source.Source;
-import com.apicatalog.projection.target.TargetAdapter;
+import com.apicatalog.projection.objects.getter.Getter;
+import com.apicatalog.projection.objects.setter.Setter;
+import com.apicatalog.projection.property.source.Source;
+import com.apicatalog.projection.property.target.TargetAdapter;
 
 public class SourceProperty implements ProjectionProperty {
 
@@ -33,7 +33,7 @@ public class SourceProperty implements ProjectionProperty {
 			return;
 		}
 		
-		logger.debug("Forward {} : {}, depth = {}", targetSetter.getName(), targetSetter.getValueClass().getSimpleName(), queue.length());
+		logger.debug("Forward {} : {}, depth = {}", targetSetter.getName(), targetSetter.getType(), queue.length());
 
 		// get source value
 		Object object = source.read(queue, context);
@@ -44,7 +44,7 @@ public class SourceProperty implements ProjectionProperty {
 
 		object = targetAdapter.forward(queue, object, context);
 
-		logger.trace("{} : {} = {}", targetSetter.getName(), targetSetter.getValueClass().getSimpleName(), object);
+		logger.trace("{} : {} = {}", targetSetter.getName(), targetSetter.getType(), object);
 
 		targetSetter.set(queue.peek(), object);
 		
@@ -57,7 +57,7 @@ public class SourceProperty implements ProjectionProperty {
 			return;
 		}
 		
-		logger.debug("Backward {} : {}, depth = {}", targetGetter.getName(), targetGetter.getValueClass().getSimpleName(), queue.length());
+		logger.debug("Backward {} : {}, depth = {}", targetGetter.getName(), targetGetter.getType(), queue.length());
 
 		Object object = targetGetter.get(queue.peek());
 		
@@ -93,5 +93,21 @@ public class SourceProperty implements ProjectionProperty {
 	
 	public void setVisible(final Set<Integer> levels) {
 		this.visibleLevels = levels;
+	}
+	
+	public Source getSource() {
+		return source;
+	}
+	
+	public TargetAdapter getTargetAdapter() {
+		return targetAdapter;
+	}
+	
+	public Getter getTargetGetter() {
+		return targetGetter;
+	}
+	
+	public Setter getTargetSetter() {
+		return targetSetter;
 	}
 }

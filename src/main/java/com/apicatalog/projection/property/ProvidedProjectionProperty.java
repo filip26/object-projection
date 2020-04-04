@@ -8,17 +8,17 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.ProjectionFactory;
-import com.apicatalog.projection.beans.Getter;
-import com.apicatalog.projection.beans.Setter;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.ProjectionQueue;
+import com.apicatalog.projection.objects.getter.Getter;
+import com.apicatalog.projection.objects.setter.Setter;
 
 public class ProvidedProjectionProperty implements ProjectionProperty {
 
 	final Logger logger = LoggerFactory.getLogger(ProvidedProjectionProperty.class);
 
-	final ProjectionFactory factory;
+	final ProjectionRegistry factory;
 	
 	Getter targetGetter;
 	Setter targetSetter;
@@ -29,7 +29,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 	
 	boolean optional;
 	
-	public ProvidedProjectionProperty(ProjectionFactory factory) {
+	public ProvidedProjectionProperty(ProjectionRegistry factory) {
 		this.factory = factory;
 	}
 	
@@ -40,16 +40,16 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 			return;
 		}
 		
-		logger.debug("Forward {} : {}, qualifier = {}, optional = {}, depth = {}", targetSetter.getName(), targetSetter.getValueClass().getSimpleName(), sourceObjectQualifier, optional, queue.length());
+		logger.debug("Forward {} : {}, qualifier = {}, optional = {}, depth = {}", targetSetter.getName(), targetSetter.getType(), sourceObjectQualifier, optional, queue.length());
 
 		final ContextObjects clonedSources = new ContextObjects(context);
 		
 		Optional.ofNullable(sourceObjectQualifier).ifPresent(clonedSources::pushNamespace);
 		
-		final Projection<?> projection = factory.get(targetSetter.getValueClass()); 
+		final Projection<?> projection = factory.get(targetSetter.getType().getObjectClass()); 
 		
 		if (projection == null) {
-			throw new ProjectionError("Projection " + targetSetter.getValueClass().getCanonicalName() +  " is not present.");
+			throw new ProjectionError("Projection " + targetSetter.getType().getObjectClass() +  " is not present.");
 		}
 			
 		Object object = projection.compose(queue, clonedSources.getValues());
@@ -63,10 +63,10 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 	public void backward(ProjectionQueue queue, ContextObjects context) throws ProjectionError {
 		
 		@SuppressWarnings("unchecked")
-		final Projection<Object> projection = (Projection<Object>) factory.get(targetGetter.getValueClass()); 
+		final Projection<Object> projection = (Projection<Object>) factory.get(targetGetter.getType().getObjectClass()); 
 		
 		if (projection == null) {
-			throw new ProjectionError("Projection " + targetGetter.getValueClass().getCanonicalName() +  " is not present.");			
+			throw new ProjectionError("Projection " + targetGetter.getType().getObjectClass() +  " is not present.");			
 		}
 		
 		Object object = targetGetter.get(queue.peek());
@@ -93,5 +93,9 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 	
 	public void setSourceObjectQualifier(String sourceObjectQualifier) {
 		this.sourceObjectQualifier = sourceObjectQualifier;
+	}
+	
+	public void setOptional(boolean optional) {
+		this.optional = optional;
 	}
 }

@@ -2,6 +2,7 @@ package com.apicatalog.projection;
 
 import com.apicatalog.projection.objects.ContextObjects;
 import com.apicatalog.projection.objects.ProjectionQueue;
+import com.apicatalog.projection.property.ProjectionProperty;
 
 public interface Projection<P> {
 
@@ -39,5 +40,6 @@ public interface Projection<P> {
 	 * @throws ProjectionError 
 	 */
 	<S> S extract(Class<S> sourceClass, String qualifier, P projection) throws ProjectionError;
-	
+
+	ProjectionProperty[] getProperties();
 }
