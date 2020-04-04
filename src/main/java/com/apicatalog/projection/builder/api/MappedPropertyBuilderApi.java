@@ -70,7 +70,11 @@ public class MappedPropertyBuilderApi<P> {
 	}
 
 	public ProvidedPropertyBuilderApi<P> provided() {
-		ProvidedPropertyBuilderApi<P> builder = new ProvidedPropertyBuilderApi<>(projectionBuilder);
+		return provided(null);
+	}
+	
+	public ProvidedPropertyBuilderApi<P> provided(String qualifier) {
+		ProvidedPropertyBuilderApi<P> builder = new ProvidedPropertyBuilderApi<>(projectionBuilder).qualifier(qualifier);
 		this.providedPropertyBuilder = builder;
 		return builder;
 	}

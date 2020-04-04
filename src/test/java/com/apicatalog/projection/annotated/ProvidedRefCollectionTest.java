@@ -103,10 +103,16 @@ public class ProvidedRefCollectionTest {
     	Assert.assertEquals(1, objects.length);
     	
     	Assert.assertNotNull(objects[0]);
-    	Assert.assertTrue(Collection.class.isInstance(objects[0]));
+    	
+    	Assert.assertTrue(NamedObject.class.isInstance(objects[0]));
+    	@SuppressWarnings("unchecked")
+		NamedObject<Object> object1 = (NamedObject<Object>)objects[0];
+
+    	Assert.assertEquals("items", object1.getName());
+    	Assert.assertTrue(Collection.class.isInstance(object1.getObject()));
     	
     	@SuppressWarnings("unchecked")
-		Collection<SimpleObject> c1 = (Collection<SimpleObject>)objects[0];
+		Collection<SimpleObject> c1 = (Collection<SimpleObject>)object1.getObject();
     	
     	Assert.assertEquals(1, c1.size());
     	

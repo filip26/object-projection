@@ -53,7 +53,15 @@ public class ContextObjects {
 	}
 
 	public Object[] getValues() {
-		return index.values().toArray(new Object[0]);
+		return index.entrySet()
+					.stream()
+					.map(e -> StringUtils.isBlank(e.getKey().qualifier) 
+								? e.getValue() 
+								: NamedObject.of(e.getKey().qualifier, e.getValue()
+										)
+						
+						)
+					.collect(Collectors.toList()).toArray(new Object[0]);
 	}
 	
 	public ContextObjects addOrReplace(Object object, String qualifier) {

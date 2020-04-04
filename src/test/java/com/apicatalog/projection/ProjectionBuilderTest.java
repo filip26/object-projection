@@ -257,4 +257,83 @@ public class ProjectionBuilderTest {
 		Assert.assertNull(projection);
 	}
 
+	@Test
+	public void test9() throws ProjectionError {
+		
+		ProjectionRegistry registry = ProjectionRegistry.newInstance();
+		
+		Assert.assertNotNull( 
+				ProjectionBuilder
+					.bind(Object1To.class)
+					
+					.map("object2", true).source(Object1.class).optional()
+
+					.map("id").provided()
+					
+					.build(registry, new TypeAdapters())
+					);
+
+		Assert.assertNotNull(
+				ProjectionBuilder
+					.bind(Object2To.class)
+					
+					.map("id").provided()
+					
+					.build(registry, new TypeAdapters())
+					);
+		
+		Object1 object1 = new Object1();
+		
+		Object2 object2 = new Object2();
+		
+		object1.object2 = object2;
+		
+		Object1To to = registry.compose(Object1To.class, object1, "AREW2324E");
+		
+		Assert.assertNotNull(to);;
+		Assert.assertEquals("AREW2324E", to.id);
+		
+		Assert.assertNotNull(to.object2);
+		Assert.assertEquals("AREW2324E", to.object2.id);		
+	}
+
+	@Test
+	public void test10() throws ProjectionError {
+		
+		ProjectionRegistry registry = ProjectionRegistry.newInstance();
+		
+		Assert.assertNotNull( 
+				ProjectionBuilder
+					.bind(Object1To.class)
+					
+					.map("object2", true).source(Object1.class).optional()
+
+					.map("id").provided("id")
+					
+					.build(registry, new TypeAdapters())
+					);
+
+		Assert.assertNotNull(
+				ProjectionBuilder
+					.bind(Object2To.class)
+					
+					.map("id").provided("id")
+					
+					.build(registry, new TypeAdapters())
+					);
+		
+		Object1 object1 = new Object1();
+		
+		Object2 object2 = new Object2();
+		
+		object1.object2 = object2;
+		
+		Object1To to = registry.compose(Object1To.class, object1,  NamedObject.of("id", "AREW2324E"));
+		
+		Assert.assertNotNull(to);;
+		Assert.assertEquals("AREW2324E", to.id);
+		
+		Assert.assertNotNull(to.object2);
+		Assert.assertEquals("AREW2324E", to.object2.id);		
+	}
 }

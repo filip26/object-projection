@@ -57,10 +57,20 @@ public class ProvidedCollectionTest {
     	Assert.assertNotNull(objects);
     	Assert.assertEquals(2, objects.length);
     	
-    	Assert.assertEquals(to.href, objects[0]);
+    	Assert.assertTrue(NamedObject.class.isInstance(objects[0]));    	
+    	@SuppressWarnings("unchecked")
+		NamedObject<Object> object1 = (NamedObject<Object>)objects[0];
     	
-    	Assert.assertTrue(Collection.class.isInstance(objects[1]));
-    	Assert.assertArrayEquals(new String[] {"10", "20", "30"}, ((Collection<?>)objects[1]).toArray(new String[0]));
+    	Assert.assertEquals("href", object1.getName());
+    	Assert.assertEquals(to.href, object1.getObject());
+
+    	Assert.assertTrue(NamedObject.class.isInstance(objects[1]));
+    	@SuppressWarnings("unchecked")
+		NamedObject<Object> object2 = (NamedObject<Object>)objects[1];
+    	
+    	Assert.assertEquals("items", object2.getName());
+    	Assert.assertTrue(Collection.class.isInstance(object2.getObject()));
+    	Assert.assertArrayEquals(new String[] {"10", "20", "30"}, ((Collection<?>)object2.getObject()).toArray(new String[0]));
     }    
     
 }
