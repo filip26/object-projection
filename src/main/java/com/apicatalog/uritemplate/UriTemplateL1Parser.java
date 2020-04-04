@@ -12,32 +12,48 @@ public class UriTemplateL1Parser {
 	
 	enum State { VAR_BEGIN, VAR_END, STOP_CHAR }
 	
-	protected UriTemplateL1Parser() {
+	final ArrayList<String> elements;
+	final ArrayList<Integer> variables;
+	final ArrayList<Integer> stops;
+
+	char[] input;
+	
+	int inputIndex;
+	int tmpIndex;
+
+	State state;
+
+	UriTemplateL1Parser() {
+		this.elements = new ArrayList<>(10);
+		this.variables = new ArrayList<>(10);
+		this.stops = new ArrayList<>(10);
+	}
+	
+	public static final UriTemplateL1Parser newInstance() {
+		return new UriTemplateL1Parser();
 	}
 
-	public static UriTemplateL1 of(final String uriTemplate) throws MalformedUriTemplate {
+	public static final UriTemplateL1 of(final String uriTemplate) throws MalformedUriTemplate {
+		return newInstance().parse(uriTemplate);
+	}
+	
+	public final UriTemplateL1 parse(final String uriTemplate) throws MalformedUriTemplate {
 
 		if (uriTemplate == null) {
 			throw new IllegalArgumentException("Invalid null as uriTemplate parameter.");
 		}
 		
-		final ArrayList<String> elements = new ArrayList<>();
-		final ArrayList<Integer> variables = new ArrayList<>();
-		final ArrayList<Integer> stops = new ArrayList<>();
-
-		final char[] input = uriTemplate.toCharArray();
-		int inputIndex = 0;
-
-		State state = State.VAR_BEGIN;
+		elements.clear();
+		variables.clear();
+		stops.clear();
 		
-		// strip leading spaces		
-		for (; inputIndex < input.length; inputIndex++) {
-			if (!Character.isWhitespace(input[inputIndex])) {
-				break;
-			}
-		}
+		state = State.VAR_BEGIN;
+		input = uriTemplate.toCharArray();
+		inputIndex = 0;
+				 
+		stripspaces();
 
-		int tmpIndex = inputIndex;
+		tmpIndex = inputIndex;
 		
 		// process URI template
 		for (; inputIndex < input.length; inputIndex++) {
@@ -48,34 +64,58 @@ public class UriTemplateL1Parser {
 			case VAR_BEGIN:
 				// found first variable
 				if (ch == '{') {
-					if (tmpIndex < inputIndex) {
-						elements.add(String.copyValueOf(input, tmpIndex, inputIndex - tmpIndex));
-					}
-					state = State.VAR_END;
-					tmpIndex = inputIndex + 1;
+					beginVar();
 				}
 				break;
 				
 			case VAR_END:
 				if (ch == '}') {
-					variables.add(elements.size());
-					elements.add(String.copyValueOf(input, tmpIndex, inputIndex - tmpIndex));
-					state = State.STOP_CHAR;
-					tmpIndex = inputIndex + 1;
+					endVar();
 				}
 				break;
 				
 			case STOP_CHAR:
 				if (ch == '/' || ch == '&' || ch == '?' || ch == '=' || ch == '#') {
-					stops.add(inputIndex);
-					elements.add(String.copyValueOf(input, tmpIndex, inputIndex - tmpIndex + 1));
-					state = State.VAR_BEGIN;
-					tmpIndex = inputIndex + 1;
+					stopChar();
 				}
 				break;
 			}			
 		}
+
+		complete(uriTemplate);
 		
+		// return URI template
+		return new UriTemplateL1(
+						elements.toArray(new String[0]),
+						variables.stream().mapToInt(v -> v).toArray(),
+						getStopchars()
+				);
+	}
+	
+	void beginVar() {
+		if (tmpIndex < inputIndex) {
+			elements.add(String.copyValueOf(input, tmpIndex, inputIndex - tmpIndex));
+		}
+		state = State.VAR_END;
+		tmpIndex = inputIndex + 1;
+
+	}
+	
+	void endVar() {
+		variables.add(elements.size());
+		elements.add(String.copyValueOf(input, tmpIndex, inputIndex - tmpIndex));
+		state = State.STOP_CHAR;
+		tmpIndex = inputIndex + 1;
+	}
+	
+	void stopChar() {
+		stops.add(inputIndex);
+		elements.add(String.copyValueOf(input, tmpIndex, inputIndex - tmpIndex + 1));
+		state = State.VAR_BEGIN;
+		tmpIndex = inputIndex + 1;
+	}
+	
+	void complete(final String uriTemplate) throws MalformedUriTemplate {
 		switch (state) {
 		case STOP_CHAR:			
 		case VAR_BEGIN:
@@ -99,14 +139,16 @@ public class UriTemplateL1Parser {
 		case VAR_END:
 			throw new MalformedUriTemplate("Unexpected end of input, expected '}' template=" + uriTemplate);
 		}
-		
+
 		if (elements.isEmpty()) {
 			throw new MalformedUriTemplate("Invalid URI template=" + uriTemplate + ". Only 'Level 1' templates are supported.");
 		}		
-		
-		// extract stop chars
-		final char[] stopChars = new char[variables.size()];
+	}
 
+	// extract stop chars
+	char[] getStopchars() {
+		final char[] stopChars = new char[variables.size()];
+	
 		inputIndex = 0;
 		for (Integer stopIndex : stops) {
 			stopChars[inputIndex++] = input[stopIndex];
@@ -115,11 +157,16 @@ public class UriTemplateL1Parser {
 			stopChars[inputIndex] = UriTemplateL1.END_OF_INPUT;
 		}
 		
-		// return URI template
-		return new UriTemplateL1(
-						elements.toArray(new String[0]),
-						variables.stream().mapToInt(v -> v).toArray(),
-						stopChars
-				);
+		return stopChars;
 	}
+
+	// strip leading spaces
+	void stripspaces() {
+		for (; inputIndex < input.length; inputIndex++) {
+			if (!Character.isWhitespace(input[inputIndex])) {
+				break;
+			}
+		}
+	}
+	
 }
