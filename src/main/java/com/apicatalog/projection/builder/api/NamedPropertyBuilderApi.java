@@ -29,6 +29,7 @@ public class NamedPropertyBuilderApi<P> {
 	
 	SourcePropertyBuilderApi<P> sourcePropertyBuilder;
 	ProvidedPropertyBuilderApi<P> providedPropertyBuilder;
+	SourcesPropertyBuilderApi<P> sourcesPropertyBuilder;
 
 	ConstantPropertyBuilder constantBuilder;
 	
@@ -56,7 +57,13 @@ public class NamedPropertyBuilderApi<P> {
 		this.sourcePropertyBuilder = builder;
 		return builder;
 	}
-	
+
+	public SourcesPropertyBuilderApi<P> sources() {
+		SourcesPropertyBuilderApi<P> builder = new SourcesPropertyBuilderApi<>(projectionBuilder, targetPropertyName);
+		this.sourcesPropertyBuilder = builder;
+		return builder;
+	}
+
 	public Projection<P> build(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
 		return projectionBuilder.build(factory, typeAdapters);
 	}
@@ -108,6 +115,16 @@ public class NamedPropertyBuilderApi<P> {
 			constantBuilder.targetSetter(targetSetter);
 			return constantBuilder.build(registry, typeAdapters);
 			
+		} else 	if  (Optional.ofNullable(sourcesPropertyBuilder).isPresent()) {
+
+			// extract getter
+			final Getter targetGetter = FieldGetter.from(field, targetType);
+
+			sourcesPropertyBuilder.targetGetter(targetGetter);
+			sourcesPropertyBuilder.targetSetter(targetSetter);
+			
+			return sourcesPropertyBuilder.buildProperty(registry, typeAdapters);
+
 		}
 		return null;
 	}
@@ -135,7 +152,6 @@ public class NamedPropertyBuilderApi<P> {
 		
 		return ObjectType.of(objectClass, componentClass, reference);
 	}
-
 
 	protected static final Getter getGetter(Class<?> objectClass, final String name, boolean reference) {
 

@@ -9,14 +9,14 @@ import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.property.source.ArraySource;
-import com.apicatalog.projection.property.source.SingleSource;
+import com.apicatalog.projection.property.source.Source;
 import com.apicatalog.projection.reducer.ReducerMapping;
 
 public class ArraySourceBuilder {
 
 	final Logger logger = LoggerFactory.getLogger(ArraySourceBuilder.class);
 	
-	SingleSource[] sources;
+	Source[] sources;
 	
 	boolean optional;
 	
@@ -69,7 +69,7 @@ public class ArraySourceBuilder {
 		return this;
 	}
 	
-	public ArraySourceBuilder sources(SingleSource[] sources) {
+	public ArraySourceBuilder sources(Source[] sources) {
 		this.sources = sources;
 		return this;
 	}

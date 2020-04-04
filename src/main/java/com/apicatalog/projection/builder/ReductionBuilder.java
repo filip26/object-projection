@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.reducer.Reducer;
@@ -29,7 +28,7 @@ public class ReductionBuilder {
 		return new ReductionBuilder();
 	}
 		
-	public ReducerMapping build(TypeAdapters typeAdapters) throws ReducerError, ProjectionError {
+	public ReducerMapping build() throws ReducerError, ProjectionError {
 		
 		ReducerMapping reducer = new ReducerMapping();
 		

@@ -124,9 +124,9 @@ public class ProjectionBuilderTest {
 	@Test
 	public void test51() throws ProjectionError {
 		
-		ProjectionRegistry factory = ProjectionRegistry.newInstance();
+		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		
-		final Projection<Object1To> projection1 = 
+		Assert.assertNotNull( 
 				ProjectionBuilder
 					.bind(Object1To.class)
 					
@@ -134,19 +134,17 @@ public class ProjectionBuilderTest {
 
 					.map("id").source(Object1.class)
 					
-					.build(factory, new TypeAdapters());
+					.build(registry, new TypeAdapters())
+					);
 
-		Assert.assertNotNull(projection1);
-
-		final Projection<Object2To> projection2 = 
+		Assert.assertNotNull(
 				ProjectionBuilder
 					.bind(Object2To.class)
 					
 					.map("id").source(Object2.class)
 					
-					.build(factory, new TypeAdapters());
-
-		Assert.assertNotNull(projection2);
+					.build(registry, new TypeAdapters())
+					);
 		
 		Object1 object1 = new Object1();
 		object1.id = "AREW2324E";
@@ -156,7 +154,7 @@ public class ProjectionBuilderTest {
 		
 		object1.object2 = object2;
 		
-		Object1To to = projection1.compose(object1);
+		Object1To to = registry.compose(Object1To.class, object1);
 		
 		Assert.assertNotNull(to);;
 		Assert.assertEquals(object1.id, to.id);
@@ -168,9 +166,9 @@ public class ProjectionBuilderTest {
 	@Test
 	public void test52() throws ProjectionError {
 		
-		ProjectionRegistry factory = ProjectionRegistry.newInstance();
-		
-		final Projection<Object1To> projection1 = 
+		ProjectionRegistry registry = ProjectionRegistry.newInstance();
+
+		Assert.assertNotNull( 
 				ProjectionBuilder
 					.bind(Object1To.class)
 					
@@ -178,25 +176,23 @@ public class ProjectionBuilderTest {
 
 					.map("id").source(Object1.class)
 					
-					.build(factory, new TypeAdapters());
+					.build(registry, new TypeAdapters())
+					);
 
-		Assert.assertNotNull(projection1);
-
-		final Projection<Object2To> projection2 = 
+		Assert.assertNotNull(
 				ProjectionBuilder
 					.bind(Object2To.class)
 					
 					.map("id").source(Object2.class)
 					
-					.build(factory, new TypeAdapters());
-
-		Assert.assertNotNull(projection2);
+					.build(registry, new TypeAdapters())
+					);
 
 		Object1 object1 = new Object1();
 		object1.id = "AREW2324E";	
 		object1.object2 = null;
 		
-		Object1To to = projection1.compose(object1);
+		Object1To to = registry.compose(Object1To.class, object1);
 		
 		Assert.assertNotNull(to);;
 		Assert.assertEquals(object1.id, to.id);
@@ -227,12 +223,28 @@ public class ProjectionBuilderTest {
 					.bind(Object1To.class)
 					
 					.map("id")
-						.source(Object1.class)
-						.source(Object1.class, "i1")
-						.reduce(UriTemplate.class, "/{}/{}")
-						.conversion(Prefix.class, "https://example.org")
+						.sources()
+							.reduce(UriTemplate.class, "/{}/{}")							
+							.conversion(Prefix.class, "https://example.org")
+
+							.source(Object1.class)
+							
+							.source(Object1.class, "id")
+								.conversion(Prefix.class, "1")
+								.conversion(Suffix.class, "2")
 						
 					.build(ProjectionRegistry.newInstance(), new TypeAdapters());
+		
+		Assert.assertNotNull(projection);
+		
+		Object1 object1 = new Object1();
+		object1.id = "A";
+		
+		Object1To to = projection.compose(object1);
+				
+		Assert.assertNotNull(to);
+		
+		Assert.assertEquals("https://example.org/A/1A2", to.id);
 	}
 
 	@Test

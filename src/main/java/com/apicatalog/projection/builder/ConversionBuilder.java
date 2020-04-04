@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterConfig;
 import com.apicatalog.projection.converter.ConverterError;
@@ -28,7 +27,7 @@ public class ConversionBuilder {
 		return new ConversionBuilder();
 	}
 		
-	public ConverterMapping build(TypeAdapters typeAdapters) throws ConverterError, ProjectionError {
+	public ConverterMapping build() throws ConverterError, ProjectionError {
 		
 		ConverterMapping converter = new ConverterMapping();
 		

@@ -55,8 +55,6 @@ public class ArraySource implements Source {
 			sourceObjects[i] = sources[i].read(queue, context);
 		}
 		
-		System.out.println(">>> " + reduction.getSourceType());
-		System.out.println(">>> " + reduction.getTargetType());
 		try {
 			Object object = reduction
 								.getReducer()

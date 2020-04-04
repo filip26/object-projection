@@ -44,7 +44,7 @@ public class ProvidedPropertyBuilder {
 		final ObjectType targetType = targetGetter != null ? targetGetter.getType() : targetSetter.getType(); 
 		
 		if (targetType.isReference() && !targetType.isCollection()) {
-			return buildReference(factory, typeAdapters);
+			return buildReference(factory);
 		}
 		
 		final ProvidedObjectProperty property = new ProvidedObjectProperty();
@@ -80,7 +80,7 @@ public class ProvidedPropertyBuilder {
 		return property;
 	}
 	
-	ProjectionProperty buildReference(ProjectionRegistry factory, TypeAdapters typeAdapters) {
+	ProjectionProperty buildReference(ProjectionRegistry factory) {
 		
 		final ProvidedProjectionProperty property = new ProvidedProjectionProperty(factory);
 

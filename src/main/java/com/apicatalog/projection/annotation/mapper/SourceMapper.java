@@ -210,7 +210,7 @@ class SourceMapper {
 							.newInstance()
 							.converter(conversion.type())
 							.parameters(conversion.value())
-							.build(typeAdapters)
+							.build()
 							);
 		}
 
@@ -223,7 +223,7 @@ class SourceMapper {
 					.newInstance()
 					.converter(reduction.type())
 					.parameters(reduction.value())
-					.build(typeAdapters)
+					.build()
 					;
 	}	
 }

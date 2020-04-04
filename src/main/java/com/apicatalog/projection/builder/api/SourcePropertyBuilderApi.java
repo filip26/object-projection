@@ -29,8 +29,6 @@ public class SourcePropertyBuilderApi<P> {
 	
 	List<ConversionBuilder> conversionBuilder;
 	
-	SourcesPropertyBuilderApi<P> sourcesApi;
-	
 	Class<?> sourceObjectClass;
 	String sourcePropertyName;
 	
@@ -71,7 +69,7 @@ public class SourcePropertyBuilderApi<P> {
 	}
 	
 	protected SourcePropertyBuilderApi<P> targetGetter(Getter targetGetter) {
-		sourcePropertyBuilder = sourcePropertyBuilder.targetGetter(targetGetter);
+		sourcePropertyBuilder = sourcePropertyBuilder.targetGetter(targetGetter); 
 		return this;
 	}
 
@@ -93,24 +91,14 @@ public class SourcePropertyBuilderApi<P> {
 		return this;
 	}
 
-	public SourcesPropertyBuilderApi<P> source(Class<?> sourceClass, String sourceProperty) {
-		this.sourcesApi = new SourcesPropertyBuilderApi<>(projectionBuilder);
-		return sourcesApi;
-	}
-
-	public SourcesPropertyBuilderApi<P> source(Class<?> sourceClass) {
-		this.sourcesApi = new SourcesPropertyBuilderApi<>(projectionBuilder);
-		return sourcesApi;
-	}
-
-	protected ProjectionProperty buildProperty(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
+	protected Source buildSource(TypeAdapters typeAdapters, SingleSourceBuilder sourceBuilder) throws ProjectionError {
 
 		ConverterMapping[] converters = new ConverterMapping[conversionBuilder.size()];
 		
 		try {
 			int i=0;
 			for (ConversionBuilder cb : conversionBuilder) {
-				converters[i++] = cb.build(typeAdapters);
+				converters[i++] = cb.build();
 			}
 			
 		} catch (ConverterError e) {
@@ -121,14 +109,17 @@ public class SourcePropertyBuilderApi<P> {
 		final Getter sourceGetter = NamedPropertyBuilderApi.getGetter(sourceObjectClass, sourcePropertyName, false);
 		final Setter sourceSetter = NamedPropertyBuilderApi.getSetter(sourceObjectClass, sourcePropertyName, false);
 		
-		Source source = sourceBuilder
+		return sourceBuilder
 							.getter(sourceGetter)
 							.setter(sourceSetter)
 							.converters(converters)
-							.build(typeAdapters);
-				
-		return sourcePropertyBuilder
-					.source(source)
-					.build(factory, typeAdapters);
+							.build(typeAdapters)
+							;		
 	}	
+
+	protected ProjectionProperty buildProperty(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {				
+		return sourcePropertyBuilder
+					.source(buildSource(typeAdapters, sourceBuilder))
+					.build(factory, typeAdapters);
+	}
 }
