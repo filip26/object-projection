@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.objects.ProjectionContext;
+import com.apicatalog.projection.context.ProjectionContext;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
@@ -68,7 +68,7 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 			object = targetAdapter.backward(object, context);
 		}
 
-		context.addOrReplace(object, sourceObjectQualifier);	//TODO what if the object already exists?
+		context.addOrReplace(object, sourceObjectQualifier);
 	}
 	
 	public void setTargetGetter(Getter targetGetter) {

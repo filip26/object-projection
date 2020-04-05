@@ -1,5 +1,8 @@
 package com.apicatalog.projection.converter.std;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterConfig;
 import com.apicatalog.projection.converter.ConverterError;
@@ -16,12 +19,10 @@ public class UriTemplate implements Reducer<String, String>, Converter<String, S
 	@Override
 	public void initReducer(ReducerConfig ctx) throws ReducerError {
 		try {
-			this.template = UriTemplateL1.of(ctx.getValues()[0]); 	//FIXME
-			
+			init(ctx.getValues());
 		} catch (MalformedUriTemplate e) {
 			throw new ReducerError(e);
 		}
-		
 	}
 
 	@Override
@@ -37,11 +38,10 @@ public class UriTemplate implements Reducer<String, String>, Converter<String, S
 	@Override
 	public void initConverter(ConverterConfig ctx) throws ConverterError {
 		try {
-			this.template = UriTemplateL1.of(ctx.getValues()[0]); 	//FIXME
-			
+			init(ctx.getValues());
 		} catch (MalformedUriTemplate e) {
 			throw new ConverterError(e);
-		}		
+		}
 	}
 
 	@Override
@@ -60,5 +60,9 @@ public class UriTemplate implements Reducer<String, String>, Converter<String, S
 		
 		// return just the first variable
 		return variables[0];
+	}
+	
+	void init(String[] values) throws MalformedUriTemplate {
+		this.template = UriTemplateL1.of(Arrays.stream(values).collect(Collectors.joining()));			
 	}
 }

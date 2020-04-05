@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.objects.ProjectionContext;
+import com.apicatalog.projection.context.ProjectionContext;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;

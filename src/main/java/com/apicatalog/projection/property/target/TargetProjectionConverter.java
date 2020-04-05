@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.objects.ProjectionContext;
+import com.apicatalog.projection.context.ProjectionContext;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ProjectionQueue;
 

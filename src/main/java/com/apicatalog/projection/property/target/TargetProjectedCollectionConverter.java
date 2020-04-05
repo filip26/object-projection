@@ -11,7 +11,7 @@ import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.objects.ProjectionContext;
+import com.apicatalog.projection.context.ProjectionContext;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ProjectionQueue;
 
@@ -100,7 +100,7 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 
 		for (final Object object : objects) {
 
-			if (value.isEmpty() && sourceType.isInstance(objects)) {
+			if (value.isEmpty() && sourceType.isInstance(object)) {
 				
 				value = Optional.ofNullable(object);
 				

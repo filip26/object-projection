@@ -2,10 +2,12 @@ package com.apicatalog.projection;
 
 import java.util.Arrays;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.objects.ProjectionContext;
+import com.apicatalog.projection.context.ProjectionContext;
+import com.apicatalog.projection.objects.NamedObject;
 import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.property.ProjectionProperty;
@@ -41,11 +43,11 @@ public final class Projection<P> {
 	public P compose(ProjectionQueue queue, ProjectionContext context) throws ProjectionError {
 		
 		logger.debug("Compose {} of {} object(s), depth = {}", projectionClass.getSimpleName(), context.size(), queue.length());
-		
-//TODO		if (logger.isTraceEnabled()) {
-//			Stream.of(objects).forEach(v -> logger.trace("  {}", v.getClass().getSimpleName()));
-//		}
-		
+
+		if (logger.isTraceEnabled()) {
+			context.stream().forEach(v -> logger.trace("  {}", v));
+		}
+
 		// check for cycles
 		if (queue.contains(projectionClass)) {
 			logger.debug("Ignored. Projection {} is in processing already", projectionClass.getSimpleName());
@@ -128,9 +130,22 @@ public final class Projection<P> {
 		if (objects == null || objects.length == 0) {
 			return null;
 		}
+
+		if (StringUtils.isNotBlank(qualifier)) {
+			return (S)Arrays
+					.stream(objects)
+					.filter(NamedObject.class::isInstance)
+					.filter(o -> 
+								qualifier.equals(((NamedObject<?>)o).getName())  
+								&& sourceObjectClass.isInstance(((NamedObject<?>)o).getObject())
+								)
+					.findFirst()
+					.orElse(null);
+		}
 		
 		return (S)Arrays
 					.stream(objects)
+					.map(o -> NamedObject.class.isInstance(o) ? ((NamedObject<?>)o).getObject() : o)
 					.filter(sourceObjectClass::isInstance)
 					.findFirst()
 					.orElse(null);

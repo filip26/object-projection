@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.objects.ProjectionContext;
+import com.apicatalog.projection.context.ProjectionContext;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
@@ -44,7 +44,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 
 		final ProjectionContext clonedContext = new ProjectionContext(context);
 		
-		Optional.ofNullable(sourceObjectQualifier).ifPresent(clonedContext::pushNamespace);
+		Optional.ofNullable(sourceObjectQualifier).ifPresent(clonedContext::namespace);
 		
 		final Projection<?> projection = factory.get(targetSetter.getType().getObjectClass()); 
 		

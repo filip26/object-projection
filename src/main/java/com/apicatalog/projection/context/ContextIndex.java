@@ -1,30 +1,32 @@
-package com.apicatalog.projection.objects;
+package com.apicatalog.projection.context;
 
 import java.util.Objects;
+import java.util.Optional;
 
-final class ObjectKey {
+import com.apicatalog.projection.objects.NamedObject;
+
+final class ContextIndex {
 
 	final Class<?> clazz;
 	final String qualifier;
 	
-	ObjectKey(Class<?> clazz, String qualifier) {
+	ContextIndex(Class<?> clazz, String qualifier) {
 		this.clazz = clazz;
 		this.qualifier = qualifier;
 	}
 	
-	public static ObjectKey of(Class<?> clazz, String qualifier) {
-		return new ObjectKey(clazz, qualifier == null ? "" : qualifier);
+	public static ContextIndex of(Class<?> clazz, String qualifier) {
+		return new ContextIndex(clazz, qualifier == null ? "" : qualifier);		
 	}
-
-	public static ObjectKey of(Object object) {
-		if (object instanceof NamedObject) {
+	
+	public static ContextIndex of(Object object) {
+		if (NamedObject.class.isInstance(object)) {
 			final NamedObject<?> namedObject = (NamedObject<?>)object;
 			
 			return of(namedObject.getObject().getClass(), namedObject.getName());	
 		}
 		return of(object.getClass(), null);
 	}
-
 	
 	@Override
 	public int hashCode() {
@@ -42,7 +44,7 @@ final class ObjectKey {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		ObjectKey other = (ObjectKey) obj;
+		ContextIndex other = (ContextIndex) obj;
 		return Objects.equals(clazz, other.clazz) && Objects.equals(qualifier, other.qualifier);
 	}	
 	
@@ -56,6 +58,6 @@ final class ObjectKey {
 
 	@Override
 	public String toString() {
-		return "ObjectKey [clazz=" + clazz + ", qualifier=" + qualifier + "]";
+		return "ContextIndex [clazz=" + Optional.ofNullable(clazz).map(Class::getSimpleName).orElse("n/a") + ", qualifier=" +Optional.ofNullable(qualifier).orElse("n/a") + "]";
 	}
 }

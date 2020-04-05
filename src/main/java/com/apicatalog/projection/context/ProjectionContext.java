@@ -1,7 +1,5 @@
-package com.apicatalog.projection.objects;
+package com.apicatalog.projection.context;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -12,15 +10,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apicatalog.projection.objects.NamedObject;
+
 public final class ProjectionContext {
 
 	final Logger logger = LoggerFactory.getLogger(ProjectionContext.class);
 	
-	final Map<ObjectKey, Object> index;
+	final Map<ContextIndex, Object> index;
 	
 	final ContextNamespace namespace;
 	
-	protected ProjectionContext(Map<ObjectKey, Object> index, Collection<Object> objects) {
+	protected ProjectionContext(Map<ContextIndex, Object> index) {
 		this.index = index;
 		this.namespace = new ContextNamespace();
 	}
@@ -31,17 +31,16 @@ public final class ProjectionContext {
 	}
 	
 	public static final ProjectionContext of(Object...objects) {		
-		return new ProjectionContext(index(objects), Arrays.asList(objects));
+		return new ProjectionContext(index(objects));
 	}
 	
 	public Object get(final Class<?> clazz, final String name) {
-		//FIXME optimize
 		
 		final String qualifiedName = Optional.ofNullable(name).map(n -> namespace.getQName(name)).orElse(null);
 				
-		return Optional.ofNullable(index.get(ObjectKey.of(clazz, qualifiedName)))
+		return Optional.ofNullable(index.get(ContextIndex.of(clazz, qualifiedName)))
 				.orElseGet(() -> {
-					for (Map.Entry<ObjectKey, Object> entry : index.entrySet()) {
+					for (Map.Entry<ContextIndex, Object> entry : index.entrySet()) {
 						if (clazz.isAssignableFrom(entry.getKey().getClazz()) && ((StringUtils.isBlank(qualifiedName) && StringUtils.isBlank(entry.getKey().getQualifier()))
 									|| StringUtils.isNotBlank(qualifiedName) && qualifiedName.equals(entry.getKey().getQualifier())
 									)) {
@@ -54,27 +53,31 @@ public final class ProjectionContext {
 	}
 
 	public Object[] getValues() {
-		return index.entrySet()
-					.stream()
-					.map(e -> StringUtils.isBlank(e.getKey().qualifier) 
-								? e.getValue() 
-								: NamedObject.of(e.getKey().qualifier, e.getValue()
-										)
-						
-						)
-					.collect(Collectors.toList()).toArray(new Object[0]);
+		return stream().collect(Collectors.toList()).toArray(new Object[0]);
 	}
 	
+	public Stream<Object> stream() {
+		return index.entrySet()
+				.stream()
+				.map(e -> StringUtils.isBlank(e.getKey().qualifier) 
+							? e.getValue() 
+							: NamedObject.of(e.getKey().qualifier, e.getValue()
+									)
+					
+					);		
+	}
+
+	
 	public ProjectionContext addOrReplace(Object object, String qualifier) {
-		index.put(ObjectKey.of(object.getClass(), qualifier), object);
+		index.put(ContextIndex.of(object.getClass(), qualifier), object);
 		return this;
 	}
 
 	public boolean contains(Class<?> objectClass, String qualifier) {
-		return index.containsKey(ObjectKey.of(objectClass, qualifier));
+		return index.containsKey(ContextIndex.of(objectClass, qualifier));
 	}
 	
-	public void pushNamespace(String name) {
+	public void namespace(String name) {
 		this.namespace.push(name);
 	}
 
@@ -82,16 +85,15 @@ public final class ProjectionContext {
 		return index.size();
 	}
 	
-	protected static final Map<ObjectKey, Object> index(Object[] objects) {
-		//TODO extract superclasses/interfaces and index 
+	protected static final Map<ContextIndex, Object> index(Object[] objects) {
 		return Stream
 				.of(objects)
 				.collect(Collectors.toMap(
-							ObjectKey::of,
+							ContextIndex::of,
 								o -> 
 								(NamedObject.class.isInstance(o))
 									? ((NamedObject<?>)o).getObject()
 									: o
 									));
-	}
+	}	
 }

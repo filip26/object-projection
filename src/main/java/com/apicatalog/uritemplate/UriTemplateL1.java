@@ -88,7 +88,7 @@ public final class UriTemplateL1 {
 			
 				// extract a variable from the remaining input
 				if (stopCharacters[variableIndex] == END_OF_INPUT) {
-					
+
 					int length = input.length - inputIndex;
 					
 					if ((variables[variableIndex] + 1) < elements.length) {

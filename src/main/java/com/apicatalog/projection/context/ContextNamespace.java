@@ -1,4 +1,4 @@
-package com.apicatalog.projection.objects;
+package com.apicatalog.projection.context;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;

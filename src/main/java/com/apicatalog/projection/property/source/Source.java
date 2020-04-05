@@ -1,7 +1,7 @@
 package com.apicatalog.projection.property.source;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.objects.ProjectionContext;
+import com.apicatalog.projection.context.ProjectionContext;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ProjectionQueue;
 
