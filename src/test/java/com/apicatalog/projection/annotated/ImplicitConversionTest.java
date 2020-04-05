@@ -1,5 +1,6 @@
 package com.apicatalog.projection.annotated;
 
+import java.net.URI;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -12,7 +13,9 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.BasicTypes;
+import com.apicatalog.projection.objects.UriObject;
 import com.apicatalog.projection.projections.ImplicitConversionTo;
+import com.apicatalog.projection.projections.UriTo;
 
 public class ImplicitConversionTest {
 
@@ -22,6 +25,7 @@ public class ImplicitConversionTest {
 	public void setup() {
 		projections = ProjectionRegistry.newInstance()
 						.register(ImplicitConversionTo.class)
+						.register(UriTo.class)
 						;
 	}
 	
@@ -124,5 +128,32 @@ public class ImplicitConversionTest {
     	Assert.assertEquals("1 item", object.stringArray[0]);
     	Assert.assertEquals("2 item", object.stringArray[1]);
     	Assert.assertEquals("3 item", object.stringArray[2]);
+    }
+    
+    @Test
+    public void testComposition2() throws ProjectionError, ConverterError {
+    	
+    	UriObject object = new UriObject();
+		object.uri = URI.create("https://example.org/a/b/c");
+    	
+    	UriTo projection = projections.compose(UriTo.class, object);
+    	
+    	Assert.assertNotNull(projection);
+		Assert.assertEquals(object.uri.toString(), projection.uri);
+    }
+    
+    @Test
+    public void testDecomposition2() throws ProjectionError, ConverterError {
+    	
+    	UriTo to = new UriTo();
+		to.uri = "https://example.org/a/b/c";
+    	
+    	Object[] objects = projections.decompose(to);
+    	
+    	Assert.assertNotNull(objects);
+    	Assert.assertEquals(1, objects.length);
+    	Assert.assertNotNull(objects[0]);
+    	Assert.assertEquals(UriObject.class, objects[0].getClass());
+		Assert.assertEquals(URI.create(to.uri), ((UriObject)objects[0]).uri);
     }
 }

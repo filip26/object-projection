@@ -89,8 +89,13 @@ public final class ObjectUtils {
 	public static Field getProperty(Class<?> clazz, String property) {
 		
 		try {
-			return clazz.getDeclaredField(property);
-			
+			Field field = clazz.getDeclaredField(property);
+
+			if (!Modifier.isStatic(field.getModifiers())
+					&& !Modifier.isTransient(field.getModifiers())) {
+				return field;
+			}
+
 		} catch (NoSuchFieldException e) {/* ignore */}
 		
 		return null;

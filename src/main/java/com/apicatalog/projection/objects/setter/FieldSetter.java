@@ -23,6 +23,7 @@ public final class FieldSetter implements Setter {
 	@Override
 	public void set(final Object object, final Object value) throws ProjectionError {	
 		try {
+			field.setAccessible(true);
 			field.set(object, value);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			throw new ProjectionError(e);

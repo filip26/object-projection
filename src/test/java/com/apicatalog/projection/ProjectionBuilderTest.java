@@ -1,5 +1,7 @@
 package com.apicatalog.projection;
 
+import java.net.URI;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -12,9 +14,11 @@ import com.apicatalog.projection.objects.NamedObject;
 import com.apicatalog.projection.objects.Object1;
 import com.apicatalog.projection.objects.Object2;
 import com.apicatalog.projection.objects.SimpleObject;
+import com.apicatalog.projection.objects.UriObject;
 import com.apicatalog.projection.projections.Object1To;
 import com.apicatalog.projection.projections.Object2To;
 import com.apicatalog.projection.projections.SimpleObjectTo;
+import com.apicatalog.projection.projections.UriTo;
 
 public class ProjectionBuilderTest {
 
@@ -379,5 +383,32 @@ public class ProjectionBuilderTest {
 		
 		Assert.assertNotNull(to.object2);
 		Assert.assertEquals("3GFD42EE7", to.object2.id);		
+	}
+	
+	@Test
+	public void test12() throws ProjectionError {
+		
+		ProjectionRegistry registry = ProjectionRegistry.newInstance();
+		
+		Assert.assertNotNull( 
+				ProjectionBuilder
+					.bind(UriTo.class)
+					
+					.map("uri").source(UriObject.class)
+					
+					.build(registry, new TypeAdapters())
+					);
+
+		UriObject object1 = new UriObject();
+		object1.uri = URI.create("https://example.org/a/b/c");
+		
+		UriTo to = registry.compose(
+							UriTo.class, 
+							object1
+							);
+		
+		
+		Assert.assertNotNull(to);;
+		Assert.assertEquals(object1.uri.toString(), to.uri);		
 	}
 }

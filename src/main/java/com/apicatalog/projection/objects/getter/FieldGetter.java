@@ -23,6 +23,7 @@ public final class FieldGetter implements Getter {
 	@Override
 	public Object get(final Object object) throws ProjectionError {
 		try {
+			field.setAccessible(true);
 			return field.get(object);
 			
 		} catch (IllegalArgumentException | IllegalAccessException e) {

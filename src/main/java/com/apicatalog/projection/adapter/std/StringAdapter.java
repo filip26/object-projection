@@ -1,5 +1,7 @@
 package com.apicatalog.projection.adapter.std;
 
+import java.net.URI;
+
 import com.apicatalog.projection.adapter.TypeAdapter;
 import com.apicatalog.projection.adapter.TypeAdapterError;
 
@@ -12,7 +14,7 @@ public class StringAdapter implements TypeAdapter<String> {
 
 	@Override
 	public Class<?>[] produces() {
-		return new Class[] {Long.class, Double.class, Boolean.class, Integer.class};
+		return new Class[] {Long.class, Double.class, Boolean.class, Integer.class, URI.class};
 	}
 
 	@SuppressWarnings("unchecked")
@@ -37,7 +39,11 @@ public class StringAdapter implements TypeAdapter<String> {
 		}		
 		if (targetClass.isAssignableFrom(Integer.class)) {
 			return (T)Integer.valueOf(object);
+		}
+		if (targetClass.isAssignableFrom(URI.class)) {
+			return (T)URI.create(object);
 		}		
+	
 		
 		throw new TypeAdapterError("Can not convert " + object.getClass().getCanonicalName() + " to " + targetClass.getCanonicalName() + ".");
 
