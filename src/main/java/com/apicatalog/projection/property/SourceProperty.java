@@ -47,7 +47,6 @@ public class SourceProperty implements ProjectionProperty {
 		logger.trace("{} : {} = {}", targetSetter.getName(), targetSetter.getType(), object);
 
 		targetSetter.set(queue.peek(), object);
-		
 	}
 
 	@Override

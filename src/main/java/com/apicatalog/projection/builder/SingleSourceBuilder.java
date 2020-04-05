@@ -2,6 +2,7 @@ package com.apicatalog.projection.builder;
 
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,7 +106,7 @@ public class SingleSourceBuilder {
 	}
 	
 	public SingleSourceBuilder qualifier(String qualifier) {
-		this.qualifier = qualifier;
+		this.qualifier = StringUtils.isBlank(qualifier) ? null : qualifier.strip();
 		return this;
 	}
 	
