@@ -20,7 +20,7 @@ public class DirectMappingTest {
 	@Before
 	public void setup() {
 		projections = ProjectionRegistry.newInstance()
-						.add(TypeObjectTo.class);
+						.register(TypeObjectTo.class);
 	}
 	
     @Test

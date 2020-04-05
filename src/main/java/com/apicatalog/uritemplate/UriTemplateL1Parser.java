@@ -19,7 +19,7 @@ public final class UriTemplateL1Parser {
 	char[] input;
 	
 	int inputIndex;
-	int tmpIndex;
+	int lastIndex;
 
 	State state;
 
@@ -50,10 +50,8 @@ public final class UriTemplateL1Parser {
 		state = State.VAR_BEGIN;
 		input = uriTemplate.toCharArray();
 		inputIndex = 0;
-				 
-		stripspaces();
 
-		tmpIndex = inputIndex;
+		lastIndex = stripspaces();
 		
 		// process URI template
 		for (; inputIndex < input.length; inputIndex++) {
@@ -93,45 +91,44 @@ public final class UriTemplateL1Parser {
 	}
 	
 	final void beginVar() {
-		if (tmpIndex < inputIndex) {
-			elements.add(String.copyValueOf(input, tmpIndex, inputIndex - tmpIndex));
+		if (lastIndex < inputIndex) {
+			elements.add(String.copyValueOf(input, lastIndex, inputIndex - lastIndex));
 		}
 		state = State.VAR_END;
-		tmpIndex = inputIndex + 1;
-
+		lastIndex = inputIndex + 1;
 	}
 	
 	final void endVar() {
 		variables.add(elements.size());
-		elements.add(String.copyValueOf(input, tmpIndex, inputIndex - tmpIndex));
+		elements.add(String.copyValueOf(input, lastIndex, inputIndex - lastIndex));
 		state = State.STOP_CHAR;
-		tmpIndex = inputIndex + 1;
+		lastIndex = inputIndex + 1;
 	}
 	
 	final void stopChar() {
 		stops.add(inputIndex);
-		elements.add(String.copyValueOf(input, tmpIndex, inputIndex - tmpIndex + 1));
+		elements.add(String.copyValueOf(input, lastIndex, inputIndex - lastIndex + 1));
 		state = State.VAR_BEGIN;
-		tmpIndex = inputIndex + 1;
+		lastIndex = inputIndex + 1;
 	}
 	
 	final void complete(final String uriTemplate) throws MalformedUriTemplate {
 		switch (state) {
 		case STOP_CHAR:			
 		case VAR_BEGIN:
-			if (tmpIndex != -1 && tmpIndex < input.length) {
+			if (lastIndex != -1 && lastIndex < input.length) {
 
 				int endIndex = input.length;
 				
 				// strip trailing spaces
-				for (; endIndex > tmpIndex; endIndex--) {
+				for (; endIndex > lastIndex; endIndex--) {
 					if (!Character.isWhitespace(input[endIndex-1])) {
 						break;
 					}
 				}
 				// add remaining input
-				if (tmpIndex < endIndex) {
-					elements.add(String.copyValueOf(input, tmpIndex, endIndex - tmpIndex));
+				if (lastIndex < endIndex) {
+					elements.add(String.copyValueOf(input, lastIndex, endIndex - lastIndex));
 				}
 			}
 			break;
@@ -161,12 +158,12 @@ public final class UriTemplateL1Parser {
 	}
 
 	// strip leading spaces
-	final void stripspaces() {
+	final int stripspaces() {
 		for (; inputIndex < input.length; inputIndex++) {
 			if (!Character.isWhitespace(input[inputIndex])) {
 				break;
 			}
 		}
+		return inputIndex;
 	}
-	
 }

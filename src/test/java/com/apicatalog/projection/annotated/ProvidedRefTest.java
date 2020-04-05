@@ -19,8 +19,8 @@ public class ProvidedRefTest {
 	@Before
 	public void setup() {
 		projections = ProjectionRegistry.newInstance()
-						.add(ProvidedReferefenceTo.class)
-						.add(SimpleObjectTo.class)
+						.register(ProvidedReferefenceTo.class)
+						.register(SimpleObjectTo.class)
 						;
 	}
 	

@@ -1,5 +1,7 @@
 package com.apicatalog.projection.objects;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -10,40 +12,32 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ContextObjects {
+public final class ProjectionContext {
 
-	final Logger logger = LoggerFactory.getLogger(ContextObjects.class);
+	final Logger logger = LoggerFactory.getLogger(ProjectionContext.class);
 	
 	final Map<ObjectKey, Object> index;
-
+	
 	final ContextNamespace namespace;
 	
-	protected ContextObjects(Map<ObjectKey, Object> index) {
+	protected ProjectionContext(Map<ObjectKey, Object> index, Collection<Object> objects) {
 		this.index = index;
 		this.namespace = new ContextNamespace();
 	}
-	
-	public ContextObjects(ContextObjects sources) {
-		this.index = new LinkedHashMap<>(sources.index);
-		this.namespace = new ContextNamespace(sources.namespace);
+
+	public ProjectionContext(ProjectionContext context) {
+		this.index = new LinkedHashMap<>(context.index);
+		this.namespace = new ContextNamespace(context.namespace);
 	}
 	
-	public static ContextObjects of(Object...objects) {		
-		return new ContextObjects(Stream
-							.of(objects)
-							.collect(Collectors.toMap(
-										ObjectKey::of,
-										o -> 
-											(NamedObject.class.isInstance(o)) 
-												? ((NamedObject<?>)o).getObject()
-												: o
-									)));		
+	public static final ProjectionContext of(Object...objects) {		
+		return new ProjectionContext(index(objects), Arrays.asList(objects));
 	}
 	
-	public Object get(Class<?> clazz, String name) {
+	public Object get(final Class<?> clazz, final String name) {
 		//FIXME optimize
 		
-		String qualifiedName = Optional.ofNullable(name).map(n -> namespace.getQName(name)).orElse(null);
+		final String qualifiedName = Optional.ofNullable(name).map(n -> namespace.getQName(name)).orElse(null);
 				
 		return Optional.ofNullable(index.get(ObjectKey.of(clazz, qualifiedName)))
 				.orElseGet(() -> {
@@ -71,13 +65,13 @@ public class ContextObjects {
 					.collect(Collectors.toList()).toArray(new Object[0]);
 	}
 	
-	public ContextObjects addOrReplace(Object object, String qualifier) {
+	public ProjectionContext addOrReplace(Object object, String qualifier) {
 		index.put(ObjectKey.of(object.getClass(), qualifier), object);
 		return this;
 	}
 
-	public boolean contains(Class<? extends Object> class1, String qualifier) {
-		return index.containsKey(ObjectKey.of(class1, qualifier));
+	public boolean contains(Class<?> objectClass, String qualifier) {
+		return index.containsKey(ObjectKey.of(objectClass, qualifier));
 	}
 	
 	public void pushNamespace(String name) {
@@ -86,5 +80,18 @@ public class ContextObjects {
 
 	public int size() {
 		return index.size();
+	}
+	
+	protected static final Map<ObjectKey, Object> index(Object[] objects) {
+		//TODO extract superclasses/interfaces and index 
+		return Stream
+				.of(objects)
+				.collect(Collectors.toMap(
+							ObjectKey::of,
+								o -> 
+								(NamedObject.class.isInstance(o))
+									? ((NamedObject<?>)o).getObject()
+									: o
+									));
 	}
 }

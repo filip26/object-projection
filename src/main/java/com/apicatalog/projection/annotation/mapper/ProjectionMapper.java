@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.builder.ProjectionImpl;
 import com.apicatalog.projection.property.ProjectionProperty;
 
 public class ProjectionMapper {
@@ -35,7 +34,7 @@ public class ProjectionMapper {
 		this.propertyMapper = propertyMapper;
 	}
 
-	public <P> Projection<P> getProjection(final Class<P> targetProjectionClass) {
+	public <P> Projection<P> getProjectionOf(final Class<P> targetProjectionClass) {
 
 		if (targetProjectionClass == null) {
 			throw new IllegalArgumentException();
@@ -49,8 +48,6 @@ public class ProjectionMapper {
 		logger.debug("Scan {}", targetProjectionClass.getCanonicalName());
 		
 		final com.apicatalog.projection.annotation.Projection projectionAnnotation = targetProjectionClass.getAnnotation(com.apicatalog.projection.annotation.Projection.class);
-		
-		final ProjectionImpl<P> projectionMapping = new ProjectionImpl<>(targetProjectionClass);
 		
 		final Class<?> defaultSourceClass = Class.class.equals(projectionAnnotation.value()) ? null : projectionAnnotation.value();
 		
@@ -81,8 +78,6 @@ public class ProjectionMapper {
 			return null;
 		}
 		
-		projectionMapping.setProperties(properties.toArray(new ProjectionProperty[0]));
-		
-		return projectionMapping;
+		return Projection.newInstance(targetProjectionClass, properties.toArray(new ProjectionProperty[0]));
 	}
 }

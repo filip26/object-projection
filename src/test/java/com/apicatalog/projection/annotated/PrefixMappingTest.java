@@ -19,7 +19,7 @@ public class PrefixMappingTest {
 	public void setup() {
 		projections = ProjectionRegistry.newInstance();
 		
-		projections.add(PrefixTo.class);
+		projections.register(PrefixTo.class);
 	}
 	
     @Test

@@ -21,9 +21,9 @@ public class VisibilityTest {
 	@Before
 	public void setup() {
 		projections = ProjectionRegistry.newInstance()
-						.add(Object1To.class)
-						.add(Object2To.class)
-						.add(TypeObjectTo.class)
+						.register(Object1To.class)
+						.register(Object2To.class)
+						.register(TypeObjectTo.class)
 						;
 	}
 	

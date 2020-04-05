@@ -20,7 +20,7 @@ public class TwoSourceCompositeTest {
 	@Before
 	public void setup() {
 		projections = ProjectionRegistry.newInstance()				
-						.add(CompositeTo.class)
+						.register(CompositeTo.class)
 						;
 	}	
 	

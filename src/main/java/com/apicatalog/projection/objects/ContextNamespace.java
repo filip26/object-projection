@@ -3,7 +3,7 @@ package com.apicatalog.projection.objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class ContextNamespace {
+final class ContextNamespace {
 
 	public static final int MAX_DEPTH = 10;
 	

@@ -17,7 +17,7 @@ public class AccessModeTest {
 	@Before
 	public void setup() {
 		projections = ProjectionRegistry.newInstance()
-						.add(AccessModeTo.class);
+						.register(AccessModeTo.class);
 	}
 	
     @Test

@@ -21,7 +21,7 @@ public class PropertyNameOverrideTest {
 	public void setup() {
 		projections = ProjectionRegistry.newInstance();
 		
-		projections.add(NameOverrideTo.class);
+		projections.register(NameOverrideTo.class);
 	}
 	
     @Test

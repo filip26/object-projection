@@ -18,7 +18,7 @@ public class SourcesWithConversionTest {
 	@Before
 	public void setup() {
 		projections = ProjectionRegistry.newInstance()
-						.add(SourcesReduceMapTo.class)
+						.register(SourcesReduceMapTo.class)
 						;
 	}
 		

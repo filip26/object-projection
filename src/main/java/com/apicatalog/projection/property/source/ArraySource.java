@@ -9,14 +9,14 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
-import com.apicatalog.projection.objects.ContextObjects;
+import com.apicatalog.projection.objects.ProjectionContext;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.property.target.TargetAdapter;
 import com.apicatalog.projection.reducer.ReducerError;
 import com.apicatalog.projection.reducer.ReducerMapping;
 
-public class ArraySource implements Source {
+public final class ArraySource implements Source {
 
 	final Logger logger = LoggerFactory.getLogger(ArraySource.class);
 
@@ -41,7 +41,7 @@ public class ArraySource implements Source {
 	}
 	
 	@Override
-	public Object read(ProjectionQueue queue, ContextObjects context) throws ProjectionError {
+	public Object read(ProjectionQueue queue, ProjectionContext context) throws ProjectionError {
 		
 		if (!isReadable()) {
 			return null;
@@ -83,7 +83,7 @@ public class ArraySource implements Source {
 	}
 
 	@Override
-	public void write(ProjectionQueue queue, Object object, ContextObjects context) throws ProjectionError {
+	public void write(ProjectionQueue queue, Object object, ProjectionContext context) throws ProjectionError {
 		logger.debug("Write {}, {} sources(s), optional = {}, depth = {}", object, sources.length, optional, queue.length());
 
 		try {

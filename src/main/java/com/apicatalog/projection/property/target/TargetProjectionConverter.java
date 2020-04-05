@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.objects.ContextObjects;
+import com.apicatalog.projection.objects.ProjectionContext;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ProjectionQueue;
 
@@ -28,11 +28,11 @@ public class TargetProjectionConverter implements TargetAdapter {
 	}
 	
 	@Override
-	public Object forward(ProjectionQueue queue, Object object, ContextObjects context) throws ProjectionError {
+	public Object forward(ProjectionQueue queue, Object object, ProjectionContext context) throws ProjectionError {
 		
 		logger.debug("Convert {} to {}, depth = {}, reference = true", sourceType, targetType, queue.length());
 
-		final ContextObjects clonedSources = new ContextObjects(context);
+		final ProjectionContext clonedSources = new ProjectionContext(context);
 		
 		Optional.ofNullable(object).ifPresent(v -> clonedSources.addOrReplace(v, null));
 
@@ -46,20 +46,20 @@ public class TargetProjectionConverter implements TargetAdapter {
 	}
 
 	@Override
-	public Object backward(Object object, ContextObjects context) throws ProjectionError {
+	public Object backward(Object object, ProjectionContext context) throws ProjectionError {
 		logger.debug("Convert {} to {}, reference = true", targetType, sourceType);
 		
 		@SuppressWarnings("unchecked")
 		final Projection<Object> projection = (Projection<Object>) factory.get(targetType.getObjectClass()); 
 		
 		if (projection != null) {
-			return filter(projection.decompose(object, new ContextObjects(context)), context);
+			return filter(projection.decompose(object, new ProjectionContext(context)), context);
 		}
 
 		throw new ProjectionError("Projection " + targetType.getObjectClass().getCanonicalName() +  " is not present.");
 	}
 	
-	Object filter(Object[] objects, ContextObjects context) {
+	Object filter(Object[] objects, ProjectionContext context) {
 		if (objects == null) {
 			return null;
 		}

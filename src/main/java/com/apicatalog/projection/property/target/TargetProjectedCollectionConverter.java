@@ -11,7 +11,7 @@ import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.objects.ContextObjects;
+import com.apicatalog.projection.objects.ProjectionContext;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ProjectionQueue;
 
@@ -36,7 +36,7 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 	}
 	
 	@Override
-	public Object forward(ProjectionQueue queue, Object object, ContextObjects context) throws ProjectionError {
+	public Object forward(ProjectionQueue queue, Object object, ProjectionContext context) throws ProjectionError {
 		
 		logger.debug("Convert {} to {}, depth = {}, reference = true, collection = true", sourceType, targetType, queue.length());
 
@@ -56,7 +56,7 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 			collection.add(projection
 							.compose(
 								queue,										
-								(new ContextObjects(context)).addOrReplace(item, null)
+								(new ProjectionContext(context)).addOrReplace(item, null)
 								)
 							);
 		}
@@ -65,7 +65,7 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 	}
 
 	@Override
-	public Object backward(Object object, ContextObjects context) throws ProjectionError {
+	public Object backward(Object object, ProjectionContext context) throws ProjectionError {
 		logger.debug("Convert {} to {}, reference = true, collection = true", targetType, sourceType);
 		
 		@SuppressWarnings("unchecked")
@@ -81,13 +81,13 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 		
 		// extract objects from each projection in the collection
 		for (final Object item : sourceCollection) {
-			collection.add(filterComponent(projection.decompose(item, new ContextObjects(context)), context));
+			collection.add(filterComponent(projection.decompose(item, new ProjectionContext(context)), context));
 		}
 		
 		return collection;
 	}
 
-	Object filterComponent(final Object[] objects, final ContextObjects context) {
+	Object filterComponent(final Object[] objects, final ProjectionContext context) {
 		if (objects == null) {
 			return null;
 		}

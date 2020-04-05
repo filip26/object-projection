@@ -20,8 +20,8 @@ public class CycleCheckTest {
 	@Before
 	public void setup() {
 		projections = ProjectionRegistry.newInstance()		
-						.add(InterwiredProjection1.class)
-						.add(InterwiredProjection2.class)
+						.register(InterwiredProjection1.class)
+						.register(InterwiredProjection2.class)
 						;
 	}
 	

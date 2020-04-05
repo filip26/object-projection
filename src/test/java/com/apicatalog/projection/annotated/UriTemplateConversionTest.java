@@ -20,7 +20,7 @@ public class UriTemplateConversionTest {
 	@Before
 	public void setup() {
 		projections = ProjectionRegistry.newInstance()
-						.add(UriTemplateConversion.class)
+						.register(UriTemplateConversion.class)
 						;
 	}
 		

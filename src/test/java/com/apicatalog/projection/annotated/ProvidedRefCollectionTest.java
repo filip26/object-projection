@@ -25,8 +25,8 @@ public class ProvidedRefCollectionTest {
 		projections = ProjectionRegistry.newInstance();		
 		
 		projections
-			.add(ProvidedRefCollectionTo.class)
-			.add(SimpleObjectTo.class);
+			.register(ProvidedRefCollectionTo.class)
+			.register(SimpleObjectTo.class);
 	}
 	
     @Test

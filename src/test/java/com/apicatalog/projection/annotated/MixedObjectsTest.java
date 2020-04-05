@@ -21,8 +21,8 @@ public class MixedObjectsTest {
 		projections = ProjectionRegistry.newInstance();
 		
 		projections
-			.add(Object3To.class)
-			.add(Object4To.class)
+			.register(Object3To.class)
+			.register(Object4To.class)
 			;
 	}
 	

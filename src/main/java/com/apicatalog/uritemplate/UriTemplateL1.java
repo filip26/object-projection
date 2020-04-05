@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author filip
  *
  */
-public class UriTemplateL1 {
+public final class UriTemplateL1 {
 	
 	protected static final char END_OF_INPUT = '\n';
 	

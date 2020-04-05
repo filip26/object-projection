@@ -5,7 +5,7 @@ import java.lang.reflect.Field;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.objects.ObjectType;
 
-public class FieldGetter implements Getter {
+public final class FieldGetter implements Getter {
 
 	final Field field;
 	

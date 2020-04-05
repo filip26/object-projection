@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.objects.ContextObjects;
+import com.apicatalog.projection.objects.ProjectionContext;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
@@ -27,7 +27,7 @@ public class SourceProperty implements ProjectionProperty {
 	Set<Integer> visibleLevels;
 	
 	@Override
-	public void forward(ProjectionQueue queue, ContextObjects context) throws ProjectionError {
+	public void forward(ProjectionQueue queue, ProjectionContext context) throws ProjectionError {
 
 		if (!source.isReadable() || targetSetter == null) {
 			return;
@@ -51,7 +51,7 @@ public class SourceProperty implements ProjectionProperty {
 	}
 
 	@Override
-	public void backward(ProjectionQueue queue, ContextObjects context) throws ProjectionError {
+	public void backward(ProjectionQueue queue, ProjectionContext context) throws ProjectionError {
 
 		if (!source.isWritable() || targetGetter == null) {
 			return;

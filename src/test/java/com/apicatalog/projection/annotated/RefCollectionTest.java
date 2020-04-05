@@ -22,8 +22,8 @@ public class RefCollectionTest {
 	@Before
 	public void setup() {
 		projections = ProjectionRegistry.newInstance()
-						.add(RefCollectionTo.class)
-						.add(NameOverrideTo.class)
+						.register(RefCollectionTo.class)
+						.register(NameOverrideTo.class)
 						;
 	}
 	

@@ -19,7 +19,7 @@ public class ProvidedObjectTest {
 	public void setup() {
 		projections = ProjectionRegistry.newInstance();
 		
-		projections.add(ProvidedObjectTo.class);
+		projections.register(ProvidedObjectTo.class);
 	}
 	
     @Test

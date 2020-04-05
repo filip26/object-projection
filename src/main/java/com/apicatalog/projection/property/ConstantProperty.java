@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.objects.ContextObjects;
+import com.apicatalog.projection.objects.ProjectionContext;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.target.TargetAdapter;
@@ -24,14 +24,14 @@ public class ConstantProperty implements ProjectionProperty {
 	Set<Integer> visibleLevels;
 
 	@Override
-	public void forward(ProjectionQueue queue, ContextObjects context) throws ProjectionError {
+	public void forward(ProjectionQueue queue, ProjectionContext context) throws ProjectionError {
 		logger.debug("Forward constant = {}, depth = {}", constants, queue.length());
 		
 		targetSetter.set(queue.peek(), targetAdapter.forward(queue, constants, context));
 	}
 
 	@Override
-	public void backward(ProjectionQueue queue, ContextObjects context) throws ProjectionError {
+	public void backward(ProjectionQueue queue, ProjectionContext context) throws ProjectionError {
 		// nothing to do, it's a constant
 	}
 

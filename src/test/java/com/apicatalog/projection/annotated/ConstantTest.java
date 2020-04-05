@@ -19,7 +19,7 @@ public class ConstantTest {
 	@Before
 	public void setup() {
 		projections = ProjectionRegistry.newInstance()
-						.add(ConstantTo.class);
+						.register(ConstantTo.class);
 	}
 	
     @Test

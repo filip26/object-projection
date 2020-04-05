@@ -1,12 +1,31 @@
 package com.apicatalog.projection;
 
-import com.apicatalog.projection.objects.ContextObjects;
+import java.util.Arrays;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.apicatalog.projection.objects.ProjectionContext;
+import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.property.ProjectionProperty;
 
-public interface Projection<P> {
+public final class Projection<P> {
+	
+	final Logger logger = LoggerFactory.getLogger(Projection.class);
 
-	Class<P> getProjectionClass();
+	final Class<P> projectionClass;
+	
+	final ProjectionProperty[] properties;
+	
+	Projection(final Class<P> projectionClass, final ProjectionProperty[] properties) {
+		this.projectionClass = projectionClass;
+		this.properties = properties;
+	}
+	
+	public static final <A> Projection<A> newInstance(final Class<A> projectionClass, final ProjectionProperty[] properties) {
+		return new Projection<>(projectionClass, properties);
+	}
 	
 	/**
 	 * Compose a projection from the given source values
@@ -15,10 +34,46 @@ public interface Projection<P> {
 	 * @return a projection
 	 * @throws ProjectionError
 	 */
-	P compose(Object...objects) throws ProjectionError;
-	
-	P compose(ProjectionQueue queue, ContextObjects context) throws ProjectionError;
-	
+	public P compose(Object... objects) throws ProjectionError {
+		return compose(ProjectionQueue.create(), ProjectionContext.of(objects));
+	}
+
+	public P compose(ProjectionQueue queue, ProjectionContext context) throws ProjectionError {
+		
+		logger.debug("Compose {} of {} object(s), depth = {}", projectionClass.getSimpleName(), context.size(), queue.length());
+		
+//TODO		if (logger.isTraceEnabled()) {
+//			Stream.of(objects).forEach(v -> logger.trace("  {}", v.getClass().getSimpleName()));
+//		}
+		
+		// check for cycles
+		if (queue.contains(projectionClass)) {
+			logger.debug("Ignored. Projection {} is in processing already", projectionClass.getSimpleName());
+			return null;
+		}
+		
+		final P projection = ObjectUtils.newInstance(projectionClass);
+		
+		queue.push(projection);
+
+		for (int i = 0; i < properties.length; i++) {
+			
+			// limit property visibility
+			if (properties[i].isVisible(queue.length() - 1)) {
+				properties[i].forward(queue, context);				
+			}
+
+		}
+		
+		final Object ref = queue.pop();
+		
+		if (!ref.equals(projection)) {
+			throw new IllegalStateException();
+		}
+		
+		return projection;
+	}
+
 	/**
 	 * Decompose a projection into a source of values
 	 * 
@@ -26,9 +81,28 @@ public interface Projection<P> {
 	 * @return objects extracted from the projection
 	 * @throws ProjectionError
 	 */
-	Object[] decompose(P projection) throws ProjectionError;
-	
-	Object[] decompose(P projection, ContextObjects context) throws ProjectionError;
+	public Object[] decompose(P projection) throws ProjectionError {
+		return decompose(projection, ProjectionContext.of());
+	}
+
+	public final Object[] decompose(P projection, ProjectionContext context) throws ProjectionError {
+		
+		logger.debug("Decompose {}", projection.getClass().getSimpleName());
+		
+		final ProjectionQueue queue = ProjectionQueue.create().push(projection);
+		
+		for (int i = 0; i < properties.length; i++) {
+			properties[i].backward(queue, context);
+		}
+
+		final Object ref = queue.pop();
+		
+		if (!ref.equals(projection)) {
+			throw new IllegalStateException();
+		}
+
+		return context.getValues();
+	}
 
 	/**
 	 * Extract exact source value for the given projection
@@ -39,7 +113,34 @@ public interface Projection<P> {
 	 * @return
 	 * @throws ProjectionError 
 	 */
-	<S> S extract(Class<S> sourceClass, String qualifier, P projection) throws ProjectionError;
+	@SuppressWarnings("unchecked")
+	public <S> S extract(Class<S> sourceObjectClass, String qualifier, P projection) throws ProjectionError {
+		
+		if (projection == null || sourceObjectClass == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		logger.debug("Extract {} from {}", sourceObjectClass.getSimpleName(), projection.getClass().getSimpleName());
 
-	ProjectionProperty[] getProperties();
+		//TODO optimize, don't use decompose
+		Object[] objects = decompose(projection);
+		
+		if (objects == null || objects.length == 0) {
+			return null;
+		}
+		
+		return (S)Arrays
+					.stream(objects)
+					.filter(sourceObjectClass::isInstance)
+					.findFirst()
+					.orElse(null);
+	}
+	
+	public ProjectionProperty[] getProperties() {
+		return properties;
+	}
+	
+	public final Class<P> getProjectionClass() {
+		return projectionClass;
+	}
 }

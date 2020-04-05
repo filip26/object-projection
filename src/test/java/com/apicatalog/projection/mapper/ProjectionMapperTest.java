@@ -22,7 +22,7 @@ public class ProjectionMapperTest {
 
 	@Test
 	public void testUnmapped() {
-		Projection<SimpleObject> projection = mapper.getProjection(SimpleObject.class);
+		Projection<SimpleObject> projection = mapper.getProjectionOf(SimpleObject.class);
 		Assert.assertNull(projection);
 	}
 	

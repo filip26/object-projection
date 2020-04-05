@@ -12,8 +12,8 @@ public class ProjectionRegistry {
 	
 	final Map<Class<?>, Projection<?>> index;
 	
-	protected ProjectionRegistry(final Map<Class<?>, Projection<?>> projections) {
-		this.index = projections;
+	protected ProjectionRegistry(final Map<Class<?>, Projection<?>> index) {
+		this.index = index;
 		this.mapper = new ProjectionMapper(this);
 	}
 
@@ -50,7 +50,7 @@ public class ProjectionRegistry {
 				.extract(sourceObjectClass, qualifier, projection);		
 	}
 
-	public ProjectionRegistry add(final Projection<?> projection) {
+	public ProjectionRegistry register(final Projection<?> projection) {
 		if (projection == null) {
 			throw new IllegalArgumentException();
 		}
@@ -58,8 +58,11 @@ public class ProjectionRegistry {
 		return this;
 	}
 
-	public ProjectionRegistry add(Class<?> projectionClass) {
-		Optional.ofNullable(mapper.getProjection(projectionClass)).ifPresent(this::add);		
+	public ProjectionRegistry register(Class<?> annotatedProjectionClass) {
+		if (annotatedProjectionClass == null) {
+			throw new IllegalArgumentException();
+		}
+		Optional.ofNullable(mapper.getProjectionOf(annotatedProjectionClass)).ifPresent(this::register);		
 		return this;
 	}
 

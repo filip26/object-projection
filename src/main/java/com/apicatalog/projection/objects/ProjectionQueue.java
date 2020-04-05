@@ -3,7 +3,7 @@ package com.apicatalog.projection.objects;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public class ProjectionQueue {
+public final class ProjectionQueue {
 
 	final Deque<ProjectionQueueKey> components;
 	

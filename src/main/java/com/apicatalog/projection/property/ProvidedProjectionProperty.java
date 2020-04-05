@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.objects.ContextObjects;
+import com.apicatalog.projection.objects.ProjectionContext;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
@@ -34,7 +34,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 	}
 	
 	@Override
-	public void forward(ProjectionQueue queue, ContextObjects context) throws ProjectionError {
+	public void forward(ProjectionQueue queue, ProjectionContext context) throws ProjectionError {
 
 		if (targetSetter == null) {
 			return;
@@ -42,9 +42,9 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 		
 		logger.debug("Forward {} : {}, qualifier = {}, optional = {}, depth = {}", targetSetter.getName(), targetSetter.getType(), sourceObjectQualifier, optional, queue.length());
 
-		final ContextObjects clonedSources = new ContextObjects(context);
+		final ProjectionContext clonedContext = new ProjectionContext(context);
 		
-		Optional.ofNullable(sourceObjectQualifier).ifPresent(clonedSources::pushNamespace);
+		Optional.ofNullable(sourceObjectQualifier).ifPresent(clonedContext::pushNamespace);
 		
 		final Projection<?> projection = factory.get(targetSetter.getType().getObjectClass()); 
 		
@@ -52,7 +52,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 			throw new ProjectionError("Projection " + targetSetter.getType().getObjectClass() +  " is not present.");
 		}
 			
-		Object object = projection.compose(queue, clonedSources);
+		final Object object = projection.compose(queue, clonedContext);
 		
 		if (object != null) {
 			targetSetter.set(queue.peek(), object);
@@ -60,7 +60,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 	}
 
 	@Override
-	public void backward(ProjectionQueue queue, ContextObjects context) throws ProjectionError {
+	public void backward(ProjectionQueue queue, ProjectionContext context) throws ProjectionError {
 		
 		@SuppressWarnings("unchecked")
 		final Projection<Object> projection = (Projection<Object>) factory.get(targetGetter.getType().getObjectClass()); 
@@ -69,7 +69,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 			throw new ProjectionError("Projection " + targetGetter.getType().getObjectClass() +  " is not present.");			
 		}
 		
-		Object object = targetGetter.get(queue.peek());
+		final Object object = targetGetter.get(queue.peek());
 		
 		projection.decompose(object, context);
 	}

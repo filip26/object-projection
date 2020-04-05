@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.objects.ObjectType;
 
-public class MethodGetter implements Getter {
+public final class MethodGetter implements Getter {
 
 	final Method method;
 	

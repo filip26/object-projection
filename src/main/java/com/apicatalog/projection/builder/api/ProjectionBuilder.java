@@ -8,7 +8,6 @@ import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.builder.ProjectionImpl;
 import com.apicatalog.projection.property.ProjectionProperty;
 
 public class ProjectionBuilder<P> {
@@ -49,10 +48,9 @@ public class ProjectionBuilder<P> {
 			return null;
 		}
 		
-		final ProjectionImpl<P> projection = new ProjectionImpl<>(projectionClass);
-		projection.setProperties(properties.toArray(new ProjectionProperty[0]));
+		final Projection<P> projection = Projection.newInstance(projectionClass, properties.toArray(new ProjectionProperty[0]));
 
-		factory.add(projection);
+		factory.register(projection);
 		
 		return projection;
 	}

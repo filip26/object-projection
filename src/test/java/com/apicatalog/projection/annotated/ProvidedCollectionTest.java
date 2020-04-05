@@ -22,7 +22,7 @@ public class ProvidedCollectionTest {
 	public void setup() {
 		projections = ProjectionRegistry.newInstance();
 		
-		projections.add(StringCollectionTo.class);
+		projections.register(StringCollectionTo.class);
 	}
 	
     @Test

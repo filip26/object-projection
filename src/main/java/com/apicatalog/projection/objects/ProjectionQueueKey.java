@@ -2,7 +2,7 @@ package com.apicatalog.projection.objects;
 
 import java.util.Objects;
 
-class ProjectionQueueKey {
+final class ProjectionQueueKey {
 
 	final Object projection;
 	final Class<?> projectionClass;

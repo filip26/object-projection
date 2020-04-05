@@ -21,7 +21,7 @@ public class ImplicitConversionTest {
 	@Before
 	public void setup() {
 		projections = ProjectionRegistry.newInstance()
-						.add(ImplicitConversionTo.class)
+						.register(ImplicitConversionTo.class)
 						;
 	}
 	

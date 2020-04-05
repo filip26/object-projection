@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.apicatalog.projection.ProjectionError;
 
-public class ObjectUtils {
+public final class ObjectUtils {
 
 	ObjectUtils() {}
 	

@@ -18,7 +18,7 @@ public class OneToOneWithFncTest {
 	public void setup() {
 		projections = ProjectionRegistry.newInstance();
 		
-		projections.add(TestProjectionAF.class);
+		projections.register(TestProjectionAF.class);
 	}
 			
     @Test

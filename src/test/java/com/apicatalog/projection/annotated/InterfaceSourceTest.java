@@ -18,7 +18,7 @@ public class InterfaceSourceTest {
 	public void setup() {
 		projections = ProjectionRegistry.newInstance();
 		
-		projections.add(Interface1To.class);
+		projections.register(Interface1To.class);
 	}
 	
     @Test

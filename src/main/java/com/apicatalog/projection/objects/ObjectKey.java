@@ -2,7 +2,7 @@ package com.apicatalog.projection.objects;
 
 import java.util.Objects;
 
-public class ObjectKey {
+final class ObjectKey {
 
 	final Class<?> clazz;
 	final String qualifier;

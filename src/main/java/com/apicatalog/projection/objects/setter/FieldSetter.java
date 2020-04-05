@@ -5,7 +5,7 @@ import java.lang.reflect.Field;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.objects.ObjectType;
 
-public class FieldSetter implements Setter {
+public final class FieldSetter implements Setter {
 
 	final Field field;
 	

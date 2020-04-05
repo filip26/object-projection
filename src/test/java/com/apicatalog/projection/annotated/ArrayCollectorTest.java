@@ -20,7 +20,7 @@ public class ArrayCollectorTest {
 	@Before
 	public void setup() {
 		projections = ProjectionRegistry.newInstance()
-						.add(ArrayCollectorTo.class);
+						.register(ArrayCollectorTo.class);
 	}
 	
     @Test

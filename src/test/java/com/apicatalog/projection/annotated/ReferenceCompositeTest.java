@@ -20,9 +20,9 @@ public class ReferenceCompositeTest {
 	@Before
 	public void setup() {
 		projections = ProjectionRegistry.newInstance()		
-						.add(ReferenceTo.class)
-						.add(CompositeTo.class)
-						.add(NameOverrideTo.class)
+						.register(ReferenceTo.class)
+						.register(CompositeTo.class)
+						.register(NameOverrideTo.class)
 						;
 	}
 	

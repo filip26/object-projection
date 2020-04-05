@@ -2,7 +2,7 @@ package com.apicatalog.projection.objects;
 
 import java.util.Optional;
 
-public class ObjectType {
+public final class ObjectType {
 
 	final Class<?> objectClass;
 	final Class<?> objectComponentClass;

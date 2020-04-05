@@ -1,6 +1,6 @@
 package com.apicatalog.projection.objects;
 
-public class NamedObject<T> {
+public final class NamedObject<T> {
 
 	final T object;
 	final String name;
