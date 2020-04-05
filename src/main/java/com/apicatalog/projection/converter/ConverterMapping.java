@@ -1,50 +1,31 @@
 package com.apicatalog.projection.converter;
 
+import com.apicatalog.projection.objects.ObjectType;
+
 public class ConverterMapping {
 
 	Converter<Object, Object> converter;
 	
-	Class<?> sourceClass;
-	Class<?> sourceComponentClass;
+	ObjectType sourceType;
 	
-	Class<?> targetClass;
-	Class<?> targetComponentClass;
+	ObjectType targetType;
 	
-	public Class<?> getSourceClass() {
-		return sourceClass;
-	}
-
-	public Class<?> getTargetClass() {
-		return targetClass;
-	}
-	
-	public void setSourceClass(Class<?> sourceClass) {
-		this.sourceClass = sourceClass;
-	}
-	
-	public void setTargetClass(Class<?> targetClass) {
-		this.targetClass = targetClass;
-	}
-	
-	public Class<?> getSourceComponentClass() {
-		return sourceComponentClass;
-	}
-	
-	public void setSourceComponentClass(Class<?> sourceComponentClass) {
-		this.sourceComponentClass = sourceComponentClass;
-	}
-	
-	public Class<?> getTargetComponentClass() {
-		return targetComponentClass;
-	}
-	
-	public void setTargetComponentClass(Class<?> targetComponentClass) {
-		this.targetComponentClass = targetComponentClass;
-	}
 	public Converter<Object, Object> getConverter() {
 		return converter;
 	}
 	public void setConverter(Converter<Object, Object> converter) {
 		this.converter = converter;
+	}
+	public ObjectType getSourceType() {
+		return sourceType;
+	}
+	public void setSourceType(ObjectType sourceType) {
+		this.sourceType = sourceType;
+	}
+	public ObjectType getTargetType() {
+		return targetType;
+	}
+	public void setTargetType(ObjectType targetType) {
+		this.targetType = targetType;
 	}
 }

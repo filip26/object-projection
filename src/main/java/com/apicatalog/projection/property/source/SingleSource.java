@@ -70,7 +70,7 @@ public final class SingleSource implements Source {
 		if (conversions != null) {
 			try {
 				for (ConverterMapping conversion : conversions) {
-					object = conversion.getConverter().forward(object);
+					object = conversion.getConverter().forward(typeAdapters.convert(conversion.getSourceType(), object));
 				}
 			} catch (ConverterError e) {
 				throw new ProjectionError(e);

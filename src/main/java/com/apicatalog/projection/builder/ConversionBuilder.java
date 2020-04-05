@@ -11,6 +11,7 @@ import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterConfig;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
+import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ObjectUtils;
 
 public class ConversionBuilder {
@@ -51,9 +52,7 @@ public class ConversionBuilder {
 			sourceClass = (Class<?>) sourceType;
 		}
 		
-
-		converter.setSourceClass(sourceClass);
-		converter.setSourceComponentClass(sourceComponentClass);
+		converter.setSourceType(ObjectType.of(sourceClass, sourceComponentClass));
 
 		Type targetType = ((ParameterizedType) converterClass.getGenericInterfaces()[0]).getActualTypeArguments()[1];
 		
@@ -68,9 +67,8 @@ public class ConversionBuilder {
 			targetClass = (Class<?>) targetType;
 		}
 
-		converter.setTargetClass(targetClass);
-		converter.setTargetComponentClass(targetComponentClass);
-		
+		converter.setTargetType(ObjectType.of(targetClass, targetComponentClass));
+
 		return converter;		
 	}
 	

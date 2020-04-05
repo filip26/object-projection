@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.converter.ConverterMapping;
-import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.property.source.ArraySource;
 import com.apicatalog.projection.property.source.Source;
 import com.apicatalog.projection.reducer.ReducerMapping;
@@ -58,7 +57,7 @@ public class ArraySourceBuilder {
 		if (source.getConversions() != null) {
 			Stream.of(source.getConversions())
 					.reduce((first, second) -> second)
-					.ifPresent(m -> source.setTargetType(ObjectType.of(m.getSourceClass(), m.getSourceComponentClass())));
+					.ifPresent(m -> source.setTargetType(m.getSourceType()));
 		}
 		
 		return source;

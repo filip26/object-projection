@@ -88,7 +88,7 @@ public class SingleSourceBuilder {
 			
 			Stream.of(source.getConversions())
 					.reduce((first, second) -> second)
-					.ifPresent(m -> source.setTargetType(ObjectType.of(m.getSourceClass(), m.getSourceComponentClass())));
+					.ifPresent(m -> source.setTargetType(m.getSourceType()));
 
 		}
 		return source;

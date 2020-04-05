@@ -394,7 +394,9 @@ public class ProjectionBuilderTest {
 				ProjectionBuilder
 					.bind(UriTo.class)
 					
-					.map("uri").source(UriObject.class)
+					.map("uri")
+						.source(UriObject.class)
+						.conversion(Suffix.class, "/d/e/f")
 					
 					.build(registry, new TypeAdapters())
 					);
@@ -409,6 +411,6 @@ public class ProjectionBuilderTest {
 		
 		
 		Assert.assertNotNull(to);;
-		Assert.assertEquals(object1.uri.toString(), to.uri);		
+		Assert.assertEquals(object1.uri.toString() + "/d/e/f", to.uri);		
 	}
 }
