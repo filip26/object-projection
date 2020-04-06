@@ -74,6 +74,8 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 		if (projection == null) {
 			throw new ProjectionError("Projection " + targetType.getObjectComponentClass().getCanonicalName() +  " is not present.");
 		}
+
+//		final Collection<Object> collection = context.get(Collection.class, ) 
 		
 		final Collection<Object> collection = new ArrayList<>();
 

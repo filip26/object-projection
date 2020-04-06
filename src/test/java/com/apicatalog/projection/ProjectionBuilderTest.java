@@ -10,7 +10,6 @@ import com.apicatalog.projection.builder.api.ProjectionBuilder;
 import com.apicatalog.projection.converter.std.Prefix;
 import com.apicatalog.projection.converter.std.Suffix;
 import com.apicatalog.projection.converter.std.UriTemplate;
-import com.apicatalog.projection.objects.NamedObject;
 import com.apicatalog.projection.objects.Object1;
 import com.apicatalog.projection.objects.Object2;
 import com.apicatalog.projection.objects.SimpleObject;
@@ -19,6 +18,7 @@ import com.apicatalog.projection.projections.Object1To;
 import com.apicatalog.projection.projections.Object2To;
 import com.apicatalog.projection.projections.SimpleObjectTo;
 import com.apicatalog.projection.projections.UriTo;
+import com.apicatalog.projection.source.SourceObject;
 
 public class ProjectionBuilderTest {
 
@@ -118,7 +118,7 @@ public class ProjectionBuilderTest {
 		SimpleObject object1 = new SimpleObject();
 		object1.i1 = 443546356;
 		
-		SimpleObjectTo to = projection.compose(object1, NamedObject.of("string1", "provided-string"));
+		SimpleObjectTo to = projection.compose(object1, SourceObject.of("string1", "provided-string"));
 		
 		Assert.assertNotNull(to);;
 		Assert.assertEquals(object1.i1, to.i1);
@@ -332,7 +332,7 @@ public class ProjectionBuilderTest {
 		
 		object1.object2 = object2;
 		
-		Object1To to = registry.compose(Object1To.class, object1,  NamedObject.of("id", "AREW2324E"));
+		Object1To to = registry.compose(Object1To.class, object1,  SourceObject.of("id", "AREW2324E"));
 		
 		Assert.assertNotNull(to);;
 		Assert.assertEquals("AREW2324E", to.id);
@@ -373,9 +373,9 @@ public class ProjectionBuilderTest {
 		Object1To to = registry.compose(
 							Object1To.class, 
 							object1,
-							NamedObject.of("obj2", object2),
-							NamedObject.of("id", "AREW2324E"),
-							NamedObject.of("obj2.id", "3GFD42EE7")
+							SourceObject.of("obj2", object2),
+							SourceObject.of("id", "AREW2324E"),
+							SourceObject.of("obj2.id", "3GFD42EE7")
 							);
 		
 		Assert.assertNotNull(to);;

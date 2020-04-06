@@ -11,10 +11,10 @@ import org.junit.Test;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.converter.ConverterError;
-import com.apicatalog.projection.objects.NamedObject;
 import com.apicatalog.projection.objects.SimpleObject;
 import com.apicatalog.projection.projections.ProvidedRefCollectionTo;
 import com.apicatalog.projection.projections.SimpleObjectTo;
+import com.apicatalog.projection.source.SourceObject;
 
 public class ProvidedRefCollectionTest {
 
@@ -36,7 +36,7 @@ public class ProvidedRefCollectionTest {
     	
     	ProvidedRefCollectionTo projection = projections.compose(
     									ProvidedRefCollectionTo.class, 
-    									NamedObject.of("items", items)
+    									SourceObject.of("items", items)
     									);
     	
     	Assert.assertNotNull(projection);
@@ -63,7 +63,7 @@ public class ProvidedRefCollectionTest {
     	
     	ProvidedRefCollectionTo projection = projections.compose(
     									ProvidedRefCollectionTo.class, 
-    									NamedObject.of("items", items)
+    									SourceObject.of("items", items)
     									);
     	
     	Assert.assertNotNull(projection);
@@ -95,11 +95,9 @@ public class ProvidedRefCollectionTest {
     	to1.s1 = "X";
     	
     	to.items.add(to1);
-    	
-    	Collection<SimpleObject> c1 = new ArrayList<>();
-    	
-    	projections.extract(to, NamedObject.of("items", c1));
-    
+
+    	Collection<SimpleObject> c1 = projections.extractCollection(to, SimpleObject.class);
+
     	Assert.assertNotNull(c1);
     	Assert.assertEquals(1, c1.size());
     	

@@ -1,6 +1,5 @@
 package com.apicatalog.projection.annotated;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -12,8 +11,8 @@ import org.junit.Test;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.converter.ConverterError;
-import com.apicatalog.projection.objects.NamedObject;
 import com.apicatalog.projection.projections.StringCollectionTo;
+import com.apicatalog.projection.source.SourceObject;
 
 public class ProvidedCollectionTest {
 
@@ -35,8 +34,8 @@ public class ProvidedCollectionTest {
     	
     	StringCollectionTo projection = projections.compose(
     									StringCollectionTo.class, 
-    									NamedObject.of("items", items), 
-    									NamedObject.of("href",  href)
+    									SourceObject.of("items", items), 
+    									SourceObject.of("href",  href)
     									);
     	
     	Assert.assertNotNull(projection);
@@ -53,13 +52,12 @@ public class ProvidedCollectionTest {
     	to.href = "https://example.org/provided";
     	to.items = Arrays.asList("10", "20", "30"); 
     	
-    	String href = new String();
-    	Collection<String> items = new ArrayList<>();
-    	
-    	projections.extract(to, NamedObject.of("href", href), NamedObject.of("items", items));
-    	
+    	String href = projections.extract(to, "href", String.class);
+    	Assert.assertNotNull(href);
     	Assert.assertEquals(to.href, href);
-
+    	
+    	Collection<String> items = projections.extractCollection(to, "items", String.class);
+    	Assert.assertNotNull(items);
     	Assert.assertArrayEquals(new String[] {"10", "20", "30"}, items.toArray(new String[0]));
     }    
     

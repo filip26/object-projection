@@ -65,10 +65,12 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 		}
 		
 		if (targetAdapter != null) {
-			object = targetAdapter.backward(object, context);
+			/*object =*/ targetAdapter.backward(object, context);
 		}
+		
+		
 
-		context.addOrReplace(object, sourceObjectQualifier);
+//		context.addOrReplace(object, sourceObjectQualifier);
 	}
 	
 	public void setTargetGetter(Getter targetGetter) {

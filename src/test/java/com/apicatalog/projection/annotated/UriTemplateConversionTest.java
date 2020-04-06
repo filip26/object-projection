@@ -42,12 +42,10 @@ public class UriTemplateConversionTest {
     	UriTemplateConversion projection = new UriTemplateConversion();
     	projection.href = "https://www.example.org/123456/ABC";
     	
-    	BasicTypes object1 = new BasicTypes();
-    	Reference object2 = new Reference();
-    	
-    	projections.extract(projection, object1, object2);
-    	
+    	BasicTypes object1 = projections.extract(projection, BasicTypes.class);
 		checkBasic(object1, 123456l);
+		
+    	Reference object2 = projections.extract(projection, Reference.class);    	
 		checkReference(object2, "ABC");
     }
     

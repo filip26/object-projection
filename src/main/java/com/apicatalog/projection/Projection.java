@@ -1,14 +1,16 @@
 package com.apicatalog.projection;
 
+import java.util.Collection;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.context.ProjectionContext;
-import com.apicatalog.projection.objects.NamedObject;
 import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.property.ProjectionProperty;
+import com.apicatalog.projection.source.SourceObject;
 
 public final class Projection<P> {
 	
@@ -78,33 +80,34 @@ public final class Projection<P> {
 	 * Extract exact source value for the given projection
 	 *
 	 */
-	public void extract(P projection, Object...objects) throws ProjectionError {
-		extract(projection, ProjectionContext.of(objects));
-	}	
-
-	public <S> S extract(P projection, Class<S> objectClass) throws ProjectionError {
-		return extract(projection, objectClass, null);
+	public <S> S extract(P projection, Class<S> objectType) throws ProjectionError {
+		return extract(projection, null, objectType);
 	}
 	
-	public <S> S extract(P projection, Class<S> objectClass, String qualifier) throws ProjectionError {
+	public <S> S extract(P projection, String qualifier, Class<S> objectType) throws ProjectionError {
 
-		S object = ObjectUtils.newInstance(objectClass);
+		S object = ObjectUtils.newInstance(objectType);
 		
-		extract(projection, ProjectionContext.of(StringUtils.isNotBlank(qualifier) ? NamedObject.of(qualifier, object) : object));
+		extract(projection, ProjectionContext.of(StringUtils.isNotBlank(qualifier) ? SourceObject.of(qualifier, object) : object));
 		
 		return object;
 	}
 
-	public Object[] extract(P projection, Class<?>...objectClass) throws ProjectionError {
+	public <I> Collection<I> extractCollection(P projection, Class<I> componentType) throws ProjectionError {
+		return extractCollection(projection, null, componentType); 
+	}
+	
+	public <I> Collection<I> extractCollection(P projection, String qualifier, Class<I> componentType) throws ProjectionError {
 		
 		final ProjectionContext context = ProjectionContext.of();
-		for (Class<?> clazz : objectClass) {
-			context.addOrReplace(ObjectUtils.newInstance(clazz));
-		}
-		
-		extract(projection, context);
-
-		return context.getValues();
+//		for (Class<?> clazz : types) {
+//			context.addOrReplace(ObjectUtils.newInstance(clazz));
+//		}
+//		
+//		extract(projection, context);
+//
+//		return context.getValues();
+		return null;
 	}
 
 	public void extract(P projection, ProjectionContext context) throws ProjectionError {

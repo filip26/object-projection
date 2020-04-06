@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.objects.NamedObject;
+import com.apicatalog.projection.source.SourceObject;
 
 public final class ProjectionContext {
 
@@ -61,7 +61,7 @@ public final class ProjectionContext {
 				.stream()
 				.map(e -> StringUtils.isBlank(e.getKey().qualifier) 
 							? e.getValue() 
-							: NamedObject.of(e.getKey().qualifier, e.getValue()
+							: SourceObject.of(e.getKey().qualifier, e.getValue()
 									)
 					
 					);		
@@ -94,8 +94,8 @@ public final class ProjectionContext {
 				.collect(Collectors.toMap(
 							ContextIndex::of,
 								o -> 
-								(NamedObject.class.isInstance(o))
-									? ((NamedObject<?>)o).getObject()
+								(SourceObject.class.isInstance(o))
+									? ((SourceObject)o).getObject()
 									: o
 									));
 	}	
