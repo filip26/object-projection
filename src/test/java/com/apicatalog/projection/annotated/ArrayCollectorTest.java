@@ -60,21 +60,16 @@ public class ArrayCollectorTest {
     	to.objectArray = new Object[] { 1.234d, false, Instant.now(), new String[] { "s1", "s2", "s3" }};
     	to.stringCollection = Arrays.asList(new String[] { "951", "false" });
 
-    	Object[] objects = projections.decompose(to);
+    	BasicTypes object = projections.extract(to, BasicTypes.class);
 
-    	Assert.assertNotNull(objects);
-    	Assert.assertEquals(1, objects.length); 
+    	Assert.assertNotNull(object);
     	
-    	Assert.assertTrue(BasicTypes.class.isInstance(objects[0]));
+    	Assert.assertEquals(to.objectArray[0], object.doubleValue);
+    	Assert.assertEquals(to.objectArray[1], object.booleanValue);
+    	Assert.assertEquals(to.objectArray[2], object.instantValue);
+    	Assert.assertArrayEquals((String[])to.objectArray[3], object.stringArray);
     	
-    	BasicTypes o1 = (BasicTypes)objects[0];
-    	
-    	Assert.assertEquals(to.objectArray[0], o1.doubleValue);
-    	Assert.assertEquals(to.objectArray[1], o1.booleanValue);
-    	Assert.assertEquals(to.objectArray[2], o1.instantValue);
-    	Assert.assertArrayEquals((String[])to.objectArray[3], o1.stringArray);
-    	
-    	Assert.assertEquals(Integer.valueOf(to.stringCollection.toArray(new String[0])[0]), o1.integerValue);
-    	Assert.assertEquals(Boolean.valueOf(to.stringCollection.toArray(new String[0])[1]), o1.booleanValue);    	
+    	Assert.assertEquals(Integer.valueOf(to.stringCollection.toArray(new String[0])[0]), object.integerValue);
+    	Assert.assertEquals(Boolean.valueOf(to.stringCollection.toArray(new String[0])[1]), object.booleanValue);    	
     }
 }

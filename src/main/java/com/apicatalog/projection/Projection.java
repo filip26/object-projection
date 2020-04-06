@@ -1,9 +1,11 @@
 package com.apicatalog.projection;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.context.ProjectionContext;
+import com.apicatalog.projection.objects.NamedObject;
 import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.property.ProjectionProperty;
@@ -73,39 +75,6 @@ public final class Projection<P> {
 	}
 
 	/**
-	 * Decompose a projection into a source of values
-	 * 
-	 * @param projection to decompose
-	 * @return objects extracted from the projection
-	 * @throws ProjectionError
-	 * 
-	 */
-	@Deprecated(since="0.7", forRemoval = true)
-	public Object[] decompose(P projection) throws ProjectionError {
-		return decompose(projection, ProjectionContext.of());
-	}
-
-	@Deprecated(since="0.7", forRemoval = true)
-	public final Object[] decompose(P projection, ProjectionContext context) throws ProjectionError {
-		
-		logger.debug("Decompose {}", projection.getClass().getSimpleName());
-		
-		final ProjectionQueue queue = ProjectionQueue.create().push(projection);
-		
-		for (int i = 0; i < properties.length; i++) {
-			properties[i].backward(queue, context);
-		}
-
-		final Object ref = queue.pop();
-		
-		if (!ref.equals(projection)) {
-			throw new IllegalStateException();
-		}
-
-		return context.getValues();
-	}
-
-	/**
 	 * Extract exact source value for the given projection
 	 *
 	 */
@@ -114,14 +83,30 @@ public final class Projection<P> {
 	}	
 
 	public <S> S extract(P projection, Class<S> objectClass) throws ProjectionError {
+		return extract(projection, objectClass, null);
+	}
+	
+	public <S> S extract(P projection, Class<S> objectClass, String qualifier) throws ProjectionError {
 
 		S object = ObjectUtils.newInstance(objectClass);
 		
-		extract(projection, ProjectionContext.of(object));
+		extract(projection, ProjectionContext.of(StringUtils.isNotBlank(qualifier) ? NamedObject.of(qualifier, object) : object));
 		
 		return object;
 	}
-	
+
+	public Object[] extract(P projection, Class<?>...objectClass) throws ProjectionError {
+		
+		final ProjectionContext context = ProjectionContext.of();
+		for (Class<?> clazz : objectClass) {
+			context.addOrReplace(ObjectUtils.newInstance(clazz));
+		}
+		
+		extract(projection, context);
+
+		return context.getValues();
+	}
+
 	public void extract(P projection, ProjectionContext context) throws ProjectionError {
 		
 		logger.debug("Extract {} object(s) from {}", context.size(), projection.getClass().getSimpleName());

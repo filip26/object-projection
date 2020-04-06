@@ -1,5 +1,6 @@
 package com.apicatalog.projection.annotated;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -46,31 +47,20 @@ public class ProvidedCollectionTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError, ConverterError {
+    public void testExtraction() throws ProjectionError, ConverterError {
     	
     	StringCollectionTo to = new StringCollectionTo();
     	to.href = "https://example.org/provided";
     	to.items = Arrays.asList("10", "20", "30"); 
     	
-    	Object[] objects = projections.decompose(to);
+    	String href = new String();
+    	Collection<String> items = new ArrayList<>();
     	
-    	Assert.assertNotNull(objects);
-    	Assert.assertEquals(2, objects.length);
+    	projections.extract(to, NamedObject.of("href", href), NamedObject.of("items", items));
     	
-    	Assert.assertTrue(NamedObject.class.isInstance(objects[0]));    	
-    	@SuppressWarnings("unchecked")
-		NamedObject<Object> object1 = (NamedObject<Object>)objects[0];
-    	
-    	Assert.assertEquals("href", object1.getName());
-    	Assert.assertEquals(to.href, object1.getObject());
+    	Assert.assertEquals(to.href, href);
 
-    	Assert.assertTrue(NamedObject.class.isInstance(objects[1]));
-    	@SuppressWarnings("unchecked")
-		NamedObject<Object> object2 = (NamedObject<Object>)objects[1];
-    	
-    	Assert.assertEquals("items", object2.getName());
-    	Assert.assertTrue(Collection.class.isInstance(object2.getObject()));
-    	Assert.assertArrayEquals(new String[] {"10", "20", "30"}, ((Collection<?>)object2.getObject()).toArray(new String[0]));
+    	Assert.assertArrayEquals(new String[] {"10", "20", "30"}, items.toArray(new String[0]));
     }    
     
 }

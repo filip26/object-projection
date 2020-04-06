@@ -37,21 +37,16 @@ public class OneToOneWithFncTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError, ConverterError {
+    public void testExtraction() throws ProjectionError, ConverterError {
     	
     	TestProjectionAF pa = new TestProjectionAF();
     	pa.originString = "ABCDEF";
     	pa.modifiedString = "ABCDEFGHIJKL";
     	pa.modified2xString = "ABCDEFGHIJKLMNOPQR";
     	
-    	Object[] oo = projections.decompose(pa);
+    	BasicTypes object = projections.extract(pa, BasicTypes.class);
     	
-    	Assert.assertNotNull(oo);
-    	Assert.assertEquals(1, oo.length);
-    	Assert.assertEquals(BasicTypes.class, oo[0].getClass());
-    	
-    	BasicTypes oa = (BasicTypes)oo[0];
-
-    	Assert.assertEquals("ABCDEF", oa.stringValue);
+    	Assert.assertNotNull(object);
+    	Assert.assertEquals("ABCDEF", object.stringValue);
     }
 }

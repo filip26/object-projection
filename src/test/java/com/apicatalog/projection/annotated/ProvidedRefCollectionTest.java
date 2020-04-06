@@ -96,24 +96,11 @@ public class ProvidedRefCollectionTest {
     	
     	to.items.add(to1);
     	
+    	Collection<SimpleObject> c1 = new ArrayList<>();
     	
-    	Object[] objects = projections.decompose(to);
+    	projections.extract(to, NamedObject.of("items", c1));
     
-    	Assert.assertNotNull(objects);
-    	Assert.assertEquals(1, objects.length);
-    	
-    	Assert.assertNotNull(objects[0]);
-    	
-    	Assert.assertTrue(NamedObject.class.isInstance(objects[0]));
-    	@SuppressWarnings("unchecked")
-		NamedObject<Object> object1 = (NamedObject<Object>)objects[0];
-
-    	Assert.assertEquals("items", object1.getName());
-    	Assert.assertTrue(Collection.class.isInstance(object1.getObject()));
-    	
-    	@SuppressWarnings("unchecked")
-		Collection<SimpleObject> c1 = (Collection<SimpleObject>)object1.getObject();
-    	
+    	Assert.assertNotNull(c1);
     	Assert.assertEquals(1, c1.size());
     	
     	SimpleObject o1 = c1.iterator().next();

@@ -36,20 +36,15 @@ public class PrefixMappingTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError, ConverterError {
+    public void testExtraction() throws ProjectionError, ConverterError {
     	
     	PrefixTo projection = new PrefixTo();
     	projection.id = "At the beginning of the New World";
     	
-    	Object[] objects = projections.decompose(projection);
+    	Object1 object = projections.extract(projection, Object1.class);
     	
-    	Assert.assertNotNull(objects);
+    	Assert.assertNotNull(object);
     	
-    	Assert.assertEquals(1, objects.length);
-    	Assert.assertEquals(Object1.class, objects[0].getClass());
-    	
-    	Object1 o1 = (Object1)objects[0];
-
-    	Assert.assertEquals("of the New World", o1.id);
+    	Assert.assertEquals("of the New World", object.id);
     }
 }

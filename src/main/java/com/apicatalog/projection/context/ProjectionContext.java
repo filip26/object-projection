@@ -67,6 +67,9 @@ public final class ProjectionContext {
 					);		
 	}
 
+	public ProjectionContext addOrReplace(Object object) {
+		return addOrReplace(object, null);
+	}
 	
 	public ProjectionContext addOrReplace(Object object, String qualifier) {
 		index.put(ContextIndex.of(object.getClass(), qualifier), object);

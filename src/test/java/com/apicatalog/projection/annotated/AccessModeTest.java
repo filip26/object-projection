@@ -38,27 +38,7 @@ public class AccessModeTest {
     	Assert.assertNull(projection.longValue);
     	Assert.assertTrue(projection.booleanValue);
     }
-    
-    @Test
-    public void testDecomposition1() throws ProjectionError, ConverterError {
-    	
-    	AccessModeTo to = new AccessModeTo();
-    	to.stringValue = "ABC123";
-    	to.longValue = 951l;
-    	to.booleanValue = true;
-
-    	Object[] objects = projections.decompose(to);
-    	
-    	Assert.assertNotNull(objects);
-    	Assert.assertEquals(1, objects.length);
-    	
-    	Assert.assertNotNull(objects[0]);
-    	Assert.assertTrue(BasicTypes.class.isInstance(objects[0]));
-    	Assert.assertNull(((BasicTypes)objects[0]).stringValue);
-    	Assert.assertEquals(to.longValue, ((BasicTypes)objects[0]).longValue);
-    	Assert.assertTrue(((BasicTypes)objects[0]).booleanValue);
-    }
-    
+ 
     @Test
     public void testExtraction() throws ProjectionError, ConverterError {
     	

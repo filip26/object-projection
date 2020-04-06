@@ -1,7 +1,5 @@
 package com.apicatalog.projection.annotated;
 
-import static org.junit.Assert.assertNotNull;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,21 +46,13 @@ public class TwoSourceCompositeTest {
     	projection.source1 = 123456l;
     	projection.source2 = "source 2 value";
 
-    	Object[] objects = projections.decompose(projection);
+    	BasicTypes object1 = new BasicTypes();
+    	Reference object2 = new Reference();
     	
-    	Assert.assertNotNull(objects);
-    	Assert.assertEquals(2, objects.length);
-
-    	assertNotNull(objects[0]);
-    	assertNotNull(objects[1]);
+    	projections.extract(projection, object1, object2);
     	
-    	if (BasicTypes.class.isInstance(objects[0])) {
-    		checkBasic(objects[0], projection.source1);
-    		checkReference(objects[1], projection.source2);
-    	} else {
-    		checkReference(objects[0], projection.source2);
-    		checkBasic(objects[1], projection.source1);
-    	}
+		checkBasic(object1, projection.source1);
+		checkReference(object2, projection.source2);
     }
     
     static void checkReference(Object object, String ref) {

@@ -55,7 +55,7 @@ public class MixedObjectsTest {
     }
     
     @Test
-    public void testDecomposition1() throws ProjectionError, ConverterError {
+    public void testExtraction1() throws ProjectionError, ConverterError {
     	
     	Object3To to3 = new Object3To();
     	to3.id = "id-3";
@@ -67,16 +67,8 @@ public class MixedObjectsTest {
     	
     	to3.object4 = to4;
 
-    	Object[] objects = projections.decompose(to3);
-    	
-    	Assert.assertNotNull(objects);
-    	Assert.assertEquals(1, objects.length);
-    	
-    	Assert.assertNotNull(objects[0]);
-    	Assert.assertTrue(Object3.class.isInstance(objects[0]));
-    	
-    	Object3 object3 = (Object3)objects[0];
-    	
+    	Object3 object3 = projections.extract(to3, Object3.class);
+    	    	
     	Assert.assertNotNull(object3);
     	Assert.assertEquals(to3.id, object3.id);
     	Assert.assertEquals(to4.name1, object3.name1);
@@ -87,7 +79,7 @@ public class MixedObjectsTest {
     }
     
     @Test
-    public void testDecomposition2() throws ProjectionError, ConverterError {
+    public void testExtraction2() throws ProjectionError, ConverterError {
     	
     	Object3To to3 = new Object3To();
     	to3.id = "id-3";
@@ -97,16 +89,8 @@ public class MixedObjectsTest {
     	
     	to3.object4 = to4;
 
-    	Object[] objects = projections.decompose(to3);
-    	
-    	Assert.assertNotNull(objects);
-    	Assert.assertEquals(1, objects.length);
-    	
-    	Assert.assertNotNull(objects[0]);
-    	Assert.assertTrue(Object3.class.isInstance(objects[0]));
-    	
-    	Object3 object3 = (Object3)objects[0];
-    	
+    	Object3 object3 = projections.extract(to3, Object3.class);
+    	    	
     	Assert.assertNotNull(object3);
     	Assert.assertEquals(to3.id, object3.id);
     	Assert.assertEquals(to4.name1, object3.name1);
@@ -115,7 +99,7 @@ public class MixedObjectsTest {
     }
     
     @Test
-    public void testExtraction() throws ProjectionError, ConverterError {
+    public void testExtraction3() throws ProjectionError, ConverterError {
     	
     	Object3To to3 = new Object3To();
     	to3.id = "id-3";
