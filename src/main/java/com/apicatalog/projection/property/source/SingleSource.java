@@ -101,14 +101,17 @@ public final class SingleSource implements Source {
 			}
 		}
 	
-		Object instance = context.get(objectClass, qualifier);
-		
-		if (instance == null) {
-			instance = ObjectUtils.newInstance(objectClass);
-			context.addOrReplace(instance, qualifier);
+		Optional<Object> instance =  Optional.ofNullable(context.get(objectClass, qualifier));
+
+		if (instance.isEmpty()) {
+			instance = Optional.of(ObjectUtils.newInstance(objectClass));
+			context.addOrReplace(instance.get(), qualifier);
 		}
+		setter.set(instance.get(), typeAdapters.convert(setter.getType().getObjectClass(), setter.getType().getObjectComponentClass(), object));
 		
-		setter.set(instance, typeAdapters.convert(setter.getType().getObjectClass(), setter.getType().getObjectComponentClass(), object));		
+//		if (instance.isPresent()) {
+//			setter.set(instance.get(), typeAdapters.convert(setter.getType().getObjectClass(), setter.getType().getObjectComponentClass(), object));
+//		}
 	}
 	
 	public void setConversions(ConverterMapping[] conversions) {

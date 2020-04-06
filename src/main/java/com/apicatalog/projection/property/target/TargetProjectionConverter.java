@@ -52,8 +52,10 @@ public class TargetProjectionConverter implements TargetAdapter {
 		@SuppressWarnings("unchecked")
 		final Projection<Object> projection = (Projection<Object>) factory.get(targetType.getObjectClass()); 
 		
-		if (projection != null) {
-			return filter(projection.decompose(object, new ProjectionContext(context)), context);
+		if (projection != null) {	//TODO
+			ProjectionContext clonedContext = new ProjectionContext(context);
+			projection.extract(object, clonedContext);
+			return filter(clonedContext.getValues(), context);
 		}
 
 		throw new ProjectionError("Projection " + targetType.getObjectClass().getCanonicalName() +  " is not present.");

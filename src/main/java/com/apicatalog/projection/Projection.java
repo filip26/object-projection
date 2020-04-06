@@ -1,13 +1,9 @@
 package com.apicatalog.projection;
 
-import java.util.Arrays;
-
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.context.ProjectionContext;
-import com.apicatalog.projection.objects.NamedObject;
 import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.property.ProjectionProperty;
@@ -82,11 +78,14 @@ public final class Projection<P> {
 	 * @param projection to decompose
 	 * @return objects extracted from the projection
 	 * @throws ProjectionError
+	 * 
 	 */
+	@Deprecated(since="0.7", forRemoval = true)
 	public Object[] decompose(P projection) throws ProjectionError {
 		return decompose(projection, ProjectionContext.of());
 	}
 
+	@Deprecated(since="0.7", forRemoval = true)
 	public final Object[] decompose(P projection, ProjectionContext context) throws ProjectionError {
 		
 		logger.debug("Decompose {}", projection.getClass().getSimpleName());
@@ -108,47 +107,36 @@ public final class Projection<P> {
 
 	/**
 	 * Extract exact source value for the given projection
-	 * 
-	 * @param sourceClass
-	 * @param qualifier
-	 * @param projection
-	 * @return
-	 * @throws ProjectionError 
+	 *
 	 */
-	@SuppressWarnings("unchecked")
-	public <S> S extract(Class<S> sourceObjectClass, String qualifier, P projection) throws ProjectionError {
-		
-		if (projection == null || sourceObjectClass == null) {
-			throw new IllegalArgumentException();
-		}
-		
-		logger.debug("Extract {} from {}", sourceObjectClass.getSimpleName(), projection.getClass().getSimpleName());
+	public void extract(P projection, Object...objects) throws ProjectionError {
+		extract(projection, ProjectionContext.of(objects));
+	}	
 
-		//TODO optimize, don't use decompose
-		Object[] objects = decompose(projection);
+	public <S> S extract(P projection, Class<S> objectClass) throws ProjectionError {
+
+		S object = ObjectUtils.newInstance(objectClass);
 		
-		if (objects == null || objects.length == 0) {
-			return null;
+		extract(projection, ProjectionContext.of(object));
+		
+		return object;
+	}
+	
+	public void extract(P projection, ProjectionContext context) throws ProjectionError {
+		
+		logger.debug("Extract {} object(s) from {}", context.size(), projection.getClass().getSimpleName());
+
+		final ProjectionQueue queue = ProjectionQueue.create().push(projection);
+		
+		for (int i = 0; i < properties.length; i++) {
+			properties[i].backward(queue, context);
 		}
 
-		if (StringUtils.isNotBlank(qualifier)) {
-			return (S)Arrays
-					.stream(objects)
-					.filter(NamedObject.class::isInstance)
-					.filter(o -> 
-								qualifier.equals(((NamedObject<?>)o).getName())  
-								&& sourceObjectClass.isInstance(((NamedObject<?>)o).getObject())
-								)
-					.findFirst()
-					.orElse(null);
-		}
+		final Object ref = queue.pop();
 		
-		return (S)Arrays
-					.stream(objects)
-					.map(o -> NamedObject.class.isInstance(o) ? ((NamedObject<?>)o).getObject() : o)
-					.filter(sourceObjectClass::isInstance)
-					.findFirst()
-					.orElse(null);
+		if (!ref.equals(projection)) {
+			throw new IllegalStateException();
+		}
 	}
 	
 	public ProjectionProperty[] getProperties() {

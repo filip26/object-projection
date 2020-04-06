@@ -45,32 +45,6 @@ public class DirectMappingTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError, ConverterError {
-    	
-    	TypeObjectTo projection = new TypeObjectTo();
-    	projection.booleanValue = true;
-    	projection.doubleValue= 123.456d;
-    	projection.instantValue = Instant.now();
-    	projection.longValue = 123456l;
-    	projection.stringValue = "ABCDEF";
-    	
-    	Object[] objects = projections.decompose(projection);
-    	
-    	Assert.assertNotNull(objects);
-    	
-    	Assert.assertEquals(1, objects.length);
-    	Assert.assertEquals(BasicTypes.class, objects[0].getClass());
-    	
-    	BasicTypes object = (BasicTypes)objects[0];
-
-    	Assert.assertEquals(projection.stringValue, object.stringValue);
-    	Assert.assertEquals(projection.booleanValue, object.booleanValue);
-    	Assert.assertEquals(projection.doubleValue, object.doubleValue);
-    	Assert.assertEquals(projection.instantValue, object.instantValue);
-    	Assert.assertEquals(projection.longValue, object.longValue);
-    }
-    
-    @Test
     public void testExtraction() throws ProjectionError, ConverterError {
     	
     	TypeObjectTo projection = new TypeObjectTo();
@@ -80,7 +54,7 @@ public class DirectMappingTest {
     	projection.longValue = 123456l;
     	projection.stringValue = "ABCDEF";
     	
-    	BasicTypes object = projections.extract(BasicTypes.class, projection);
+    	BasicTypes object = projections.extract(projection, BasicTypes.class);
     	
     	Assert.assertNotNull(object);
     	

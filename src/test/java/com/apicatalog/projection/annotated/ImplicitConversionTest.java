@@ -111,8 +111,8 @@ public class ImplicitConversionTest {
     	projection.floatValue = 0.0f;
     	projection.doubleValue = 1.23d;
     	projection.stringCollection = Arrays.asList("1 item", "2 item", "3 item");
-
-    	BasicTypes object = projections.extract(BasicTypes.class, projection);
+    	
+    	BasicTypes object = projections.extract(projection, BasicTypes.class);
     	
     	Assert.assertNotNull(object);
 

@@ -67,7 +67,7 @@ public class AccessModeTest {
     	to.longValue = 951l;
     	to.booleanValue = true;
 
-    	BasicTypes object = projections.extract(BasicTypes.class, to);
+    	BasicTypes object = projections.extract(to, BasicTypes.class);
     	
     	Assert.assertNotNull(object);
     	Assert.assertNull(object.stringValue);

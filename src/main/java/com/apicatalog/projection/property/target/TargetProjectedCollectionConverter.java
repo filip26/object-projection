@@ -80,8 +80,10 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 		Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, targetType.getObjectComponentClass(), object);
 		
 		// extract objects from each projection in the collection
-		for (final Object item : sourceCollection) {
-			collection.add(filterComponent(projection.decompose(item, new ProjectionContext(context)), context));
+		for (final Object item : sourceCollection) {	//TODO
+			ProjectionContext clonedContext = new ProjectionContext(context);
+			projection.extract(item, clonedContext);
+			collection.add(filterComponent(clonedContext.getValues(), context));
 		}
 		
 		return collection;

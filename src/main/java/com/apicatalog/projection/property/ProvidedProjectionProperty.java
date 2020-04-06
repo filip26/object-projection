@@ -71,7 +71,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 		
 		final Object object = targetGetter.get(queue.peek());
 		
-		projection.decompose(object, context);
+		projection.extract(object, context);
 	}
 	
 	public void setTargetGetter(Getter targetGetter) {

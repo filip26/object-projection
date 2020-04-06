@@ -82,7 +82,7 @@ public class ReferenceCompositeTest {
     	ReferenceTo projection2 = new ReferenceTo();
     	projection2.ref = projection1;
 
-    	Reference object = projections.extract(Reference.class, projection2);
+    	Reference object = projections.extract(projection2, Reference.class);
     	
     	Assert.assertNotNull(object);
 

@@ -127,7 +127,7 @@ public class MixedObjectsTest {
     	
     	to3.object4 = to4;
 
-    	Object3 object3 = projections.extract(Object3.class, to3);
+    	Object3 object3 = projections.extract(to3, Object3.class);
     	
     	Assert.assertNotNull(object3);
     	Assert.assertEquals(to3.id, object3.id);

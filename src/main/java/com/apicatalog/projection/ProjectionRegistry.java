@@ -27,6 +27,7 @@ public class ProjectionRegistry {
 	}
 
 	@SuppressWarnings("unchecked")
+	@Deprecated
 	public Object[] decompose(Object projection) throws ProjectionError {
 		return Optional.ofNullable(get((Class<Object>)projection.getClass()))
 					.orElseThrow(() -> unknownProjection(projection.getClass()))
@@ -38,17 +39,19 @@ public class ProjectionRegistry {
 					.orElseThrow(() -> unknownProjection(projectionClass))
 					.compose(values);					
 	}
-	
-	public <P> P extract(Class<P> sourceObjectClass, Object projection) throws ProjectionError {
-		return extract(sourceObjectClass, null, projection);
-	}
-	
+		
 	@SuppressWarnings("unchecked")
-	public <P> P extract(final Class<P> sourceObjectClass, final String qualifier, final Object projection) throws ProjectionError {
+	public void extract(Object projection, Object...objects) throws ProjectionError {
+		Optional.ofNullable(get((Class<Object>)projection.getClass()))
+				.orElseThrow(() -> unknownProjection(projection.getClass()))
+				.extract(projection, objects);
+	}	
+
+	public <S> S extract(Object projection, Class<S> objectClass) throws ProjectionError {
 		return Optional.ofNullable(get((Class<Object>)projection.getClass()))
 				.orElseThrow(() -> unknownProjection(projection.getClass()))
-				.extract(sourceObjectClass, qualifier, projection);		
-	}
+				.extract(projection, objectClass);
+	}	
 
 	public ProjectionRegistry register(final Projection<?> projection) {
 		if (projection == null) {
