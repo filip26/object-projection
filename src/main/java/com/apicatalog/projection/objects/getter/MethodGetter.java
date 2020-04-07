@@ -2,8 +2,8 @@ package com.apicatalog.projection.objects.getter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Optional;
 
-import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.objects.ObjectType;
 
 public final class MethodGetter implements Getter {
@@ -25,13 +25,13 @@ public final class MethodGetter implements Getter {
 	}
 
 	@Override
-	public Object get(final Object object) throws ProjectionError {
+	public Optional<Object> get(final Object object) {
 		try {
-			return method.invoke(object);
+			return Optional.ofNullable(method.invoke(object));
 			
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) { /* ignore */}
 		
-		return null;
+		return Optional.empty();
 	}
 	
 	@Override

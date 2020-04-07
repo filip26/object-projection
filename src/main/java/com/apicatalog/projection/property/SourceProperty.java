@@ -1,13 +1,14 @@
 package com.apicatalog.projection.property;
 
+import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.CompositionContext;
+import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
@@ -59,15 +60,19 @@ public class SourceProperty implements ProjectionProperty {
 		
 		logger.debug("Backward {} : {}, depth = {}", targetGetter.getName(), targetGetter.getType(), queue.length());
 
-		Object object = targetGetter.get(queue.peek());
+		Optional<Object> object = targetGetter.get(queue.peek());
 
-		if (object == null) {
+		if (object.isEmpty()) {
 			return;
 		}
 
-		object = targetAdapter.backward(object, context);
+		if (targetAdapter != null) {
+			object = Optional.ofNullable(targetAdapter.backward(object.get(), context));
+		}
 
-		source.write(queue, object, context);
+		if (object.isPresent()) {
+			source.write(queue, object.get(), context);
+		}
 	}
 	
 	public void setTargetAdapter(TargetAdapter targetAdapter) {

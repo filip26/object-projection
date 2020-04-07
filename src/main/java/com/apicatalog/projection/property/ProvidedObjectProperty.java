@@ -1,5 +1,6 @@
 package com.apicatalog.projection.property;
 
+import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -59,17 +60,19 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 
 		logger.debug("Backward {} : {}, qualifier = {}, optional = {}, depth = {}", targetGetter.getName(), targetGetter.getType(), sourceObjectQualifier, optional, queue.length());
 
-		Object object = targetGetter.get(queue.peek());
+		Optional<Object> object = targetGetter.get(queue.peek());
 		
-		if (object == null) {
+		if (object.isEmpty()) {
 			return;
 		}
 		
 		if (targetAdapter != null) {
-			object = targetAdapter.backward(object, context);
+			object = Optional.ofNullable(targetAdapter.backward(object.get(), context));
 		}
 		
-		context.set(sourceObjectQualifier, object);
+		if (object.isPresent()) {
+			context.set(sourceObjectQualifier, object.get());
+		}
 	}
 	
 	public void setTargetGetter(Getter targetGetter) {

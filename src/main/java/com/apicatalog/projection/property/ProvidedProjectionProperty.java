@@ -76,7 +76,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 			throw new ProjectionError("Projection " + targetGetter.getType().getObjectClass() +  " is not present.");			
 		}
 		
-		final Optional<Object> object = Optional.ofNullable(targetGetter.get(queue.peek()));
+		final Optional<Object> object = targetGetter.get(queue.peek());
 		
 		if (object.isPresent()) {
 			projection.extract(object.get(), context);

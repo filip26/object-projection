@@ -61,19 +61,20 @@ public final class SingleSource implements Source {
 		}
 
 		// get source value
-		Object object = getter.get(instance.get());
+		Optional<Object> object = getter.get(instance.get());
 
-		logger.trace("{}.{} = {}", objectClass.getSimpleName(), getter.getName(), object);
-		
-		if (object == null) {
+		if (object.isEmpty()) {
 			return null;
 		}
+
+		logger.trace("{}.{} = {}", objectClass.getSimpleName(), getter.getName(), object.get());
+		
 		
 		// apply explicit conversions
 		if (conversions != null) {
 			try {
 				for (ConverterMapping conversion : conversions) {
-					object = conversion.getConverter().forward(typeAdapters.convert(conversion.getSourceType(), object));
+					object = Optional.ofNullable(conversion.getConverter().forward(typeAdapters.convert(conversion.getSourceType(), object.get())));
 				}
 			} catch (ConverterError e) {
 				throw new ProjectionError(e);
@@ -81,7 +82,7 @@ public final class SingleSource implements Source {
 
 		}
 
-		return object;
+		return object.orElse(null);
 	}
 
 	@Override

@@ -1,8 +1,8 @@
 package com.apicatalog.projection.objects.getter;
 
 import java.lang.reflect.Field;
+import java.util.Optional;
 
-import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.objects.ObjectType;
 
 public final class FieldGetter implements Getter {
@@ -21,14 +21,14 @@ public final class FieldGetter implements Getter {
 	}
 	
 	@Override
-	public Object get(final Object object) throws ProjectionError {
+	public Optional<Object> get(final Object object) {
 		try {
 			field.setAccessible(true);
-			return field.get(object);
+			return Optional.ofNullable(field.get(object));
 			
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			throw new ProjectionError(e);
-		}
+		} catch (IllegalArgumentException | IllegalAccessException e)  { /* ignore */}
+
+		return Optional.empty();
 	}
 
 	@Override
