@@ -7,15 +7,12 @@ public final class ObjectType {
 	final Class<?> objectClass;
 	final Class<?> objectComponentClass;
 	
-	final String asString;
-	
 	final boolean reference;
 	
-	protected ObjectType(Class<?> objectClass, Class<?> objectComponentClass, boolean reference, String asString) { 
+	protected ObjectType(Class<?> objectClass, Class<?> objectComponentClass, boolean reference) { 
 		this.objectClass = objectClass;
 		this.objectComponentClass = objectComponentClass;
 		this.reference = reference;
-		this.asString = asString;
 	}
 	
 	public static final ObjectType of(Class<?> objectClass) {
@@ -31,16 +28,7 @@ public final class ObjectType {
 	}
 
 	public static final ObjectType of(Class<?> objectClass, Class<?> objectComponentClass, boolean reference) {
-		
-		StringBuilder builder = new StringBuilder();
-		builder.append(ObjectType.class.getSimpleName());
-		builder.append(" [");
-		builder.append(objectClass.getSimpleName());
-		Optional.ofNullable(objectComponentClass).ifPresent(c -> builder.append("<" + c.getSimpleName() + ">"));
-		if (reference) { builder.append(", reference"); }
-		builder.append(']');
-		
-		return new ObjectType(objectClass, objectComponentClass, reference, builder.toString());
+		return new ObjectType(objectClass, objectComponentClass, reference);
 	}
 
 	public boolean isReference() {
@@ -79,6 +67,13 @@ public final class ObjectType {
 
 	@Override
 	public String toString() {
-		return asString;
+		return "ObjectType [" 
+					+ Optional.ofNullable(objectClass).map(Class::getSimpleName).orElse("") 
+					+ "<" 
+					+ Optional.ofNullable(objectComponentClass).map(Class::getSimpleName).orElse("") 
+					+ ">, reference=" 
+					+ reference 
+					+ "]"
+					;
 	}
 }

@@ -67,7 +67,7 @@ public class ProvidedPropertyBuilder {
 		}			
 
 		// set qualifier
-		property.setSourceObjectQualifier(StringUtils.isNotBlank(qualifier) ? qualifier : null);
+		property.setObjectQualifier(StringUtils.isNotBlank(qualifier) ? qualifier : null);
 
 		property.setOptional(optional);
 
@@ -102,7 +102,7 @@ public class ProvidedPropertyBuilder {
 		}	
 
 		// set qualifier
-		property.setSourceObjectQualifier(qualifier);
+		property.setObjectQualifier(qualifier);
 
 		property.setOptional(optional);
 

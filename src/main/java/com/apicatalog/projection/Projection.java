@@ -92,7 +92,7 @@ public final class Projection<P> {
 		
 		extract(projection, context);
 
-		return (S) context.get(qualifier, objectType, null);
+		return (S) context.get(qualifier, objectType, null).orElse(null);
 	}
 
 	public <I> Collection<I> extractCollection(P projection, Class<I> componentType) throws ProjectionError {
@@ -107,7 +107,7 @@ public final class Projection<P> {
 		
 		extract(projection, context);
 	
-		return (Collection<I>) context.get(qualifier, Collection.class, componentType);
+		return (Collection<I>) context.get(qualifier, Collection.class, componentType).orElse(null);
 	}
 
 	public void extract(P projection, ExtractionContext context) throws ProjectionError {

@@ -31,7 +31,7 @@ public final class FieldSetter implements Setter {
 	}
 	
 	@Override
-	public Object getName() {
+	public String getName() {
 		return field.getName();
 	}
 	

@@ -36,7 +36,7 @@ public final class MethodSetter implements Setter {
 	}
 
 	@Override
-	public Object getName() {
+	public String getName() {
 		return name;
 	}
 	
