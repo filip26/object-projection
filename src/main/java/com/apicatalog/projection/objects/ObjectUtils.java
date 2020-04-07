@@ -52,7 +52,6 @@ public final class ObjectUtils {
 	
 	public static <T> T newInstance(Class<? extends T> clazz) throws ProjectionError {
 		try {
-			
 			return clazz.getDeclaredConstructor().newInstance();
 					
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException

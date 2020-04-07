@@ -1,5 +1,6 @@
 package com.apicatalog.projection.builder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +67,7 @@ public class ProvidedPropertyBuilder {
 		}			
 
 		// set qualifier
-		property.setSourceObjectQualifier(qualifier);
+		property.setSourceObjectQualifier(StringUtils.isNotBlank(qualifier) ? qualifier : null);
 
 		property.setOptional(optional);
 

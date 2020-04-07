@@ -1,7 +1,5 @@
 package com.apicatalog.projection.annotated;
 
-import static org.junit.Assert.assertNotNull;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +23,7 @@ public class TwoSourceCompositeTest {
 	}	
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	BasicTypes source1 = new BasicTypes();
     	source1.longValue = 123456l;
@@ -42,27 +40,17 @@ public class TwoSourceCompositeTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError, ConverterError {
+    public void testExtract() throws ProjectionError, ConverterError {
     	
     	CompositeTo projection = new CompositeTo();
     	projection.source1 = 123456l;
     	projection.source2 = "source 2 value";
 
-    	Object[] objects = projections.decompose(projection);
-    	
-    	Assert.assertNotNull(objects);
-    	Assert.assertEquals(2, objects.length);
-
-    	assertNotNull(objects[0]);
-    	assertNotNull(objects[1]);
-    	
-    	if (BasicTypes.class.isInstance(objects[0])) {
-    		checkBasic(objects[0], projection.source1);
-    		checkReference(objects[1], projection.source2);
-    	} else {
-    		checkReference(objects[0], projection.source2);
-    		checkBasic(objects[1], projection.source1);
-    	}
+    	BasicTypes object1 = projections.extract(projection, BasicTypes.class);
+		checkBasic(object1, projection.source1);
+		
+    	Reference object2 = projections.extract(projection, Reference.class);
+		checkReference(object2, projection.source2);
     }
     
     static void checkReference(Object object, String ref) {

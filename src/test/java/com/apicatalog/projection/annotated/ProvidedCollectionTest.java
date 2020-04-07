@@ -11,8 +11,8 @@ import org.junit.Test;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.converter.ConverterError;
-import com.apicatalog.projection.objects.NamedObject;
 import com.apicatalog.projection.projections.StringCollectionTo;
+import com.apicatalog.projection.source.SourceObject;
 
 public class ProvidedCollectionTest {
 
@@ -26,7 +26,7 @@ public class ProvidedCollectionTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	String href = "https://example.org/provided";
 
@@ -34,8 +34,8 @@ public class ProvidedCollectionTest {
     	
     	StringCollectionTo projection = projections.compose(
     									StringCollectionTo.class, 
-    									NamedObject.of("items", items), 
-    									NamedObject.of("href",  href)
+    									SourceObject.of("items", items), 
+    									SourceObject.of("href",  href)
     									);
     	
     	Assert.assertNotNull(projection);
@@ -46,31 +46,19 @@ public class ProvidedCollectionTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError, ConverterError {
+    public void testExtract() throws ProjectionError, ConverterError {
     	
     	StringCollectionTo to = new StringCollectionTo();
     	to.href = "https://example.org/provided";
     	to.items = Arrays.asList("10", "20", "30"); 
     	
-    	Object[] objects = projections.decompose(to);
+    	String href = projections.extract(to, "href", String.class);
+    	Assert.assertNotNull(href);
+    	Assert.assertEquals(to.href, href);
     	
-    	Assert.assertNotNull(objects);
-    	Assert.assertEquals(2, objects.length);
-    	
-    	Assert.assertTrue(NamedObject.class.isInstance(objects[0]));    	
-    	@SuppressWarnings("unchecked")
-		NamedObject<Object> object1 = (NamedObject<Object>)objects[0];
-    	
-    	Assert.assertEquals("href", object1.getName());
-    	Assert.assertEquals(to.href, object1.getObject());
-
-    	Assert.assertTrue(NamedObject.class.isInstance(objects[1]));
-    	@SuppressWarnings("unchecked")
-		NamedObject<Object> object2 = (NamedObject<Object>)objects[1];
-    	
-    	Assert.assertEquals("items", object2.getName());
-    	Assert.assertTrue(Collection.class.isInstance(object2.getObject()));
-    	Assert.assertArrayEquals(new String[] {"10", "20", "30"}, ((Collection<?>)object2.getObject()).toArray(new String[0]));
+    	Collection<String> items = projections.extractCollection(to, "items", String.class);
+    	Assert.assertNotNull(items);
+    	Assert.assertArrayEquals(new String[] {"10", "20", "30"}, items.toArray(new String[0]));
     }    
     
 }

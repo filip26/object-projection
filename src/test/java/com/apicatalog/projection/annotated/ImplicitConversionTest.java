@@ -30,7 +30,7 @@ public class ImplicitConversionTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	BasicTypes object = new BasicTypes();
     	object.instantValue = Instant.now();
@@ -69,7 +69,7 @@ public class ImplicitConversionTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError, ConverterError {
+    public void testExtract() throws ProjectionError, ConverterError {
     	
     	ImplicitConversionTo projection = new ImplicitConversionTo();
     	projection.stringValue = "987654";
@@ -79,14 +79,8 @@ public class ImplicitConversionTest {
     	projection.doubleValue = 1.23d;
     	projection.stringCollection = Arrays.asList("1 item", "2 item", "3 item");
 
-    	Object[] objects = projections.decompose(projection);
+    	BasicTypes object = projections.extract(projection, BasicTypes.class);
     	
-    	Assert.assertNotNull(objects);
-    	Assert.assertEquals(1, objects.length);
-    	Assert.assertEquals(BasicTypes.class, objects[0].getClass());
-    	
-    	BasicTypes object = (BasicTypes)objects[0];
-
     	Assert.assertEquals("1.23", object.stringValue);
     	Assert.assertEquals(Instant.ofEpochMilli(projection.longValue), object.instantValue);
     	Assert.assertEquals((Long)987654l, object.longValue);
@@ -100,38 +94,9 @@ public class ImplicitConversionTest {
     	Assert.assertEquals("2 item", object.stringArray[1]);
     	Assert.assertEquals("3 item", object.stringArray[2]);
     }
-    
+       
     @Test
-    public void testExtraction() throws ProjectionError, ConverterError {
-    	
-    	ImplicitConversionTo projection = new ImplicitConversionTo();
-    	projection.stringValue = "987654";
-    	projection.booleanValue = true;
-    	projection.longValue = Instant.now().toEpochMilli();
-    	projection.floatValue = 0.0f;
-    	projection.doubleValue = 1.23d;
-    	projection.stringCollection = Arrays.asList("1 item", "2 item", "3 item");
-
-    	BasicTypes object = projections.extract(BasicTypes.class, projection);
-    	
-    	Assert.assertNotNull(object);
-
-    	Assert.assertEquals("1.23", object.stringValue);
-    	Assert.assertEquals(Instant.ofEpochMilli(projection.longValue), object.instantValue);
-    	Assert.assertEquals((Long)987654l, object.longValue);
-    	Assert.assertEquals((Integer)1, object.integerValue);
-    	Assert.assertEquals(Boolean.FALSE, object.booleanValue);
-    	
-    	Assert.assertNotNull(object.stringArray);
-    	Assert.assertEquals(3, object.stringArray.length);
-
-    	Assert.assertEquals("1 item", object.stringArray[0]);
-    	Assert.assertEquals("2 item", object.stringArray[1]);
-    	Assert.assertEquals("3 item", object.stringArray[2]);
-    }
-    
-    @Test
-    public void testComposition2() throws ProjectionError, ConverterError {
+    public void testCompose2() throws ProjectionError, ConverterError {
     	
     	UriObject object = new UriObject();
 		object.uri = URI.create("https://example.org/a/b/c");
@@ -143,17 +108,15 @@ public class ImplicitConversionTest {
     }
     
     @Test
-    public void testDecomposition2() throws ProjectionError, ConverterError {
+    public void testExtract2() throws ProjectionError, ConverterError {
     	
     	UriTo to = new UriTo();
 		to.uri = "https://example.org/a/b/c";
     	
-    	Object[] objects = projections.decompose(to);
+    	UriObject object = projections.extract(to, UriObject.class);
     	
-    	Assert.assertNotNull(objects);
-    	Assert.assertEquals(1, objects.length);
-    	Assert.assertNotNull(objects[0]);
-    	Assert.assertEquals(UriObject.class, objects[0].getClass());
-		Assert.assertEquals(URI.create(to.uri), ((UriObject)objects[0]).uri);
+    	Assert.assertNotNull(object);
+    	Assert.assertEquals(UriObject.class, object.getClass());
+		Assert.assertEquals(URI.create(to.uri), object.uri);
     }
 }

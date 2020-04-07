@@ -3,17 +3,20 @@ package com.apicatalog.projection.property;
 import java.util.Set;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.context.ProjectionContext;
+import com.apicatalog.projection.context.ExtractionContext;
+import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.objects.ProjectionQueue;
 
 public interface ProjectionProperty {
 
-	void forward(ProjectionQueue queue, ProjectionContext context) throws ProjectionError;
+	void forward(ProjectionQueue queue, CompositionContext context) throws ProjectionError;
 	
-	void backward(ProjectionQueue queue, ProjectionContext context) throws ProjectionError;
+	void backward(ProjectionQueue queue, ExtractionContext context) throws ProjectionError;
 
 	boolean isVisible(int level);
 
-	void setVisible(Set<Integer> levels);
+	void setVisibility(Set<Integer> levels);
+	
+//	boolean hasSource(ObjectType sourceType);
 	
 }

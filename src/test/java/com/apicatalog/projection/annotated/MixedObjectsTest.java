@@ -27,7 +27,7 @@ public class MixedObjectsTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	Object3 o3 = new Object3();
     	o3.id = "id-3";
@@ -55,7 +55,7 @@ public class MixedObjectsTest {
     }
     
     @Test
-    public void testDecomposition1() throws ProjectionError, ConverterError {
+    public void testExtract1() throws ProjectionError, ConverterError {
     	
     	Object3To to3 = new Object3To();
     	to3.id = "id-3";
@@ -67,16 +67,8 @@ public class MixedObjectsTest {
     	
     	to3.object4 = to4;
 
-    	Object[] objects = projections.decompose(to3);
-    	
-    	Assert.assertNotNull(objects);
-    	Assert.assertEquals(1, objects.length);
-    	
-    	Assert.assertNotNull(objects[0]);
-    	Assert.assertTrue(Object3.class.isInstance(objects[0]));
-    	
-    	Object3 object3 = (Object3)objects[0];
-    	
+    	Object3 object3 = projections.extract(to3, Object3.class);
+    	    	
     	Assert.assertNotNull(object3);
     	Assert.assertEquals(to3.id, object3.id);
     	Assert.assertEquals(to4.name1, object3.name1);
@@ -87,7 +79,7 @@ public class MixedObjectsTest {
     }
     
     @Test
-    public void testDecomposition2() throws ProjectionError, ConverterError {
+    public void testExtract2() throws ProjectionError, ConverterError {
     	
     	Object3To to3 = new Object3To();
     	to3.id = "id-3";
@@ -97,16 +89,8 @@ public class MixedObjectsTest {
     	
     	to3.object4 = to4;
 
-    	Object[] objects = projections.decompose(to3);
-    	
-    	Assert.assertNotNull(objects);
-    	Assert.assertEquals(1, objects.length);
-    	
-    	Assert.assertNotNull(objects[0]);
-    	Assert.assertTrue(Object3.class.isInstance(objects[0]));
-    	
-    	Object3 object3 = (Object3)objects[0];
-    	
+    	Object3 object3 = projections.extract(to3, Object3.class);
+    	    	
     	Assert.assertNotNull(object3);
     	Assert.assertEquals(to3.id, object3.id);
     	Assert.assertEquals(to4.name1, object3.name1);
@@ -115,7 +99,7 @@ public class MixedObjectsTest {
     }
     
     @Test
-    public void testExtraction() throws ProjectionError, ConverterError {
+    public void testExtract3() throws ProjectionError, ConverterError {
     	
     	Object3To to3 = new Object3To();
     	to3.id = "id-3";
@@ -127,7 +111,7 @@ public class MixedObjectsTest {
     	
     	to3.object4 = to4;
 
-    	Object3 object3 = projections.extract(Object3.class, to3);
+    	Object3 object3 = projections.extract(to3, Object3.class);
     	
     	Assert.assertNotNull(object3);
     	Assert.assertEquals(to3.id, object3.id);

@@ -11,10 +11,10 @@ import org.junit.Test;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.converter.ConverterError;
-import com.apicatalog.projection.objects.NamedObject;
 import com.apicatalog.projection.objects.SimpleObject;
 import com.apicatalog.projection.projections.ProvidedRefCollectionTo;
 import com.apicatalog.projection.projections.SimpleObjectTo;
+import com.apicatalog.projection.source.SourceObject;
 
 public class ProvidedRefCollectionTest {
 
@@ -30,13 +30,13 @@ public class ProvidedRefCollectionTest {
 	}
 	
     @Test
-    public void testComposition1() throws ProjectionError, ConverterError {
+    public void testCompose1() throws ProjectionError, ConverterError {
     	
     	Collection<SimpleObject> items = new ArrayList<>();
     	
     	ProvidedRefCollectionTo projection = projections.compose(
     									ProvidedRefCollectionTo.class, 
-    									NamedObject.of("items", items)
+    									SourceObject.of("items", items)
     									);
     	
     	Assert.assertNotNull(projection);
@@ -46,7 +46,7 @@ public class ProvidedRefCollectionTest {
     }
     
     @Test
-    public void testComposition2() throws ProjectionError, ConverterError {
+    public void testCompose2() throws ProjectionError, ConverterError {
     	
     	Collection<SimpleObject> items = new ArrayList<>();
     	
@@ -63,7 +63,7 @@ public class ProvidedRefCollectionTest {
     	
     	ProvidedRefCollectionTo projection = projections.compose(
     									ProvidedRefCollectionTo.class, 
-    									NamedObject.of("items", items)
+    									SourceObject.of("items", items)
     									);
     	
     	Assert.assertNotNull(projection);
@@ -85,7 +85,7 @@ public class ProvidedRefCollectionTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError, ConverterError {
+    public void testExtract() throws ProjectionError, ConverterError {
     	
     	ProvidedRefCollectionTo to = new ProvidedRefCollectionTo();
     	to.items = new ArrayList<>();
@@ -95,25 +95,10 @@ public class ProvidedRefCollectionTest {
     	to1.s1 = "X";
     	
     	to.items.add(to1);
-    	
-    	
-    	Object[] objects = projections.decompose(to);
-    
-    	Assert.assertNotNull(objects);
-    	Assert.assertEquals(1, objects.length);
-    	
-    	Assert.assertNotNull(objects[0]);
-    	
-    	Assert.assertTrue(NamedObject.class.isInstance(objects[0]));
-    	@SuppressWarnings("unchecked")
-		NamedObject<Object> object1 = (NamedObject<Object>)objects[0];
 
-    	Assert.assertEquals("items", object1.getName());
-    	Assert.assertTrue(Collection.class.isInstance(object1.getObject()));
-    	
-    	@SuppressWarnings("unchecked")
-		Collection<SimpleObject> c1 = (Collection<SimpleObject>)object1.getObject();
-    	
+    	Collection<SimpleObject> c1 = projections.extractCollection(to, "items", SimpleObject.class);
+
+    	Assert.assertNotNull(c1);
     	Assert.assertEquals(1, c1.size());
     	
     	SimpleObject o1 = c1.iterator().next();

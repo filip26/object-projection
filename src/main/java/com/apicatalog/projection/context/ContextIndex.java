@@ -3,7 +3,9 @@ package com.apicatalog.projection.context;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.apicatalog.projection.objects.NamedObject;
+import org.apache.commons.lang3.StringUtils;
+
+import com.apicatalog.projection.source.SourceObject;
 
 final class ContextIndex {
 
@@ -16,12 +18,12 @@ final class ContextIndex {
 	}
 	
 	public static ContextIndex of(Class<?> clazz, String qualifier) {
-		return new ContextIndex(clazz, qualifier == null ? "" : qualifier);		
+		return new ContextIndex(clazz, StringUtils.isBlank(qualifier) ? "" : qualifier);		
 	}
 	
 	public static ContextIndex of(Object object) {
-		if (NamedObject.class.isInstance(object)) {
-			final NamedObject<?> namedObject = (NamedObject<?>)object;
+		if (SourceObject.class.isInstance(object)) {
+			final SourceObject namedObject = (SourceObject)object;
 			
 			return of(namedObject.getObject().getClass(), namedObject.getName());	
 		}

@@ -23,7 +23,7 @@ public class ConstantTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	Object1 o1 = new Object1();
     	o1.id = "ABC123";
@@ -47,35 +47,31 @@ public class ConstantTest {
     }
     
     @Test
-    public void testDecomposition1() throws ProjectionError, ConverterError {
+    public void testExtract1() throws ProjectionError, ConverterError {
     	
     	ConstantTo to = new ConstantTo();
     	to.id = "https://example.org/c/";
     	to.stringArray = new String[] {"10", "20", "30"};
     	to.booleanCollection = Arrays.asList(false, true);
     	
-    	Object[] objects = projections.decompose(to);
+    	Object1 object = projections.extract(to, Object1.class);
     	
-    	Assert.assertNotNull(objects);
-    	Assert.assertEquals(1, objects.length);
+    	Assert.assertNotNull(object);
     	
-    	Assert.assertNotNull(objects[0]);
-    	Assert.assertTrue(Object1.class.isInstance(objects[0]));
-    	Assert.assertEquals(to.id, ((Object1)objects[0]).id);
-    	Assert.assertNull(((Object1)objects[0]).object2);
-    }    
-
+    	Assert.assertTrue(Object1.class.isInstance(object));
+    	Assert.assertEquals(to.id, object.id);
+    	Assert.assertNull(object.object2);
+    }
     
     @Test
-    public void testDecomposition2() throws ProjectionError, ConverterError {
+    public void testExtract2() throws ProjectionError, ConverterError {
     	
     	ConstantTo to = new ConstantTo();
     	to.stringArray = new String[] {"10", "20", "30"};
     	to.booleanCollection = Arrays.asList(false, true);
     	
-    	Object[] objects = projections.decompose(to);
+    	Object1 object = projections.extract(to, Object1.class);
 
-    	Assert.assertNotNull(objects);
-    	Assert.assertEquals(0, objects.length);    	
+    	Assert.assertNull(object);
     }
 }

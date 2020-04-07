@@ -6,7 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.context.ProjectionContext;
+import com.apicatalog.projection.context.CompositionContext;
+import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
@@ -28,7 +29,7 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 	boolean optional;	
 	
 	@Override
-	public void forward(ProjectionQueue queue, ProjectionContext context) throws ProjectionError {
+	public void forward(ProjectionQueue queue, CompositionContext context) throws ProjectionError {
 		
 		if (targetSetter == null) {
 			return;
@@ -50,7 +51,7 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 	}
 
 	@Override
-	public void backward(ProjectionQueue queue, ProjectionContext context) throws ProjectionError {
+	public void backward(ProjectionQueue queue, ExtractionContext context) throws ProjectionError {
 		
 		if (targetGetter == null) {
 			return;
@@ -59,7 +60,7 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 		logger.debug("Backward {} : {}, qualifier = {}, optional = {}, depth = {}", targetGetter.getName(), targetGetter.getType(), sourceObjectQualifier, optional, queue.length());
 
 		Object object = targetGetter.get(queue.peek());
-
+		
 		if (object == null) {
 			return;
 		}
@@ -67,8 +68,8 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 		if (targetAdapter != null) {
 			object = targetAdapter.backward(object, context);
 		}
-
-		context.addOrReplace(object, sourceObjectQualifier);
+		
+		context.set(sourceObjectQualifier, object);
 	}
 	
 	public void setTargetGetter(Getter targetGetter) {
@@ -84,7 +85,7 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 		return visibleLevels == null || visibleLevels.isEmpty() || visibleLevels.contains(depth);
 	}
 	
-	public void setVisible(final Set<Integer> levels) {
+	public void setVisibility(final Set<Integer> levels) {
 		this.visibleLevels = levels;
 	}
 	

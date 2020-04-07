@@ -7,6 +7,7 @@ import org.junit.Test;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.converter.ConverterError;
+import com.apicatalog.projection.objects.Interface1;
 import com.apicatalog.projection.objects.Interface1Impl;
 import com.apicatalog.projection.projections.Interface1To;
 
@@ -22,7 +23,7 @@ public class InterfaceSourceTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	Interface1Impl i1 = new Interface1Impl();
     	i1.setId("987654321");
@@ -36,19 +37,17 @@ public class InterfaceSourceTest {
     	Assert.assertEquals(Long.valueOf(i1.getId()), projection.id);
     }
 
-//TODO
+
 //    @Test
-//    public void testDecomposition() throws ProjectionError, ConverterError {
+//    public void testExtract() throws ProjectionError, ConverterError {
 //    	
 //    	Interface1To to = new Interface1To();
 //    	to.id = 951846237l;
 //    	
-//    	Object[] objects  = projections.decompose(to);
+//    	Interface1 object  = projections.extract(to, Interface1Impl.class);
 //    	
-//    	Assert.assertNotNull(objects);
-//    	Assert.assertEquals(1, objects.length);
-//    	
-//    	Assert.assertTrue(Interface1.class.isInstance(objects[0]));
+//    	Assert.assertNotNull(object);
+//    	Assert.assertEquals(to.id, object.getId());
 //    	
 //    }
     

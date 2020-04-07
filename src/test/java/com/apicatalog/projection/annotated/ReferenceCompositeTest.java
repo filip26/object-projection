@@ -27,7 +27,7 @@ public class ReferenceCompositeTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	BasicTypes object1 = new BasicTypes();
     	object1.longValue = 123456l;
@@ -49,7 +49,7 @@ public class ReferenceCompositeTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError, ConverterError {
+    public void testExtract() throws ProjectionError, ConverterError {
     	
     	CompositeTo projection1 = new CompositeTo();
     	projection1.source1 = 123456l;
@@ -58,31 +58,7 @@ public class ReferenceCompositeTest {
     	ReferenceTo projection2 = new ReferenceTo();
     	projection2.ref = projection1;
 
-    	Object[] objects = projections.decompose(projection2);
-
-    	Assert.assertNotNull(objects);
-
-    	Assert.assertEquals(1, objects.length);
-    	Assert.assertEquals(Reference.class, objects[0].getClass());
-    	
-    	Reference object = (Reference)objects[0];
-    	Assert.assertNotNull(object.objectA);
-
-    	Assert.assertEquals(projection2.ref.source1, object.objectA.longValue);
-    	Assert.assertEquals(projection2.ref.source2, object.stringValue);
-    }
-    
-    @Test
-    public void testExtraction() throws ProjectionError, ConverterError {
-    	
-    	CompositeTo projection1 = new CompositeTo();
-    	projection1.source1 = 123456l;
-    	projection1.source2 = "source 2 value";
-
-    	ReferenceTo projection2 = new ReferenceTo();
-    	projection2.ref = projection1;
-
-    	Reference object = projections.extract(Reference.class, projection2);
+    	Reference object = projections.extract(projection2, Reference.class);
     	
     	Assert.assertNotNull(object);
 

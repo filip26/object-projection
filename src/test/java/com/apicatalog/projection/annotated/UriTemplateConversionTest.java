@@ -1,7 +1,5 @@
 package com.apicatalog.projection.annotated;
 
-import static org.junit.Assert.assertNotNull;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +23,7 @@ public class UriTemplateConversionTest {
 	}
 		
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	BasicTypes oa = new BasicTypes();
     	oa.longValue = 123l;
@@ -40,25 +38,15 @@ public class UriTemplateConversionTest {
     }
 
     @Test
-    public void testDecomposition() throws ProjectionError, ConverterError {
+    public void testExtract() throws ProjectionError, ConverterError {
     	UriTemplateConversion projection = new UriTemplateConversion();
     	projection.href = "https://www.example.org/123456/ABC";
     	
-    	Object[] objects = projections.decompose(projection);
-    	
-    	Assert.assertNotNull(objects);
-    	Assert.assertEquals(2, objects.length);
-    	
-    	assertNotNull(objects[0]);
-    	assertNotNull(objects[1]);
-    	
-    	if (BasicTypes.class.isInstance(objects[0])) {
-    		checkBasic(objects[0], 123456l);
-    		checkReference(objects[1], "ABC");
-    	} else {
-    		checkReference(objects[0], "ABC");
-    		checkBasic(objects[1], 123456l);
-    	}
+    	BasicTypes object1 = projections.extract(projection, BasicTypes.class);
+		checkBasic(object1, 123456l);
+		
+    	Reference object2 = projections.extract(projection, Reference.class);    	
+		checkReference(object2, "ABC");
     }
     
     static void checkReference(Object object, String ref) {

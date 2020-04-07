@@ -2,7 +2,6 @@ package com.apicatalog.projection.property.target;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,9 +10,11 @@ import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.context.ProjectionContext;
+import com.apicatalog.projection.context.ExtractionContext;
+import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ProjectionQueue;
+import com.apicatalog.projection.source.SourceType;
 
 public class TargetProjectedCollectionConverter implements TargetAdapter {
 
@@ -36,7 +37,7 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 	}
 	
 	@Override
-	public Object forward(ProjectionQueue queue, Object object, ProjectionContext context) throws ProjectionError {
+	public Object forward(ProjectionQueue queue, Object object, CompositionContext context) throws ProjectionError {
 		
 		logger.debug("Convert {} to {}, depth = {}, reference = true, collection = true", sourceType, targetType, queue.length());
 
@@ -56,7 +57,7 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 			collection.add(projection
 							.compose(
 								queue,										
-								(new ProjectionContext(context)).addOrReplace(item, null)
+								(new CompositionContext(context)).addOrReplace(item, null)
 								)
 							);
 		}
@@ -65,7 +66,7 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 	}
 
 	@Override
-	public Object backward(Object object, ProjectionContext context) throws ProjectionError {
+	public Object backward(Object object, ExtractionContext context) throws ProjectionError {
 		logger.debug("Convert {} to {}, reference = true, collection = true", targetType, sourceType);
 		
 		@SuppressWarnings("unchecked")
@@ -75,41 +76,28 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 			throw new ProjectionError("Projection " + targetType.getObjectComponentClass().getCanonicalName() +  " is not present.");
 		}
 		
+
 		final Collection<Object> collection = new ArrayList<>();
 
 		Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, targetType.getObjectComponentClass(), object);
+
+		Class<?> componentClass = sourceType.getObjectComponentClass();
 		
-		// extract objects from each projection in the collection
-		for (final Object item : sourceCollection) {
-			collection.add(filterComponent(projection.decompose(item, new ProjectionContext(context)), context));
-		}
-		
-		return collection;
-	}
-
-	Object filterComponent(final Object[] objects, final ProjectionContext context) {
-		if (objects == null) {
-			return null;
-		}
-
-		if (objects.length == 1) {
-			return objects[0];	//FIXME hack!!!
-		}
-
-		Optional<Object> value = Optional.empty();
-
-		for (final Object object : objects) {
-
-			if (value.isEmpty() && sourceType.isInstance(object)) {
-				
-				value = Optional.ofNullable(object);
-				
-			} else if (!context.contains(object.getClass(), null)) {
-				context.addOrReplace(object, null);
-				
+		if (sourceType.isReference()) {	//FIXME hack
+			for (SourceType type : context.types()) {
+				if (type.getType().isInstance(sourceCollection)) {
+					componentClass = type.getComponentType();
+				}
 			}
 		}
 		
-		return value.orElse(null);
+		// extract objects from each projection in the collection
+		for (final Object item : sourceCollection) {	//TODO
+
+			projection.extract(item, context.accept(null, componentClass, null));
+			collection.add(context.remove(null, componentClass, null));
+		}
+		
+		return collection;
 	}
 }

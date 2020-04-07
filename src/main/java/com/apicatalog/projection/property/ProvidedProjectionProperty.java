@@ -9,7 +9,8 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.context.ProjectionContext;
+import com.apicatalog.projection.context.ExtractionContext;
+import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
@@ -34,7 +35,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 	}
 	
 	@Override
-	public void forward(ProjectionQueue queue, ProjectionContext context) throws ProjectionError {
+	public void forward(ProjectionQueue queue, CompositionContext context) throws ProjectionError {
 
 		if (targetSetter == null) {
 			return;
@@ -42,7 +43,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 		
 		logger.debug("Forward {} : {}, qualifier = {}, optional = {}, depth = {}", targetSetter.getName(), targetSetter.getType(), sourceObjectQualifier, optional, queue.length());
 
-		final ProjectionContext clonedContext = new ProjectionContext(context);
+		final CompositionContext clonedContext = new CompositionContext(context);
 		
 		Optional.ofNullable(sourceObjectQualifier).ifPresent(clonedContext::namespace);
 		
@@ -60,7 +61,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 	}
 
 	@Override
-	public void backward(ProjectionQueue queue, ProjectionContext context) throws ProjectionError {
+	public void backward(ProjectionQueue queue, ExtractionContext context) throws ProjectionError {
 		
 		@SuppressWarnings("unchecked")
 		final Projection<Object> projection = (Projection<Object>) factory.get(targetGetter.getType().getObjectClass()); 
@@ -71,7 +72,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 		
 		final Object object = targetGetter.get(queue.peek());
 		
-		projection.decompose(object, context);
+		projection.extract(object, context);
 	}
 	
 	public void setTargetGetter(Getter targetGetter) {
@@ -87,7 +88,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 		return visibleLevels == null || visibleLevels.isEmpty() || visibleLevels.contains(depth);
 	}
 	
-	public void setVisible(final Set<Integer> levels) {
+	public void setVisibility(final Set<Integer> levels) {
 		this.visibleLevels = levels;
 	}
 	

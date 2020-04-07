@@ -7,7 +7,8 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.context.ProjectionContext;
+import com.apicatalog.projection.context.ExtractionContext;
+import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.objects.ObjectType;
@@ -40,7 +41,7 @@ public final class SingleSource implements Source {
 	}
 	
 	@Override
-	public Object read(ProjectionQueue queue, ProjectionContext context) throws ProjectionError {
+	public Object read(ProjectionQueue queue, CompositionContext context) throws ProjectionError {
 		
 		if (!isReadable()) {
 			return null;
@@ -82,9 +83,9 @@ public final class SingleSource implements Source {
 	}
 
 	@Override
-	public void write(ProjectionQueue queue, Object object, ProjectionContext context) throws ProjectionError {
+	public void write(ProjectionQueue queue, Object object, ExtractionContext context) throws ProjectionError {
 		
-		if (!isWritable()) {
+		if (!isWritable() || !context.isAccepted(qualifier, objectClass, null)) {
 			return;
 		}
 		
@@ -100,15 +101,14 @@ public final class SingleSource implements Source {
 				throw new ProjectionError(e);
 			}
 		}
-	
-		Object instance = context.get(objectClass, qualifier);
 		
-		if (instance == null) {
-			instance = ObjectUtils.newInstance(objectClass);
-			context.addOrReplace(instance, qualifier);
+		Optional<?> instance =  Optional.ofNullable(context.get(qualifier, objectClass, null));
+
+		if (instance.isEmpty()) {
+			instance = Optional.of(ObjectUtils.newInstance(objectClass));
+			context.set(qualifier, instance.get());
 		}
-		
-		setter.set(instance, typeAdapters.convert(setter.getType().getObjectClass(), setter.getType().getObjectComponentClass(), object));		
+		setter.set(instance.get(), typeAdapters.convert(setter.getType().getObjectClass(), setter.getType().getObjectComponentClass(), object));
 	}
 	
 	public void setConversions(ConverterMapping[] conversions) {

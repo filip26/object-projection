@@ -1,5 +1,6 @@
 package com.apicatalog.projection;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -26,30 +27,35 @@ public class ProjectionRegistry {
 		return (Projection<P>) index.get(projectionClass);
 	}
 
-	@SuppressWarnings("unchecked")
-	public Object[] decompose(Object projection) throws ProjectionError {
-		return Optional.ofNullable(get((Class<Object>)projection.getClass()))
-					.orElseThrow(() -> unknownProjection(projection.getClass()))
-					.decompose(projection);
-	}
-
 	public <P> P compose(Class<P> projectionClass, Object...values) throws ProjectionError {
 		return Optional.ofNullable(get(projectionClass))
 					.orElseThrow(() -> unknownProjection(projectionClass))
 					.compose(values);					
 	}
-	
-	public <P> P extract(Class<P> sourceObjectClass, Object projection) throws ProjectionError {
-		return extract(sourceObjectClass, null, projection);
+
+	public <S> S extract(Object projection, Class<S> objectType) throws ProjectionError {
+		return extract(projection, null, objectType);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <P> P extract(final Class<P> sourceObjectClass, final String qualifier, final Object projection) throws ProjectionError {
+	public <S> S extract(Object projection, String qualifier, Class<S> objectType) throws ProjectionError {
 		return Optional.ofNullable(get((Class<Object>)projection.getClass()))
 				.orElseThrow(() -> unknownProjection(projection.getClass()))
-				.extract(sourceObjectClass, qualifier, projection);		
-	}
+				.extract(projection, qualifier, objectType);
+	}	
 
+	public <I> Collection<I> extractCollection(Object projection, Class<I> componentType) throws ProjectionError {
+		return extractCollection(projection, null, componentType);
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public <I> Collection<I> extractCollection(Object projection, String qualifier, Class<I> componentType) throws ProjectionError {
+	return Optional.ofNullable(get((Class<Object>)projection.getClass()))
+			.orElseThrow(() -> unknownProjection(projection.getClass()))
+			.extractCollection(projection, qualifier, componentType);
+	}	
+	
 	public ProjectionRegistry register(final Projection<?> projection) {
 		if (projection == null) {
 			throw new IllegalArgumentException();

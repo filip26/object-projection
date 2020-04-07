@@ -25,7 +25,7 @@ public class ProvidedRefTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	BasicTypes object1 = new BasicTypes();
     	object1.stringValue = "A B C D E";
@@ -48,7 +48,7 @@ public class ProvidedRefTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError, ConverterError {
+    public void testExtract() throws ProjectionError, ConverterError {
     	
     	ProvidedReferefenceTo projection1 = new ProvidedReferefenceTo();
     	projection1.title = "QWERTY ZXCVBN";
@@ -59,30 +59,12 @@ public class ProvidedRefTest {
 
     	projection1.projection = projection2;
     	
-    	Object[] objects = projections.decompose(projection1);
+    	BasicTypes object1ref = projections.extract(projection1, BasicTypes.class);
+    	Assert.assertNotNull(object1ref);
+    	Assert.assertEquals(projection1.title, object1ref.stringValue);
     	
-    	Assert.assertNotNull(objects);
-    	Assert.assertEquals(2, objects.length);
-    	
-    	Assert.assertNotNull(objects[0]);
-    	Assert.assertNotNull(objects[1]);
-    	
-    	if (BasicTypes.class.isInstance(objects[1])) {
-    		Object tmp = objects[0];
-    		objects[0] = objects[1];
-    		objects[1] = tmp;
-    	}
-    	
-    	Assert.assertEquals(BasicTypes.class, objects[0].getClass());
-    	
-    	BasicTypes object1ref = (BasicTypes)objects[0];
-
-    	Assert.assertEquals(projection1.title, object1ref.stringValue);    	
-    	
-    	Assert.assertEquals(SimpleObject.class, objects[1].getClass());
-    	
-    	SimpleObject object2ref = (SimpleObject)objects[1];
-    	
+    	SimpleObject object2ref = projections.extract(projection1, SimpleObject.class);
+    	Assert.assertNotNull(object1ref);
     	Assert.assertEquals(projection2.i1, object2ref.i1);
     	Assert.assertEquals(projection2.s1, object2ref.s1);
 

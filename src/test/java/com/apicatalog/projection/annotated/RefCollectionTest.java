@@ -28,7 +28,7 @@ public class RefCollectionTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	BasicTypes oa = new BasicTypes();
     	oa.booleanValue = true;
@@ -51,39 +51,38 @@ public class RefCollectionTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError, ConverterError {
+    public void testExtract() throws ProjectionError, ConverterError {
     	
-    	RefCollectionTo ca = new RefCollectionTo();
-    	ca.items = new ArrayList<>();
+    	RefCollectionTo to = new RefCollectionTo();
+    	to.items = new ArrayList<>();
     	
-    	NameOverrideTo pa1 = new NameOverrideTo();
-    	pa1.projectedString = "ABC";
+    	NameOverrideTo to2 = new NameOverrideTo();
+    	to2.projectedString = "ABC";
 
-    	NameOverrideTo pa2 = new NameOverrideTo();
-    	pa2.projectedString = "XYZ";
+    	NameOverrideTo to3 = new NameOverrideTo();
+    	to3.projectedString = "XYZ";
     	
-    	ca.items.add(pa1);
-    	ca.items.add(pa2);
+    	to.items.add(to2);
+    	to.items.add(to3);
 
-    	Object[] oo = projections.decompose(ca);
+    	ObjectsCollection object = projections.extract(to, ObjectsCollection.class);
 
-    	Assert.assertNotNull(oo);
-    	Assert.assertEquals(1, oo.length);
-    	Assert.assertEquals(ObjectsCollection.class, oo[0].getClass());
+    	Assert.assertNotNull(object);
+    	Assert.assertNotNull(object.items);
+    	Assert.assertEquals(2, object.items.size());
     	
-    	ObjectsCollection oc = (ObjectsCollection)oo[0];
-    	Assert.assertNotNull(oc.items);
-    	Assert.assertEquals(2, oc.items.size());
-    	
-    	Iterator<BasicTypes> it = oc.items.iterator();
+    	Iterator<BasicTypes> it = object.items.iterator();
     	
     	BasicTypes oa1 = it.next();
+    	Assert.assertNotNull(oa1);
     	
-    	Assert.assertEquals(pa1.projectedString, oa1.stringValue);
+    	Assert.assertEquals(to2.projectedString, oa1.stringValue);
     	    	
     	BasicTypes oa2 = it.next();
+    	Assert.assertNotNull(oa2);
+
     	
-    	Assert.assertEquals(pa2.projectedString, oa2.stringValue);
+    	Assert.assertEquals(to3.projectedString, oa2.stringValue);
     			
     }
 }
