@@ -83,6 +83,7 @@ public final class Projection<P> {
 		return extract(projection, null, objectType);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public <S> S extract(P projection, String qualifier, Class<S> objectType) throws ProjectionError {
 
 		final ExtractionContext context = ExtractionContext.newInstance()
@@ -97,6 +98,7 @@ public final class Projection<P> {
 		return extractCollection(projection, null, componentType); 
 	}
 	
+	@SuppressWarnings("unchecked")
 	public <I> Collection<I> extractCollection(P projection, String qualifier, Class<I> componentType) throws ProjectionError {
 		
 		final ExtractionContext context = ExtractionContext.newInstance()
@@ -109,7 +111,7 @@ public final class Projection<P> {
 
 	public void extract(P projection, ExtractionContext context) throws ProjectionError {
 		
-		logger.debug("Extract {} object(s) from {}", context.size(), projection.getClass().getSimpleName());
+		logger.debug("Extract {} object(s) from {}, {} properties", context.size(), projection.getClass().getSimpleName(), properties.length);
 
 		final ProjectionQueue queue = ProjectionQueue.create().push(projection);
 		

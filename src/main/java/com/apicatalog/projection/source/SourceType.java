@@ -1,6 +1,5 @@
 package com.apicatalog.projection.source;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -50,30 +49,9 @@ public final class SourceType {
 		return "SourceType [type=" + Optional.ofNullable(type).map(Class::getSimpleName).orElse("n/a") + ", name=" + Optional.ofNullable(name).orElse("n/a") + "]";
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(/*componentType,*/ name, type);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		SourceType other = (SourceType) obj;
-		return /*Objects.equals(componentType, other.componentType) &&*/ Objects.equals(name, other.name)
-				&& Objects.equals(type, other.type);
-	}
-
 	public boolean isAssignableFrom(String qualifier, Class<?> objectType, Class<?> componentType) {
-		return qualifierMatch(qualifier) && type.isAssignableFrom(objectType)
-				;
+		return qualifierMatch(qualifier) && objectType.isAssignableFrom(type);
+				
 	}
 
 	public boolean isInstance(String qualifier, Object object) {
