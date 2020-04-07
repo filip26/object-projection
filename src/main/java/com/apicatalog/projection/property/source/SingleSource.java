@@ -16,6 +16,7 @@ import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
+import com.apicatalog.projection.source.SourceType;
 
 public final class SingleSource implements Source {
 
@@ -25,13 +26,11 @@ public final class SingleSource implements Source {
 	
 	Getter getter;
 	Setter setter;
-	
-	Class<?> objectClass;
+
+	SourceType sourceType;
 	
 	ObjectType targetType;
 	
-	String qualifier;
-
 	ConverterMapping[] conversions;
 	
 	boolean optional;
@@ -41,40 +40,42 @@ public final class SingleSource implements Source {
 	}
 	
 	@Override
-	public Object read(ProjectionQueue queue, CompositionContext context) throws ProjectionError {
+	public Optional<Object> read(ProjectionQueue queue, CompositionContext context) throws ProjectionError {
 		
 		if (!isReadable()) {
-			return null;
+			return Optional.empty();
 		}
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("Read {}.{}, qualifier = {}, optional = {}, depth = {}", objectClass.getSimpleName(), getter.getName(), Optional.ofNullable(qualifier).orElse("n/a"), optional, queue.length());
+			logger.debug("Read {}.{}, optional = {}, depth = {}", sourceType, getter.getName(), optional, queue.length());
 		}
 
-		final Optional<Object> instance = Optional.ofNullable(context.get(objectClass, qualifier));
+		final Optional<Object> instance = Optional.ofNullable(context.get(sourceType));
 
 		if (instance.isEmpty()) {
 			if (optional) {
-				return null;
+				return Optional.empty();
 			}
-			throw new ProjectionError("Source instance of " + objectClass.getCanonicalName() + ", qualifier=" + qualifier + ",  is not present.");
+			throw new ProjectionError("Source instance of " + sourceType + ",  is not present.");
 		}
 
 		// get source value
 		Optional<Object> object = getter.get(instance.get());
 
 		if (object.isEmpty()) {
-			return null;
+			return Optional.empty();
 		}
 
-		logger.trace("{}.{} = {}", objectClass.getSimpleName(), getter.getName(), object.get());
+		logger.trace("{}.{} = {}", sourceType, getter.getName(), object.get());
 		
 		
 		// apply explicit conversions
 		if (conversions != null) {
 			try {
 				for (ConverterMapping conversion : conversions) {
-					object = Optional.ofNullable(conversion.getConverter().forward(typeAdapters.convert(conversion.getSourceType(), object.get())));
+					if (object.isPresent()) {
+						object = Optional.ofNullable(conversion.getConverter().forward(typeAdapters.convert(conversion.getSourceType(), object.get())));
+					}
 				}
 			} catch (ConverterError e) {
 				throw new ProjectionError(e);
@@ -82,17 +83,17 @@ public final class SingleSource implements Source {
 
 		}
 
-		return object.orElse(null);
+		return object;
 	}
 
 	@Override
-	public void write(ProjectionQueue queue, Object object, ExtractionContext context) throws ProjectionError {
+	public void write(ProjectionQueue queue, ExtractionContext context, Object object) throws ProjectionError {
 		
-		if (!isWritable() || !context.isAccepted(qualifier, objectClass, null)) {
+		if (!isWritable() || !context.isAccepted(sourceType)) {
 			return;
 		}
 		
-		logger.debug("Write {} to {}.{}, qualifier = {}, optional = {}, depth = {}", object, objectClass.getSimpleName(), setter.getName(), qualifier, optional, queue.length());
+		logger.debug("Write {} to {}.{}, optional = {}, depth = {}", object, sourceType, setter.getName(), optional, queue.length());
 
 		// apply explicit conversions in reverse order
 		if (conversions != null) {
@@ -105,21 +106,25 @@ public final class SingleSource implements Source {
 			}
 		}
 		
-		Optional<?> instance =  Optional.ofNullable(context.get(qualifier, objectClass, null));
+		Optional<?> instance =  context.get(sourceType);
 
 		if (instance.isEmpty()) {
-			instance = Optional.of(ObjectUtils.newInstance(context.getAssignableType(qualifier, objectClass, null)));
-			context.set(qualifier, instance.get());
+			
+			Optional<Class<?>> instanceClass = context.getAssignableType(sourceType);
+			
+			if (instanceClass.isEmpty()) {
+				return;
+			}
+			
+			instance = Optional.of(ObjectUtils.newInstance(instanceClass.get()));
+			context.set(sourceType.getName(), instance.get());	//TODO ?!?!
 		}
+
 		setter.set(instance.get(), typeAdapters.convert(setter.getType().getObjectClass(), setter.getType().getObjectComponentClass(), object));
 	}
 	
 	public void setConversions(ConverterMapping[] conversions) {
 		this.conversions = conversions;
-	}
-	
-	public void setQualifier(String qualifier) {
-		this.qualifier = qualifier;
 	}
 	
 	public void setGetter(Getter getter) {
@@ -129,15 +134,7 @@ public final class SingleSource implements Source {
 	public void setSetter(Setter setter) {
 		this.setter = setter;
 	}
-	
-	public void setObjectClass(Class<?> bbjectClass) {
-		this.objectClass = bbjectClass;
-	}
-
-	public Class<?> getObjectClass() {
-		return objectClass;
-	}
-	
+		
 	public void setOptional(boolean optional) {
 		this.optional = optional;
 	}
@@ -166,5 +163,19 @@ public final class SingleSource implements Source {
 	
 	public ConverterMapping[] getConversions() {
 		return conversions;
+	}
+	
+	public void setSourceType(SourceType sourceType) {
+		this.sourceType = sourceType;
+	}
+
+	@Override
+	public boolean isAnyTypeOf(SourceType... sourceTypes) {
+		for (SourceType type : sourceTypes) {
+			if (type.isAssignableFrom(sourceType)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

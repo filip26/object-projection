@@ -9,5 +9,5 @@ public interface Setter {
 	
 	ObjectType getType();
 	
-	Object getName();
+	String getName();
 }

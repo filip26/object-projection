@@ -38,23 +38,27 @@ public class SourceProperty implements ProjectionProperty {
 		logger.debug("Forward {} : {}, depth = {}", targetSetter.getName(), targetSetter.getType(), queue.length());
 
 		// get source value
-		Object object = source.read(queue, context);
+		Optional<Object> object = source.read(queue, context);
 		
-		if (object == null) {
+		if (object.isEmpty()) {
 			return;
 		}
 
-		object = targetAdapter.forward(queue, object, context);
-
-		logger.trace("{} : {} = {}", targetSetter.getName(), targetSetter.getType(), object);
-
-		targetSetter.set(queue.peek(), object);
+		object = Optional.ofNullable(targetAdapter.forward(queue, object.get(), context));
+		
+		if (object.isPresent()) {
+			if (logger.isTraceEnabled()) {
+				logger.trace("{} : {} = {}", targetSetter.getName(), targetSetter.getType(), object.get());	
+			}
+			
+			targetSetter.set(queue.peek(), object.get());
+		}
 	}
 
 	@Override
 	public void backward(ProjectionQueue queue, ExtractionContext context) throws ProjectionError {
 
-		if (!source.isWritable() || targetGetter == null) {
+		if (!source.isWritable() || targetGetter == null || !source.isAnyTypeOf(context.accepted())) {
 			return;
 		}
 		
@@ -71,7 +75,7 @@ public class SourceProperty implements ProjectionProperty {
 		}
 
 		if (object.isPresent()) {
-			source.write(queue, object.get(), context);
+			source.write(queue, context, object.get());
 		}
 	}
 	

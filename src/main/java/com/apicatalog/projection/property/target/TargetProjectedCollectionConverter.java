@@ -84,7 +84,7 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 		Class<?> componentClass = sourceType.getObjectComponentClass();
 		
 		if (sourceType.isReference()) {	//FIXME hack
-			for (SourceType type : context.types()) {
+			for (SourceType type : context.accepted()) {
 				if (type.getType().isInstance(sourceCollection)) {
 					componentClass = type.getComponentType();
 				}
@@ -93,8 +93,10 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 		
 		// extract objects from each projection in the collection
 		for (final Object item : sourceCollection) {
+			
 			projection.extract(item, context.accept(null, componentClass, null));
-			collection.add(context.remove(null, componentClass, null));
+			
+			context.remove(null, componentClass, null).ifPresent(collection::add);
 		}
 		
 		return collection;

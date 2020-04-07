@@ -60,7 +60,7 @@ public class TargetProjectionConverter implements TargetAdapter {
 								.accept(null, sourceType.getObjectClass(), sourceType.getObjectComponentClass())
 							);
 							
-			return context.remove(null, sourceType.getObjectClass(), sourceType.getObjectComponentClass());
+			return context.remove(null, sourceType.getObjectClass(), sourceType.getObjectComponentClass()).orElse(null);
 		}
 
 		throw new ProjectionError("Projection " + targetType.getObjectClass().getCanonicalName() +  " is not present.");

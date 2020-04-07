@@ -26,7 +26,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 	
 	Set<Integer> visibleLevels;
 	
-	String sourceObjectQualifier;
+	String objectQualifier;
 	
 	boolean optional;
 	
@@ -41,11 +41,11 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 			return;
 		}
 		
-		logger.debug("Forward {} : {}, qualifier = {}, optional = {}, depth = {}", targetSetter.getName(), targetSetter.getType(), sourceObjectQualifier, optional, queue.length());
+		logger.debug("Forward {} : {}, qualifier = {}, optional = {}, depth = {}", targetSetter.getName(), targetSetter.getType(), objectQualifier, optional, queue.length());
 
 		final CompositionContext clonedContext = new CompositionContext(context);
 		
-		Optional.ofNullable(sourceObjectQualifier).ifPresent(clonedContext::namespace);
+		Optional.ofNullable(objectQualifier).ifPresent(clonedContext::namespace);
 		
 		final Projection<?> projection = factory.get(targetSetter.getType().getObjectClass()); 
 		
@@ -67,7 +67,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 			return;
 		}
 
-		logger.debug("Backward {} : {}, qualifier = {}, optional = {}, depth = {}", targetGetter.getName(), targetGetter.getType(), sourceObjectQualifier, optional, queue.length());
+		logger.debug("Backward {} : {}, qualifier = {}, optional = {}, depth = {}", targetGetter.getName(), targetGetter.getType(), objectQualifier, optional, queue.length());
 
 		@SuppressWarnings("unchecked")
 		final Projection<Object> projection = (Projection<Object>) factory.get(targetGetter.getType().getObjectClass()); 
@@ -76,7 +76,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 			throw new ProjectionError("Projection " + targetGetter.getType().getObjectClass() +  " is not present.");			
 		}
 
-		Optional.ofNullable(sourceObjectQualifier).ifPresent(context::pushNamespace);
+		Optional.ofNullable(objectQualifier).ifPresent(context::pushNamespace);
 
 		final Optional<Object> object = targetGetter.get(queue.peek());
 
@@ -84,7 +84,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 			projection.extract(object.get(), context);
 		}
 
-		Optional.ofNullable(sourceObjectQualifier).ifPresent(context::popNamespace);
+		Optional.ofNullable(objectQualifier).ifPresent(context::popNamespace);
 
 	}
 	
@@ -105,8 +105,8 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 		this.visibleLevels = levels;
 	}
 	
-	public void setSourceObjectQualifier(String sourceObjectQualifier) {
-		this.sourceObjectQualifier = sourceObjectQualifier;
+	public void setObjectQualifier(String objectQualifier) {
+		this.objectQualifier = objectQualifier;
 	}
 	
 	public void setOptional(boolean optional) {

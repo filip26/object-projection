@@ -25,7 +25,7 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 	
 	Set<Integer> visibleLevels;
 	
-	String sourceObjectQualifier;
+	String objectQualifier;
 	
 	boolean optional;	
 	
@@ -36,9 +36,9 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 			return;
 		}
 		
-		logger.debug("Forward {} : {}, qualifier = {}, optional = {}, depth = {}", targetSetter.getName(), targetSetter.getType(), sourceObjectQualifier, optional, queue.length());
+		logger.debug("Forward {} : {}, qualifier = {}, optional = {}, depth = {}", targetSetter.getName(), targetSetter.getType(), objectQualifier, optional, queue.length());
 		
-		Object object = context.get(targetSetter.getType().getObjectClass(), sourceObjectQualifier);
+		Object object = context.get(objectQualifier, targetSetter.getType().getObjectClass());
 		
 		if (object == null) {
 			return;
@@ -58,7 +58,7 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 			return;
 		}
 
-		logger.debug("Backward {} : {}, qualifier = {}, optional = {}, depth = {}", targetGetter.getName(), targetGetter.getType(), sourceObjectQualifier, optional, queue.length());
+		logger.debug("Backward {} : {}, qualifier = {}, optional = {}, depth = {}", targetGetter.getName(), targetGetter.getType(), objectQualifier, optional, queue.length());
 
 		Optional<Object> object = targetGetter.get(queue.peek());
 		
@@ -70,8 +70,8 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 			object = Optional.ofNullable(targetAdapter.backward(object.get(), context));
 		}
 		
-		if (object.isPresent()) {
-			context.set(sourceObjectQualifier, object.get());
+		if (object.isPresent() ) {
+			context.set(objectQualifier, object.get());
 		}
 	}
 	
@@ -92,8 +92,8 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 		this.visibleLevels = levels;
 	}
 	
-	public void setSourceObjectQualifier(String sourceObjectQualifier) {
-		this.sourceObjectQualifier = sourceObjectQualifier;
+	public void setObjectQualifier(String objectQualifier) {
+		this.objectQualifier = objectQualifier;
 	}
 	
 	public void setTargetAdapter(TargetAdapter targetAdapter) {

@@ -13,6 +13,7 @@ import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.source.SingleSource;
+import com.apicatalog.projection.source.SourceType;
 
 public class SingleSourceBuilder {
 
@@ -43,16 +44,16 @@ public class SingleSourceBuilder {
 	}
 	
 	public SingleSource build(TypeAdapters typeAdapters) {
-		
-		final SingleSource source = new SingleSource(typeAdapters);
-
-		source.setObjectClass(sourceObjectClass);
 
 		// no setter nor getter? 
 		if (sourceGetter == null && sourceSetter == null) {
 			// nothing to do with this
 			return null;
 		}
+
+		final SingleSource source = new SingleSource(typeAdapters);
+
+		source.setSourceType(SourceType.of(StringUtils.isNotBlank(qualifier) ? qualifier : null, sourceObjectClass));
 		
 		// set source access
 		switch (mode) {
@@ -75,10 +76,7 @@ public class SingleSourceBuilder {
 
 		// set optional 
 		source.setOptional(optional);
-		
-		// set qualifier
-		source.setQualifier(qualifier);
-		
+				
 		// set target class
 		ObjectType targetType = sourceGetter != null ? sourceGetter.getType() : sourceSetter.getType(); 
 

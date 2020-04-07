@@ -1,5 +1,6 @@
 package com.apicatalog.projection.property.source;
 
+import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -7,8 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.CompositionContext;
+import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.objects.ObjectType;
@@ -16,6 +17,7 @@ import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.property.target.TargetAdapter;
 import com.apicatalog.projection.reducer.ReducerError;
 import com.apicatalog.projection.reducer.ReducerMapping;
+import com.apicatalog.projection.source.SourceType;
 
 public final class ArraySource implements Source {
 
@@ -42,10 +44,10 @@ public final class ArraySource implements Source {
 	}
 	
 	@Override
-	public Object read(ProjectionQueue queue, CompositionContext context) throws ProjectionError {
+	public Optional<Object> read(ProjectionQueue queue, CompositionContext context) throws ProjectionError {
 		
 		if (!isReadable()) {
-			return null;
+			return Optional.empty();
 		}
 		
 		logger.debug("Read {} source(s), optional = {}, depth = {}", sources.length, optional, queue.length());
@@ -53,7 +55,7 @@ public final class ArraySource implements Source {
 		final Object[] sourceObjects = new Object[sources.length];
 	
 		for (int i = 0; i < sources.length; i++) {
-			sourceObjects[i] = sources[i].read(queue, context);
+			sourceObjects[i] = sources[i].read(queue, context).orElse(null);
 		}
 		
 		try {
@@ -76,7 +78,7 @@ public final class ArraySource implements Source {
 					}
 			}
 			
-			return object;
+			return Optional.ofNullable(object);
 			
 		} catch (ConverterError | ReducerError e) {
 			throw new ProjectionError(e);
@@ -84,7 +86,7 @@ public final class ArraySource implements Source {
 	}
 
 	@Override
-	public void write(ProjectionQueue queue, Object object, ExtractionContext context) throws ProjectionError {
+	public void write(ProjectionQueue queue, ExtractionContext context, Object object) throws ProjectionError {
 		logger.debug("Write {}, {} sources(s), optional = {}, depth = {}", object, sources.length, optional, queue.length());
 
 		try {
@@ -107,7 +109,7 @@ public final class ArraySource implements Source {
 			}
 
 			for (int i = 0; i < sources.length; i++) {
-				sources[i].write(queue, sourceObjects[i], context);
+				sources[i].write(queue, context, sourceObjects[i]);
 			}				
 
 		} catch (ConverterError | ReducerError e) {
@@ -164,5 +166,15 @@ public final class ArraySource implements Source {
 	@Override
 	public ObjectType getTargetType() {
 		return targetType;
+	}
+
+	@Override
+	public boolean isAnyTypeOf(SourceType... sourceTypes) {
+		for (Source source : sources) {
+			if (source.isAnyTypeOf(sourceTypes)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

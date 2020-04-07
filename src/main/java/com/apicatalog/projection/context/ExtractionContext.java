@@ -67,7 +67,11 @@ public final class ExtractionContext {
 		logger.trace("Rejected to set {}, qualifier = {}", object.getClass().getSimpleName(), qualifiedName);
 	}
 	
-	public Object get(final String qualifier, final Class<?> objectType, final Class<?> componentType) {
+	public Optional<Object> get(final SourceType sourceType) {
+		return get(sourceType.getName(), sourceType.getType(), sourceType.getComponentType());
+	}
+	
+	public Optional<Object> get(final String qualifier, final Class<?> objectType, final Class<?> componentType) {
 
 		if (index == 0) {
 			throw new IllegalStateException();
@@ -77,13 +81,13 @@ public final class ExtractionContext {
 
 		for (int i=index - 1; i >= 0; i--) {
 			if (types[i].isAssignableFrom(qualifiedName, objectType, componentType)) {
-				return objects[i];
+				return Optional.ofNullable(objects[i]);
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 	
-	public Object remove(final String qualifier, final Class<?> objectType, final Class<?> componentType) {
+	public Optional<Object> remove(final String qualifier, final Class<?> objectType, final Class<?> componentType) {
 		if (index == 0) {
 			throw new IllegalStateException();
 		}
@@ -94,17 +98,20 @@ public final class ExtractionContext {
 			if (types[i].isAssignableFrom(qualifiedName, objectType, componentType)) {
 				index--;
 
-				return objects[i];
+				return Optional.ofNullable(objects[i]);
 			}
 		}
-
-		return null;
+		return Optional.empty();
 	}
 
 	public int size() {
 		return index;
 	}
 
+	public boolean isAccepted(SourceType sourceType) {
+		return isAccepted(sourceType.getName(), sourceType.getType(), sourceType.getComponentType());
+	}
+	
 	public boolean isAccepted(String qualifier, Class<?> objectType, Class<?> componentType) {
 		if (index == 0) {
 			throw new IllegalStateException();
@@ -120,12 +127,15 @@ public final class ExtractionContext {
 		return false;
 	}
 	
-	@Deprecated(forRemoval = true, since = "v0.8")
-	public SourceType[] types() {
+	public SourceType[] accepted() {
 		return Arrays.copyOf(types, index);
 	}
 
-	public Class<?> getAssignableType(String qualifier, Class<?> objectType, Class<?> componentType) {
+	public Optional<Class<?>> getAssignableType(final SourceType sourceType) {
+		return getAssignableType(sourceType.getName(), sourceType.getType(), sourceType.getComponentType());
+	}
+	
+	public Optional<Class<?>> getAssignableType(String qualifier, Class<?> objectType, Class<?> componentType) {
 
 		if (index == 0) {
 			throw new IllegalStateException();
@@ -135,10 +145,10 @@ public final class ExtractionContext {
 
 		for (int i=index - 1; i >= 0; i--) {
 			if (types[i].isAssignableFrom(qualifiedName, objectType, componentType)) {
-				return types[i].getType();
+				return Optional.ofNullable(types[i].getType());
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 	
 	public void pushNamespace(String name) {
