@@ -413,4 +413,43 @@ public class ProjectionBuilderTest {
 		Assert.assertNotNull(to);;
 		Assert.assertEquals(object1.uri.toString() + "/d/e/f", to.uri);		
 	}
+	
+	@Test
+	public void test13() throws ProjectionError {
+		
+		ProjectionRegistry registry = ProjectionRegistry.newInstance();
+		
+		Assert.assertNotNull( 
+				ProjectionBuilder
+					.bind(Object1To.class)
+					
+					.map("object2", true).provided("obj2")
+
+					.map("id").provided("id")
+					
+					.build(registry, new TypeAdapters())
+					);
+
+		Assert.assertNotNull(
+				ProjectionBuilder
+					.bind(Object2To.class)
+					
+					.map("id").provided("id")
+					
+					.build(registry, new TypeAdapters())
+					);
+		
+		Object1To to = new Object1To();
+		to.id = "AREW2324E";
+		
+		Object2To to2 = new Object2To();
+		to2.id = "3GFD42EE7";
+		to.object2  = to2;
+		
+		String id = registry.extract(to, "id", String.class);
+		Assert.assertEquals(to.id, id);
+
+		String id2 = registry.extract(to, "obj2.id", String.class);
+		Assert.assertEquals(to2.id, id2);	
+	}
 }

@@ -76,10 +76,6 @@ public final class CompositionContext {
 		return this;
 	}
 
-	public boolean contains(Class<?> objectClass, String qualifier) {
-		return index.containsKey(ContextIndex.of(objectClass, qualifier));
-	}
-	
 	public void namespace(String name) {
 		this.namespace.push(name);
 	}

@@ -18,10 +18,13 @@ public final class ExtractionContext {
 	Object[] objects;
 	int index;
 	
+	final ContextNamespace namespace;
+	
 	protected ExtractionContext() {
 		this.types = new SourceType[MAX_OBJECTS];
 		this.objects = new Object[MAX_OBJECTS];
 		this.index = 0;
+		this.namespace = new ContextNamespace();
 	}
 	
 	public static final ExtractionContext newInstance() {		
@@ -30,8 +33,10 @@ public final class ExtractionContext {
 
 	public ExtractionContext accept(String qualifier, Class<?> objectType, Class<?> componentType) {
 
+		final String qualifiedName = Optional.ofNullable(qualifier).map(n -> namespace.getQName(qualifier)).orElse(null);
+		
 		objects[index] = null;
-		types[index++] = SourceType.of(qualifier, objectType, componentType);
+		types[index++] = SourceType.of(qualifiedName, objectType, componentType);
 		
 		return this;
 	}
@@ -42,12 +47,14 @@ public final class ExtractionContext {
 			throw new IllegalStateException();
 		}
 
+		final String qualifiedName = Optional.ofNullable(qualifier).map(n -> namespace.getQName(qualifier)).orElse(null);
+		
 		for (int i=index - 1; i >= 0; i--) {
-			if (types[i].isInstance(qualifier, object)) {
+			if (types[i].isInstance(qualifiedName, object)) {
 				
 				if (logger.isDebugEnabled()) {
 					logger.debug("Set {}, {}",
-							Optional.ofNullable(qualifier).orElse("n/a"),
+							Optional.ofNullable(qualifiedName).orElse("n/a"),
 							object
 							);
 				}
@@ -57,7 +64,7 @@ public final class ExtractionContext {
 			}
 		}
 		
-		logger.trace("Rejected to set {}, qualifier = {}", object.getClass().getSimpleName(), qualifier);
+		logger.trace("Rejected to set {}, qualifier = {}", object.getClass().getSimpleName(), qualifiedName);
 	}
 	
 	public Object get(final String qualifier, final Class<?> objectType, final Class<?> componentType) {
@@ -66,8 +73,10 @@ public final class ExtractionContext {
 			throw new IllegalStateException();
 		}
 
+		final String qualifiedName = Optional.ofNullable(qualifier).map(n -> namespace.getQName(qualifier)).orElse(null);
+
 		for (int i=index - 1; i >= 0; i--) {
-			if (types[i].isAssignableFrom(qualifier, objectType, componentType)) {
+			if (types[i].isAssignableFrom(qualifiedName, objectType, componentType)) {
 				return objects[i];
 			}
 		}
@@ -78,9 +87,11 @@ public final class ExtractionContext {
 		if (index == 0) {
 			throw new IllegalStateException();
 		}
+		
+		final String qualifiedName = Optional.ofNullable(qualifier).map(n -> namespace.getQName(qualifier)).orElse(null);
 
 		for (int i=index - 1; i >= 0; i--) {
-			if (types[i].isAssignableFrom(qualifier, objectType, componentType)) {
+			if (types[i].isAssignableFrom(qualifiedName, objectType, componentType)) {
 				index--;
 
 				return objects[i];
@@ -99,8 +110,10 @@ public final class ExtractionContext {
 			throw new IllegalStateException();
 		}
 
+		final String qualifiedName = Optional.ofNullable(qualifier).map(n -> namespace.getQName(qualifier)).orElse(null);
+
 		for (int i=index - 1; i >= 0; i--) {
-			if (types[i].isAssignableFrom(qualifier, objectType, componentType)) {
+			if (types[i].isAssignableFrom(qualifiedName, objectType, componentType)) {
 				return true;
 			}
 		}	
@@ -118,11 +131,21 @@ public final class ExtractionContext {
 			throw new IllegalStateException();
 		}
 
+		final String qualifiedName = Optional.ofNullable(qualifier).map(n -> namespace.getQName(qualifier)).orElse(null);
+
 		for (int i=index - 1; i >= 0; i--) {
-			if (types[i].isAssignableFrom(qualifier, objectType, componentType)) {
+			if (types[i].isAssignableFrom(qualifiedName, objectType, componentType)) {
 				return types[i].getType();
 			}
 		}
 		return null;
+	}
+	
+	public void pushNamespace(String name) {
+		this.namespace.push(name);
+	}
+	
+	public void popNamespace(String name) {
+		this.namespace.pop();
 	}
 }

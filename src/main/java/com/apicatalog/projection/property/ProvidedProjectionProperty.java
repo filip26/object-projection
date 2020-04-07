@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.CompositionContext;
+import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
@@ -75,12 +75,17 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 		if (projection == null) {
 			throw new ProjectionError("Projection " + targetGetter.getType().getObjectClass() +  " is not present.");			
 		}
-		
+
+		Optional.ofNullable(sourceObjectQualifier).ifPresent(context::pushNamespace);
+
 		final Optional<Object> object = targetGetter.get(queue.peek());
-		
+
 		if (object.isPresent()) {
 			projection.extract(object.get(), context);
 		}
+
+		Optional.ofNullable(sourceObjectQualifier).ifPresent(context::popNamespace);
+
 	}
 	
 	public void setTargetGetter(Getter targetGetter) {

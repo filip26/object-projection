@@ -92,8 +92,7 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 		}
 		
 		// extract objects from each projection in the collection
-		for (final Object item : sourceCollection) {	//TODO
-
+		for (final Object item : sourceCollection) {
 			projection.extract(item, context.accept(null, componentClass, null));
 			collection.add(context.remove(null, componentClass, null));
 		}
