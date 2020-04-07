@@ -39,10 +39,6 @@ public final class SourceType {
 	public String getName() {
 		return name;
 	}
-	
-//	public Class<?> getComponentType() {
-//		return componentType;
-//	}
 
 	@Override
 	public String toString() {

@@ -101,7 +101,7 @@ public final class ObjectUtils {
 		return null;
 	}
 	
-	public static Method getMethod(Class<?> clazz, String name, Class<?>...param) {
+	public static Method getMethod(Class<?> clazz, String name) {
 				
 		try {
 			

@@ -46,8 +46,10 @@ public final class SingleSource implements Source {
 		if (!isReadable()) {
 			return null;
 		}
-		
-		logger.debug("Read {}.{}, qualifier = {}, optional = {}, depth = {}", objectClass.getSimpleName(), getter.getName(), Optional.ofNullable(qualifier).orElse("n/a"), optional, queue.length());
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Read {}.{}, qualifier = {}, optional = {}, depth = {}", objectClass.getSimpleName(), getter.getName(), Optional.ofNullable(qualifier).orElse("n/a"), optional, queue.length());
+		}
 
 		final Optional<Object> instance = Optional.ofNullable(context.get(objectClass, qualifier));
 
