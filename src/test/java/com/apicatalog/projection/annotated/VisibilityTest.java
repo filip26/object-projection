@@ -28,7 +28,7 @@ public class VisibilityTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose1() throws ProjectionError, ConverterError {
     	
     	Object1 o1 =new Object1();
     	o1.id = "Object 1";
@@ -50,7 +50,7 @@ public class VisibilityTest {
     }
 
     @Test
-    public void testComposition1() throws ProjectionError, ConverterError {
+    public void testCompose2() throws ProjectionError, ConverterError {
 
     	Object2 o2 =new Object2();
     	o2.id = "Object 2";

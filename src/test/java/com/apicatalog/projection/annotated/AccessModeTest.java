@@ -21,7 +21,7 @@ public class AccessModeTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	BasicTypes o1 = new BasicTypes();
     	o1.stringValue = "ABC123";
@@ -40,7 +40,7 @@ public class AccessModeTest {
     }
  
     @Test
-    public void testExtraction() throws ProjectionError, ConverterError {
+    public void testExtract() throws ProjectionError, ConverterError {
     	
     	AccessModeTo to = new AccessModeTo();
     	to.stringValue = "ABC123";

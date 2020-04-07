@@ -23,7 +23,7 @@ public class SourcesWithConversionTest {
 	}
 		
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	BasicTypes oa = new BasicTypes();
     	oa.longValue = 123l;

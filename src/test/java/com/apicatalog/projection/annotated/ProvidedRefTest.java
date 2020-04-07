@@ -25,7 +25,7 @@ public class ProvidedRefTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	BasicTypes object1 = new BasicTypes();
     	object1.stringValue = "A B C D E";
@@ -48,7 +48,7 @@ public class ProvidedRefTest {
     }
     
     @Test
-    public void testExtraction() throws ProjectionError, ConverterError {
+    public void testExtract() throws ProjectionError, ConverterError {
     	
     	ProvidedReferefenceTo projection1 = new ProvidedReferefenceTo();
     	projection1.title = "QWERTY ZXCVBN";

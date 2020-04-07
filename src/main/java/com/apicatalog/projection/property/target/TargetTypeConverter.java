@@ -5,7 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.context.ProjectionContext;
+import com.apicatalog.projection.context.ExtractionContext;
+import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ProjectionQueue;
 
@@ -25,18 +26,16 @@ public class TargetTypeConverter implements TargetAdapter {
 	}
 	
 	@Override
-	public Object forward(ProjectionQueue queue, Object object, ProjectionContext context) throws ProjectionError {
+	public Object forward(ProjectionQueue queue, Object object, CompositionContext context) throws ProjectionError {
 		logger.debug("Construct {} from {}, depth = {}", targetType, object, queue.length());
 
 		return typeAdapters.convert(targetType, object);
 	}
 
 	@Override
-	public Object backward(Object object, ProjectionContext context) throws ProjectionError {
-		logger.debug("Deconstruct {} from {}", sourceType, object);
+	public Object backward(Object object, ExtractionContext context) throws ProjectionError {
+		logger.debug("Extract {} from {}", sourceType, object);
 		
 		return typeAdapters.convert(sourceType, object);
 	}
-
 }
-

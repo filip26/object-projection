@@ -3,6 +3,8 @@ package com.apicatalog.projection.context;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.apicatalog.projection.source.SourceObject;
 
 final class ContextIndex {
@@ -16,7 +18,7 @@ final class ContextIndex {
 	}
 	
 	public static ContextIndex of(Class<?> clazz, String qualifier) {
-		return new ContextIndex(clazz, qualifier == null ? "" : qualifier);		
+		return new ContextIndex(clazz, StringUtils.isBlank(qualifier) ? "" : qualifier);		
 	}
 	
 	public static ContextIndex of(Object object) {

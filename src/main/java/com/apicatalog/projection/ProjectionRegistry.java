@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.apicatalog.projection.annotation.mapper.ProjectionMapper;
-import com.apicatalog.projection.source.SourceObject;
-import com.apicatalog.projection.source.SourceType;
 
 public class ProjectionRegistry {
 
@@ -55,7 +53,7 @@ public class ProjectionRegistry {
 	public <I> Collection<I> extractCollection(Object projection, String qualifier, Class<I> componentType) throws ProjectionError {
 	return Optional.ofNullable(get((Class<Object>)projection.getClass()))
 			.orElseThrow(() -> unknownProjection(projection.getClass()))
-			.extractCollection(projection, null, componentType);
+			.extractCollection(projection, qualifier, componentType);
 	}	
 	
 	public ProjectionRegistry register(final Projection<?> projection) {

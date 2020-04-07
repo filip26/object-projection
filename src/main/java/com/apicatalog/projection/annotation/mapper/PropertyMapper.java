@@ -77,7 +77,7 @@ public class PropertyMapper {
 		}
 		
 		if (field.isAnnotationPresent(Visibility.class)) {
-			mapping.ifPresent(m -> m.setVisible(
+			mapping.ifPresent(m -> m.setVisibility(
 										IntStream.of(field.getAnnotation(Visibility.class).level())
 												.boxed()
 												.collect(Collectors.toSet())

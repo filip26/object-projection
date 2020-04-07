@@ -28,7 +28,7 @@ public class RefCollectionTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	BasicTypes oa = new BasicTypes();
     	oa.booleanValue = true;
@@ -51,7 +51,7 @@ public class RefCollectionTest {
     }
     
     @Test
-    public void testExtraction() throws ProjectionError, ConverterError {
+    public void testExtract() throws ProjectionError, ConverterError {
     	
     	RefCollectionTo to = new RefCollectionTo();
     	to.items = new ArrayList<>();

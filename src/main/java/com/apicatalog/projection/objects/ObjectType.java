@@ -65,6 +65,18 @@ public final class ObjectType {
 				);
 	}
 	
+	public boolean isAssignableFrom(ObjectType type) {
+		return (((objectComponentClass != null) && objectComponentClass.isAssignableFrom(type.getObjectComponentClass()))
+				|| ((objectClass != null) && objectClass.isAssignableFrom(type.getObjectClass()))
+				);		
+	}
+
+	public boolean isAssignableFrom(Class<?> type) {
+		return (((objectComponentClass != null) && objectComponentClass.isAssignableFrom(type))
+				|| ((objectClass != null) && objectClass.isAssignableFrom(type))
+				);		
+	}
+
 	@Override
 	public String toString() {
 		return asString;

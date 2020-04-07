@@ -24,7 +24,7 @@ public class DirectMappingTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	BasicTypes object = new BasicTypes();
     	object.booleanValue = true;
@@ -45,7 +45,7 @@ public class DirectMappingTest {
     }
     
     @Test
-    public void testExtraction() throws ProjectionError, ConverterError {
+    public void testExtract() throws ProjectionError, ConverterError {
     	
     	TypeObjectTo projection = new TypeObjectTo();
     	projection.booleanValue = true;

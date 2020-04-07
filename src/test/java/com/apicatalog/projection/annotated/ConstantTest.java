@@ -23,7 +23,7 @@ public class ConstantTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	Object1 o1 = new Object1();
     	o1.id = "ABC123";
@@ -47,7 +47,7 @@ public class ConstantTest {
     }
     
     @Test
-    public void testExtraction1() throws ProjectionError, ConverterError {
+    public void testExtract1() throws ProjectionError, ConverterError {
     	
     	ConstantTo to = new ConstantTo();
     	to.id = "https://example.org/c/";
@@ -64,7 +64,7 @@ public class ConstantTest {
     }
     
     @Test
-    public void testExtraction2() throws ProjectionError, ConverterError {
+    public void testExtract2() throws ProjectionError, ConverterError {
     	
     	ConstantTo to = new ConstantTo();
     	to.stringArray = new String[] {"10", "20", "30"};
@@ -72,6 +72,6 @@ public class ConstantTest {
     	
     	Object1 object = projections.extract(to, Object1.class);
 
-    	Assert.assertNotNull(object);
+    	Assert.assertNull(object);
     }
 }

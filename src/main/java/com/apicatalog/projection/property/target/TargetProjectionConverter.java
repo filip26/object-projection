@@ -8,7 +8,8 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.context.ProjectionContext;
+import com.apicatalog.projection.context.ExtractionContext;
+import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ProjectionQueue;
 
@@ -28,11 +29,11 @@ public class TargetProjectionConverter implements TargetAdapter {
 	}
 	
 	@Override
-	public Object forward(ProjectionQueue queue, Object object, ProjectionContext context) throws ProjectionError {
+	public Object forward(ProjectionQueue queue, Object object, CompositionContext context) throws ProjectionError {
 		
 		logger.debug("Convert {} to {}, depth = {}, reference = true", sourceType, targetType, queue.length());
 
-		final ProjectionContext clonedSources = new ProjectionContext(context);
+		final CompositionContext clonedSources = new CompositionContext(context);
 		
 		Optional.ofNullable(object).ifPresent(v -> clonedSources.addOrReplace(v, null));
 
@@ -46,39 +47,22 @@ public class TargetProjectionConverter implements TargetAdapter {
 	}
 
 	@Override
-	public Object backward(Object object, ProjectionContext context) throws ProjectionError {
+	public Object backward(Object object, ExtractionContext context) throws ProjectionError {
 		logger.debug("Convert {} to {}, reference = true", targetType, sourceType);
 		
 		@SuppressWarnings("unchecked")
 		final Projection<Object> projection = (Projection<Object>) factory.get(targetType.getObjectClass()); 
 		
-		if (projection != null) {	//TODO
-			ProjectionContext clonedContext = new ProjectionContext(context);
-			projection.extract(object, clonedContext);
-			return filter(clonedContext.getValues(), context);
+		if (projection != null) {	//TODO			
+			projection.extract(
+							object, 
+							context
+								.accept(null, sourceType.getObjectClass(), sourceType.getObjectComponentClass())
+							);
+							
+			return context.remove(null, sourceType.getObjectClass(), sourceType.getObjectComponentClass());
 		}
 
 		throw new ProjectionError("Projection " + targetType.getObjectClass().getCanonicalName() +  " is not present.");
-	}
-	
-	Object filter(Object[] objects, ProjectionContext context) {
-		if (objects == null) {
-			return null;
-		}
-
-		Optional<Object> value = Optional.empty();
-
-		for (final Object object : objects) {
-
-			if (value.isEmpty() && sourceType.isInstance(object)) {
-				
-				value = Optional.ofNullable(object);
-				
-			} else if (!context.contains(object.getClass(), null)) {
-				context.addOrReplace(object, null);
-				
-			}
-		}
-		return value.orElse(null);
 	}
 }

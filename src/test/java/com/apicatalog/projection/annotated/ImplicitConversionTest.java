@@ -30,7 +30,7 @@ public class ImplicitConversionTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	BasicTypes object = new BasicTypes();
     	object.instantValue = Instant.now();
@@ -69,7 +69,7 @@ public class ImplicitConversionTest {
     }
     
     @Test
-    public void testExtraction() throws ProjectionError, ConverterError {
+    public void testExtract() throws ProjectionError, ConverterError {
     	
     	ImplicitConversionTo projection = new ImplicitConversionTo();
     	projection.stringValue = "987654";
@@ -96,7 +96,7 @@ public class ImplicitConversionTest {
     }
        
     @Test
-    public void testComposition2() throws ProjectionError, ConverterError {
+    public void testCompose2() throws ProjectionError, ConverterError {
     	
     	UriObject object = new UriObject();
 		object.uri = URI.create("https://example.org/a/b/c");
@@ -108,7 +108,7 @@ public class ImplicitConversionTest {
     }
     
     @Test
-    public void testExtraction2() throws ProjectionError, ConverterError {
+    public void testExtract2() throws ProjectionError, ConverterError {
     	
     	UriTo to = new UriTo();
 		to.uri = "https://example.org/a/b/c";

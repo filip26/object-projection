@@ -30,7 +30,7 @@ public class ProvidedRefCollectionTest {
 	}
 	
     @Test
-    public void testComposition1() throws ProjectionError, ConverterError {
+    public void testCompose1() throws ProjectionError, ConverterError {
     	
     	Collection<SimpleObject> items = new ArrayList<>();
     	
@@ -46,7 +46,7 @@ public class ProvidedRefCollectionTest {
     }
     
     @Test
-    public void testComposition2() throws ProjectionError, ConverterError {
+    public void testCompose2() throws ProjectionError, ConverterError {
     	
     	Collection<SimpleObject> items = new ArrayList<>();
     	
@@ -85,7 +85,7 @@ public class ProvidedRefCollectionTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError, ConverterError {
+    public void testExtract() throws ProjectionError, ConverterError {
     	
     	ProvidedRefCollectionTo to = new ProvidedRefCollectionTo();
     	to.items = new ArrayList<>();

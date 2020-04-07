@@ -12,26 +12,26 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.source.SourceObject;
 
-public final class ProjectionContext {
+public final class CompositionContext {
 
-	final Logger logger = LoggerFactory.getLogger(ProjectionContext.class);
+	final Logger logger = LoggerFactory.getLogger(CompositionContext.class);
 	
 	final Map<ContextIndex, Object> index;
 	
 	final ContextNamespace namespace;
 	
-	protected ProjectionContext(Map<ContextIndex, Object> index) {
+	protected CompositionContext(Map<ContextIndex, Object> index) {
 		this.index = index;
 		this.namespace = new ContextNamespace();
 	}
 
-	public ProjectionContext(ProjectionContext context) {
+	public CompositionContext(CompositionContext context) {
 		this.index = new LinkedHashMap<>(context.index);
 		this.namespace = new ContextNamespace(context.namespace);
 	}
 	
-	public static final ProjectionContext of(Object...objects) {		
-		return new ProjectionContext(index(objects));
+	public static final CompositionContext of(Object...objects) {		
+		return new CompositionContext(index(objects));
 	}
 	
 	public Object get(final Class<?> clazz, final String name) {
@@ -67,11 +67,11 @@ public final class ProjectionContext {
 					);		
 	}
 
-	public ProjectionContext addOrReplace(Object object) {
+	public CompositionContext addOrReplace(Object object) {
 		return addOrReplace(object, null);
 	}
 	
-	public ProjectionContext addOrReplace(Object object, String qualifier) {
+	public CompositionContext addOrReplace(Object object, String qualifier) {
 		index.put(ContextIndex.of(object.getClass(), qualifier), object);
 		return this;
 	}

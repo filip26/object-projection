@@ -23,7 +23,7 @@ public class UriTemplateConversionTest {
 	}
 		
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	BasicTypes oa = new BasicTypes();
     	oa.longValue = 123l;
@@ -38,7 +38,7 @@ public class UriTemplateConversionTest {
     }
 
     @Test
-    public void testDecomposition() throws ProjectionError, ConverterError {
+    public void testExtract() throws ProjectionError, ConverterError {
     	UriTemplateConversion projection = new UriTemplateConversion();
     	projection.href = "https://www.example.org/123456/ABC";
     	

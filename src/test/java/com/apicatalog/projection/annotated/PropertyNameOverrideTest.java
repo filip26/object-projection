@@ -25,7 +25,7 @@ public class PropertyNameOverrideTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	BasicTypes object = new BasicTypes();
     	object.booleanValue = true;
@@ -46,7 +46,7 @@ public class PropertyNameOverrideTest {
     }
     
     @Test
-    public void testExtraction() throws ProjectionError, ConverterError {
+    public void testExtract() throws ProjectionError, ConverterError {
     	
     	NameOverrideTo to = new NameOverrideTo();
     	to.projectedBoolean = true;

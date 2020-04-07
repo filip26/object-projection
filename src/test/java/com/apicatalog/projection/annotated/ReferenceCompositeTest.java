@@ -27,7 +27,7 @@ public class ReferenceCompositeTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	BasicTypes object1 = new BasicTypes();
     	object1.longValue = 123456l;
@@ -49,7 +49,7 @@ public class ReferenceCompositeTest {
     }
     
     @Test
-    public void testExtraction() throws ProjectionError, ConverterError {
+    public void testExtract() throws ProjectionError, ConverterError {
     	
     	CompositeTo projection1 = new CompositeTo();
     	projection1.source1 = 123456l;

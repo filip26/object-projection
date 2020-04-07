@@ -24,7 +24,7 @@ public class ArrayCollectorTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	BasicTypes o1 = new BasicTypes();
     	o1.integerValue = 12345;
@@ -54,7 +54,7 @@ public class ArrayCollectorTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError, ConverterError {
+    public void testExtract() throws ProjectionError, ConverterError {
     	
     	ArrayCollectorTo to = new ArrayCollectorTo();
     	to.objectArray = new Object[] { 1.234d, false, Instant.now(), new String[] { "s1", "s2", "s3" }};

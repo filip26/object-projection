@@ -26,7 +26,7 @@ public class ProvidedCollectionTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	String href = "https://example.org/provided";
 
@@ -46,7 +46,7 @@ public class ProvidedCollectionTest {
     }
     
     @Test
-    public void testExtraction() throws ProjectionError, ConverterError {
+    public void testExtract() throws ProjectionError, ConverterError {
     	
     	StringCollectionTo to = new StringCollectionTo();
     	to.href = "https://example.org/provided";

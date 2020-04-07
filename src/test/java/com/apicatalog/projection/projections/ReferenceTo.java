@@ -7,7 +7,7 @@ import com.apicatalog.projection.objects.Reference;
 @Projection(Reference.class)
 public class ReferenceTo {
 
-	@Source(value = "objectA")
+	@Source("objectA")
 	public CompositeTo ref;
 
 	@Override

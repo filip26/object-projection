@@ -22,7 +22,7 @@ public class OneToOneWithFncTest {
 	}
 			
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	BasicTypes oa = new BasicTypes();
     	oa.stringValue = "ABCDEF";
@@ -37,7 +37,7 @@ public class OneToOneWithFncTest {
     }
     
     @Test
-    public void testExtraction() throws ProjectionError, ConverterError {
+    public void testExtract() throws ProjectionError, ConverterError {
     	
     	TestProjectionAF pa = new TestProjectionAF();
     	pa.originString = "ABCDEF";
