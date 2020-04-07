@@ -11,7 +11,7 @@ import com.apicatalog.projection.objects.Interface1;
 import com.apicatalog.projection.objects.Interface1Impl;
 import com.apicatalog.projection.projections.Interface1To;
 
-public class InterfaceSourceTest {
+public class InterfaceTest {
 
 	ProjectionRegistry projections;
 	
@@ -38,17 +38,17 @@ public class InterfaceSourceTest {
     }
 
 
-//    @Test
-//    public void testExtract() throws ProjectionError, ConverterError {
-//    	
-//    	Interface1To to = new Interface1To();
-//    	to.id = 951846237l;
-//    	
-//    	Interface1 object  = projections.extract(to, Interface1Impl.class);
-//    	
-//    	Assert.assertNotNull(object);
-//    	Assert.assertEquals(to.id, object.getId());
-//    	
-//    }
+    @Test
+    public void testExtract() throws ProjectionError, ConverterError {
+    	
+    	Interface1To to = new Interface1To();
+    	to.id = 951846237l;
+    	
+    	Interface1 object  = projections.extract(to, Interface1Impl.class);
+    	
+    	Assert.assertNotNull(object);
+    	Assert.assertEquals(Long.toString(to.id), object.getId());
+    	
+    }
     
 }

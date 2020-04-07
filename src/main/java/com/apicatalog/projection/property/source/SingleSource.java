@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.CompositionContext;
+import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.objects.ObjectType;
@@ -46,8 +46,10 @@ public final class SingleSource implements Source {
 		if (!isReadable()) {
 			return null;
 		}
-		
-		logger.debug("Read {}.{}, qualifier = {}, optional = {}, depth = {}", objectClass.getSimpleName(), getter.getName(), Optional.ofNullable(qualifier).orElse("n/a"), optional, queue.length());
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Read {}.{}, qualifier = {}, optional = {}, depth = {}", objectClass.getSimpleName(), getter.getName(), Optional.ofNullable(qualifier).orElse("n/a"), optional, queue.length());
+		}
 
 		final Optional<Object> instance = Optional.ofNullable(context.get(objectClass, qualifier));
 
@@ -105,7 +107,7 @@ public final class SingleSource implements Source {
 		Optional<?> instance =  Optional.ofNullable(context.get(qualifier, objectClass, null));
 
 		if (instance.isEmpty()) {
-			instance = Optional.of(ObjectUtils.newInstance(objectClass));
+			instance = Optional.of(ObjectUtils.newInstance(context.getAssignableType(qualifier, objectClass, null)));
 			context.set(qualifier, instance.get());
 		}
 		setter.set(instance.get(), typeAdapters.convert(setter.getType().getObjectClass(), setter.getType().getObjectComponentClass(), object));

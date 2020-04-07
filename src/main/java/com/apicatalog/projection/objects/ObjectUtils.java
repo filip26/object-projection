@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -103,9 +104,10 @@ public final class ObjectUtils {
 	public static Method getMethod(Class<?> clazz, String name) {
 				
 		try {
-			return clazz.getDeclaredMethod(name);
 			
-		} catch (NoSuchMethodException | SecurityException e) {/* ignore */}
+			return Arrays.stream(clazz.getMethods()).filter(m -> m.getName().equals(name)).findFirst().orElse(null);
+			
+		} catch (SecurityException e) {/* ignore */}
 		
 		return null;
 	}

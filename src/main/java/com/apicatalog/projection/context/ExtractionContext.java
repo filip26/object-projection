@@ -107,9 +107,22 @@ public final class ExtractionContext {
 		return false;
 	}
 	
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "v0.8")
 	public SourceType[] types() {
 		return Arrays.copyOf(types, index);
+	}
 
+	public Class<?> getAssignableType(String qualifier, Class<?> objectType, Class<?> componentType) {
+
+		if (index == 0) {
+			throw new IllegalStateException();
+		}
+
+		for (int i=index - 1; i >= 0; i--) {
+			if (types[i].isAssignableFrom(qualifier, objectType, componentType)) {
+				return types[i].getType();
+			}
+		}
+		return null;
 	}
 }

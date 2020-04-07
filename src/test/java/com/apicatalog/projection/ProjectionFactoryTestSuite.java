@@ -10,7 +10,10 @@ import com.apicatalog.projection.annotated.ConstantTest;
 import com.apicatalog.projection.annotated.CycleCheckTest;
 import com.apicatalog.projection.annotated.DirectMappingTest;
 import com.apicatalog.projection.annotated.ImplicitConversionTest;
+import com.apicatalog.projection.annotated.InterfaceTest;
+import com.apicatalog.projection.annotated.MixedObjectsTest;
 import com.apicatalog.projection.annotated.OneToOneWithFncTest;
+import com.apicatalog.projection.annotated.PrefixMappingTest;
 import com.apicatalog.projection.annotated.PropertyNameOverrideTest;
 import com.apicatalog.projection.annotated.ProvidedCollectionTest;
 import com.apicatalog.projection.annotated.ProvidedObjectTest;
@@ -19,28 +22,33 @@ import com.apicatalog.projection.annotated.ProvidedRefTest;
 import com.apicatalog.projection.annotated.RefCollectionTest;
 import com.apicatalog.projection.annotated.ReferenceCompositeTest;
 import com.apicatalog.projection.annotated.SourcesWithConversionTest;
+import com.apicatalog.projection.annotated.TwoSourceCompositeTest;
 import com.apicatalog.projection.annotated.UriTemplateConversionTest;
 import com.apicatalog.projection.annotated.VisibilityTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	DirectMappingTest.class,
-	PropertyNameOverrideTest.class,
-	RefCollectionTest.class,
-	ReferenceCompositeTest.class,
-	ImplicitConversionTest.class,
-	SourcesWithConversionTest.class,
-	OneToOneWithFncTest.class,
-	UriTemplateConversionTest.class,
-	ProvidedObjectTest.class,
-	ProvidedRefTest.class,
-	CycleCheckTest.class,
-	ProvidedCollectionTest.class,
-	VisibilityTest.class,
-	ConstantTest.class,
-	ProvidedRefCollectionTest.class,
 	AccessModeTest.class,
 	ArrayCollectorTest.class,
+	ConstantTest.class,
+	CycleCheckTest.class,
+	DirectMappingTest.class,
+	ImplicitConversionTest.class,
+	InterfaceTest.class,
+	MixedObjectsTest.class,
+	OneToOneWithFncTest.class,
+	PrefixMappingTest.class,
+	PropertyNameOverrideTest.class,
+	ProvidedCollectionTest.class,
+	ProvidedObjectTest.class,
+	ProvidedRefCollectionTest.class,
+	ProvidedRefTest.class,
+	RefCollectionTest.class,
+	ReferenceCompositeTest.class,
+	SourcesWithConversionTest.class,
+	TwoSourceCompositeTest.class,
+	UriTemplateConversionTest.class,
+	VisibilityTest.class	
 })
 public class ProjectionFactoryTestSuite {
 

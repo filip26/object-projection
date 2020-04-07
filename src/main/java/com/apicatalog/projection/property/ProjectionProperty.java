@@ -16,7 +16,5 @@ public interface ProjectionProperty {
 	boolean isVisible(int level);
 
 	void setVisibility(Set<Integer> levels);
-	
-//	boolean hasSource(ObjectType sourceType);
-	
+		
 }

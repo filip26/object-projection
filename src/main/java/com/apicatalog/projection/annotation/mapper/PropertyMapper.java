@@ -167,7 +167,7 @@ public class PropertyMapper {
 		return ObjectType.of(objectClass, componentClass, reference);
 	}
 
-	protected static final ObjectType getTypeOf(Method method) {
+	protected static final ObjectType getReturnTypeOf(Method method) {
 		
 		Class<?> objectClass = method.getReturnType();
 		Class<?> componentClass = null;
@@ -180,6 +180,21 @@ public class PropertyMapper {
 		
 		return ObjectType.of(objectClass, componentClass, reference);
 	}
+	
+	protected static final ObjectType getParameterTypeOf(Method method) {
+		
+		Class<?> objectClass = method.getParameters()[0].getType();
+		Class<?> componentClass = null;
+		boolean reference = objectClass.isAnnotationPresent(Projection.class);
+
+		if (Collection.class.isAssignableFrom(method.getParameters()[0].getType())) {
+			componentClass = (Class<?>)((ParameterizedType) method.getGenericParameterTypes()[0]).getActualTypeArguments()[0];
+			reference = componentClass.isAnnotationPresent(Projection.class);
+		}
+		
+		return ObjectType.of(objectClass, componentClass, reference);
+	}
+
 
 	protected static final Getter getGetter(Class<?> objectClass, final String name) {
 
@@ -193,7 +208,7 @@ public class PropertyMapper {
 		final Method sourceGetter = ObjectUtils.getMethod(objectClass, "get".concat(StringUtils.capitalize(name)));
 		
 		if (sourceGetter != null) {
-			return MethodGetter.from(sourceGetter, name, getTypeOf(sourceGetter));
+			return MethodGetter.from(sourceGetter, name, getReturnTypeOf(sourceGetter));
 		}
 
 		return null;
@@ -208,10 +223,10 @@ public class PropertyMapper {
 		}
 
 		// look for getter method
-		final Method sourceGetter = ObjectUtils.getMethod(objectClass, "set".concat(StringUtils.capitalize(name)));
-		
-		if (sourceGetter != null) {
-			return MethodSetter.from(sourceGetter, name, getTypeOf(sourceGetter));
+		final Method sourceSetter = ObjectUtils.getMethod(objectClass, "set".concat(StringUtils.capitalize(name)));
+
+		if (sourceSetter != null) {
+			return MethodSetter.from(sourceSetter, name, getParameterTypeOf(sourceSetter));
 		}
 
 		return null;
