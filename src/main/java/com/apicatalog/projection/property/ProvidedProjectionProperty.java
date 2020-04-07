@@ -62,7 +62,13 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 
 	@Override
 	public void backward(ProjectionQueue queue, ExtractionContext context) throws ProjectionError {
-		
+
+		if (targetGetter == null) {
+			return;
+		}
+
+		logger.debug("Backward {} : {}, qualifier = {}, optional = {}, depth = {}", targetGetter.getName(), targetGetter.getType(), sourceObjectQualifier, optional, queue.length());
+
 		@SuppressWarnings("unchecked")
 		final Projection<Object> projection = (Projection<Object>) factory.get(targetGetter.getType().getObjectClass()); 
 		
@@ -70,9 +76,11 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 			throw new ProjectionError("Projection " + targetGetter.getType().getObjectClass() +  " is not present.");			
 		}
 		
-		final Object object = targetGetter.get(queue.peek());
+		final Optional<Object> object = Optional.ofNullable(targetGetter.get(queue.peek()));
 		
-		projection.extract(object, context);
+		if (object.isPresent()) {
+			projection.extract(object.get(), context);
+		}
 	}
 	
 	public void setTargetGetter(Getter targetGetter) {
