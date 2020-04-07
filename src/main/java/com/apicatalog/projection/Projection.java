@@ -1,6 +1,7 @@
 package com.apicatalog.projection;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,7 +112,13 @@ public final class Projection<P> {
 
 	public void extract(P projection, ExtractionContext context) throws ProjectionError {
 		
-		logger.debug("Extract {} object(s) from {}, {} properties", context.size(), projection.getClass().getSimpleName(), properties.length);
+		if (projection == null || context == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("Extract {} object(s) from {}, {} properties", context.size(), projection.getClass().getSimpleName(),  Optional.ofNullable(properties).orElse(new ProjectionProperty[0]).length);
+		}
 
 		final ProjectionQueue queue = ProjectionQueue.create().push(projection);
 		
