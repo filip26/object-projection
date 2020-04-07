@@ -23,7 +23,7 @@ public class TwoSourceCompositeTest {
 	}	
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	BasicTypes source1 = new BasicTypes();
     	source1.longValue = 123456l;
@@ -40,7 +40,7 @@ public class TwoSourceCompositeTest {
     }
     
     @Test
-    public void testDecomposition() throws ProjectionError, ConverterError {
+    public void testExtract() throws ProjectionError, ConverterError {
     	
     	CompositeTo projection = new CompositeTo();
     	projection.source1 = 123456l;

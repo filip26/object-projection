@@ -1,5 +1,6 @@
 package com.apicatalog.projection.context;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -52,10 +53,11 @@ public final class ExtractionContext {
 				}
 
 				objects[i] = object;
+				return;
 			}
 		}
 		
-		logger.trace("Rejected to set {}, {}", qualifier, object.getClass());
+		logger.trace("Rejected to set {}, qualifier = {}", object.getClass().getSimpleName(), qualifier);
 	}
 	
 	public Object get(final String qualifier, final Class<?> objectType, final Class<?> componentType) {
@@ -103,5 +105,11 @@ public final class ExtractionContext {
 			}
 		}	
 		return false;
+	}
+	
+	@Deprecated
+	public SourceType[] types() {
+		return Arrays.copyOf(types, index);
+
 	}
 }

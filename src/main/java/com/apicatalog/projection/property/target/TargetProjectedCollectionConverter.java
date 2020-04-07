@@ -14,6 +14,7 @@ import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ProjectionQueue;
+import com.apicatalog.projection.source.SourceType;
 
 public class TargetProjectedCollectionConverter implements TargetAdapter {
 
@@ -79,12 +80,22 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 		final Collection<Object> collection = new ArrayList<>();
 
 		Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, targetType.getObjectComponentClass(), object);
+
+		Class<?> componentClass = sourceType.getObjectComponentClass();
+		
+		if (sourceType.isReference()) {	//FIXME hack
+			for (SourceType type : context.types()) {
+				if (type.getType().isInstance(sourceCollection)) {
+					componentClass = type.getComponentType();
+				}
+			}
+		}
 		
 		// extract objects from each projection in the collection
 		for (final Object item : sourceCollection) {	//TODO
 
-			projection.extract(item, context.accept(null, sourceType.getObjectComponentClass(), null));
-			collection.add(context.remove(null, sourceType.getObjectComponentClass(), null));
+			projection.extract(item, context.accept(null, componentClass, null));
+			collection.add(context.remove(null, componentClass, null));
 		}
 		
 		return collection;

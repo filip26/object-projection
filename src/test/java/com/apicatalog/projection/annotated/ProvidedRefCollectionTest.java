@@ -96,7 +96,7 @@ public class ProvidedRefCollectionTest {
     	
     	to.items.add(to1);
 
-    	Collection<SimpleObject> c1 = projections.extractCollection(to, SimpleObject.class);
+    	Collection<SimpleObject> c1 = projections.extractCollection(to, "items", SimpleObject.class);
 
     	Assert.assertNotNull(c1);
     	Assert.assertEquals(1, c1.size());

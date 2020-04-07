@@ -57,10 +57,10 @@ public class ProvidedObjectTest {
 
     	projection.object = object2;
     	
-//    	BasicTypes object1ref = projections.extract(projection, BasicTypes.class);
-//    	Assert.assertNotNull(object1ref);
-//    	Assert.assertEquals(projection.title, object1ref.stringValue);    	
-//    	
+    	BasicTypes object1ref = projections.extract(projection, BasicTypes.class);
+    	Assert.assertNotNull(object1ref);
+    	Assert.assertEquals(projection.title, object1ref.stringValue);    	
+    	
     	SimpleObject object2ref = projections.extract(projection, SimpleObject.class);
     	Assert.assertNotNull(object2ref);
     	Assert.assertEquals(object2.i1, object2ref.i1);

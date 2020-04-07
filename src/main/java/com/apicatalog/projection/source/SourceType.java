@@ -8,13 +8,13 @@ import org.apache.commons.lang3.StringUtils;
 public final class SourceType {
 
 	final Class<?> type;
-//	final Class<?> componentType;
+	final Class<?> componentType;
 	final String name;
 	
-	SourceType(String name, Class<?> type/*, Class<?> componentType*/) {
+	SourceType(String name, Class<?> type, Class<?> componentType) {
 		this.type = type;
 		this.name = name;
-//		this.componentType = componentType;
+		this.componentType = componentType;
 	}
 
 	public static SourceType of(Class<?> type) {
@@ -26,11 +26,11 @@ public final class SourceType {
 	}
 
 	public static SourceType of(Class<?> type, Class<?> componentType) {
-		return new SourceType(null, type /*componentType*/);
+		return new SourceType(null, type, componentType);
 	}
 
 	public static SourceType of(String qualifier, Class<?> type, Class<?> componentType) {
-		return new SourceType(qualifier, type /*componentType*/);
+		return new SourceType(qualifier, type, componentType);
 	}
 
 	public Class<?> getType() {
@@ -83,4 +83,12 @@ public final class SourceType {
 	boolean qualifierMatch(String qualifier) {
 		return StringUtils.isNotBlank(name) ? name.equals(qualifier) : StringUtils.isBlank(qualifier);
 	}
+	
+	public boolean isCollection() {
+		return componentType != null;
+	}
+	
+	public Class<?> getComponentType() {
+		return componentType;
+	}	
 }

@@ -27,7 +27,7 @@ public class MixedObjectsTest {
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testCompose() throws ProjectionError, ConverterError {
     	
     	Object3 o3 = new Object3();
     	o3.id = "id-3";
@@ -55,7 +55,7 @@ public class MixedObjectsTest {
     }
     
     @Test
-    public void testExtraction1() throws ProjectionError, ConverterError {
+    public void testExtract1() throws ProjectionError, ConverterError {
     	
     	Object3To to3 = new Object3To();
     	to3.id = "id-3";
@@ -79,7 +79,7 @@ public class MixedObjectsTest {
     }
     
     @Test
-    public void testExtraction2() throws ProjectionError, ConverterError {
+    public void testExtract2() throws ProjectionError, ConverterError {
     	
     	Object3To to3 = new Object3To();
     	to3.id = "id-3";
@@ -99,7 +99,7 @@ public class MixedObjectsTest {
     }
     
     @Test
-    public void testExtraction3() throws ProjectionError, ConverterError {
+    public void testExtract3() throws ProjectionError, ConverterError {
     	
     	Object3To to3 = new Object3To();
     	to3.id = "id-3";
