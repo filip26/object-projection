@@ -22,7 +22,7 @@ public final class SingleSource implements Source {
 
 	final Logger logger = LoggerFactory.getLogger(SingleSource.class);
 
-	final TypeAdapters typeAdapters;	//FIXME use concrete adapters set during mapping
+	final TypeAdapters typeAdapters;	//TODO use concrete adapters set during mapping
 	
 	Getter getter;
 	Setter setter;

@@ -38,6 +38,9 @@ public final class ArraySource implements Source {
 	Set<Integer> visibleLevels;
 	
 	boolean optional;
+	
+	boolean readable;
+	boolean writable;
 
 	public ArraySource(final TypeAdapters typeAdapters) {
 		this.typeAdapters = typeAdapters;
@@ -143,12 +146,12 @@ public final class ArraySource implements Source {
 
 	@Override
 	public boolean isReadable() {
-		return true;	//FIXME
+		return writable;
 	}
 
 	@Override
 	public boolean isWritable() {
-		return true;	//FIXME
+		return readable;
 	}
 
 	public void setTargetType(ObjectType targetType) {
@@ -176,5 +179,13 @@ public final class ArraySource implements Source {
 			}
 		}
 		return false;
+	}
+	
+	public void setReadable(boolean readable) {
+		this.readable = readable;
+	}
+	
+	public void setWritable(boolean writable) {
+		this.writable = writable;
 	}
 }

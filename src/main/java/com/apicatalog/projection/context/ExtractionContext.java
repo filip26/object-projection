@@ -151,11 +151,11 @@ public final class ExtractionContext {
 		return Optional.empty();
 	}
 	
-	public void pushNamespace(String name) {
+	public void addNamespace(String name) {
 		this.namespace.push(name);
 	}
 	
-	public void popNamespace(String name) {
-		this.namespace.pop();
+	public String removeLastNamespace() {
+		return this.namespace.pop();
 	}
 }

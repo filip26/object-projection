@@ -76,7 +76,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 			throw new ProjectionError("Projection " + targetGetter.getType().getObjectClass() +  " is not present.");			
 		}
 
-		Optional.ofNullable(objectQualifier).ifPresent(context::pushNamespace);
+		Optional.ofNullable(objectQualifier).ifPresent(context::addNamespace);
 
 		final Optional<Object> object = targetGetter.get(queue.peek());
 
@@ -84,8 +84,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 			projection.extract(object.get(), context);
 		}
 
-		Optional.ofNullable(objectQualifier).ifPresent(context::popNamespace);
-
+		Optional.ofNullable(objectQualifier).ifPresent(s -> context.removeLastNamespace());
 	}
 	
 	public void setTargetGetter(Getter targetGetter) {

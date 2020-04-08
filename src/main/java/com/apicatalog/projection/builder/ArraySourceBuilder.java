@@ -1,5 +1,6 @@
 package com.apicatalog.projection.builder;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -53,6 +54,10 @@ public class ArraySourceBuilder {
 				
 		// set target type
 		source.setTargetType(reduction.getTargetType());
+		
+		// readable/writable
+		source.setReadable(Arrays.stream(sources).anyMatch(Source::isReadable));
+		source.setWritable(Arrays.stream(sources).anyMatch(Source::isWritable));
 				
 		// extract actual target object class 
 		if (source.getConversions() != null) {
