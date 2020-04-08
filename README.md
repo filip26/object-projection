@@ -1,5 +1,18 @@
 # Object Projection
 
+```java
+ProjectionBuilder
+          .bind(EmployeeTo.class)
+
+          .map("name")
+                .source(Person.class)
+          
+          .map("employer")
+                .source(Employer.class, "name")
+                .optional()
+          
+          .build();
+```
 
 ```java
 @Projection
@@ -10,7 +23,7 @@ public class TestProjection {
               @Source(type=User.class, value = "username"),
               @Source(type=Repository.class, value = "id"),
               },
-      reduce = @Reduction(
+      map = @Conversion(
               type = URLTemplate.class,
               value = "https://www.example.org/{username}/{repositoryId}"
               )
