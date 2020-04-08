@@ -117,7 +117,7 @@ public final class SingleSource implements Source {
 			}
 			
 			instance = Optional.of(ObjectUtils.newInstance(instanceClass.get()));
-			context.set(sourceType.getName(), instance.get());	//TODO ?!?!
+			context.set(sourceType.getName(), instance.get());
 		}
 
 		setter.set(instance.get(), typeAdapters.convert(setter.getType().getObjectClass(), setter.getType().getObjectComponentClass(), object));

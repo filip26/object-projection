@@ -19,10 +19,6 @@ public final class ObjectType {
 		return of(objectClass, null, false);
 	}
 
-	public static final ObjectType of(Class<?> objectClass, boolean reference) {
-		return of(objectClass, null, reference);
-	}
-	
 	public static final ObjectType of(Class<?> objectClass, Class<?> objectComponentClass) {
 		return of(objectClass, objectComponentClass, false);
 	}
@@ -45,24 +41,6 @@ public final class ObjectType {
 	
 	public Class<?> getObjectComponentClass() {
 		return objectComponentClass;
-	}
-
-	public boolean isInstance(Object object) {
-		return (((objectComponentClass != null) && objectComponentClass.isInstance(object))
-				|| ((objectClass != null) && objectClass.isInstance(object))
-				);
-	}
-	
-	public boolean isAssignableFrom(ObjectType type) {
-		return (((objectComponentClass != null) && objectComponentClass.isAssignableFrom(type.getObjectComponentClass()))
-				|| ((objectClass != null) && objectClass.isAssignableFrom(type.getObjectClass()))
-				);		
-	}
-
-	public boolean isAssignableFrom(Class<?> type) {
-		return (((objectComponentClass != null) && objectComponentClass.isAssignableFrom(type))
-				|| ((objectClass != null) && objectClass.isAssignableFrom(type))
-				);		
 	}
 
 	@Override

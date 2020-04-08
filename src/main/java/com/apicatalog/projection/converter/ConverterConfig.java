@@ -2,7 +2,7 @@ package com.apicatalog.projection.converter;
 
 public class ConverterConfig {
 
-	String[] values;
+	final String[] values;
 	
 	public ConverterConfig(String[] values) {
 		this.values = values;
@@ -10,9 +10,5 @@ public class ConverterConfig {
 
 	public String[] getValues() {
 		return values;
-	}
-
-	public void setValues(String[] values) {
-		this.values = values;
 	}
 }
