@@ -70,8 +70,8 @@ public class SourceProperty implements ProjectionProperty {
 			return;
 		}
 
-		if (targetAdapter != null) {
-			object = Optional.ofNullable(targetAdapter.backward(object.get(), context));
+		if (targetAdapter != null) {			
+			object = Optional.ofNullable(targetAdapter.backward(source.getTargetType(), object.get(), context));
 		}
 
 		if (object.isPresent()) {

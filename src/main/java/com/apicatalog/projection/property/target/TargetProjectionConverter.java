@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
-import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.objects.ObjectType;
 
 public class TargetProjectionConverter implements TargetAdapter {
@@ -19,50 +19,49 @@ public class TargetProjectionConverter implements TargetAdapter {
 
 	final ProjectionRegistry factory;
 	
-	final ObjectType sourceType;
 	final ObjectType targetType;
 		
-	public TargetProjectionConverter(ProjectionRegistry factory, ObjectType sourceType, ObjectType targetType) {
+	public TargetProjectionConverter(ProjectionRegistry factory, ObjectType targetType) {
 		this.factory = factory;
-		this.sourceType = sourceType;
 		this.targetType = targetType;
 	}
 	
 	@Override
-	public Object forward(ProjectionStack queue, Object object, CompositionContext context) throws ProjectionError {
+	public Object forward(ProjectionStack stack, Object object, CompositionContext context) throws ProjectionError {
 		
-		logger.debug("Convert {} to {}, depth = {}, reference = true", sourceType, targetType, queue.length());
+		if (logger.isDebugEnabled()) {
+			logger.debug("Convert {} to {}, depth = {}, reference = true", object.getClass().getSimpleName(), targetType, stack.length());
+		}
+
+		final Projection<?> projection = 
+				Optional.ofNullable(factory.get(targetType.getObjectClass()))
+						.orElseThrow(() -> new ProjectionError("Projection " + targetType.getObjectClass().getCanonicalName() +  " is not present."))
+						;
 
 		final CompositionContext clonedSources = new CompositionContext(context);
 		
-		Optional.ofNullable(object).ifPresent(v -> clonedSources.addOrReplace(v, null));
+		Optional.ofNullable(object).ifPresent(clonedSources::put);
 
-		final Projection<?> projection = factory.get(targetType.getObjectClass()); 
-		
-		if (projection != null) {
-			return projection.compose(queue, clonedSources);
-		}
-		
-		throw new ProjectionError("Projection " + targetType.getObjectClass() +  " is not present.");
+		return projection.compose(stack, clonedSources);
 	}
 
 	@Override
-	public Object backward(Object object, ExtractionContext context) throws ProjectionError {
+	public Object backward(ObjectType sourceType, Object object, ExtractionContext context) throws ProjectionError {
+		
 		logger.debug("Convert {} to {}, reference = true", targetType, sourceType);
 		
 		@SuppressWarnings("unchecked")
-		final Projection<Object> projection = (Projection<Object>) factory.get(targetType.getObjectClass()); 
-		
-		if (projection != null) {	//TODO			
-			projection.extract(
-							object, 
-							context
-								.accept(null, sourceType.getObjectClass(), sourceType.getObjectComponentClass())
-							);
-							
-			return context.remove(null, sourceType.getObjectClass(), sourceType.getObjectComponentClass()).orElse(null);
-		}
-
-		throw new ProjectionError("Projection " + targetType.getObjectClass().getCanonicalName() +  " is not present.");
+		final Projection<Object> projection = 
+					Optional.ofNullable((Projection<Object>) factory.get(targetType.getObjectClass()))
+							.orElseThrow(() -> new ProjectionError("Projection " + targetType.getObjectClass().getCanonicalName() +  " is not present."))
+							;
+			
+		projection.extract(
+						object, 
+						context
+							.accept(null, sourceType.getObjectClass(), sourceType.getObjectComponentClass())
+						);
+						
+		return context.remove(null, sourceType.getObjectClass(), sourceType.getObjectComponentClass()).orElse(null);
 	}
 }

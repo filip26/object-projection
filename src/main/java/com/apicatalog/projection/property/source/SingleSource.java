@@ -50,7 +50,7 @@ public final class SingleSource implements Source {
 			logger.debug("Read {}.{}, optional = {}, depth = {}", sourceType, getter.getName(), optional, queue.length());
 		}
 
-		final Optional<Object> instance = Optional.ofNullable(context.get(sourceType));
+		final Optional<Object> instance = context.get(sourceType);
 
 		if (instance.isEmpty()) {
 			if (optional) {

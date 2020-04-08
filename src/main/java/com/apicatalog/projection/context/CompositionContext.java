@@ -21,12 +21,12 @@ public final class CompositionContext {
 	
 	final ContextNamespace namespace;
 	
-	protected CompositionContext(Map<SourceType, Object> index) {
+	protected CompositionContext(final Map<SourceType, Object> index) {
 		this.index = index;
 		this.namespace = new ContextNamespace();
 	}
 
-	public CompositionContext(CompositionContext context) {
+	public CompositionContext(final CompositionContext context) {
 		this.index = new LinkedHashMap<>(context.index);
 		this.namespace = new ContextNamespace(context.namespace);
 	}
@@ -35,25 +35,25 @@ public final class CompositionContext {
 		return new CompositionContext(index(objects));
 	}
 	
-	public Object get(SourceType sourceType) {
+	public Optional<Object> get(SourceType sourceType) {
 		return get(sourceType.getName(), sourceType.getType());
 	}
 	
-	public Object get(final String name, final Class<?> clazz) {
+	public Optional<Object> get(final String name, final Class<?> clazz) {
 		
 		final String qualifiedName = Optional.ofNullable(name).map(n -> namespace.getQName(name)).orElse(null);
 				
 		return Optional.ofNullable(index.get(SourceType.of(qualifiedName, clazz)))
-				.orElseGet(() -> {
+				.or(() -> {
 					for (Map.Entry<SourceType, Object> entry : index.entrySet()) {
 						if (clazz.isAssignableFrom(entry.getKey().getType()) && ((StringUtils.isBlank(qualifiedName) && StringUtils.isBlank(entry.getKey().getName()))
 									|| StringUtils.isNotBlank(qualifiedName) && qualifiedName.equals(entry.getKey().getName())
 									)) {
-								return entry.getValue();
+								return Optional.ofNullable(entry.getValue());
 						
 						}
 					}
-					return null;
+					return Optional.empty();
 				});
 	}
 
@@ -71,12 +71,12 @@ public final class CompositionContext {
 					);		
 	}
 
-	public CompositionContext addOrReplace(Object object) {
-		return addOrReplace(object, null);
+	public CompositionContext put(final Object object) {
+		return put(null, object);
 	}
 	
-	public CompositionContext addOrReplace(Object object, String qualifier) {
-		index.put(SourceType.of(qualifier, object.getClass()), object);
+	public CompositionContext put(final String name, final Object object) {
+		index.put(SourceType.of(name, object.getClass()), object);
 		return this;
 	}
 
