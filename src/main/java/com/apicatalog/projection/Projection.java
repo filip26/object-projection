@@ -20,7 +20,7 @@ public final class Projection<P> {
 	
 	final ProjectionProperty[] properties;
 	
-	Projection(final Class<P> projectionClass, final ProjectionProperty[] properties) {
+	protected Projection(final Class<P> projectionClass, final ProjectionProperty[] properties) {
 		this.projectionClass = projectionClass;
 		this.properties = properties;
 	}
@@ -48,9 +48,10 @@ public final class Projection<P> {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Compose {} of {} object(s), depth = {}", projectionClass.getSimpleName(), context.size(), stack.length());
-		}
-		if (logger.isTraceEnabled()) {
-			context.stream().forEach(v -> logger.trace("  {}", v));
+		
+			if (logger.isTraceEnabled()) {
+				context.stream().forEach(sourceObject -> logger.trace("  {}", sourceObject));
+			}
 		}
 
 		// check for cycles

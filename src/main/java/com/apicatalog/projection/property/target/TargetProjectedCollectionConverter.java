@@ -10,11 +10,10 @@ import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.TypeAdapters;
+import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
-import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.objects.ObjectType;
-import com.apicatalog.projection.source.SourceType;
 
 public class TargetProjectedCollectionConverter implements TargetAdapter {
 
@@ -24,22 +23,19 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 	
 	final TypeAdapters typeAdapters;	//TODO use just concrete adapter(s), not whole factory
 	
-	final ObjectType sourceType;
-	
 	final ObjectType targetType;
 	
-	public TargetProjectedCollectionConverter(ProjectionRegistry factory, TypeAdapters typeAdapters, ObjectType sourceType, ObjectType targetType) {
+	public TargetProjectedCollectionConverter(ProjectionRegistry factory, TypeAdapters typeAdapters, ObjectType targetType) {
 		this.factory = factory;
 		this.typeAdapters = typeAdapters;
 		
-		this.sourceType = sourceType;
 		this.targetType = targetType;
 	}
 	
 	@Override
 	public Object forward(ProjectionStack queue, Object object, CompositionContext context) throws ProjectionError {
 		
-		logger.debug("Convert {} to {}, depth = {}, reference = true, collection = true", sourceType, targetType, queue.length());
+		logger.debug("Convert {} to {}, depth = {}, reference = true, collection = true", object.getClass().getSimpleName(), targetType, queue.length());
 
 		final Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, Object.class, object);
 		
@@ -57,7 +53,7 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 			collection.add(projection
 							.compose(
 								queue,										
-								(new CompositionContext(context)).addOrReplace(item, null)
+								(new CompositionContext(context)).put(item)
 								)
 							);
 		}
@@ -66,7 +62,7 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 	}
 
 	@Override
-	public Object backward(Object object, ExtractionContext context) throws ProjectionError {
+	public Object backward(ObjectType sourceType, Object object, ExtractionContext context) throws ProjectionError {
 		logger.debug("Convert {} to {}, reference = true, collection = true", targetType, sourceType);
 		
 		@SuppressWarnings("unchecked")
@@ -79,18 +75,10 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 
 		final Collection<Object> collection = new ArrayList<>();
 
-		Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, targetType.getObjectComponentClass(), object);
+		final Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, targetType.getObjectComponentClass(), object);
 
-		Class<?> componentClass = sourceType.getObjectComponentClass();
-		
-		if (sourceType.isReference()) {	//FIXME hack
-			for (SourceType type : context.accepted()) {
-				if (type.getType().isInstance(sourceCollection)) {
-					componentClass = type.getComponentType();
-				}
-			}
-		}
-		
+		final Class<?> componentClass = sourceType.getObjectComponentClass();
+				
 		// extract objects from each projection in the collection
 		for (final Object item : sourceCollection) {
 			

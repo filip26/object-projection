@@ -1,5 +1,6 @@
 package com.apicatalog.projection.property;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 
@@ -10,6 +11,7 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
+import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.target.TargetAdapter;
@@ -38,17 +40,19 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 		
 		logger.debug("Forward {} : {}, qualifier = {}, optional = {}, depth = {}", targetSetter.getName(), targetSetter.getType(), objectQualifier, optional, queue.length());
 		
-		Object object = context.get(objectQualifier, targetSetter.getType().getObjectClass());
+		Optional<Object> object = context.get(objectQualifier, targetSetter.getType().getObjectClass());
 		
-		if (object == null) {
+		if (object.isEmpty()) {
 			return;
 		}
 		
 		if (targetAdapter != null) {
-			object = targetAdapter.forward(queue, object, context);
+			object = Optional.ofNullable(targetAdapter.forward(queue, object.get(), context));
 		}
 		
-		targetSetter.set(queue.peek(), object);
+		if (object.isPresent()) {
+			targetSetter.set(queue.peek(), object.get());
+		}
 	}
 
 	@Override
@@ -67,7 +71,19 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 		}
 		
 		if (targetAdapter != null) {
-			object = Optional.ofNullable(targetAdapter.backward(object.get(), context));
+
+			final Object value = object.get();
+			
+			Optional<ObjectType> sourceType = 
+							Arrays.stream(context.accepted())
+									.filter(type -> type.getType().isInstance(value))
+									.findFirst()
+									.map(type -> ObjectType.of(type.getType(), type.getComponentType()))
+									;
+			
+			if (sourceType.isPresent()) {
+				object = Optional.ofNullable(targetAdapter.backward(sourceType.get(), value, context));
+			}
 		}
 		
 		if (object.isPresent() ) {

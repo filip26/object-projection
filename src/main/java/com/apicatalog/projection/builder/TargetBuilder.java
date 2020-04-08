@@ -32,13 +32,13 @@ public class TargetBuilder {
 		if (targetType.isReference()) {
 
 			if (targetType.isCollection()) {
-				return new TargetProjectedCollectionConverter(factory, typeAdapters, sourceType, targetType);
+				return new TargetProjectedCollectionConverter(factory, typeAdapters, /*sourceType,*/ targetType);
 			}
 
-			return new TargetProjectionConverter(factory, sourceType, targetType);
+			return new TargetProjectionConverter(factory, targetType);
 		}
 
-		return new TargetTypeConverter(typeAdapters, sourceType, targetType);
+		return new TargetTypeConverter(typeAdapters, targetType);
 	}
 	
 	public TargetBuilder source(ObjectType source) {
