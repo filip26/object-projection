@@ -19,6 +19,7 @@ public class ConstantPropertyBuilder {
 	String[] constants;
 	
 	Setter targetSetter;
+	boolean targetReference;
 	
 	protected ConstantPropertyBuilder() {
 	}
@@ -37,7 +38,7 @@ public class ConstantPropertyBuilder {
 		property.setTargetAdapter(
 				TargetBuilder.newInstance()
 					.source(ObjectType.of(String[].class))
-					.target(targetSetter.getType())
+					.target(targetSetter.getType(), targetReference)
 					.build(registry, typeAdapters)
 					);
 
@@ -47,8 +48,9 @@ public class ConstantPropertyBuilder {
 		return Optional.of(property);
 	}	
 	
-	public ConstantPropertyBuilder targetSetter(Setter targetSetter) {
+	public ConstantPropertyBuilder targetSetter(Setter targetSetter, boolean reference) {
 		this.targetSetter = targetSetter;
+		this.targetReference = reference;
 		return this;
 	}
 	

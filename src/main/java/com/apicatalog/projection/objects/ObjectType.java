@@ -7,30 +7,19 @@ public final class ObjectType {
 	final Class<?> objectClass;
 	final Class<?> objectComponentClass;
 	
-	final boolean reference;
-	
-	protected ObjectType(Class<?> objectClass, Class<?> objectComponentClass, boolean reference) { 
+	protected ObjectType(Class<?> objectClass, Class<?> objectComponentClass) { 
 		this.objectClass = objectClass;
 		this.objectComponentClass = objectComponentClass;
-		this.reference = reference;
 	}
 	
 	public static final ObjectType of(Class<?> objectClass) {
-		return of(objectClass, null, false);
+		return of(objectClass, null);
 	}
 
 	public static final ObjectType of(Class<?> objectClass, Class<?> objectComponentClass) {
-		return of(objectClass, objectComponentClass, false);
+		return new ObjectType(objectClass, objectComponentClass);
 	}
 
-	public static final ObjectType of(Class<?> objectClass, Class<?> objectComponentClass, boolean reference) {
-		return new ObjectType(objectClass, objectComponentClass, reference);
-	}
-
-	public boolean isReference() {
-		return reference;
-	}	
-	
 	public boolean isCollection() {
 		return objectComponentClass != null;
 	}
@@ -49,9 +38,7 @@ public final class ObjectType {
 					+ Optional.ofNullable(objectClass).map(Class::getSimpleName).orElse("") 
 					+ "<" 
 					+ Optional.ofNullable(objectComponentClass).map(Class::getSimpleName).orElse("") 
-					+ ">, reference=" 
-					+ reference 
-					+ "]"
+					+ ">]" 
 					;
 	}
 }

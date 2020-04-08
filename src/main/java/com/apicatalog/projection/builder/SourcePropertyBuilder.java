@@ -25,6 +25,8 @@ public class SourcePropertyBuilder {
 	
 	Getter targetGetter;
 	Setter targetSetter;
+	
+	boolean targetReference;
 
 	protected SourcePropertyBuilder() {
 		this.mode = AccessMode.READ_WRITE;
@@ -68,7 +70,7 @@ public class SourcePropertyBuilder {
 		property.setTargetAdapter(
 				TargetBuilder.newInstance()
 					.source(source.getTargetType())
-					.target(targetSetter.getType())
+					.target(targetSetter.getType(), targetReference)
 					.build(factory, typeAdapters)
 					);
 
@@ -92,6 +94,11 @@ public class SourcePropertyBuilder {
 
 	public SourcePropertyBuilder targetSetter(Setter setter) {
 		this.targetSetter = setter;
+		return this;
+	}
+
+	public SourcePropertyBuilder targetReference(boolean targetReference) {
+		this.targetReference = targetReference;
 		return this;
 	}
 

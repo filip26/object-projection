@@ -18,7 +18,9 @@ public class TargetBuilder {
 	static final String SOURCE_IS_MISSING = "Source is missing. Property {} is ignored."; 
 	
 	ObjectType sourceType;
+	
 	ObjectType targetType;
+	boolean targetReference;
 		
 	protected TargetBuilder() {
 	}
@@ -29,7 +31,7 @@ public class TargetBuilder {
 		
 	public TargetAdapter build(ProjectionRegistry factory, TypeAdapters typeAdapters) {
 
-		if (targetType.isReference()) {
+		if (targetReference) {
 
 			if (targetType.isCollection()) {
 				return new TargetProjectedCollectionConverter(factory, typeAdapters, /*sourceType,*/ targetType);
@@ -46,8 +48,9 @@ public class TargetBuilder {
 		return this;
 	}
 	
-	public TargetBuilder target(ObjectType target) {
+	public TargetBuilder target(ObjectType target, boolean reference) {
 		this.targetType = target;
+		this.targetReference = reference;
 		return this;
 	}
 }

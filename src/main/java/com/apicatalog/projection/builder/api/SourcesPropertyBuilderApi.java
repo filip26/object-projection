@@ -97,6 +97,11 @@ public class SourcesPropertyBuilderApi<P> {
 		sourcePropertyBuilder = sourcePropertyBuilder.targetSetter(targetSetter);
 		return this;
 	}
+	
+	protected SourcesPropertyBuilderApi<P> targetReference(boolean reference) {
+		sourcePropertyBuilder = sourcePropertyBuilder.targetReference(reference);
+		return this;
+	}
 
 	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
 

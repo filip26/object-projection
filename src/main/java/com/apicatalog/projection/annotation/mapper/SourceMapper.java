@@ -27,6 +27,7 @@ import com.apicatalog.projection.builder.SourcePropertyBuilder;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.objects.ObjectType;
+import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.objects.getter.FieldGetter;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.FieldSetter;
@@ -62,7 +63,7 @@ class SourceMapper {
 			return Optional.empty();
 		}
 		
-		ObjectType targetType = PropertyMapper.getTypeOf(field);
+		ObjectType targetType =  ObjectUtils.getTypeOf(field);
 
 		// extract setter/getter
 		final Getter targetGetter = FieldGetter.from(field, targetType);
@@ -73,6 +74,7 @@ class SourceMapper {
 				.mode(AccessMode.READ_WRITE)
 				.targetGetter(targetGetter)
 				.targetSetter(targetSetter)
+				.targetReference(PropertyMapper.isReference(targetSetter.getType()))
 				.build(factory, typeAdapters);
 	}
 	
@@ -92,7 +94,7 @@ class SourceMapper {
 			return Optional.empty();
 		}
 		
-		ObjectType targetType = PropertyMapper.getTypeOf(field);
+		ObjectType targetType =  ObjectUtils.getTypeOf(field);
 		
 		// extract setter/getter
 		final Getter targetGetter = FieldGetter.from(field, targetType);
@@ -103,6 +105,7 @@ class SourceMapper {
 					.mode(sourceAnnotation.mode())
 					.targetGetter(targetGetter)
 					.targetSetter(targetSetter)
+					.targetReference(PropertyMapper.isReference(targetSetter.getType()))					
 					.build(factory, typeAdapters);
 	}
 
@@ -156,8 +159,8 @@ class SourceMapper {
 	Optional<SingleSource> getSingleSource(Class<?> sourceObjectClass, String sourceFieldName, SingleSourceBuilder sourceBuilder) {
 		
 		// extract setter/getter
-		final Getter sourceGetter = PropertyMapper.getGetter(sourceObjectClass, sourceFieldName);
-		final Setter sourceSetter = PropertyMapper.getSetter(sourceObjectClass, sourceFieldName);
+		final Getter sourceGetter = ObjectUtils.getGetter(sourceObjectClass, sourceFieldName);
+		final Setter sourceSetter = ObjectUtils.getSetter(sourceObjectClass, sourceFieldName);
 
 		return sourceBuilder
 				.getter(sourceGetter)

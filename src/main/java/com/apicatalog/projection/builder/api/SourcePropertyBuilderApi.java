@@ -15,6 +15,7 @@ import com.apicatalog.projection.builder.SourcePropertyBuilder;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
+import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.ProjectionProperty;
@@ -79,6 +80,11 @@ public class SourcePropertyBuilderApi<P> {
 		return this;
 	}
 	
+	protected SourcePropertyBuilderApi<P> targetReference(boolean targetReference) {
+		sourcePropertyBuilder = sourcePropertyBuilder.targetReference(targetReference);
+		return this;		
+	}
+	
 	public MappedPropertyBuilderApi<P> map(String propertyName) {
 		return projectionBuilder.map(propertyName);
 	}
@@ -107,8 +113,8 @@ public class SourcePropertyBuilderApi<P> {
 		}
 		
 		// extract setter/getter
-		final Getter sourceGetter = MappedPropertyBuilderApi.getGetter(sourceObjectClass, sourcePropertyName, false);
-		final Setter sourceSetter = MappedPropertyBuilderApi.getSetter(sourceObjectClass, sourcePropertyName, false);
+		final Getter sourceGetter = ObjectUtils.getGetter(sourceObjectClass, sourcePropertyName);
+		final Setter sourceSetter = ObjectUtils.getSetter(sourceObjectClass, sourcePropertyName);
 		
 		return sourceBuilder
 							.getter(sourceGetter)
@@ -125,7 +131,7 @@ public class SourcePropertyBuilderApi<P> {
 		if (source.isEmpty()) {
 			return Optional.empty();
 		}
-		
+
 		return sourcePropertyBuilder
 					.source(source.get())
 					.build(factory, typeAdapters).map(ProjectionProperty.class::cast);

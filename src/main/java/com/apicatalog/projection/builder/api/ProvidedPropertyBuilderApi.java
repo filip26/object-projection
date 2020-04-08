@@ -48,6 +48,11 @@ public class ProvidedPropertyBuilderApi<P> {
 		return this;
 	}
 	
+	protected ProvidedPropertyBuilderApi<P> targetReference(boolean reference) {
+		providedPropertyBuilder = providedPropertyBuilder.targetReference(reference);
+		return this;
+	}
+
 	public MappedPropertyBuilderApi<P> map(String propertyName) {
 		return projectionBuilder.map(propertyName);
 	}

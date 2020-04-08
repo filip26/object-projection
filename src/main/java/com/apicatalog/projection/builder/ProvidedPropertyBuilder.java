@@ -23,6 +23,8 @@ public class ProvidedPropertyBuilder {
 	Getter targetGetter;
 	Setter targetSetter;
 	
+	boolean targetReference;
+	
 	AccessMode mode;
 	
 	String qualifier;
@@ -46,7 +48,7 @@ public class ProvidedPropertyBuilder {
 		
 		final ObjectType targetType = targetGetter != null ? targetGetter.getType() : targetSetter.getType(); 
 		
-		if (targetType.isReference() && !targetType.isCollection()) {
+		if (targetReference && !targetType.isCollection()) {
 			return buildReference(factory);
 		}
 		
@@ -76,7 +78,7 @@ public class ProvidedPropertyBuilder {
 		property.setTargetAdapter(
 					TargetBuilder.newInstance()
 						.source(targetSetter != null ? targetSetter.getType() : targetGetter.getType())
-						.target(targetSetter != null ? targetSetter.getType() : targetGetter.getType())
+						.target(targetSetter != null ? targetSetter.getType() : targetGetter.getType(), targetReference)
 						.build(factory, typeAdapters)
 						);
 
@@ -133,6 +135,11 @@ public class ProvidedPropertyBuilder {
 
 	public ProvidedPropertyBuilder qualifier(String qualifier) {
 		this.qualifier = qualifier;
+		return this;
+	}
+
+	public ProvidedPropertyBuilder targetReference(boolean reference) {
+		this.targetReference = reference;
 		return this;
 	}
 

@@ -17,6 +17,7 @@ import com.apicatalog.projection.builder.SingleSourceBuilder;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
+import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.source.Source;
@@ -92,8 +93,8 @@ public class SourcesBuilderApi<P> {
 		}
 		
 		// extract setter/getter
-		final Getter sourceGetter = MappedPropertyBuilderApi.getGetter(sourceHolder.objectClass, sourceHolder.propertyName, false);
-		final Setter sourceSetter = MappedPropertyBuilderApi.getSetter(sourceHolder.objectClass, sourceHolder.propertyName, false);
+		final Getter sourceGetter = ObjectUtils.getGetter(sourceHolder.objectClass, sourceHolder.propertyName);
+		final Setter sourceSetter = ObjectUtils.getSetter(sourceHolder.objectClass, sourceHolder.propertyName);
 		
 		return sourceHolder.builder
 							.objectClass(sourceHolder.objectClass)
