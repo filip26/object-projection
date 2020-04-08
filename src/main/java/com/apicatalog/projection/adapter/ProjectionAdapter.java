@@ -1,4 +1,4 @@
-package com.apicatalog.projection.property.target;
+package com.apicatalog.projection.adapter;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.context.CompositionContext;
@@ -6,7 +6,7 @@ import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.objects.ObjectType;
 
-public interface TargetAdapter {
+public interface ProjectionAdapter {
 
 	Object forward(ProjectionStack queue, Object object, CompositionContext context) throws ProjectionError;
 

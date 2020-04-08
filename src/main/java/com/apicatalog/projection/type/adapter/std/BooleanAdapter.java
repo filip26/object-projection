@@ -1,7 +1,7 @@
-package com.apicatalog.projection.adapter.std;
+package com.apicatalog.projection.type.adapter.std;
 
-import com.apicatalog.projection.adapter.TypeAdapter;
-import com.apicatalog.projection.adapter.TypeAdapterError;
+import com.apicatalog.projection.type.adapter.TypeAdapter;
+import com.apicatalog.projection.type.adapter.TypeAdapterError;
 
 public class BooleanAdapter implements TypeAdapter<Boolean> {
 

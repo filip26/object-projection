@@ -1,25 +1,23 @@
-package com.apicatalog.projection.adapter.std;
+package com.apicatalog.projection.type.adapter.std;
 
-import java.time.Instant;
+import com.apicatalog.projection.type.adapter.TypeAdapter;
+import com.apicatalog.projection.type.adapter.TypeAdapterError;
 
-import com.apicatalog.projection.adapter.TypeAdapter;
-import com.apicatalog.projection.adapter.TypeAdapterError;
-
-public class LongAdapter implements TypeAdapter<Long> {
+public class FloatAdapter implements TypeAdapter<Double> {
 
 	@Override
-	public Class<Long> consumes() {
-		return Long.class;
+	public Class<Double> consumes() {
+		return Double.class;
 	}
 
 	@Override
 	public Class<?>[] produces() {
-		return new Class[] {String.class, Integer.class, Short.class, Byte.class, Double.class, Float.class, Instant.class, Boolean.class};
+		return new Class[] {String.class, Integer.class, Short.class, Byte.class, Long.class, Float.class, Boolean.class};
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T convert(Class<? extends T> targetClass, Long object) throws TypeAdapterError {
+	public <T> T convert(Class<? extends T> targetClass, Double object) throws TypeAdapterError {
 		
 		if (targetClass.isAssignableFrom(String.class)) {
 			return (T)object.toString();
@@ -33,18 +31,15 @@ public class LongAdapter implements TypeAdapter<Long> {
 		if (targetClass.isAssignableFrom(Byte.class)) {
 			return (T)Byte.valueOf(object.byteValue());
 		}		
-		if (targetClass.isAssignableFrom(Double.class)) {
-			return (T)Double.valueOf(object.doubleValue());
+		if (targetClass.isAssignableFrom(Long.class)) {
+			return (T)Long.valueOf(object.longValue());
 		}		
 		if (targetClass.isAssignableFrom(Float.class)) {
 			return (T)Float.valueOf(object.floatValue());
 		}
-		if (targetClass.isAssignableFrom(Instant.class)) {
-			return (T)Instant.ofEpochMilli(object);
-		}
 		if (targetClass.isAssignableFrom(Boolean.class)) {
 			return (T)(object == 1 ? Boolean.TRUE : Boolean.FALSE);
-		}		
+		}				
 		
 		throw new TypeAdapterError("Can not convert " + object.getClass().getCanonicalName() + " to " + targetClass.getCanonicalName() + ".");
 	}

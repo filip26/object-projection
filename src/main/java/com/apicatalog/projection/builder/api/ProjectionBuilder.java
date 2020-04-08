@@ -6,8 +6,8 @@ import java.util.List;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.property.ProjectionProperty;
+import com.apicatalog.projection.type.adapter.TypeAdapters;
 
 public class ProjectionBuilder<P> {
 	

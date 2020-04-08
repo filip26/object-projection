@@ -1,4 +1,4 @@
-package com.apicatalog.projection.property.target;
+package com.apicatalog.projection.adapter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,15 +9,15 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.objects.ObjectType;
+import com.apicatalog.projection.type.adapter.TypeAdapters;
 
-public class TargetProjectedCollectionConverter implements TargetAdapter {
+public class ProjectionsAdapter implements ProjectionAdapter {
 
-	final Logger logger = LoggerFactory.getLogger(TargetProjectedCollectionConverter.class);
+	final Logger logger = LoggerFactory.getLogger(ProjectionsAdapter.class);
 
 	final ProjectionRegistry factory;
 	
@@ -25,7 +25,7 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 	
 	final ObjectType targetType;
 	
-	public TargetProjectedCollectionConverter(ProjectionRegistry factory, TypeAdapters typeAdapters, ObjectType targetType) {
+	public ProjectionsAdapter(ProjectionRegistry factory, TypeAdapters typeAdapters, ObjectType targetType) {
 		this.factory = factory;
 		this.typeAdapters = typeAdapters;
 		

@@ -6,11 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.adapter.ProjectionAdapter;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.objects.setter.Setter;
-import com.apicatalog.projection.property.target.TargetAdapter;
 
 public class ConstantProperty implements ProjectionProperty {
 
@@ -18,7 +18,7 @@ public class ConstantProperty implements ProjectionProperty {
 
 	String[] constants;
 	
-	TargetAdapter targetAdapter;
+	ProjectionAdapter targetAdapter;
 	
 	Setter targetSetter;
 
@@ -41,7 +41,7 @@ public class ConstantProperty implements ProjectionProperty {
 		this.constants = constants;
 	}
 	
-	public void setTargetAdapter(TargetAdapter targetAdapter) {
+	public void setTargetAdapter(ProjectionAdapter targetAdapter) {
 		this.targetAdapter = targetAdapter;
 	}
 	

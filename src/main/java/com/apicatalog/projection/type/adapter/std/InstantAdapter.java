@@ -1,10 +1,10 @@
-package com.apicatalog.projection.adapter.std;
+package com.apicatalog.projection.type.adapter.std;
 
 import java.time.Instant;
 import java.util.Date;
 
-import com.apicatalog.projection.adapter.TypeAdapter;
-import com.apicatalog.projection.adapter.TypeAdapterError;
+import com.apicatalog.projection.type.adapter.TypeAdapter;
+import com.apicatalog.projection.type.adapter.TypeAdapterError;
 
 public class InstantAdapter implements TypeAdapter<Instant> {
 

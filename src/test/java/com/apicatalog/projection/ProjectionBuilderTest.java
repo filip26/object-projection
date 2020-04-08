@@ -5,7 +5,6 @@ import java.net.URI;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.builder.api.ProjectionBuilder;
 import com.apicatalog.projection.converter.std.Prefix;
 import com.apicatalog.projection.converter.std.Suffix;
@@ -19,6 +18,7 @@ import com.apicatalog.projection.projections.Object2To;
 import com.apicatalog.projection.projections.SimpleObjectTo;
 import com.apicatalog.projection.projections.UriTo;
 import com.apicatalog.projection.source.SourceObject;
+import com.apicatalog.projection.type.adapter.TypeAdapters;
 
 public class ProjectionBuilderTest {
 

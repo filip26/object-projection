@@ -1,4 +1,4 @@
-package com.apicatalog.projection.property.target;
+package com.apicatalog.projection.adapter;
 
 import java.util.Optional;
 
@@ -13,15 +13,15 @@ import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.objects.ObjectType;
 
-public class TargetProjectionConverter implements TargetAdapter {
+public class SingleProjectionAdapter implements ProjectionAdapter {
 
-	final Logger logger = LoggerFactory.getLogger(TargetProjectionConverter.class);
+	final Logger logger = LoggerFactory.getLogger(SingleProjectionAdapter.class);
 
 	final ProjectionRegistry factory;
 	
 	final ObjectType targetType;
 		
-	public TargetProjectionConverter(ProjectionRegistry factory, ObjectType targetType) {
+	public SingleProjectionAdapter(ProjectionRegistry factory, ObjectType targetType) {
 		this.factory = factory;
 		this.targetType = targetType;
 	}

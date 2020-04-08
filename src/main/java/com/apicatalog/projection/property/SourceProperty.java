@@ -7,13 +7,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.adapter.ProjectionAdapter;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.source.Source;
-import com.apicatalog.projection.property.target.TargetAdapter;
 
 public class SourceProperty implements ProjectionProperty {
 
@@ -21,7 +21,7 @@ public class SourceProperty implements ProjectionProperty {
 
 	Source source;
 	
-	TargetAdapter targetAdapter;
+	ProjectionAdapter targetAdapter;
 	
 	Getter targetGetter;
 	Setter targetSetter;
@@ -79,7 +79,7 @@ public class SourceProperty implements ProjectionProperty {
 		}
 	}
 	
-	public void setTargetAdapter(TargetAdapter targetAdapter) {
+	public void setTargetAdapter(ProjectionAdapter targetAdapter) {
 		this.targetAdapter = targetAdapter;
 	}
 	

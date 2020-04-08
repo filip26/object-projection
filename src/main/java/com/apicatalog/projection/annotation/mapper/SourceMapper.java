@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.annotation.Conversion;
 import com.apicatalog.projection.annotation.Reduction;
@@ -37,6 +36,7 @@ import com.apicatalog.projection.property.source.ArraySource;
 import com.apicatalog.projection.property.source.SingleSource;
 import com.apicatalog.projection.reducer.ReducerError;
 import com.apicatalog.projection.reducer.ReducerMapping;
+import com.apicatalog.projection.type.adapter.TypeAdapters;
 
 class SourceMapper {
 

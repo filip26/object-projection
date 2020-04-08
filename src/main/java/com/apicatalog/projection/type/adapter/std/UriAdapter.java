@@ -1,9 +1,9 @@
-package com.apicatalog.projection.adapter.std;
+package com.apicatalog.projection.type.adapter.std;
 
 import java.net.URI;
 
-import com.apicatalog.projection.adapter.TypeAdapter;
-import com.apicatalog.projection.adapter.TypeAdapterError;
+import com.apicatalog.projection.type.adapter.TypeAdapter;
+import com.apicatalog.projection.type.adapter.TypeAdapterError;
 
 public class UriAdapter implements TypeAdapter<URI> {
 

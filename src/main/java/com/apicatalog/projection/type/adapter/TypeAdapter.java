@@ -1,4 +1,4 @@
-package com.apicatalog.projection.adapter;
+package com.apicatalog.projection.type.adapter;
 
 public interface TypeAdapter<S> {
 

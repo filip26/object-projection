@@ -1,23 +1,23 @@
-package com.apicatalog.projection.adapter.std;
+package com.apicatalog.projection.type.adapter.std;
 
-import com.apicatalog.projection.adapter.TypeAdapter;
-import com.apicatalog.projection.adapter.TypeAdapterError;
+import com.apicatalog.projection.type.adapter.TypeAdapter;
+import com.apicatalog.projection.type.adapter.TypeAdapterError;
 
-public class FloatAdapter implements TypeAdapter<Double> {
+public class DoubleAdapter implements TypeAdapter<Float> {
 
 	@Override
-	public Class<Double> consumes() {
-		return Double.class;
+	public Class<Float> consumes() {
+		return Float.class;
 	}
 
 	@Override
 	public Class<?>[] produces() {
-		return new Class[] {String.class, Integer.class, Short.class, Byte.class, Long.class, Float.class, Boolean.class};
+		return new Class[] {String.class, Integer.class, Short.class, Byte.class, Long.class, Double.class, Boolean.class};
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T convert(Class<? extends T> targetClass, Double object) throws TypeAdapterError {
+	public <T> T convert(Class<? extends T> targetClass, Float object) throws TypeAdapterError {
 		
 		if (targetClass.isAssignableFrom(String.class)) {
 			return (T)object.toString();
@@ -34,8 +34,8 @@ public class FloatAdapter implements TypeAdapter<Double> {
 		if (targetClass.isAssignableFrom(Long.class)) {
 			return (T)Long.valueOf(object.longValue());
 		}		
-		if (targetClass.isAssignableFrom(Float.class)) {
-			return (T)Float.valueOf(object.floatValue());
+		if (targetClass.isAssignableFrom(Double.class)) {
+			return (T)Double.valueOf(object.doubleValue());
 		}
 		if (targetClass.isAssignableFrom(Boolean.class)) {
 			return (T)(object == 1 ? Boolean.TRUE : Boolean.FALSE);
