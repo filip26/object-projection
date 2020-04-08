@@ -3,7 +3,6 @@ package com.apicatalog.projection.annotation.mapper;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +63,8 @@ public class ProjectionMapper {
 					continue;
 			}
 			
-			Optional.ofNullable(propertyMapper.getPropertyMapping(field, defaultSourceClass))
+			propertyMapper
+					.getPropertyMapping(field, defaultSourceClass)
 					.ifPresent(
 							projectionProperty -> {
 									logger.trace("Found {}.{} : {}", targetProjectionClass.getSimpleName(), field.getName(), field.getType().getSimpleName());

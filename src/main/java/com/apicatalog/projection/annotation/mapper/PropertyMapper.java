@@ -51,29 +51,29 @@ public class PropertyMapper {
 		this.sourceMapper = new SourceMapper(factory, typeAdapters);
 	}
 	
-	ProjectionProperty getPropertyMapping(final Field field, final Class<?> defaultSourceClass) {
+	Optional<ProjectionProperty> getPropertyMapping(final Field field, final Class<?> defaultSourceClass) {
 
 		final Optional<ProjectionProperty> mapping;
 		
 		// single source? 
 		if (field.isAnnotationPresent(Source.class)) {
-			mapping = Optional.ofNullable(sourceMapper.getSourcePropertyMapping(field, defaultSourceClass));
+			mapping = sourceMapper.getSourcePropertyMapping(field, defaultSourceClass);
 
 		// multiple sources?
 		} else if (field.isAnnotationPresent(Sources.class) ) {
-			mapping = Optional.ofNullable(sourceMapper.getSourcesPropertyMapping(field, defaultSourceClass));
+			mapping = sourceMapper.getSourcesPropertyMapping(field, defaultSourceClass);
 
 		// provided -> global source
 		} else if (field.isAnnotationPresent(Provided.class)) {
-			mapping = Optional.ofNullable(getProvidedMapping(field));
+			mapping = getProvidedMapping(field);
 			
 		// constant value
 		} else if (field.isAnnotationPresent(Constant.class)) {
-			mapping = Optional.ofNullable(getConstantMapping(field));
+			mapping = getConstantMapping(field);
 
 		// direct mapping or a reference
 		} else {
-			mapping = Optional.ofNullable(getDefaultPropertyMapping(field, defaultSourceClass));
+			mapping = getDefaultPropertyMapping(field, defaultSourceClass);
 		}
 		
 		if (field.isAnnotationPresent(Visibility.class)) {
@@ -84,14 +84,14 @@ public class PropertyMapper {
 							));
 		}
 		
-		return mapping.orElse(null);
+		return mapping;
 	}	
 
-	ProjectionProperty getDefaultPropertyMapping(final Field field, final Class<?> defaultSourceClass) {
+	Optional<ProjectionProperty> getDefaultPropertyMapping(final Field field, final Class<?> defaultSourceClass) {
 
 		if (defaultSourceClass == null) {
 			logger.warn("Source class is missing. Property {} is ignored.", field.getName());
-			return null;				
+			return Optional.empty();				
 		}
 
 		final SingleSourceBuilder sourceBuilder = SingleSourceBuilder.newInstance()
@@ -102,7 +102,7 @@ public class PropertyMapper {
 		
 		if (source == null) {
 			logger.warn("Source is missing. Property {} is ignored.", field.getName());
-			return null;
+			return Optional.empty();
 		}
 		
 		final SourceProperty property = new SourceProperty();
@@ -122,35 +122,35 @@ public class PropertyMapper {
 					.build(registry, typeAdapters)
 					);
 
-		return property;
+		return Optional.of(property);
 	}
 
-	ProjectionProperty getProvidedMapping(Field field) {
+	Optional<ProjectionProperty> getProvidedMapping(Field field) {
 		
 		final Provided provided = field.getAnnotation(Provided.class);
 			
 		final Getter targetGetter = FieldGetter.from(field, getTypeOf(field));
 		final Setter targetSetter = FieldSetter.from(field, getTypeOf(field));
 
-		return ProvidedPropertyBuilder
+		return Optional.ofNullable(ProvidedPropertyBuilder
 					.newInstance()
 					.mode(provided.mode())
 					.optional(provided.optional())
-					.qualifier(provided.qualifier())
+					.qualifier(provided.name())
 					.targetGetter(targetGetter)
 					.targetSetter(targetSetter)
-					.build(registry, typeAdapters);
+					.build(registry, typeAdapters));
 	}				
 
-	ProjectionProperty getConstantMapping(Field field) {
+	Optional<ProjectionProperty> getConstantMapping(Field field) {
 		
 		final Constant constant = field.getAnnotation(Constant.class);
 		
-		return ConstantPropertyBuilder
+		return Optional.ofNullable(ConstantPropertyBuilder
 					.newInstance()
 					.constants(constant.value())
 					.targetSetter(FieldSetter.from(field, getTypeOf(field)))
-					.build(registry, typeAdapters);
+					.build(registry, typeAdapters));
 	}
 	
 	protected static final ObjectType getTypeOf(Field field) {

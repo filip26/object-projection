@@ -12,6 +12,7 @@ import com.apicatalog.projection.reducer.Reducer;
 public @interface Reduction {
 
 	Class<? extends Reducer<?, ?>> type();
+	
 	String[] value() default {};
 
 }

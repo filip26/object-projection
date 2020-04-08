@@ -9,7 +9,7 @@ import com.apicatalog.projection.objects.BasicTypes;
 @Projection(BasicTypes.class)
 public class ProvidedRefCollectionTo {
 
-	@Provided(qualifier = "items")
+	@Provided(name = "items")
 	public Collection<SimpleObjectTo> items;
 	
 	

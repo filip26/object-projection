@@ -8,10 +8,10 @@ import com.apicatalog.projection.annotation.Provided;
 @Projection
 public class StringCollectionTo {
 
-	@Provided(qualifier = "href")
+	@Provided(name = "href")
 	public String href;
 	
-	@Provided(qualifier = "items")
+	@Provided(name = "items")
 	public Collection<String> items;
 
 	@Override

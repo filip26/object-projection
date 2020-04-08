@@ -13,6 +13,6 @@ public @interface Provided {
 	
 	AccessMode mode() default AccessMode.READ_WRITE;
 	
-	String qualifier() default "";
+	String name() default "";
 
 }

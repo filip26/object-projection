@@ -51,7 +51,7 @@ class SourceMapper {
 		this.typeAdapters = typeAdapters;
 	}
 		
-	ProjectionProperty getSourcesPropertyMapping(final Field field, final Class<?> defaultSourceClass) {
+	Optional<ProjectionProperty> getSourcesPropertyMapping(final Field field, final Class<?> defaultSourceClass) {
 		
 		final Sources sourcesAnnotation = field.getAnnotation(Sources.class);
 
@@ -59,7 +59,7 @@ class SourceMapper {
 
 		if (arraySource == null) {
 			logger.warn(SOURCE_IS_MISSING, field.getName());
-			return null;				
+			return Optional.empty();
 		}
 		
 		ObjectType targetType = PropertyMapper.getTypeOf(field);
@@ -68,15 +68,15 @@ class SourceMapper {
 		final Getter targetGetter = FieldGetter.from(field, targetType);
 		final Setter targetSetter = FieldSetter.from(field, targetType);
 
-		return SourcePropertyBuilder.newInstance()
+		return Optional.ofNullable(SourcePropertyBuilder.newInstance()
 				.source(arraySource)
 				.mode(AccessMode.READ_WRITE)
 				.targetGetter(targetGetter)
 				.targetSetter(targetSetter)
-				.build(factory, typeAdapters);
+				.build(factory, typeAdapters));
 	}
 	
-	ProjectionProperty getSourcePropertyMapping(final Field field, final Class<?> defaultSourceClass) {
+	Optional<ProjectionProperty> getSourcePropertyMapping(final Field field, final Class<?> defaultSourceClass) {
 		
 		final Source sourceAnnotation = field.getAnnotation(Source.class);
 		
@@ -89,7 +89,7 @@ class SourceMapper {
 		
 		if (source == null) {
 			logger.warn(SOURCE_IS_MISSING, field.getName());
-			return null;
+			return Optional.empty();
 		}
 		
 		ObjectType targetType = PropertyMapper.getTypeOf(field);
@@ -98,12 +98,12 @@ class SourceMapper {
 		final Getter targetGetter = FieldGetter.from(field, targetType);
 		final Setter targetSetter = FieldSetter.from(field, targetType);
 
-		return SourcePropertyBuilder.newInstance()
+		return Optional.ofNullable(SourcePropertyBuilder.newInstance()
 					.source(source)
 					.mode(sourceAnnotation.mode())
 					.targetGetter(targetGetter)
 					.targetSetter(targetSetter)
-					.build(factory, typeAdapters);
+					.build(factory, typeAdapters));
 	}
 
 	SingleSource getSingleSource(Source sourceAnnotation, Field field, Class<?> defaultSourceClass) {
@@ -131,7 +131,7 @@ class SourceMapper {
 		SingleSourceBuilder sourceBuilder = SingleSourceBuilder.newInstance()
 				.objectClass(sourceObjectClass)
 				.optional(sourceAnnotation.optional())
-				.qualifier(sourceAnnotation.qualifier())
+				.qualifier(sourceAnnotation.name())
 				.mode(sourceAnnotation.mode())
 				;
 
@@ -201,6 +201,9 @@ class SourceMapper {
 		if (conversions.length == 0) {
 			return new ConverterMapping[0];
 		}
+		
+		var x = 10;
+		System.out.println(x);
 
 		final List<ConverterMapping> converters = new ArrayList<>();
 		
