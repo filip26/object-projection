@@ -2,7 +2,6 @@ package com.apicatalog.projection.builder.api;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
@@ -40,7 +39,8 @@ public class ProjectionBuilder<P> {
 		final List<ProjectionProperty> properties = new ArrayList<>(); 
 		
 		for (final MappedPropertyBuilderApi<P> propertyBuilder : propertyBuilders) {
-			Optional.ofNullable(propertyBuilder.buildProperty(factory, typeAdapters))
+			propertyBuilder
+					.buildProperty(factory, typeAdapters)
 					.ifPresent(properties::add);
 		}
 		

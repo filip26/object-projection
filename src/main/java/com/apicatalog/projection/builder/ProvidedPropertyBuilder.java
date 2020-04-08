@@ -1,5 +1,7 @@
 package com.apicatalog.projection.builder;
 
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,10 +38,10 @@ public class ProvidedPropertyBuilder {
 		return new ProvidedPropertyBuilder();
 	}
 	
-	public ProjectionProperty build(ProjectionRegistry factory, TypeAdapters typeAdapters) {
+	public Optional<ProjectionProperty> build(ProjectionRegistry factory, TypeAdapters typeAdapters) {
 
 		if (targetSetter == null && targetGetter == null) {
-			return null;
+			return Optional.empty();
 		}
 		
 		final ObjectType targetType = targetGetter != null ? targetGetter.getType() : targetSetter.getType(); 
@@ -78,10 +80,10 @@ public class ProvidedPropertyBuilder {
 						.build(factory, typeAdapters)
 						);
 
-		return property;
+		return Optional.of(property);
 	}
 	
-	ProjectionProperty buildReference(ProjectionRegistry factory) {
+	Optional<ProjectionProperty> buildReference(ProjectionRegistry factory) {
 		
 		final ProvidedProjectionProperty property = new ProvidedProjectionProperty(factory);
 
@@ -106,7 +108,7 @@ public class ProvidedPropertyBuilder {
 
 		property.setOptional(optional);
 
-		return property;
+		return Optional.of(property);
 	}
 	
 	public ProvidedPropertyBuilder mode(AccessMode mode) {

@@ -1,5 +1,7 @@
 package com.apicatalog.projection.builder;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,15 +34,15 @@ public class SourcePropertyBuilder {
 		return new SourcePropertyBuilder();
 	}
 			
-	public SourceProperty build(ProjectionRegistry factory, TypeAdapters typeAdapters) {
+	public Optional<SourceProperty> build(ProjectionRegistry factory, TypeAdapters typeAdapters) {
 
 		if (targetGetter == null && targetSetter == null) {
-			return null;
+			return Optional.empty();
 		}
 		
 		if (source == null) {
 			logger.warn(SOURCE_IS_MISSING, targetSetter != null ? targetSetter.getName() : targetGetter.getName());
-			return null;
+			return Optional.empty();
 		}
 
 		final SourceProperty property = new SourceProperty();
@@ -70,7 +72,7 @@ public class SourcePropertyBuilder {
 					.build(factory, typeAdapters)
 					);
 
-		return property;		
+		return Optional.of(property);		
 	}
 
 	public SourcePropertyBuilder source(Source source) {

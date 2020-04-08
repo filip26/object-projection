@@ -84,7 +84,6 @@ public final class Projection<P> {
 		return extract(projection, null, objectType);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public <S> S extract(P projection, String qualifier, Class<S> objectType) throws ProjectionError {
 
 		final ExtractionContext context = ExtractionContext.newInstance()
@@ -92,7 +91,7 @@ public final class Projection<P> {
 		
 		extract(projection, context);
 
-		return (S) context.get(qualifier, objectType, null).orElse(null);
+		return (S) context.get(qualifier, objectType, null).map(objectType::cast).orElse(null);
 	}
 
 	public <I> Collection<I> extractCollection(P projection, Class<I> componentType) throws ProjectionError {

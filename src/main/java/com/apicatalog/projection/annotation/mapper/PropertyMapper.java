@@ -53,7 +53,7 @@ public class PropertyMapper {
 	
 	Optional<ProjectionProperty> getPropertyMapping(final Field field, final Class<?> defaultSourceClass) {
 
-		final Optional<ProjectionProperty> mapping;
+		final Optional<? extends ProjectionProperty> mapping;
 		
 		// single source? 
 		if (field.isAnnotationPresent(Source.class)) {
@@ -84,8 +84,8 @@ public class PropertyMapper {
 							));
 		}
 		
-		return mapping;
-	}	
+		return mapping.map(ProjectionProperty.class::cast);
+	}
 
 	Optional<ProjectionProperty> getDefaultPropertyMapping(final Field field, final Class<?> defaultSourceClass) {
 
@@ -98,16 +98,16 @@ public class PropertyMapper {
 				.objectClass(defaultSourceClass)
 				.optional(true);
 		
-		final SingleSource source = sourceMapper.getSingleSource(defaultSourceClass, field.getName(), sourceBuilder);
+		final Optional<SingleSource> source = sourceMapper.getSingleSource(defaultSourceClass, field.getName(), sourceBuilder);
 		
-		if (source == null) {
+		if (source.isEmpty()) {
 			logger.warn("Source is missing. Property {} is ignored.", field.getName());
 			return Optional.empty();
 		}
 		
 		final SourceProperty property = new SourceProperty();
 		
-		property.setSource(source);
+		property.setSource(source.get());
 		
 		final Getter targetGetter = FieldGetter.from(field, getTypeOf(field));
 		final Setter targetSetter = FieldSetter.from(field, getTypeOf(field));
@@ -117,7 +117,7 @@ public class PropertyMapper {
 		
 		property.setTargetAdapter(
 				TargetBuilder.newInstance()
-					.source(source.getTargetType())
+					.source(source.get().getTargetType())
 					.target(targetSetter.getType())
 					.build(registry, typeAdapters)
 					);
@@ -132,25 +132,25 @@ public class PropertyMapper {
 		final Getter targetGetter = FieldGetter.from(field, getTypeOf(field));
 		final Setter targetSetter = FieldSetter.from(field, getTypeOf(field));
 
-		return Optional.ofNullable(ProvidedPropertyBuilder
+		return ProvidedPropertyBuilder
 					.newInstance()
 					.mode(provided.mode())
 					.optional(provided.optional())
 					.qualifier(provided.name())
 					.targetGetter(targetGetter)
 					.targetSetter(targetSetter)
-					.build(registry, typeAdapters));
+					.build(registry, typeAdapters);
 	}				
 
 	Optional<ProjectionProperty> getConstantMapping(Field field) {
 		
 		final Constant constant = field.getAnnotation(Constant.class);
 		
-		return Optional.ofNullable(ConstantPropertyBuilder
+		return ConstantPropertyBuilder
 					.newInstance()
 					.constants(constant.value())
 					.targetSetter(FieldSetter.from(field, getTypeOf(field)))
-					.build(registry, typeAdapters));
+					.build(registry, typeAdapters);
 	}
 	
 	protected static final ObjectType getTypeOf(Field field) {

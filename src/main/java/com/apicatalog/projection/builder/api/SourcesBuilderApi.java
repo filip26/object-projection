@@ -3,6 +3,7 @@ package com.apicatalog.projection.builder.api;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -76,7 +77,7 @@ public class SourcesBuilderApi<P> {
 		return this;
 	}
 
-	protected Source buildSource(TypeAdapters typeAdapters, SourceHolder sourceHolder) throws ProjectionError {
+	protected Optional<Source> buildSource(TypeAdapters typeAdapters, SourceHolder sourceHolder) throws ProjectionError {
 
 		List<ConverterMapping> converters = new ArrayList<>(sourceHolder.conversions.size());
 				
@@ -99,14 +100,15 @@ public class SourcesBuilderApi<P> {
 							.getter(sourceGetter)
 							.setter(sourceSetter)
 							.converters(converters.toArray(new ConverterMapping[0]))
-							.build(typeAdapters)
+							.build(typeAdapters).map(Source.class::cast)
 							;	
 	}
 
 	protected Source[] buildSources(TypeAdapters typeAdapters) throws ProjectionError {
 		final ArrayList<Source> sources = new ArrayList<>(sourceHolders.size());
+		
 		for (SourceHolder holder : sourceHolders) {
-			sources.add(buildSource(typeAdapters, holder));
+			buildSource(typeAdapters, holder).ifPresent(sources::add);
 		}
 		return sources.toArray(new Source[0]);
 	}

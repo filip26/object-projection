@@ -1,5 +1,6 @@
 package com.apicatalog.projection.builder;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -43,12 +44,12 @@ public class SingleSourceBuilder {
 		return new SingleSourceBuilder();
 	}
 	
-	public SingleSource build(TypeAdapters typeAdapters) {
+	public Optional<SingleSource> build(TypeAdapters typeAdapters) {
 
 		// no setter nor getter? 
 		if (sourceGetter == null && sourceSetter == null) {
 			// nothing to do with this
-			return null;
+			return Optional.empty();
 		}
 
 		final SingleSource source = new SingleSource(typeAdapters);
@@ -90,7 +91,7 @@ public class SingleSourceBuilder {
 					.ifPresent(m -> source.setTargetType(m.getSourceType()));
 
 		}
-		return source;
+		return Optional.of(source);
 	}
 	
 	public SingleSourceBuilder mode(AccessMode mode) {

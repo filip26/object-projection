@@ -2,6 +2,7 @@ package com.apicatalog.projection.builder.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
@@ -91,7 +92,7 @@ public class SourcePropertyBuilderApi<P> {
 		return this;
 	}
 
-	protected Source buildSource(TypeAdapters typeAdapters, SingleSourceBuilder sourceBuilder) throws ProjectionError {
+	protected Optional<Source> buildSource(TypeAdapters typeAdapters, SingleSourceBuilder sourceBuilder) throws ProjectionError {
 
 		ConverterMapping[] converters = new ConverterMapping[conversionBuilder.size()];
 		
@@ -113,13 +114,20 @@ public class SourcePropertyBuilderApi<P> {
 							.getter(sourceGetter)
 							.setter(sourceSetter)
 							.converters(converters)
-							.build(typeAdapters)
+							.build(typeAdapters).map(Source.class::cast)
 							;		
 	}	
 
-	protected ProjectionProperty buildProperty(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {				
+	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
+		
+		final Optional<Source> source = buildSource(typeAdapters, sourceBuilder);
+		
+		if (source.isEmpty()) {
+			return Optional.empty();
+		}
+		
 		return sourcePropertyBuilder
-					.source(buildSource(typeAdapters, sourceBuilder))
-					.build(factory, typeAdapters);
+					.source(source.get())
+					.build(factory, typeAdapters).map(ProjectionProperty.class::cast);
 	}
 }

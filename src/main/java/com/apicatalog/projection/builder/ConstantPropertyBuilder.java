@@ -1,5 +1,7 @@
 package com.apicatalog.projection.builder;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +27,7 @@ public class ConstantPropertyBuilder {
 		return new ConstantPropertyBuilder();
 	}
 	
-	public ProjectionProperty build(ProjectionRegistry registry, TypeAdapters typeAdapters) {
+	public Optional<ProjectionProperty> build(ProjectionRegistry registry, TypeAdapters typeAdapters) {
 		
 		final ConstantProperty property = new ConstantProperty();
 		
@@ -42,7 +44,7 @@ public class ConstantPropertyBuilder {
 		// set target setter
 		property.setTargetSetter(targetSetter);
 		
-		return property;
+		return Optional.of(property);
 	}	
 	
 	public ConstantPropertyBuilder targetSetter(Setter targetSetter) {

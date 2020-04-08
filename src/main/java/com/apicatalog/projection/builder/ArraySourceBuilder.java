@@ -1,5 +1,6 @@
 package com.apicatalog.projection.builder;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -31,12 +32,12 @@ public class ArraySourceBuilder {
 		return new ArraySourceBuilder();
 	}
 	
-	public ArraySource build(TypeAdapters typeAdapters) {
+	public Optional<ArraySource> build(TypeAdapters typeAdapters) {
 		
 		final ArraySource source = new ArraySource(typeAdapters);
 		
 		if (sources.length == 0) {
-			return null;
+			return Optional.empty();
 		}
 
 		source.setSources(sources);
@@ -60,7 +61,7 @@ public class ArraySourceBuilder {
 					.ifPresent(m -> source.setTargetType(m.getSourceType()));
 		}
 		
-		return source;
+		return Optional.of(source);
 	}	
 	
 	public ArraySourceBuilder optional(boolean optional) {
