@@ -1,6 +1,7 @@
 package com.apicatalog.projection.builder;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -21,7 +22,7 @@ public class ArraySourceBuilder {
 	
 	boolean optional;
 	
-	ConverterMapping[] converters;
+	Collection<ConverterMapping> converters;
 	
 	protected ArraySourceBuilder() {
 		this.optional = false;
@@ -41,8 +42,11 @@ public class ArraySourceBuilder {
 
 		source.setSources(sources);
 
+		//TODO add sources -> first converter conversion
+		//TODO add implicit conversions into the chain
+		
 		// set conversions to apply
-		source.setConversions(converters);
+		source.setConversions(converters != null ? converters.toArray(new ConverterMapping[0]) : null);
 
 		// set optional 
 		source.setOptional(optional);
@@ -74,7 +78,7 @@ public class ArraySourceBuilder {
 		return this;
 	}
 
-	public ArraySourceBuilder converters(ConverterMapping[] converters) {
+	public ArraySourceBuilder converters(Collection<ConverterMapping> converters) {
 		this.converters = converters;
 		return this;
 	}

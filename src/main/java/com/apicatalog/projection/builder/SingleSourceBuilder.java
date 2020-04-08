@@ -1,5 +1,6 @@
 package com.apicatalog.projection.builder;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -28,7 +29,7 @@ public class SingleSourceBuilder {
 	
 	AccessMode mode;
 	
-	ConverterMapping[] converters;
+	Collection<ConverterMapping> converters;
 	
 	Class<?> sourceObjectClass;
 
@@ -72,8 +73,10 @@ public class SingleSourceBuilder {
 			break;
 		}			
 
+		//TODO add implicit conversions into the chain
+		
 		// set conversions to apply
-		source.setConversions(converters);
+		source.setConversions(converters != null ? converters.toArray(new ConverterMapping[0]) : null);
 
 		// set optional 
 		source.setOptional(optional);
@@ -109,7 +112,7 @@ public class SingleSourceBuilder {
 		return this;
 	}
 	
-	public SingleSourceBuilder converters(ConverterMapping[] converters) {
+	public SingleSourceBuilder converters(Collection<ConverterMapping> converters) {
 		this.converters = converters;
 		return this;
 	}

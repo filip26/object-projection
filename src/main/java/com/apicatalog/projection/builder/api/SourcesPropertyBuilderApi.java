@@ -1,6 +1,7 @@
 package com.apicatalog.projection.builder.api;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -97,12 +98,11 @@ public class SourcesPropertyBuilderApi<P> {
 			return Optional.empty();
 		}
 		
-		final ConverterMapping[] converters = new ConverterMapping[conversionBuilder.size()];
+		final Collection<ConverterMapping> converters = new ArrayList<>(conversionBuilder.size()*2);
 		
 		try {
-			int i = 0;
 			for (ConversionBuilder cb : conversionBuilder) {
-				converters[i++] = cb.build();
+				converters.add(cb.build());
 			}
 						
 		} catch (ConverterError e) {

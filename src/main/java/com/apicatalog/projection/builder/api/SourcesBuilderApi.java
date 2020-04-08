@@ -100,7 +100,7 @@ public class SourcesBuilderApi<P> {
 							.objectClass(sourceHolder.objectClass)
 							.getter(sourceGetter)
 							.setter(sourceSetter)
-							.converters(converters.toArray(new ConverterMapping[0]))
+							.converters(converters)
 							.build(typeAdapters).map(Source.class::cast)
 							;	
 	}

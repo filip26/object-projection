@@ -3,6 +3,7 @@ package com.apicatalog.projection.annotation.mapper;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -195,14 +196,14 @@ class SourceMapper {
 		}				
 	}	
 	
-	ConverterMapping[] getConverterMapping(Conversion[] conversions) throws ConverterError, ProjectionError {
+	Collection<ConverterMapping> getConverterMapping(Conversion[] conversions) throws ConverterError, ProjectionError {
 
-		if (conversions.length == 0) {
-			return new ConverterMapping[0];
-		}
-		
 		final List<ConverterMapping> converters = new ArrayList<>();
 		
+		if (conversions.length == 0) {
+			return converters;
+		}
+
 		for (final Conversion conversion : conversions) {
 			converters.add(
 					ConversionBuilder
@@ -213,6 +214,6 @@ class SourceMapper {
 							);
 		}
 
-		return converters.isEmpty() ? null : converters.toArray(new ConverterMapping[0]);
+		return converters.isEmpty() ? null : converters;
 	}	
 }
