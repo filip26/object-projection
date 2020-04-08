@@ -11,7 +11,7 @@ public final class SourceType {
 	final Class<?> componentType;
 	final String name;
 	
-	SourceType(String name, Class<?> type, Class<?> componentType) {
+	protected SourceType(String name, Class<?> type, Class<?> componentType) {
 		this.type = type;
 		this.name = name;
 		this.componentType = componentType;
@@ -59,8 +59,12 @@ public final class SourceType {
 		return isAssignableFrom(sourceType.getName(), sourceType.getType(), sourceType.getComponentType());
 	}
 
-	public boolean isAssignableFrom(String qualifier, Class<?> objectType, Class<?> componentType) {
-		return qualifierMatch(qualifier) && objectType.isAssignableFrom(type);
+	public boolean isAssignableFrom(String qualifier, Class<?> objectType, Class<?> objectComponentType) {
+		return qualifierMatch(qualifier) 
+					&& objectType.isAssignableFrom(type)
+					&& ((objectComponentType == null)
+							|| (objectComponentType.isAssignableFrom(componentType))
+							);
 	}
 
 	public boolean isInstance(String qualifier, Object object) {

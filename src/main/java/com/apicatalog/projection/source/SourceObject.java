@@ -7,7 +7,7 @@ public final class SourceObject {
 	final Object object;
 	final String name;
 	
-	SourceObject(String qualifier, Object object) {
+	protected SourceObject(String qualifier, Object object) {
 		this.object = object;
 		this.name = qualifier;
 	}
@@ -25,7 +25,12 @@ public final class SourceObject {
 	}
 
 	@Override
-	public String toString() {
-		return "SourceObject [object=" + Optional.ofNullable(object).map(Object::getClass).map(Class::getSimpleName).orElse("n/a") + ", name=" + name + "]";
+	public String toString() {	
+		return "SourceObject [object=" 
+					+ Optional.ofNullable(object).map(Object::getClass).map(Class::getSimpleName).orElse("n/a") 
+					+ ", name=" 
+					+ Optional.ofNullable(name).orElse("n/a") 
+					+ "]"
+					;
 	}
 }

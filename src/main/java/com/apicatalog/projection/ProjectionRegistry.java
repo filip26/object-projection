@@ -40,20 +40,19 @@ public class ProjectionRegistry {
 	@SuppressWarnings("unchecked")
 	public <S> S extract(Object projection, String qualifier, Class<S> objectType) throws ProjectionError {
 		return Optional.ofNullable(get((Class<Object>)projection.getClass()))
-				.orElseThrow(() -> unknownProjection(projection.getClass()))
-				.extract(projection, qualifier, objectType);
+					.orElseThrow(() -> unknownProjection(projection.getClass()))
+					.extract(projection, qualifier, objectType);
 	}	
 
 	public <I> Collection<I> extractCollection(Object projection, Class<I> componentType) throws ProjectionError {
 		return extractCollection(projection, null, componentType);
 	}
 	
-	
 	@SuppressWarnings("unchecked")
 	public <I> Collection<I> extractCollection(Object projection, String qualifier, Class<I> componentType) throws ProjectionError {
-	return Optional.ofNullable(get((Class<Object>)projection.getClass()))
-			.orElseThrow(() -> unknownProjection(projection.getClass()))
-			.extractCollection(projection, qualifier, componentType);
+		return Optional.ofNullable(get((Class<Object>)projection.getClass()))
+					.orElseThrow(() -> unknownProjection(projection.getClass()))
+					.extractCollection(projection, qualifier, componentType);
 	}	
 	
 	public ProjectionRegistry register(final Projection<?> projection) {

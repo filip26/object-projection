@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
-import com.apicatalog.projection.objects.ProjectionQueue;
+import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.source.Source;
@@ -29,7 +29,7 @@ public class SourceProperty implements ProjectionProperty {
 	Set<Integer> visibleLevels;
 	
 	@Override
-	public void forward(ProjectionQueue queue, CompositionContext context) throws ProjectionError {
+	public void forward(ProjectionStack queue, CompositionContext context) throws ProjectionError {
 
 		if (!source.isReadable() || targetSetter == null) {
 			return;
@@ -56,7 +56,7 @@ public class SourceProperty implements ProjectionProperty {
 	}
 
 	@Override
-	public void backward(ProjectionQueue queue, ExtractionContext context) throws ProjectionError {
+	public void backward(ProjectionStack queue, ExtractionContext context) throws ProjectionError {
 
 		if (!source.isWritable() || targetGetter == null || !source.isAnyTypeOf(context.accepted())) {
 			return;

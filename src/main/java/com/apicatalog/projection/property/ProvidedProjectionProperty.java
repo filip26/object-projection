@@ -11,7 +11,7 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
-import com.apicatalog.projection.objects.ProjectionQueue;
+import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
 
@@ -35,7 +35,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 	}
 	
 	@Override
-	public void forward(ProjectionQueue queue, CompositionContext context) throws ProjectionError {
+	public void forward(ProjectionStack queue, CompositionContext context) throws ProjectionError {
 
 		if (targetSetter == null) {
 			return;
@@ -61,7 +61,7 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 	}
 
 	@Override
-	public void backward(ProjectionQueue queue, ExtractionContext context) throws ProjectionError {
+	public void backward(ProjectionStack queue, ExtractionContext context) throws ProjectionError {
 
 		if (targetGetter == null) {
 			return;

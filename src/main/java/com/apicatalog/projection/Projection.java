@@ -7,9 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.context.ExtractionContext;
+import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.objects.ObjectUtils;
-import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.property.ProjectionProperty;
 
 public final class Projection<P> {
@@ -37,39 +37,41 @@ public final class Projection<P> {
 	 * @throws ProjectionError
 	 */
 	public P compose(Object... objects) throws ProjectionError {
-		return compose(ProjectionQueue.create(), CompositionContext.of(objects));
+		return compose(ProjectionStack.create(), CompositionContext.of(objects));
 	}
 
-	public P compose(ProjectionQueue queue, CompositionContext context) throws ProjectionError {
+	public P compose(ProjectionStack stack, CompositionContext context) throws ProjectionError {
 		
-		logger.debug("Compose {} of {} object(s), depth = {}", projectionClass.getSimpleName(), context.size(), queue.length());
+		if (stack == null || context == null) {
+			throw new IllegalArgumentException();
+		}
 
+		if (logger.isDebugEnabled()) {
+			logger.debug("Compose {} of {} object(s), depth = {}", projectionClass.getSimpleName(), context.size(), stack.length());
+		}
 		if (logger.isTraceEnabled()) {
 			context.stream().forEach(v -> logger.trace("  {}", v));
 		}
 
 		// check for cycles
-		if (queue.contains(projectionClass)) {
+		if (stack.contains(projectionClass)) {
 			logger.debug("Ignored. Projection {} is in processing already", projectionClass.getSimpleName());
 			return null;
 		}
 		
 		final P projection = ObjectUtils.newInstance(projectionClass);
 		
-		queue.push(projection);
+		stack.push(projection);
 
 		for (int i = 0; i < properties.length; i++) {
 			
 			// limit property visibility
-			if (properties[i].isVisible(queue.length() - 1)) {
-				properties[i].forward(queue, context);				
+			if (properties[i].isVisible(stack.length() - 1)) {
+				properties[i].forward(stack, context);				
 			}
-
 		}
-		
-		final Object ref = queue.pop();
-		
-		if (!ref.equals(projection)) {
+
+		if (!projection.equals(stack.pop())) {
 			throw new IllegalStateException();
 		}
 		
@@ -86,12 +88,18 @@ public final class Projection<P> {
 	
 	public <S> S extract(P projection, String qualifier, Class<S> objectType) throws ProjectionError {
 
-		final ExtractionContext context = ExtractionContext.newInstance()
-												.accept(qualifier, objectType, null);
+		if (projection == null || objectType == null) {
+			throw new IllegalArgumentException();
+		}
+
+		final ExtractionContext context = 
+					ExtractionContext
+							.newInstance()
+							.accept(qualifier, objectType, null);
 		
 		extract(projection, context);
 
-		return (S) context.get(qualifier, objectType, null).map(objectType::cast).orElse(null);
+		return context.get(qualifier, objectType, null).map(objectType::cast).orElse(null);
 	}
 
 	public <I> Collection<I> extractCollection(P projection, Class<I> componentType) throws ProjectionError {
@@ -101,6 +109,10 @@ public final class Projection<P> {
 	@SuppressWarnings("unchecked")
 	public <I> Collection<I> extractCollection(P projection, String qualifier, Class<I> componentType) throws ProjectionError {
 		
+		if (projection == null || componentType == null) {
+			throw new IllegalArgumentException();
+		}
+
 		final ExtractionContext context = ExtractionContext.newInstance()
 											.accept(qualifier, Collection.class, componentType);
 		
@@ -119,15 +131,13 @@ public final class Projection<P> {
 			logger.debug("Extract {} object(s) from {}, {} properties", context.size(), projection.getClass().getSimpleName(),  Optional.ofNullable(properties).orElse(new ProjectionProperty[0]).length);
 		}
 
-		final ProjectionQueue queue = ProjectionQueue.create().push(projection);
+		final ProjectionStack stack = ProjectionStack.create().push(projection);
 		
 		for (int i = 0; i < properties.length; i++) {
-			properties[i].backward(queue, context);
+			properties[i].backward(stack, context);
 		}
 
-		final Object ref = queue.pop();
-		
-		if (!ref.equals(projection)) {
+		if (!projection.equals(stack.pop())) {
 			throw new IllegalStateException();
 		}
 	}

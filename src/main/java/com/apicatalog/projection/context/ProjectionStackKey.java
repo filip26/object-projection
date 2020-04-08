@@ -1,23 +1,23 @@
-package com.apicatalog.projection.objects;
+package com.apicatalog.projection.context;
 
 import java.util.Objects;
 
-final class ProjectionQueueKey {
+final class ProjectionStackKey {
 
 	final Object projection;
 	final Class<?> projectionClass;
 	
-	protected ProjectionQueueKey(Object projection, Class<?> projectionClass) {
+	protected ProjectionStackKey(Object projection, Class<?> projectionClass) {
 		this.projection = projection;
 		this.projectionClass = projectionClass;
 	}
 	
-	public static final ProjectionQueueKey of(Object projection) {
-		return new ProjectionQueueKey(projection, projection.getClass());
+	public static final ProjectionStackKey of(Object projection) {
+		return new ProjectionStackKey(projection, projection.getClass());
 	}
 	
-	protected static final ProjectionQueueKey of(Class<?> clazz) {
-		return new ProjectionQueueKey(null, clazz);
+	protected static final ProjectionStackKey of(Class<?> clazz) {
+		return new ProjectionStackKey(null, clazz);
 	}
 
 	public Object getProjection() {
@@ -40,7 +40,7 @@ final class ProjectionQueueKey {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		ProjectionQueueKey other = (ProjectionQueueKey) obj;
+		ProjectionStackKey other = (ProjectionStackKey) obj;
 		return Objects.equals(projectionClass, other.projectionClass);
 	}
 }
