@@ -34,8 +34,8 @@ public class TargetProjectionConverter implements TargetAdapter {
 		}
 
 		final Projection<?> projection = 
-				Optional.ofNullable(factory.get(targetType.getObjectClass()))
-						.orElseThrow(() -> new ProjectionError("Projection " + targetType.getObjectClass().getCanonicalName() +  " is not present."))
+				Optional.ofNullable(factory.get(targetType.getType()))
+						.orElseThrow(() -> new ProjectionError("Projection " + targetType.getType().getCanonicalName() +  " is not present."))
 						;
 
 		final CompositionContext clonedSources = new CompositionContext(context);
@@ -52,16 +52,16 @@ public class TargetProjectionConverter implements TargetAdapter {
 		
 		@SuppressWarnings("unchecked")
 		final Projection<Object> projection = 
-					Optional.ofNullable((Projection<Object>) factory.get(targetType.getObjectClass()))
-							.orElseThrow(() -> new ProjectionError("Projection " + targetType.getObjectClass().getCanonicalName() +  " is not present."))
+					Optional.ofNullable((Projection<Object>) factory.get(targetType.getType()))
+							.orElseThrow(() -> new ProjectionError("Projection " + targetType.getType().getCanonicalName() +  " is not present."))
 							;
 			
 		projection.extract(
 						object, 
 						context
-							.accept(null, sourceType.getObjectClass(), sourceType.getObjectComponentClass())
+							.accept(null, sourceType.getType(), sourceType.getComponentClass())
 						);
 						
-		return context.remove(null, sourceType.getObjectClass(), sourceType.getObjectComponentClass()).orElse(null);
+		return context.remove(null, sourceType.getType(), sourceType.getComponentClass()).orElse(null);
 	}
 }

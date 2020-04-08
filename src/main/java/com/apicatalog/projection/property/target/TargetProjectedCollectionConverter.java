@@ -42,10 +42,10 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 		final Collection<Object> collection = new ArrayList<>();
 
 		@SuppressWarnings("unchecked")
-		final Projection<Object> projection = (Projection<Object>) factory.get(targetType.getObjectComponentClass());
+		final Projection<Object> projection = (Projection<Object>) factory.get(targetType.getComponentClass());
 		
 		if (projection == null) {
-			throw new ProjectionError("Projection " + targetType.getObjectComponentClass().getCanonicalName() +  " is not present.");
+			throw new ProjectionError("Projection " + targetType.getComponentClass().getCanonicalName() +  " is not present.");
 		}
 		
 		// compose a projection from each object in the collection
@@ -66,18 +66,18 @@ public class TargetProjectedCollectionConverter implements TargetAdapter {
 		logger.debug("Convert {} to {}, reference = true, collection = true", targetType, sourceType);
 		
 		@SuppressWarnings("unchecked")
-		final Projection<Object> projection = (Projection<Object>) factory.get(targetType.getObjectComponentClass()); 
+		final Projection<Object> projection = (Projection<Object>) factory.get(targetType.getComponentClass()); 
 		
 		if (projection == null) {
-			throw new ProjectionError("Projection " + targetType.getObjectComponentClass().getCanonicalName() +  " is not present.");
+			throw new ProjectionError("Projection " + targetType.getComponentClass().getCanonicalName() +  " is not present.");
 		}
 		
 
 		final Collection<Object> collection = new ArrayList<>();
 
-		final Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, targetType.getObjectComponentClass(), object);
+		final Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, targetType.getComponentClass(), object);
 
-		final Class<?> componentClass = sourceType.getObjectComponentClass();
+		final Class<?> componentClass = sourceType.getComponentClass();
 				
 		// extract objects from each projection in the collection
 		for (final Object item : sourceCollection) {

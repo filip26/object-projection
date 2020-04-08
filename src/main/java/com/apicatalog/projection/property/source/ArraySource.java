@@ -14,7 +14,6 @@ import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.objects.ObjectType;
-import com.apicatalog.projection.property.target.TargetAdapter;
 import com.apicatalog.projection.reducer.ReducerError;
 import com.apicatalog.projection.reducer.ReducerMapping;
 import com.apicatalog.projection.source.SourceType;
@@ -31,8 +30,6 @@ public final class ArraySource implements Source {
 	
 	ConverterMapping[] conversions;
 	
-	TargetAdapter targetAdapter;
-
 	ObjectType targetType;
 	
 	Set<Integer> visibleLevels;
@@ -67,8 +64,8 @@ public final class ArraySource implements Source {
 								.reduce((Object[])
 									typeAdapters
 										.convert(
-											reduction.getSourceType().getObjectClass(),
-											reduction.getSourceType().getObjectComponentClass(),
+											reduction.getSourceType().getType(),
+											reduction.getSourceType().getComponentClass(),
 											sourceObjects
 											)
 									);
@@ -98,8 +95,8 @@ public final class ArraySource implements Source {
 										.expand(
 											typeAdapters
 												.convert(
-													reduction.getTargetType().getObjectClass(),
-													reduction.getTargetType().getObjectComponentClass(),
+													reduction.getTargetType().getType(),
+													reduction.getTargetType().getComponentClass(),
 													object
 													)
 												);
@@ -130,10 +127,6 @@ public final class ArraySource implements Source {
 	
 	public void setSources(Source[] sources) {
 		this.sources = sources;
-	}
-	
-	public void setTargetAdapter(TargetAdapter targetAdapter) {
-		this.targetAdapter = targetAdapter;
 	}
 	
 	public void setConversions(ConverterMapping[] conversions) {

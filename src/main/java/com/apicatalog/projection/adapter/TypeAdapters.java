@@ -53,7 +53,7 @@ public class TypeAdapters {
 	}
 
 	public Object convert(ObjectType objectType, Object object) throws ProjectionError {
-		return convert(objectType.getObjectClass(),objectType.getObjectComponentClass(), object);
+		return convert(objectType.getType(),objectType.getComponentClass(), object);
 	}
 	
 	public Object convert(Class<?> targetClass, Object object) throws ProjectionError {

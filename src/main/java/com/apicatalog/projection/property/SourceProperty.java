@@ -58,7 +58,7 @@ public class SourceProperty implements ProjectionProperty {
 	@Override
 	public void backward(ProjectionStack queue, ExtractionContext context) throws ProjectionError {
 
-		if (!source.isWritable() || targetGetter == null || !source.isAnyTypeOf(context.accepted())) {
+		if (!source.isWritable() || targetGetter == null || !source.isAnyTypeOf(context.getAcceptedTypes())) {
 			return;
 		}
 		
@@ -102,21 +102,5 @@ public class SourceProperty implements ProjectionProperty {
 	
 	public void setVisibility(final Set<Integer> levels) {
 		this.visibleLevels = levels;
-	}
-	
-	public Source getSource() {
-		return source;
-	}
-	
-	public TargetAdapter getTargetAdapter() {
-		return targetAdapter;
-	}
-	
-	public Getter getTargetGetter() {
-		return targetGetter;
-	}
-	
-	public Setter getTargetSetter() {
-		return targetSetter;
 	}
 }

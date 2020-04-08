@@ -120,7 +120,7 @@ public final class SingleSource implements Source {
 			context.set(sourceType.getName(), instance.get());
 		}
 
-		setter.set(instance.get(), typeAdapters.convert(setter.getType().getObjectClass(), setter.getType().getObjectComponentClass(), object));
+		setter.set(instance.get(), typeAdapters.convert(setter.getType().getType(), setter.getType().getComponentClass(), object));
 	}
 	
 	public void setConversions(ConverterMapping[] conversions) {
@@ -149,10 +149,6 @@ public final class SingleSource implements Source {
 		return setter != null;
 	}
 
-	public Getter getGetter() {
-		return getter;
-	}
-	
 	public void setTargetType(ObjectType targetType) {
 		this.targetType = targetType;
 	}

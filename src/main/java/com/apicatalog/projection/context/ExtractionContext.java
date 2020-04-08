@@ -12,10 +12,11 @@ public final class ExtractionContext {
 
 	final Logger logger = LoggerFactory.getLogger(ExtractionContext.class);
 
-	public static final int MAX_OBJECTS = 10;
+	public static final int MAX_OBJECTS = 25;
 	
-	SourceType[] types;
-	Object[] objects;
+	final SourceType[] types;
+	final Object[] objects;
+	
 	int index;
 	
 	final ContextNamespace namespace;
@@ -31,9 +32,9 @@ public final class ExtractionContext {
 		return new ExtractionContext();
 	}
 
-	public ExtractionContext accept(String qualifier, Class<?> objectType, Class<?> componentType) {
+	public ExtractionContext accept(String name, Class<?> objectType, Class<?> componentType) {
 
-		final String qualifiedName = Optional.ofNullable(qualifier).map(n -> namespace.getQName(qualifier)).orElse(null);
+		final String qualifiedName = Optional.ofNullable(name).map(n -> namespace.getQName(name)).orElse(null);
 		
 		objects[index] = null;
 		types[index++] = SourceType.of(qualifiedName, objectType, componentType);
@@ -41,13 +42,13 @@ public final class ExtractionContext {
 		return this;
 	}
 	
-	public void set(final String qualifier, final Object object) {
+	public void set(final String name, final Object object) {
 		
 		if (index == 0) {
 			throw new IllegalStateException();
 		}
 
-		final String qualifiedName = Optional.ofNullable(qualifier).map(n -> namespace.getQName(qualifier)).orElse(null);
+		final String qualifiedName = Optional.ofNullable(name).map(n -> namespace.getQName(name)).orElse(null);
 		
 		for (int i=index - 1; i >= 0; i--) {
 			if (types[i].isInstance(qualifiedName, object)) {
@@ -71,13 +72,13 @@ public final class ExtractionContext {
 		return get(sourceType.getName(), sourceType.getType(), sourceType.getComponentType());
 	}
 	
-	public Optional<Object> get(final String qualifier, final Class<?> objectType, final Class<?> componentType) {
+	public Optional<Object> get(final String name, final Class<?> objectType, final Class<?> componentType) {
 
 		if (index == 0) {
 			throw new IllegalStateException();
 		}
 
-		final String qualifiedName = Optional.ofNullable(qualifier).map(n -> namespace.getQName(qualifier)).orElse(null);
+		final String qualifiedName = Optional.ofNullable(name).map(n -> namespace.getQName(name)).orElse(null);
 
 		for (int i=index - 1; i >= 0; i--) {
 			if (types[i].isAssignableFrom(qualifiedName, objectType, componentType)) {
@@ -87,12 +88,13 @@ public final class ExtractionContext {
 		return Optional.empty();
 	}
 	
-	public Optional<Object> remove(final String qualifier, final Class<?> objectType, final Class<?> componentType) {
+	public Optional<Object> remove(final String name, final Class<?> objectType, final Class<?> componentType) {
+		
 		if (index == 0) {
 			throw new IllegalStateException();
 		}
 		
-		final String qualifiedName = Optional.ofNullable(qualifier).map(n -> namespace.getQName(qualifier)).orElse(null);
+		final String qualifiedName = Optional.ofNullable(name).map(n -> namespace.getQName(name)).orElse(null);
 
 		for (int i=index - 1; i >= 0; i--) {
 			if (types[i].isAssignableFrom(qualifiedName, objectType, componentType)) {
@@ -112,12 +114,12 @@ public final class ExtractionContext {
 		return isAccepted(sourceType.getName(), sourceType.getType(), sourceType.getComponentType());
 	}
 	
-	public boolean isAccepted(String qualifier, Class<?> objectType, Class<?> componentType) {
+	public boolean isAccepted(String name, Class<?> objectType, Class<?> componentType) {
 		if (index == 0) {
 			throw new IllegalStateException();
 		}
 
-		final String qualifiedName = Optional.ofNullable(qualifier).map(n -> namespace.getQName(qualifier)).orElse(null);
+		final String qualifiedName = Optional.ofNullable(name).map(n -> namespace.getQName(name)).orElse(null);
 
 		for (int i=index - 1; i >= 0; i--) {
 			if (types[i].isAssignableFrom(qualifiedName, objectType, componentType)) {
@@ -127,7 +129,7 @@ public final class ExtractionContext {
 		return false;
 	}
 	
-	public SourceType[] accepted() {
+	public SourceType[] getAcceptedTypes() {
 		return Arrays.copyOf(types, index);
 	}
 

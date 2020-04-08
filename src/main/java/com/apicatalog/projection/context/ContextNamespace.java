@@ -33,10 +33,6 @@ final class ContextNamespace {
 	public String pop() {
 		return names[--index];
 	}
-	
-	public String last() {
-		return names[index];
-	}
 
 	public String getQName(String name) {
 		if (index == 0) {

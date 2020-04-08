@@ -6,6 +6,5 @@ public interface Reducer<S, T> {
 	
 	T reduce(S[] objects) throws ReducerError;
 	
-	S[] expand(T object) throws ReducerError;
-	
+	S[] expand(T object) throws ReducerError;	
 }

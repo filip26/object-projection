@@ -4,40 +4,40 @@ import java.util.Optional;
 
 public final class ObjectType {
 
-	final Class<?> objectClass;
-	final Class<?> objectComponentClass;
+	final Class<?> type;
+	final Class<?> componentType;
 	
-	protected ObjectType(Class<?> objectClass, Class<?> objectComponentClass) { 
-		this.objectClass = objectClass;
-		this.objectComponentClass = objectComponentClass;
+	protected ObjectType(Class<?> type, Class<?> componentType) { 
+		this.type = type;
+		this.componentType = componentType;
 	}
 	
-	public static final ObjectType of(Class<?> objectClass) {
-		return of(objectClass, null);
+	public static final ObjectType of(Class<?> type) {
+		return of(type, null);
 	}
 
-	public static final ObjectType of(Class<?> objectClass, Class<?> objectComponentClass) {
-		return new ObjectType(objectClass, objectComponentClass);
+	public static final ObjectType of(Class<?> type, Class<?> componentTYpe) {
+		return new ObjectType(type, componentTYpe);
 	}
 
 	public boolean isCollection() {
-		return objectComponentClass != null;
+		return componentType != null;
 	}
 	
-	public Class<?> getObjectClass() {
-		return objectClass;
+	public Class<?> getType() {
+		return type;
 	}
 	
-	public Class<?> getObjectComponentClass() {
-		return objectComponentClass;
+	public Class<?> getComponentClass() {
+		return componentType;
 	}
 
 	@Override
 	public String toString() {
 		return "ObjectType [" 
-					+ Optional.ofNullable(objectClass).map(Class::getSimpleName).orElse("") 
+					+ Optional.ofNullable(type).map(Class::getSimpleName).orElse("") 
 					+ "<" 
-					+ Optional.ofNullable(objectComponentClass).map(Class::getSimpleName).orElse("") 
+					+ Optional.ofNullable(componentType).map(Class::getSimpleName).orElse("") 
 					+ ">]" 
 					;
 	}

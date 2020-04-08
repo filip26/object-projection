@@ -152,8 +152,8 @@ public class PropertyMapper {
 	
 	protected static final boolean isReference(ObjectType objectType) {
 		return objectType.isCollection()
-				? objectType.getObjectComponentClass().isAnnotationPresent(Projection.class)
-				: objectType.getObjectClass().isAnnotationPresent(Projection.class)
+				? objectType.getComponentClass().isAnnotationPresent(Projection.class)
+				: objectType.getType().isAnnotationPresent(Projection.class)
 				;		
 	}
 	

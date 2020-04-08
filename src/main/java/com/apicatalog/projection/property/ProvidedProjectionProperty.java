@@ -47,10 +47,10 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 		
 		Optional.ofNullable(objectQualifier).ifPresent(clonedContext::namespace);
 		
-		final Projection<?> projection = factory.get(targetSetter.getType().getObjectClass()); 
+		final Projection<?> projection = factory.get(targetSetter.getType().getType()); 
 		
 		if (projection == null) {
-			throw new ProjectionError("Projection " + targetSetter.getType().getObjectClass() +  " is not present.");
+			throw new ProjectionError("Projection " + targetSetter.getType().getType() +  " is not present.");
 		}
 			
 		final Object object = projection.compose(queue, clonedContext);
@@ -70,10 +70,10 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 		logger.debug("Backward {} : {}, qualifier = {}, optional = {}, depth = {}", targetGetter.getName(), targetGetter.getType(), objectQualifier, optional, queue.length());
 
 		@SuppressWarnings("unchecked")
-		final Projection<Object> projection = (Projection<Object>) factory.get(targetGetter.getType().getObjectClass()); 
+		final Projection<Object> projection = (Projection<Object>) factory.get(targetGetter.getType().getType()); 
 		
 		if (projection == null) {
-			throw new ProjectionError("Projection " + targetGetter.getType().getObjectClass() +  " is not present.");			
+			throw new ProjectionError("Projection " + targetGetter.getType().getType() +  " is not present.");			
 		}
 
 		Optional.ofNullable(objectQualifier).ifPresent(context::addNamespace);

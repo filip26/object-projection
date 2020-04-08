@@ -61,7 +61,7 @@ public class ReductionBuilder {
 		}
 
 		//FIXME hack
-		try {
+		try {			
 			reducer.setSourceType(ObjectType.of(reducerClass.getMethod("expand", (Class<?>)targetType).getReturnType(), sourceComponentClass));
 			
 		} catch (NoSuchMethodException e) {

@@ -71,14 +71,6 @@ public final class SourceType {
 		return qualifierMatch(qualifier) && type.isInstance(object); 
 	}
 	
-	boolean qualifierMatch(String qualifier) {
-		return StringUtils.isNotBlank(name) ? name.equals(qualifier) : StringUtils.isBlank(qualifier);
-	}
-	
-	public boolean isCollection() {
-		return componentType != null;
-	}
-	
 	public Class<?> getComponentType() {
 		return componentType;
 	}
@@ -101,5 +93,9 @@ public final class SourceType {
 		}
 		SourceType other = (SourceType) obj;
 		return Objects.equals(name, other.name) && Objects.equals(type, other.type);
-	}	
+	}
+	
+	final boolean qualifierMatch(String qualifier) {
+		return StringUtils.isNotBlank(name) ? name.equals(qualifier) : StringUtils.isBlank(qualifier);
+	}
 }

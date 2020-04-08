@@ -56,10 +56,6 @@ public final class CompositionContext {
 					return Optional.empty();
 				});
 	}
-
-	public Object[] getValues() {
-		return stream().collect(Collectors.toList()).toArray(new Object[0]);
-	}
 	
 	public Stream<Object> stream() {
 		return index.entrySet()

@@ -40,7 +40,7 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 		
 		logger.debug("Forward {} : {}, qualifier = {}, optional = {}, depth = {}", targetSetter.getName(), targetSetter.getType(), objectQualifier, optional, queue.length());
 		
-		Optional<Object> object = context.get(objectQualifier, targetSetter.getType().getObjectClass());
+		Optional<Object> object = context.get(objectQualifier, targetSetter.getType().getType());
 		
 		if (object.isEmpty()) {
 			return;
@@ -75,7 +75,7 @@ public class ProvidedObjectProperty implements ProjectionProperty {
 			final Object value = object.get();
 			
 			Optional<ObjectType> sourceType = 
-							Arrays.stream(context.accepted())
+							Arrays.stream(context.getAcceptedTypes())
 									.filter(type -> type.getType().isInstance(value))
 									.findFirst()
 									.map(type -> ObjectType.of(type.getType(), type.getComponentType()))

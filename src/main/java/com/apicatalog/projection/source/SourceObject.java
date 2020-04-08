@@ -4,16 +4,17 @@ import java.util.Optional;
 
 public final class SourceObject {
 
-	final Object object;
 	final String name;
 	
-	protected SourceObject(String qualifier, Object object) {
+	final Object object;
+	
+	protected SourceObject(String name, Object object) {
+		this.name = name;
 		this.object = object;
-		this.name = qualifier;
 	}
 	
-	public static SourceObject of(String qualifier, Object object) {
-		return new SourceObject(qualifier, object);
+	public static SourceObject of(String name, Object object) {
+		return new SourceObject(name, object);
 	}
 	
 	public Object getObject() {

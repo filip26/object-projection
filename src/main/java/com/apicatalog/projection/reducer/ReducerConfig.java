@@ -2,7 +2,7 @@ package com.apicatalog.projection.reducer;
 
 public class ReducerConfig {
 
-	String[] values;
+	final String[] values;
 	
 	public ReducerConfig(String[] values) {
 		this.values = values;
@@ -10,9 +10,5 @@ public class ReducerConfig {
 
 	public String[] getValues() {
 		return values;
-	}
-
-	public void setValues(String[] values) {
-		this.values = values;
 	}
 }
