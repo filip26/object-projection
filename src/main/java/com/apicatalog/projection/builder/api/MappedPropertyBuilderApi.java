@@ -85,7 +85,7 @@ public class MappedPropertyBuilderApi<P> {
 		return projectionBuilder;
 	}
 	
-	protected ProjectionProperty buildProperty(ProjectionRegistry registry, TypeAdapters typeAdapters) throws ProjectionError {
+	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry registry, TypeAdapters typeAdapters) throws ProjectionError {
 		
 		final Field field = ObjectUtils.getProperty(projectionBuilder.projectionClass(), targetPropertyName);
 		
@@ -130,7 +130,7 @@ public class MappedPropertyBuilderApi<P> {
 			return sourcesPropertyBuilder.buildProperty(registry, typeAdapters);
 
 		}
-		return null;
+		return Optional.empty();
 	}
 	
 	protected static final ObjectType getTypeOf(Field field, boolean reference) {

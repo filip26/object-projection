@@ -98,13 +98,13 @@ public class SourcesPropertyBuilderApi<P> {
 		return this;
 	}
 
-	protected ProjectionProperty buildProperty(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
+	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
 
 		if (Optional.ofNullable(sourcesBuilderApi).isEmpty()) {
-			return null;
+			return Optional.empty();
 		}
 		
-		ConverterMapping[] converters = new ConverterMapping[conversionBuilder.size()];
+		final ConverterMapping[] converters = new ConverterMapping[conversionBuilder.size()];
 		
 		ReducerMapping reducer;
 		
@@ -122,14 +122,18 @@ public class SourcesPropertyBuilderApi<P> {
 
 		Source[] sources = sourcesBuilderApi.buildSources(typeAdapters);
 
-		ArraySource source = arraySourceBuilder
+		Optional<ArraySource> source = arraySourceBuilder
 								.sources(sources)
 								.converters(converters)
 								.reducer(reducer)
 								.build(typeAdapters);
 		
+		if (source.isEmpty()) {
+			return Optional.empty();
+		}
+		
 		return sourcePropertyBuilder
-				.source(source)
-				.build(factory, typeAdapters);
+				.source(source.get())
+				.build(factory, typeAdapters).map(ProjectionProperty.class::cast);
 	}
 }

@@ -9,11 +9,11 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
+import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ObjectUtils;
-import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.source.SourceType;
@@ -22,7 +22,7 @@ public final class SingleSource implements Source {
 
 	final Logger logger = LoggerFactory.getLogger(SingleSource.class);
 
-	final TypeAdapters typeAdapters;	//FIXME use concrete adapters set during mapping
+	final TypeAdapters typeAdapters;	//TODO use concrete adapters set during mapping
 	
 	Getter getter;
 	Setter setter;
@@ -40,7 +40,7 @@ public final class SingleSource implements Source {
 	}
 	
 	@Override
-	public Optional<Object> read(ProjectionQueue queue, CompositionContext context) throws ProjectionError {
+	public Optional<Object> read(ProjectionStack queue, CompositionContext context) throws ProjectionError {
 		
 		if (!isReadable()) {
 			return Optional.empty();
@@ -87,7 +87,7 @@ public final class SingleSource implements Source {
 	}
 
 	@Override
-	public void write(ProjectionQueue queue, ExtractionContext context, Object object) throws ProjectionError {
+	public void write(ProjectionStack queue, ExtractionContext context, Object object) throws ProjectionError {
 		
 		if (!isWritable() || !context.isAccepted(sourceType)) {
 			return;

@@ -9,9 +9,9 @@ import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.context.ExtractionContext;
+import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.objects.ObjectType;
-import com.apicatalog.projection.objects.ProjectionQueue;
 
 public class TargetProjectionConverter implements TargetAdapter {
 
@@ -29,7 +29,7 @@ public class TargetProjectionConverter implements TargetAdapter {
 	}
 	
 	@Override
-	public Object forward(ProjectionQueue queue, Object object, CompositionContext context) throws ProjectionError {
+	public Object forward(ProjectionStack queue, Object object, CompositionContext context) throws ProjectionError {
 		
 		logger.debug("Convert {} to {}, depth = {}, reference = true", sourceType, targetType, queue.length());
 

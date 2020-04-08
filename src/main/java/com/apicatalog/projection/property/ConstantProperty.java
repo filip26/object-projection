@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.context.ExtractionContext;
+import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.context.CompositionContext;
-import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.target.TargetAdapter;
 
@@ -25,14 +25,14 @@ public class ConstantProperty implements ProjectionProperty {
 	Set<Integer> visibleLevels;
 
 	@Override
-	public void forward(ProjectionQueue queue, CompositionContext context) throws ProjectionError {
+	public void forward(ProjectionStack queue, CompositionContext context) throws ProjectionError {
 		logger.debug("Forward constant = {}, depth = {}", constants, queue.length());
 		
 		targetSetter.set(queue.peek(), targetAdapter.forward(queue, constants, context));
 	}
 
 	@Override
-	public void backward(ProjectionQueue queue, ExtractionContext context) throws ProjectionError {
+	public void backward(ProjectionStack queue, ExtractionContext context) throws ProjectionError {
 		logger.trace("Backward is ignored for a constant");
 		// nothing to do, it's a constant
 	}

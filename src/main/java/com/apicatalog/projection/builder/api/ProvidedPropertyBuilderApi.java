@@ -1,5 +1,7 @@
 package com.apicatalog.projection.builder.api;
 
+import java.util.Optional;
+
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
@@ -54,7 +56,7 @@ public class ProvidedPropertyBuilderApi<P> {
 		return projectionBuilder.build(factory, typeAdapters);
 	}	
 	
-	protected ProjectionProperty buildProperty(ProjectionRegistry factory, TypeAdapters typeAdapters) {
+	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry factory, TypeAdapters typeAdapters) {
 		return providedPropertyBuilder.build(factory, typeAdapters);
 	}
 }

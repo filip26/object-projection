@@ -10,10 +10,10 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
+import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.objects.ObjectType;
-import com.apicatalog.projection.objects.ProjectionQueue;
 import com.apicatalog.projection.property.target.TargetAdapter;
 import com.apicatalog.projection.reducer.ReducerError;
 import com.apicatalog.projection.reducer.ReducerMapping;
@@ -38,13 +38,16 @@ public final class ArraySource implements Source {
 	Set<Integer> visibleLevels;
 	
 	boolean optional;
+	
+	boolean readable;
+	boolean writable;
 
 	public ArraySource(final TypeAdapters typeAdapters) {
 		this.typeAdapters = typeAdapters;
 	}
 	
 	@Override
-	public Optional<Object> read(ProjectionQueue queue, CompositionContext context) throws ProjectionError {
+	public Optional<Object> read(ProjectionStack queue, CompositionContext context) throws ProjectionError {
 		
 		if (!isReadable()) {
 			return Optional.empty();
@@ -86,7 +89,7 @@ public final class ArraySource implements Source {
 	}
 
 	@Override
-	public void write(ProjectionQueue queue, ExtractionContext context, Object object) throws ProjectionError {
+	public void write(ProjectionStack queue, ExtractionContext context, Object object) throws ProjectionError {
 		logger.debug("Write {}, {} sources(s), optional = {}, depth = {}", object, sources.length, optional, queue.length());
 
 		try {
@@ -143,12 +146,12 @@ public final class ArraySource implements Source {
 
 	@Override
 	public boolean isReadable() {
-		return true;	//FIXME
+		return writable;
 	}
 
 	@Override
 	public boolean isWritable() {
-		return true;	//FIXME
+		return readable;
 	}
 
 	public void setTargetType(ObjectType targetType) {
@@ -176,5 +179,13 @@ public final class ArraySource implements Source {
 			}
 		}
 		return false;
+	}
+	
+	public void setReadable(boolean readable) {
+		this.readable = readable;
+	}
+	
+	public void setWritable(boolean writable) {
+		this.writable = writable;
 	}
 }

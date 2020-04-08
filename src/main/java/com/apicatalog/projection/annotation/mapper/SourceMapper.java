@@ -31,7 +31,7 @@ import com.apicatalog.projection.objects.getter.FieldGetter;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.FieldSetter;
 import com.apicatalog.projection.objects.setter.Setter;
-import com.apicatalog.projection.property.ProjectionProperty;
+import com.apicatalog.projection.property.SourceProperty;
 import com.apicatalog.projection.property.source.ArraySource;
 import com.apicatalog.projection.property.source.SingleSource;
 import com.apicatalog.projection.reducer.ReducerError;
@@ -51,15 +51,15 @@ class SourceMapper {
 		this.typeAdapters = typeAdapters;
 	}
 		
-	ProjectionProperty getSourcesPropertyMapping(final Field field, final Class<?> defaultSourceClass) {
+	Optional<SourceProperty> getSourcesPropertyMapping(final Field field, final Class<?> defaultSourceClass) {
 		
 		final Sources sourcesAnnotation = field.getAnnotation(Sources.class);
 
-		final ArraySource arraySource = getArraySource(sourcesAnnotation, field, defaultSourceClass);
+		final Optional<ArraySource> arraySource = getArraySource(sourcesAnnotation, field, defaultSourceClass);
 
-		if (arraySource == null) {
+		if (arraySource.isEmpty()) {
 			logger.warn(SOURCE_IS_MISSING, field.getName());
-			return null;				
+			return Optional.empty();
 		}
 		
 		ObjectType targetType = PropertyMapper.getTypeOf(field);
@@ -69,27 +69,27 @@ class SourceMapper {
 		final Setter targetSetter = FieldSetter.from(field, targetType);
 
 		return SourcePropertyBuilder.newInstance()
-				.source(arraySource)
+				.source(arraySource.get())
 				.mode(AccessMode.READ_WRITE)
 				.targetGetter(targetGetter)
 				.targetSetter(targetSetter)
 				.build(factory, typeAdapters);
 	}
 	
-	ProjectionProperty getSourcePropertyMapping(final Field field, final Class<?> defaultSourceClass) {
-		
+	Optional<SourceProperty> getSourcePropertyMapping(final Field field, final Class<?> defaultSourceClass) {
+
 		final Source sourceAnnotation = field.getAnnotation(Source.class);
 		
-		final SingleSource source = 
+		final Optional<SingleSource> source = 
 					getSingleSource( 
 						sourceAnnotation,
 						field,
 						defaultSourceClass
 						); 
 		
-		if (source == null) {
+		if (source.isEmpty()) {
 			logger.warn(SOURCE_IS_MISSING, field.getName());
-			return null;
+			return Optional.empty();
 		}
 		
 		ObjectType targetType = PropertyMapper.getTypeOf(field);
@@ -99,14 +99,14 @@ class SourceMapper {
 		final Setter targetSetter = FieldSetter.from(field, targetType);
 
 		return SourcePropertyBuilder.newInstance()
-					.source(source)
+					.source(source.get())
 					.mode(sourceAnnotation.mode())
 					.targetGetter(targetGetter)
 					.targetSetter(targetSetter)
 					.build(factory, typeAdapters);
 	}
 
-	SingleSource getSingleSource(Source sourceAnnotation, Field field, Class<?> defaultSourceClass) {
+	Optional<SingleSource> getSingleSource(Source sourceAnnotation, Field field, Class<?> defaultSourceClass) {
 				
 		Class<?> sourceObjectClass = defaultSourceClass;
 		
@@ -117,7 +117,7 @@ class SourceMapper {
 		
 		if (sourceObjectClass == null) {
 			logger.warn(SOURCE_IS_MISSING, field.getName());
-			return null;
+			return Optional.empty();
 		}
 
 		// set default source object property name -> use the same name
@@ -131,7 +131,7 @@ class SourceMapper {
 		SingleSourceBuilder sourceBuilder = SingleSourceBuilder.newInstance()
 				.objectClass(sourceObjectClass)
 				.optional(sourceAnnotation.optional())
-				.qualifier(sourceAnnotation.qualifier())
+				.qualifier(sourceAnnotation.name())
 				.mode(sourceAnnotation.mode())
 				;
 
@@ -142,7 +142,7 @@ class SourceMapper {
 				
 			} catch (ConverterError | ProjectionError e) {
 				logger.error("Property " + sourceFieldName + " is ignored.", e);
-				return null;
+				return Optional.empty();
 			}
 		}
 
@@ -153,7 +153,7 @@ class SourceMapper {
 					);
 	}
 	
-	SingleSource getSingleSource(Class<?> sourceObjectClass, String sourceFieldName, SingleSourceBuilder sourceBuilder) {
+	Optional<SingleSource> getSingleSource(Class<?> sourceObjectClass, String sourceFieldName, SingleSourceBuilder sourceBuilder) {
 		
 		// extract setter/getter
 		final Getter sourceGetter = PropertyMapper.getGetter(sourceObjectClass, sourceFieldName);
@@ -165,17 +165,18 @@ class SourceMapper {
 				.build(typeAdapters);
 	}
 
-	ArraySource getArraySource(final Sources sourcesAnnotation, final Field field, final Class<?> defaultSourceObjectClass) {
+	Optional<ArraySource> getArraySource(final Sources sourcesAnnotation, final Field field, final Class<?> defaultSourceObjectClass) {
 		
 		SingleSource[] sources = Arrays.stream(sourcesAnnotation.value())
 										.map(s -> getSingleSource(s, field, defaultSourceObjectClass))
+										.flatMap(Optional::stream)
 										.collect(Collectors.toList())
 										.toArray(new SingleSource[0])
 										;
 		
 		if (sources.length == 0) {
 			logger.warn(SOURCE_IS_MISSING, field.getName());
-			return null;
+			return Optional.empty();
 		}
 
 		ArraySourceBuilder builder = 
@@ -192,7 +193,7 @@ class SourceMapper {
 			
 		} catch (ConverterError | ReducerError | ProjectionError e) {
 			logger.error("Property " + field.getName() + " is ignored.", e);
-			return null;
+			return Optional.empty();
 		}				
 	}	
 	
@@ -201,7 +202,7 @@ class SourceMapper {
 		if (conversions.length == 0) {
 			return new ConverterMapping[0];
 		}
-
+		
 		final List<ConverterMapping> converters = new ArrayList<>();
 		
 		for (final Conversion conversion : conversions) {
