@@ -13,8 +13,6 @@ import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.objects.ObjectType;
-import com.apicatalog.projection.reducer.ReducerError;
-import com.apicatalog.projection.reducer.ReducerMapping;
 import com.apicatalog.projection.source.SourceType;
 import com.apicatalog.projection.type.adapter.TypeAdapters;
 
@@ -25,8 +23,6 @@ public final class ArraySource implements Source {
 	final TypeAdapters typeAdapters;
 	
 	Source[] sources;
-	
-	ReducerMapping reduction;
 	
 	ConverterMapping[] conversions;
 	
@@ -59,16 +55,7 @@ public final class ArraySource implements Source {
 		}
 		
 		try {
-			Object object = reduction
-								.getReducer()
-								.reduce((Object[])
-									typeAdapters
-										.convert(
-											reduction.getSourceType().getType(),
-											reduction.getSourceType().getComponentClass(),
-											sourceObjects
-											)
-									);
+			Object object = sourceObjects; 
 			
 			// apply explicit conversions
 			if (conversions != null) {
@@ -80,7 +67,7 @@ public final class ArraySource implements Source {
 			
 			return Optional.ofNullable(object);
 			
-		} catch (ConverterError | ReducerError e) {
+		} catch (ConverterError e) {
 			throw new ProjectionError(e);
 		}
 	}
@@ -89,18 +76,7 @@ public final class ArraySource implements Source {
 	public void write(ProjectionStack queue, ExtractionContext context, Object object) throws ProjectionError {
 		logger.debug("Write {}, {} sources(s), optional = {}, depth = {}", object, sources.length, optional, queue.length());
 
-		try {
-			Object[] sourceObjects = reduction
-										.getReducer()
-										.expand(
-											typeAdapters
-												.convert(
-													reduction.getTargetType().getType(),
-													reduction.getTargetType().getComponentClass(),
-													object
-													)
-												);
-			
+		try {			
 			// apply explicit conversions in reverse order
 			if (conversions != null) {
 					for (int i=conversions.length - 1; i >= 0; i--) {
@@ -108,11 +84,13 @@ public final class ArraySource implements Source {
 					}
 			}
 
+			Object[] sourceObjects = (Object[])object;	//TODO
+			
 			for (int i = 0; i < sources.length; i++) {
 				sources[i].write(queue, context, sourceObjects[i]);
 			}				
 
-		} catch (ConverterError | ReducerError e) {
+		} catch (ConverterError e) {
 			throw new ProjectionError(e);
 		}
 	}
@@ -133,10 +111,6 @@ public final class ArraySource implements Source {
 		this.conversions = conversions;
 	}
 	
-	public void setReduction(ReducerMapping reduction) {
-		this.reduction = reduction;
-	}
-
 	@Override
 	public boolean isReadable() {
 		return writable;
@@ -153,10 +127,6 @@ public final class ArraySource implements Source {
 
 	public ConverterMapping[] getConversions() {
 		return conversions;
-	}
-	
-	public ReducerMapping getReduction() {
-		return reduction;
 	}
 
 	@Override

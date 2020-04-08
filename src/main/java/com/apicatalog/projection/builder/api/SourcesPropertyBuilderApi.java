@@ -9,7 +9,6 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.builder.ArraySourceBuilder;
 import com.apicatalog.projection.builder.ConversionBuilder;
-import com.apicatalog.projection.builder.ReductionBuilder;
 import com.apicatalog.projection.builder.SourcePropertyBuilder;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterError;
@@ -19,9 +18,6 @@ import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.ProjectionProperty;
 import com.apicatalog.projection.property.source.ArraySource;
 import com.apicatalog.projection.property.source.Source;
-import com.apicatalog.projection.reducer.Reducer;
-import com.apicatalog.projection.reducer.ReducerError;
-import com.apicatalog.projection.reducer.ReducerMapping;
 import com.apicatalog.projection.type.adapter.TypeAdapters;
 
 public class SourcesPropertyBuilderApi<P> {
@@ -36,8 +32,6 @@ public class SourcesPropertyBuilderApi<P> {
 	
 	ArraySourceBuilder arraySourceBuilder;
 	
-	ReductionBuilder reductionBuilder;
-	
 	final String projectionPropertyName;
 	
 	protected SourcesPropertyBuilderApi(ProjectionBuilder<P> projection, String projectionPropertyName) {
@@ -45,7 +39,6 @@ public class SourcesPropertyBuilderApi<P> {
 		this.conversionBuilder = new ArrayList<>();
 		this.sourcePropertyBuilder = SourcePropertyBuilder.newInstance();
 		this.arraySourceBuilder = ArraySourceBuilder.newInstance();
-		this.reductionBuilder = ReductionBuilder.newInstance();
 		this.projectionPropertyName = projectionPropertyName;
 	}
 
@@ -83,11 +76,6 @@ public class SourcesPropertyBuilderApi<P> {
 		return this;
 	}
 
-	public SourcesPropertyBuilderApi<P> reduce(Class<? extends Reducer<?, ?>> reducer, String...params) {
-		reductionBuilder.converter(reducer).parameters(params);
-		return this;
-	}
-
 	protected SourcesPropertyBuilderApi<P> targetGetter(Getter targetGetter) {
 		sourcePropertyBuilder = sourcePropertyBuilder.targetGetter(targetGetter); 
 		return this;
@@ -111,17 +99,13 @@ public class SourcesPropertyBuilderApi<P> {
 		
 		final ConverterMapping[] converters = new ConverterMapping[conversionBuilder.size()];
 		
-		ReducerMapping reducer;
-		
 		try {
 			int i = 0;
 			for (ConversionBuilder cb : conversionBuilder) {
 				converters[i++] = cb.build();
 			}
-			
-			reducer = reductionBuilder.build();
-			
-		} catch (ConverterError | ReducerError e) {
+						
+		} catch (ConverterError e) {
 			throw new ProjectionError(e);
 		}
 
@@ -130,7 +114,6 @@ public class SourcesPropertyBuilderApi<P> {
 		Optional<ArraySource> source = arraySourceBuilder
 								.sources(sources)
 								.converters(converters)
-								.reducer(reducer)
 								.build(typeAdapters);
 		
 		if (source.isEmpty()) {

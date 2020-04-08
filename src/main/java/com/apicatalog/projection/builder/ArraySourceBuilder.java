@@ -8,9 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.converter.ConverterMapping;
+import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.property.source.ArraySource;
 import com.apicatalog.projection.property.source.Source;
-import com.apicatalog.projection.reducer.ReducerMapping;
 import com.apicatalog.projection.type.adapter.TypeAdapters;
 
 public class ArraySourceBuilder {
@@ -20,8 +20,6 @@ public class ArraySourceBuilder {
 	Source[] sources;
 	
 	boolean optional;
-	
-	ReducerMapping reduction;
 	
 	ConverterMapping[] converters;
 	
@@ -43,9 +41,6 @@ public class ArraySourceBuilder {
 
 		source.setSources(sources);
 
-		// set reduction
-		source.setReduction(reduction);
-
 		// set conversions to apply
 		source.setConversions(converters);
 
@@ -53,7 +48,7 @@ public class ArraySourceBuilder {
 		source.setOptional(optional);
 				
 		// set target type
-		source.setTargetType(reduction.getTargetType());
+		source.setTargetType(ObjectType.of(Object[].class));
 		
 		// readable/writable
 		source.setReadable(Arrays.stream(sources).anyMatch(Source::isReadable));
@@ -76,11 +71,6 @@ public class ArraySourceBuilder {
 	
 	public ArraySourceBuilder sources(Source[] sources) {
 		this.sources = sources;
-		return this;
-	}
-
-	public ArraySourceBuilder reducer(ReducerMapping reduction) {
-		this.reduction = reduction;
 		return this;
 	}
 

@@ -15,12 +15,10 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.annotation.Conversion;
-import com.apicatalog.projection.annotation.Reduction;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.builder.ArraySourceBuilder;
 import com.apicatalog.projection.builder.ConversionBuilder;
-import com.apicatalog.projection.builder.ReductionBuilder;
 import com.apicatalog.projection.builder.SingleSourceBuilder;
 import com.apicatalog.projection.builder.SourcePropertyBuilder;
 import com.apicatalog.projection.converter.ConverterError;
@@ -34,8 +32,6 @@ import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.SourceProperty;
 import com.apicatalog.projection.property.source.ArraySource;
 import com.apicatalog.projection.property.source.SingleSource;
-import com.apicatalog.projection.reducer.ReducerError;
-import com.apicatalog.projection.reducer.ReducerMapping;
 import com.apicatalog.projection.type.adapter.TypeAdapters;
 
 class SourceMapper {
@@ -190,11 +186,10 @@ class SourceMapper {
 
 		try {
 			return builder
-						.reducer(getReductionMapping(sourcesAnnotation.reduce()))	// set reduction
 						.converters(getConverterMapping(sourcesAnnotation.map()))	// set conversions to apply
 						.build(typeAdapters);
 			
-		} catch (ConverterError | ReducerError | ProjectionError e) {
+		} catch (ConverterError | ProjectionError e) {
 			logger.error("Property " + field.getName() + " is ignored.", e);
 			return Optional.empty();
 		}				
@@ -219,15 +214,5 @@ class SourceMapper {
 		}
 
 		return converters.isEmpty() ? null : converters.toArray(new ConverterMapping[0]);
-	}
-
-	ReducerMapping getReductionMapping(Reduction reduction) throws ProjectionError, ReducerError {
-		
-		return ReductionBuilder
-					.newInstance()
-					.converter(reduction.type())
-					.parameters(reduction.value())
-					.build()
-					;
 	}	
 }

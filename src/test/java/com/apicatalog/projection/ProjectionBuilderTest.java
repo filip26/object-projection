@@ -316,7 +316,7 @@ public class ProjectionBuilderTest {
 					
 					.map("id")
 						.sources()
-							.reduce(UriTemplate.class, "/{}/{}")							
+							.conversion(UriTemplate.class, "/{}/{}")							
 							.conversion(Prefix.class, "https://example.org")
 
 							.source(Object1.class)
