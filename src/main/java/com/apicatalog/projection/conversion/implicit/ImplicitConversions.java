@@ -20,7 +20,7 @@ import com.apicatalog.projection.adapter.type.legacy.Object2String;
 import com.apicatalog.projection.adapter.type.legacy.StringAdapter;
 import com.apicatalog.projection.adapter.type.legacy.UriAdapter;
 import com.apicatalog.projection.conversion.Conversion;
-import com.apicatalog.projection.objects.ObjectType;
+import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.property.source.ArraySource;
 
 public class ImplicitConversions {

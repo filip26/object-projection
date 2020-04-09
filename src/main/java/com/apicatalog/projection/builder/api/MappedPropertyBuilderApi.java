@@ -11,12 +11,12 @@ import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.builder.ConstantPropertyBuilder;
 import com.apicatalog.projection.conversion.implicit.ImplicitConversions;
-import com.apicatalog.projection.objects.ObjectType;
-import com.apicatalog.projection.objects.ObjectUtils;
-import com.apicatalog.projection.objects.getter.FieldGetter;
-import com.apicatalog.projection.objects.getter.Getter;
-import com.apicatalog.projection.objects.setter.FieldSetter;
-import com.apicatalog.projection.objects.setter.Setter;
+import com.apicatalog.projection.object.ObjectType;
+import com.apicatalog.projection.object.ObjectUtils;
+import com.apicatalog.projection.object.getter.FieldGetter;
+import com.apicatalog.projection.object.getter.Getter;
+import com.apicatalog.projection.object.setter.FieldSetter;
+import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.ProjectionProperty;
 
 public class MappedPropertyBuilderApi<P> {

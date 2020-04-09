@@ -1,10 +1,10 @@
-package com.apicatalog.projection.objects.getter;
+package com.apicatalog.projection.object.getter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
-import com.apicatalog.projection.objects.ObjectType;
+import com.apicatalog.projection.object.ObjectType;
 
 public final class MethodGetter implements Getter {
 

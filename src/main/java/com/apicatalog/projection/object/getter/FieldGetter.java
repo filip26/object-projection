@@ -1,9 +1,9 @@
-package com.apicatalog.projection.objects.getter;
+package com.apicatalog.projection.object.getter;
 
 import java.lang.reflect.Field;
 import java.util.Optional;
 
-import com.apicatalog.projection.objects.ObjectType;
+import com.apicatalog.projection.object.ObjectType;
 
 public final class FieldGetter implements Getter {
 

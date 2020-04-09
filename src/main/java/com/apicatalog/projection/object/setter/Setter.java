@@ -1,7 +1,7 @@
-package com.apicatalog.projection.objects.setter;
+package com.apicatalog.projection.object.setter;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.objects.ObjectType;
+import com.apicatalog.projection.object.ObjectType;
 
 public interface Setter {
 

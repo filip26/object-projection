@@ -11,8 +11,8 @@ import com.apicatalog.projection.adapter.ProjectionAdapter;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
-import com.apicatalog.projection.objects.getter.Getter;
-import com.apicatalog.projection.objects.setter.Setter;
+import com.apicatalog.projection.object.getter.Getter;
+import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.source.Source;
 
 public class SourceProperty implements ProjectionProperty {

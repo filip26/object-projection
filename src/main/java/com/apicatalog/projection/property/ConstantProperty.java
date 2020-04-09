@@ -9,8 +9,8 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.ProjectionAdapter;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
+import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.context.CompositionContext;
-import com.apicatalog.projection.objects.setter.Setter;
 
 public class ConstantProperty implements ProjectionProperty {
 

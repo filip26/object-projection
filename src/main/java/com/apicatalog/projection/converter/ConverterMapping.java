@@ -1,6 +1,6 @@
 package com.apicatalog.projection.converter;
 
-import com.apicatalog.projection.objects.ObjectType;
+import com.apicatalog.projection.object.ObjectType;
 
 public final class ConverterMapping {
 

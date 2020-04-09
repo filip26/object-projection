@@ -20,7 +20,7 @@ import com.apicatalog.projection.adapter.type.legacy.IntegerAdapter;
 import com.apicatalog.projection.adapter.type.legacy.LongAdapter;
 import com.apicatalog.projection.adapter.type.legacy.StringAdapter;
 import com.apicatalog.projection.adapter.type.legacy.UriAdapter;
-import com.apicatalog.projection.objects.ObjectType;
+import com.apicatalog.projection.object.ObjectType;
 
 @Deprecated
 public class TypeAdaptersLegacy {

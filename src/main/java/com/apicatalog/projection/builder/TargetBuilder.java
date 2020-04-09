@@ -9,7 +9,7 @@ import com.apicatalog.projection.adapter.CollectionProjectionAdapter;
 import com.apicatalog.projection.adapter.SingleProjectionAdapter;
 import com.apicatalog.projection.adapter.TargetTypeConverter;
 import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
-import com.apicatalog.projection.objects.ObjectType;
+import com.apicatalog.projection.object.ObjectType;
 
 public class TargetBuilder {
 

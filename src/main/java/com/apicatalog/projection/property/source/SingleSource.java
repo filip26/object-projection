@@ -12,10 +12,10 @@ import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
-import com.apicatalog.projection.objects.ObjectType;
-import com.apicatalog.projection.objects.ObjectUtils;
-import com.apicatalog.projection.objects.getter.Getter;
-import com.apicatalog.projection.objects.setter.Setter;
+import com.apicatalog.projection.object.ObjectType;
+import com.apicatalog.projection.object.ObjectUtils;
+import com.apicatalog.projection.object.getter.Getter;
+import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.source.SourceType;
 
 public final class SingleSource implements Source {

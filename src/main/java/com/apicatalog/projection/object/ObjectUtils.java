@@ -1,4 +1,4 @@
-package com.apicatalog.projection.objects;
+package com.apicatalog.projection.object;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -11,12 +11,12 @@ import java.util.Collection;
 import org.apache.commons.lang3.StringUtils;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.objects.getter.FieldGetter;
-import com.apicatalog.projection.objects.getter.Getter;
-import com.apicatalog.projection.objects.getter.MethodGetter;
-import com.apicatalog.projection.objects.setter.FieldSetter;
-import com.apicatalog.projection.objects.setter.MethodSetter;
-import com.apicatalog.projection.objects.setter.Setter;
+import com.apicatalog.projection.object.getter.FieldGetter;
+import com.apicatalog.projection.object.getter.Getter;
+import com.apicatalog.projection.object.getter.MethodGetter;
+import com.apicatalog.projection.object.setter.FieldSetter;
+import com.apicatalog.projection.object.setter.MethodSetter;
+import com.apicatalog.projection.object.setter.Setter;
 
 public final class ObjectUtils {
 

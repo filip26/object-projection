@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.converter.ConverterMapping;
-import com.apicatalog.projection.objects.ObjectType;
-import com.apicatalog.projection.objects.getter.Getter;
-import com.apicatalog.projection.objects.setter.Setter;
+import com.apicatalog.projection.object.ObjectType;
+import com.apicatalog.projection.object.getter.Getter;
+import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.source.SingleSource;
 import com.apicatalog.projection.source.SourceType;
 

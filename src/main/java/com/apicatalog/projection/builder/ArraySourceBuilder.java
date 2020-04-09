@@ -15,7 +15,7 @@ import com.apicatalog.projection.conversion.explicit.BackwardExplicitConversion;
 import com.apicatalog.projection.conversion.explicit.ForwardExplicitConversion;
 import com.apicatalog.projection.conversion.implicit.ImplicitConversions;
 import com.apicatalog.projection.converter.ConverterMapping;
-import com.apicatalog.projection.objects.ObjectType;
+import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.property.source.ArraySource;
 import com.apicatalog.projection.property.source.Source;
 
@@ -42,7 +42,7 @@ public class ArraySourceBuilder {
 	
 	public Optional<ArraySource> build(TypeAdaptersLegacy typeAdapters) {
 		
-		final ArraySource source = new ArraySource(typeAdapters);
+		final ArraySource source = new ArraySource();
 		
 		if (sources.length == 0) {
 			return Optional.empty();
