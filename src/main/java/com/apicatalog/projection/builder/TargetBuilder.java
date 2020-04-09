@@ -8,8 +8,8 @@ import com.apicatalog.projection.adapter.ProjectionAdapter;
 import com.apicatalog.projection.adapter.ProjectionsAdapter;
 import com.apicatalog.projection.adapter.SingleProjectionAdapter;
 import com.apicatalog.projection.adapter.TargetTypeConverter;
+import com.apicatalog.projection.adapter.type.TypeAdapters;
 import com.apicatalog.projection.objects.ObjectType;
-import com.apicatalog.projection.type.adapter.TypeAdapters;
 
 public class TargetBuilder {
 

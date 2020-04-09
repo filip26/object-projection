@@ -11,6 +11,7 @@ import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterConfig;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
+import com.apicatalog.projection.converter.ExplicitConverterMapping;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ObjectUtils;
 
@@ -30,7 +31,7 @@ public class ConversionBuilder {
 		
 	public ConverterMapping build() throws ConverterError, ProjectionError {
 		
-		ConverterMapping converter = new ConverterMapping();
+		ExplicitConverterMapping converter = new ExplicitConverterMapping();
 		
 		@SuppressWarnings("unchecked")
 		Converter<Object, Object> instance = (Converter<Object, Object>) ObjectUtils.newInstance(converterClass);

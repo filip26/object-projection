@@ -1,31 +1,31 @@
-package com.apicatalog.projection.type.adapter.std;
+package com.apicatalog.projection.adapter.type.legacy;
 
 import java.time.Instant;
 
-import com.apicatalog.projection.type.adapter.TypeAdapter;
-import com.apicatalog.projection.type.adapter.TypeAdapterError;
+import com.apicatalog.projection.adapter.type.TypeAdapter;
+import com.apicatalog.projection.adapter.type.TypeAdapterError;
 
-public class IntegerAdapter implements TypeAdapter<Integer> {
+public class LongAdapter implements TypeAdapter<Long> {
 
 	@Override
-	public Class<Integer> consumes() {
-		return Integer.class;
+	public Class<Long> consumes() {
+		return Long.class;
 	}
 
 	@Override
 	public Class<?>[] produces() {
-		return new Class[] {String.class, Long.class, Short.class, Byte.class, Double.class, Float.class, Instant.class, Boolean.class};
+		return new Class[] {String.class, Integer.class, Short.class, Byte.class, Double.class, Float.class, Instant.class, Boolean.class};
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T convert(Class<? extends T> targetClass, Integer object) throws TypeAdapterError {
+	public <T> T convert(Class<? extends T> targetClass, Long object) throws TypeAdapterError {
 		
 		if (targetClass.isAssignableFrom(String.class)) {
 			return (T)object.toString();
 		}
-		if (targetClass.isAssignableFrom(Long.class)) {
-			return (T)Long.valueOf(object.longValue());
+		if (targetClass.isAssignableFrom(Integer.class)) {
+			return (T)Integer.valueOf(object.intValue());
 		}		
 		if (targetClass.isAssignableFrom(Short.class)) {
 			return (T)Short.valueOf(object.shortValue());
@@ -44,8 +44,8 @@ public class IntegerAdapter implements TypeAdapter<Integer> {
 		}
 		if (targetClass.isAssignableFrom(Boolean.class)) {
 			return (T)(object == 1 ? Boolean.TRUE : Boolean.FALSE);
-		}				
-				
+		}		
+		
 		throw new TypeAdapterError("Can not convert " + object.getClass().getCanonicalName() + " to " + targetClass.getCanonicalName() + ".");
 	}
 

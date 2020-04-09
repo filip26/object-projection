@@ -1,4 +1,4 @@
-package com.apicatalog.projection.type.adapter;
+package com.apicatalog.projection.adapter.type;
 
 public class TypeAdapterError extends Exception {
 

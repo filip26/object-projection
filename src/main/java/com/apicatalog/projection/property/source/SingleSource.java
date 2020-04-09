@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.adapter.type.TypeAdapters;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
@@ -16,7 +17,6 @@ import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.source.SourceType;
-import com.apicatalog.projection.type.adapter.TypeAdapters;
 
 public final class SingleSource implements Source {
 
@@ -74,7 +74,7 @@ public final class SingleSource implements Source {
 			try {
 				for (ConverterMapping conversion : conversions) {
 					if (object.isPresent()) {
-						object = Optional.ofNullable(conversion.getConverter().forward(typeAdapters.convert(conversion.getSourceType(), object.get())));
+						object = Optional.ofNullable(conversion.getConversion().forward(typeAdapters.convert(conversion.getSourceType(), object.get())));
 					}
 				}
 			} catch (ConverterError e) {
@@ -99,7 +99,7 @@ public final class SingleSource implements Source {
 		if (conversions != null) {
 			try {
 				for (int i=conversions.length - 1; i >= 0; i--) {
-					object = conversions[i].getConverter().backward(object);
+					object = conversions[i].getConversion().backward(object);
 				}
 			} catch (ConverterError e) {
 				throw new ProjectionError(e);

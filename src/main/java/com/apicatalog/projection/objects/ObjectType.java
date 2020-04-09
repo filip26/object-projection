@@ -34,11 +34,12 @@ public final class ObjectType {
 
 	@Override
 	public String toString() {
-		return "ObjectType [" 
-					+ Optional.ofNullable(type).map(Class::getSimpleName).orElse("") 
-					+ "<" 
-					+ Optional.ofNullable(componentType).map(Class::getSimpleName).orElse("") 
-					+ ">]" 
+		return  Optional.ofNullable(type).map(Class::getSimpleName).orElse("") 
+					+ Optional.ofNullable(componentType).map(c -> "<" + c.getSimpleName() + ">").orElse("") 
 					;
+	}
+
+	public boolean isArray() {
+		return type.isArray();
 	}
 }

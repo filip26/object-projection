@@ -1,4 +1,4 @@
-package com.apicatalog.projection.type.adapter;
+package com.apicatalog.projection.adapter.type;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,15 +12,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.adapter.type.legacy.BooleanAdapter;
+import com.apicatalog.projection.adapter.type.legacy.DoubleAdapter;
+import com.apicatalog.projection.adapter.type.legacy.FloatAdapter;
+import com.apicatalog.projection.adapter.type.legacy.InstantAdapter;
+import com.apicatalog.projection.adapter.type.legacy.IntegerAdapter;
+import com.apicatalog.projection.adapter.type.legacy.LongAdapter;
+import com.apicatalog.projection.adapter.type.legacy.StringAdapter;
+import com.apicatalog.projection.adapter.type.legacy.UriAdapter;
 import com.apicatalog.projection.objects.ObjectType;
-import com.apicatalog.projection.type.adapter.std.BooleanAdapter;
-import com.apicatalog.projection.type.adapter.std.DoubleAdapter;
-import com.apicatalog.projection.type.adapter.std.FloatAdapter;
-import com.apicatalog.projection.type.adapter.std.InstantAdapter;
-import com.apicatalog.projection.type.adapter.std.IntegerAdapter;
-import com.apicatalog.projection.type.adapter.std.LongAdapter;
-import com.apicatalog.projection.type.adapter.std.StringAdapter;
-import com.apicatalog.projection.type.adapter.std.UriAdapter;
 
 public class TypeAdapters {
 

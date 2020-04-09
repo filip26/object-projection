@@ -8,6 +8,7 @@ import java.util.Optional;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.adapter.type.TypeAdapters;
 import com.apicatalog.projection.builder.ArraySourceBuilder;
 import com.apicatalog.projection.builder.ConversionBuilder;
 import com.apicatalog.projection.builder.SourcePropertyBuilder;
@@ -19,7 +20,6 @@ import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.ProjectionProperty;
 import com.apicatalog.projection.property.source.ArraySource;
 import com.apicatalog.projection.property.source.Source;
-import com.apicatalog.projection.type.adapter.TypeAdapters;
 
 public class SourcesPropertyBuilderApi<P> {
 	

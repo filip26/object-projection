@@ -7,14 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.adapter.Conversion;
+import com.apicatalog.projection.adapter.type.TypeAdapters;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.converter.ConverterError;
-import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.source.SourceType;
-import com.apicatalog.projection.type.adapter.TypeAdapters;
 
 public final class ArraySource implements Source {
 
@@ -24,7 +24,8 @@ public final class ArraySource implements Source {
 	
 	Source[] sources;
 	
-	ConverterMapping[] conversions;
+	Conversion<Object, Object>[] readConversions;
+	Conversion<Object, Object>[] writeConversions;
 	
 	ObjectType targetType;
 	
@@ -48,21 +49,21 @@ public final class ArraySource implements Source {
 		
 		logger.debug("Read {} source(s), optional = {}, depth = {}", sources.length, optional, queue.length());
 
-		final Object[] sourceObjects = new Object[sources.length];
-	
-		for (int i = 0; i < sources.length; i++) {
-			sourceObjects[i] = sources[i].read(queue, context).orElse(null);
-		}
-		
 		try {
+
+			final Object[] sourceObjects = new Object[sources.length];
+		
+			for (int i = 0; i < sources.length; i++) {				
+				sourceObjects[i]= sources[i].read(queue, context).orElse(null);
+			}
+
 			Object object = sourceObjects; 
 			
 			// apply explicit conversions
-			if (conversions != null) {
-	
-					for (ConverterMapping conversion : conversions) {
-						object = conversion.getConverter().forward(object);
-					}
+			if (readConversions != null) {
+				for (Conversion<Object, Object> conversion : readConversions) {
+					object = conversion.convert(object);
+				}
 			}
 			
 			return Optional.ofNullable(object);
@@ -77,10 +78,10 @@ public final class ArraySource implements Source {
 		logger.debug("Write {}, {} sources(s), optional = {}, depth = {}", object, sources.length, optional, queue.length());
 
 		try {			
-			// apply explicit conversions in reverse order
-			if (conversions != null) {
-					for (int i=conversions.length - 1; i >= 0; i--) {
-						object = conversions[i].getConverter().backward(object);
+			// apply explicit conversions
+			if (writeConversions != null) {
+					for (int i = 0; i< writeConversions.length; i++) {
+						object = writeConversions[i].convert(object);
 					}
 			}
 
@@ -107,10 +108,6 @@ public final class ArraySource implements Source {
 		this.sources = sources;
 	}
 	
-	public void setConversions(ConverterMapping[] conversions) {
-		this.conversions = conversions;
-	}
-	
 	@Override
 	public boolean isReadable() {
 		return writable;
@@ -123,10 +120,6 @@ public final class ArraySource implements Source {
 
 	public void setTargetType(ObjectType targetType) {
 		this.targetType = targetType;
-	}
-
-	public ConverterMapping[] getConversions() {
-		return conversions;
 	}
 
 	@Override
@@ -150,5 +143,13 @@ public final class ArraySource implements Source {
 	
 	public void setWritable(boolean writable) {
 		this.writable = writable;
+	}
+	
+	public void setReadConversions(Conversion<Object, Object>[] readConversions) {
+		this.readConversions = readConversions;
+	}
+	
+	public void setWriteConversions(Conversion<Object, Object>[] writeConversions) {
+		this.writeConversions = writeConversions;
 	}
 }

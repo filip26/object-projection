@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apicatalog.projection.adapter.type.TypeAdapters;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.objects.ObjectType;
@@ -15,7 +16,6 @@ import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
 import com.apicatalog.projection.property.source.SingleSource;
 import com.apicatalog.projection.source.SourceType;
-import com.apicatalog.projection.type.adapter.TypeAdapters;
 
 public class SingleSourceBuilder {
 
