@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.adapter.type.TypeAdapters;
+import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
@@ -22,7 +22,7 @@ public final class SingleSource implements Source {
 
 	final Logger logger = LoggerFactory.getLogger(SingleSource.class);
 
-	final TypeAdapters typeAdapters;	//TODO use concrete adapters set during mapping
+	final TypeAdaptersLegacy typeAdapters;	//TODO use concrete adapters set during mapping
 	
 	Getter getter;
 	Setter setter;
@@ -35,7 +35,7 @@ public final class SingleSource implements Source {
 	
 	boolean optional;
 
-	public SingleSource(TypeAdapters typeAdapters) {
+	public SingleSource(TypeAdaptersLegacy typeAdapters) {
 		this.typeAdapters = typeAdapters;
 	}
 	

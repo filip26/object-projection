@@ -8,10 +8,11 @@ import java.util.Optional;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.type.TypeAdapters;
+import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.builder.ArraySourceBuilder;
 import com.apicatalog.projection.builder.ConversionBuilder;
 import com.apicatalog.projection.builder.SourcePropertyBuilder;
+import com.apicatalog.projection.conversion.implicit.ImplicitConversions;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
@@ -35,11 +36,11 @@ public class SourcesPropertyBuilderApi<P> {
 	
 	final String projectionPropertyName;
 	
-	protected SourcesPropertyBuilderApi(ProjectionBuilder<P> projection, String projectionPropertyName) {
+	protected SourcesPropertyBuilderApi(ProjectionBuilder<P> projection, String projectionPropertyName, ImplicitConversions implicitConversions) {
 		this.projectionBuilder = projection;
 		this.conversionBuilder = new ArrayList<>();
 		this.sourcePropertyBuilder = SourcePropertyBuilder.newInstance();
-		this.arraySourceBuilder = ArraySourceBuilder.newInstance();
+		this.arraySourceBuilder = ArraySourceBuilder.newInstance(implicitConversions);
 		this.projectionPropertyName = projectionPropertyName;
 	}
 
@@ -68,7 +69,7 @@ public class SourcesPropertyBuilderApi<P> {
 		return projectionBuilder.map(propertyName);
 	}
 	
-	public Projection<P> build(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
+	public Projection<P> build(ProjectionRegistry factory, TypeAdaptersLegacy typeAdapters) throws ProjectionError {
 		return projectionBuilder.build(factory, typeAdapters);
 	}
 
@@ -92,7 +93,7 @@ public class SourcesPropertyBuilderApi<P> {
 		return this;
 	}
 
-	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
+	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry factory, TypeAdaptersLegacy typeAdapters) throws ProjectionError {
 
 		if (Optional.ofNullable(sourcesBuilderApi).isEmpty()) {
 			return Optional.empty();

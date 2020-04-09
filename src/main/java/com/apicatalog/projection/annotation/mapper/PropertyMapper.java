@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.type.TypeAdapters;
+import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.annotation.Constant;
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Provided;
@@ -20,6 +20,7 @@ import com.apicatalog.projection.builder.ConstantPropertyBuilder;
 import com.apicatalog.projection.builder.ProvidedPropertyBuilder;
 import com.apicatalog.projection.builder.SingleSourceBuilder;
 import com.apicatalog.projection.builder.TargetBuilder;
+import com.apicatalog.projection.conversion.implicit.ImplicitConversions;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.objects.getter.FieldGetter;
@@ -34,15 +35,15 @@ public class PropertyMapper {
 
 	final Logger logger = LoggerFactory.getLogger(PropertyMapper.class);
 	
-	final TypeAdapters typeAdapters;
+	final TypeAdaptersLegacy typeAdapters;
 	final ProjectionRegistry registry;
 	
 	final SourceMapper sourceMapper;
 	
-	public PropertyMapper(ProjectionRegistry factory, TypeAdapters typeAdapters) {
+	public PropertyMapper(ProjectionRegistry factory, ImplicitConversions implicitConversions, TypeAdaptersLegacy typeAdapters) {
 		this.registry = factory;
 		this.typeAdapters = typeAdapters;
-		this.sourceMapper = new SourceMapper(factory, typeAdapters);
+		this.sourceMapper = new SourceMapper(factory, implicitConversions, typeAdapters);
 	}
 	
 	Optional<ProjectionProperty> getPropertyMapping(final Field field, final Class<?> defaultSourceClass) {

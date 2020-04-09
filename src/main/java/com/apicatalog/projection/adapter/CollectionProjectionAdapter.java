@@ -9,23 +9,23 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.type.TypeAdapters;
+import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.objects.ObjectType;
 
-public class ProjectionsAdapter implements ProjectionAdapter {
+public class CollectionProjectionAdapter implements ProjectionAdapter {
 
-	final Logger logger = LoggerFactory.getLogger(ProjectionsAdapter.class);
+	final Logger logger = LoggerFactory.getLogger(CollectionProjectionAdapter.class);
 
 	final ProjectionRegistry factory;
 	
-	final TypeAdapters typeAdapters;	//TODO use just concrete adapter(s), not whole factory
+	final TypeAdaptersLegacy typeAdapters;	//TODO use just concrete adapter(s), not whole factory
 	
 	final ObjectType targetType;
 	
-	public ProjectionsAdapter(ProjectionRegistry factory, TypeAdapters typeAdapters, ObjectType targetType) {
+	public CollectionProjectionAdapter(ProjectionRegistry factory, TypeAdaptersLegacy typeAdapters, ObjectType targetType) {
 		this.factory = factory;
 		this.typeAdapters = typeAdapters;
 		

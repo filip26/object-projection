@@ -1,4 +1,4 @@
-package com.apicatalog.projection.adapter.type;
+package com.apicatalog.projection.conversion.implicit;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,26 +9,27 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.adapter.Conversion;
-import com.apicatalog.projection.adapter.ImplicitConversion;
+import com.apicatalog.projection.adapter.type.TypeAdapter;
 import com.apicatalog.projection.adapter.type.legacy.BooleanAdapter;
 import com.apicatalog.projection.adapter.type.legacy.DoubleAdapter;
 import com.apicatalog.projection.adapter.type.legacy.FloatAdapter;
 import com.apicatalog.projection.adapter.type.legacy.InstantAdapter;
 import com.apicatalog.projection.adapter.type.legacy.IntegerAdapter;
 import com.apicatalog.projection.adapter.type.legacy.LongAdapter;
+import com.apicatalog.projection.adapter.type.legacy.Object2String;
 import com.apicatalog.projection.adapter.type.legacy.StringAdapter;
 import com.apicatalog.projection.adapter.type.legacy.UriAdapter;
+import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.property.source.ArraySource;
 
-public class TypeConverters {
+public class ImplicitConversions {
 	
-	final Logger logger = LoggerFactory.getLogger(TypeConverters.class);
+	final Logger logger = LoggerFactory.getLogger(ImplicitConversions.class);
 
 	final Map<Class<?>, TypeAdapter<?>> adapters;
 	
-	public TypeConverters() {
+	public ImplicitConversions() {
 		this.adapters = new LinkedHashMap<>();
 
 		add(new StringAdapter())
@@ -43,7 +44,7 @@ public class TypeConverters {
 			;
 	}
 	
-	public TypeConverters add(TypeAdapter<?> adapter) {
+	public ImplicitConversions add(TypeAdapter<?> adapter) {
 		adapters.put(adapter.consumes(), adapter);
 		return this;
 	}
@@ -147,6 +148,5 @@ public class TypeConverters {
 		mixedArray.setTargetType(Object.class);
 		
 		return Optional.of((Conversion)mixedArray);
-
 	}
 }

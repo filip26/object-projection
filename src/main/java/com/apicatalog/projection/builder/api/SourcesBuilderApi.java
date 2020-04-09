@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.type.TypeAdapters;
+import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.builder.ConversionBuilder;
 import com.apicatalog.projection.builder.SingleSourceBuilder;
@@ -69,7 +69,7 @@ public class SourcesBuilderApi<P> {
 		return projectionBuilder.map(propertyName);
 	}
 	
-	public Projection<P> build(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
+	public Projection<P> build(ProjectionRegistry factory, TypeAdaptersLegacy typeAdapters) throws ProjectionError {
 		return projectionBuilder.build(factory, typeAdapters);
 	}
 
@@ -78,7 +78,7 @@ public class SourcesBuilderApi<P> {
 		return this;
 	}
 
-	protected Optional<Source> buildSource(TypeAdapters typeAdapters, SourceHolder sourceHolder) throws ProjectionError {
+	protected Optional<Source> buildSource(TypeAdaptersLegacy typeAdapters, SourceHolder sourceHolder) throws ProjectionError {
 
 		List<ConverterMapping> converters = new ArrayList<>(sourceHolder.conversions.size());
 				
@@ -105,7 +105,7 @@ public class SourcesBuilderApi<P> {
 							;	
 	}
 
-	protected Source[] buildSources(TypeAdapters typeAdapters) throws ProjectionError {
+	protected Source[] buildSources(TypeAdaptersLegacy typeAdapters) throws ProjectionError {
 		final ArrayList<Source> sources = new ArrayList<>(sourceHolders.size());
 		
 		for (SourceHolder holder : sourceHolders) {

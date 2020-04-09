@@ -1,4 +1,7 @@
-package com.apicatalog.projection.adapter.type;
+package com.apicatalog.projection.adapter.type.legacy;
+
+import com.apicatalog.projection.adapter.type.TypeAdapter;
+import com.apicatalog.projection.adapter.type.TypeAdapterError;
 
 public class Object2String implements TypeAdapter<Object> {
 

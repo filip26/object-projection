@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.adapter.type.TypeAdapters;
+import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
@@ -17,9 +17,9 @@ public class TargetTypeConverter implements ProjectionAdapter {
 
 	final ObjectType targetType;
 	
-	final TypeAdapters typeAdapters;
+	final TypeAdaptersLegacy typeAdapters;
 	
-	public TargetTypeConverter(TypeAdapters typeAdapters, ObjectType targetType) {
+	public TargetTypeConverter(TypeAdaptersLegacy typeAdapters, ObjectType targetType) {
 		this.targetType = targetType;
 		this.typeAdapters = typeAdapters;
 	}

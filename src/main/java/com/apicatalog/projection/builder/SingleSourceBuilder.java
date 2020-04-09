@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.adapter.type.TypeAdapters;
+import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.objects.ObjectType;
@@ -45,7 +45,7 @@ public class SingleSourceBuilder {
 		return new SingleSourceBuilder();
 	}
 	
-	public Optional<SingleSource> build(TypeAdapters typeAdapters) {
+	public Optional<SingleSource> build(TypeAdaptersLegacy typeAdapters) {
 
 		// no setter nor getter? 
 		if (sourceGetter == null && sourceSetter == null) {

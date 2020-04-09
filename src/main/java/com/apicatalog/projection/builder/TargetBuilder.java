@@ -5,10 +5,10 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.ProjectionAdapter;
-import com.apicatalog.projection.adapter.ProjectionsAdapter;
+import com.apicatalog.projection.adapter.CollectionProjectionAdapter;
 import com.apicatalog.projection.adapter.SingleProjectionAdapter;
 import com.apicatalog.projection.adapter.TargetTypeConverter;
-import com.apicatalog.projection.adapter.type.TypeAdapters;
+import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.objects.ObjectType;
 
 public class TargetBuilder {
@@ -29,12 +29,12 @@ public class TargetBuilder {
 		return new TargetBuilder();
 	}
 		
-	public ProjectionAdapter build(ProjectionRegistry factory, TypeAdapters typeAdapters) {
+	public ProjectionAdapter build(ProjectionRegistry factory, TypeAdaptersLegacy typeAdapters) {
 
 		if (targetReference) {
 
 			if (targetType.isCollection()) {
-				return new ProjectionsAdapter(factory, typeAdapters, /*sourceType,*/ targetType);
+				return new CollectionProjectionAdapter(factory, typeAdapters, /*sourceType,*/ targetType);
 			}
 
 			return new SingleProjectionAdapter(factory, targetType);

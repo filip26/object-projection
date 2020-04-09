@@ -7,11 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.adapter.Conversion;
-import com.apicatalog.projection.adapter.type.TypeAdapters;
+import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
+import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.source.SourceType;
@@ -20,7 +20,7 @@ public final class ArraySource implements Source {
 
 	final Logger logger = LoggerFactory.getLogger(ArraySource.class);
 
-	final TypeAdapters typeAdapters;
+	final TypeAdaptersLegacy typeAdapters;
 	
 	Source[] sources;
 	
@@ -36,7 +36,7 @@ public final class ArraySource implements Source {
 	boolean readable;
 	boolean writable;
 
-	public ArraySource(final TypeAdapters typeAdapters) {
+	public ArraySource(final TypeAdaptersLegacy typeAdapters) {
 		this.typeAdapters = typeAdapters;
 	}
 	

@@ -22,13 +22,14 @@ import com.apicatalog.projection.adapter.type.legacy.StringAdapter;
 import com.apicatalog.projection.adapter.type.legacy.UriAdapter;
 import com.apicatalog.projection.objects.ObjectType;
 
-public class TypeAdapters {
+@Deprecated
+public class TypeAdaptersLegacy {
 
-	final Logger logger = LoggerFactory.getLogger(TypeAdapters.class);
+	final Logger logger = LoggerFactory.getLogger(TypeAdaptersLegacy.class);
 	
 	final Map<Class<?>, TypeAdapter<?>> adapters;
 	
-	public TypeAdapters() {
+	public TypeAdaptersLegacy() {
 		this.adapters = new LinkedHashMap<>();
 
 		add(new StringAdapter())
@@ -47,7 +48,7 @@ public class TypeAdapters {
 		return (TypeAdapter<S>) adapters.get(sourceClass);
 	}
 
-	public TypeAdapters add(TypeAdapter<?> adapter) {
+	public TypeAdaptersLegacy add(TypeAdapter<?> adapter) {
 		adapters.put(adapter.consumes(), adapter);
 		return this;
 	}

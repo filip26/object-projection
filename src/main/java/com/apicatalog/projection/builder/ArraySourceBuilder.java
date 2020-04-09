@@ -9,11 +9,11 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.adapter.BackwardExplicitConversion;
-import com.apicatalog.projection.adapter.Conversion;
-import com.apicatalog.projection.adapter.ForwardExplicitConversion;
-import com.apicatalog.projection.adapter.type.TypeAdapters;
-import com.apicatalog.projection.adapter.type.TypeConverters;
+import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
+import com.apicatalog.projection.conversion.Conversion;
+import com.apicatalog.projection.conversion.explicit.BackwardExplicitConversion;
+import com.apicatalog.projection.conversion.explicit.ForwardExplicitConversion;
+import com.apicatalog.projection.conversion.implicit.ImplicitConversions;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.property.source.ArraySource;
@@ -29,17 +29,18 @@ public class ArraySourceBuilder {
 	
 	Collection<ConverterMapping> converters;
 	
-	TypeConverters typeConverters = new TypeConverters();	//FIXME
+	final ImplicitConversions typeConverters;
 	
-	protected ArraySourceBuilder() {
+	protected ArraySourceBuilder(ImplicitConversions typeConverters) {
+		this.typeConverters = typeConverters;
 		this.optional = false;
 	}
 
-	public static final ArraySourceBuilder newInstance() {
-		return new ArraySourceBuilder();
+	public static final ArraySourceBuilder newInstance(ImplicitConversions typeConverters) {
+		return new ArraySourceBuilder(typeConverters);
 	}
 	
-	public Optional<ArraySource> build(TypeAdapters typeAdapters) {
+	public Optional<ArraySource> build(TypeAdaptersLegacy typeAdapters) {
 		
 		final ArraySource source = new ArraySource(typeAdapters);
 		
@@ -106,12 +107,23 @@ public class ArraySourceBuilder {
 			readConversions.add(ForwardExplicitConversion.of(converters[i].getConversion()));
 		}
 
+		
 		final ArrayList<Conversion<?, ?>> writeConversions = new ArrayList<>(converters.length * 2);
 
-		writeConversions.add(BackwardExplicitConversion.of(converters[converters.length - 1].getConversion()));
+		for (int i = converters.length - 1; i > 0 ; i--) {
 
-		typeConverters.get(converters[converters.length - 1].getSourceType(), sourceTypes).ifPresent(writeConversions::add);
+			writeConversions.add(ForwardExplicitConversion.of(converters[i].getConversion()));
 			
+			typeConverters.get(converters[i].getSourceType(), converters[i - 1].getTargetType()).ifPresent(writeConversions::add);
+		}
+
+		
+		writeConversions.add(BackwardExplicitConversion.of(converters[0].getConversion()));
+
+		typeConverters.get(converters[0].getSourceType(), sourceTypes).ifPresent(writeConversions::add);
+			
+		
+		
 		source.setTargetType(converters[converters.length - 1].getTargetType());
 	
 		source.setReadConversions(readConversions.toArray(new Conversion[0]));

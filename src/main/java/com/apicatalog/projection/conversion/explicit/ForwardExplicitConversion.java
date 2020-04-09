@@ -1,5 +1,6 @@
-package com.apicatalog.projection.adapter;
+package com.apicatalog.projection.conversion.explicit;
 
+import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterError;
 

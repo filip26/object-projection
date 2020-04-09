@@ -5,7 +5,7 @@ import java.net.URI;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.apicatalog.projection.adapter.type.TypeAdapters;
+import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.builder.api.ProjectionBuilder;
 import com.apicatalog.projection.converter.std.Prefix;
 import com.apicatalog.projection.converter.std.Suffix;
@@ -32,7 +32,7 @@ public class ProjectionBuilderTest {
 					.map("i1").source(SimpleObject.class)
 					.map("s1").source(SimpleObject.class)
 					
-					.build(ProjectionRegistry.newInstance(), new TypeAdapters());
+					.build(ProjectionRegistry.newInstance(), new TypeAdaptersLegacy());
 		
 		Assert.assertNotNull(projection);
 
@@ -56,7 +56,7 @@ public class ProjectionBuilderTest {
 					.map("i1").source(SimpleObject.class)
 					.map("s1").source(SimpleObject.class)
 					
-					.build(ProjectionRegistry.newInstance(), new TypeAdapters());
+					.build(ProjectionRegistry.newInstance(), new TypeAdaptersLegacy());
 		
 		Assert.assertNotNull(projection);
 
@@ -79,7 +79,7 @@ public class ProjectionBuilderTest {
 					.map("i1").source(SimpleObject.class, "s1")
 					.map("s1").source(SimpleObject.class, "i1")
 					
-					.build(ProjectionRegistry.newInstance(), new TypeAdapters());
+					.build(ProjectionRegistry.newInstance(), new TypeAdaptersLegacy());
 		
 		Assert.assertNotNull(projection);
 
@@ -103,7 +103,7 @@ public class ProjectionBuilderTest {
 					.map("i1").source(SimpleObject.class, "s1")
 					.map("s1").source(SimpleObject.class, "i1")
 					
-					.build(ProjectionRegistry.newInstance(), new TypeAdapters());
+					.build(ProjectionRegistry.newInstance(), new TypeAdaptersLegacy());
 		
 		Assert.assertNotNull(projection);
 
@@ -131,7 +131,7 @@ public class ProjectionBuilderTest {
 								
 					.map("i1").source(SimpleObject.class)
 					
-					.build(ProjectionRegistry.newInstance(), new TypeAdapters());
+					.build(ProjectionRegistry.newInstance(), new TypeAdaptersLegacy());
 
 		Assert.assertNotNull(projection);
 
@@ -158,7 +158,7 @@ public class ProjectionBuilderTest {
 								
 					.map("i1").source(SimpleObject.class)
 					
-					.build(ProjectionRegistry.newInstance(), new TypeAdapters());
+					.build(ProjectionRegistry.newInstance(), new TypeAdaptersLegacy());
 
 		Assert.assertNotNull(projection);
 
@@ -185,7 +185,7 @@ public class ProjectionBuilderTest {
 
 					.map("id").source(Object1.class)
 					
-					.build(registry, new TypeAdapters())
+					.build(registry, new TypeAdaptersLegacy())
 					);
 
 		Assert.assertNotNull(
@@ -194,7 +194,7 @@ public class ProjectionBuilderTest {
 					
 					.map("id").source(Object2.class)
 					
-					.build(registry, new TypeAdapters())
+					.build(registry, new TypeAdaptersLegacy())
 					);
 		
 		Object1 object1 = new Object1();
@@ -227,7 +227,7 @@ public class ProjectionBuilderTest {
 
 					.map("id").source(Object1.class)
 					
-					.build(registry, new TypeAdapters())
+					.build(registry, new TypeAdaptersLegacy())
 					);
 
 		Assert.assertNotNull(
@@ -236,7 +236,7 @@ public class ProjectionBuilderTest {
 					
 					.map("id").source(Object2.class)
 					
-					.build(registry, new TypeAdapters())
+					.build(registry, new TypeAdaptersLegacy())
 					);
 		
 		Object1To to1 = new Object1To();
@@ -268,7 +268,7 @@ public class ProjectionBuilderTest {
 
 					.map("id").source(Object1.class)
 					
-					.build(registry, new TypeAdapters())
+					.build(registry, new TypeAdaptersLegacy())
 					);
 
 		Assert.assertNotNull(
@@ -277,7 +277,7 @@ public class ProjectionBuilderTest {
 					
 					.map("id").source(Object2.class)
 					
-					.build(registry, new TypeAdapters())
+					.build(registry, new TypeAdaptersLegacy())
 					);
 
 		Object1 object1 = new Object1();
@@ -299,7 +299,7 @@ public class ProjectionBuilderTest {
 					
 					.map("id").constant("StringContant")
 					
-					.build(ProjectionRegistry.newInstance(), new TypeAdapters());
+					.build(ProjectionRegistry.newInstance(), new TypeAdaptersLegacy());
 		
 		Assert.assertNotNull(projection);
 		
@@ -325,7 +325,7 @@ public class ProjectionBuilderTest {
 								.conversion(Prefix.class, "1")
 								.conversion(Suffix.class, "2")
 						
-					.build(ProjectionRegistry.newInstance(), new TypeAdapters());
+					.build(ProjectionRegistry.newInstance(), new TypeAdaptersLegacy());
 		
 		Assert.assertNotNull(projection);
 		
@@ -344,7 +344,7 @@ public class ProjectionBuilderTest {
 		final Projection<SimpleObjectTo> projection = 
 				ProjectionBuilder
 					.bind(SimpleObjectTo.class)					
-					.build(ProjectionRegistry.newInstance(), new TypeAdapters());
+					.build(ProjectionRegistry.newInstance(), new TypeAdaptersLegacy());
 		
 		Assert.assertNull(projection);
 	}
@@ -362,7 +362,7 @@ public class ProjectionBuilderTest {
 
 					.map("id").provided()
 					
-					.build(registry, new TypeAdapters())
+					.build(registry, new TypeAdaptersLegacy())
 					);
 
 		Assert.assertNotNull(
@@ -371,7 +371,7 @@ public class ProjectionBuilderTest {
 					
 					.map("id").provided()
 					
-					.build(registry, new TypeAdapters())
+					.build(registry, new TypeAdaptersLegacy())
 					);
 		
 		Object1 object1 = new Object1();
@@ -402,7 +402,7 @@ public class ProjectionBuilderTest {
 
 					.map("id").provided("id")
 					
-					.build(registry, new TypeAdapters())
+					.build(registry, new TypeAdaptersLegacy())
 					);
 
 		Assert.assertNotNull(
@@ -411,7 +411,7 @@ public class ProjectionBuilderTest {
 					
 					.map("id").provided("id")
 					
-					.build(registry, new TypeAdapters())
+					.build(registry, new TypeAdaptersLegacy())
 					);
 		
 		Object1 object1 = new Object1();
@@ -442,7 +442,7 @@ public class ProjectionBuilderTest {
 
 					.map("id").provided("id")
 					
-					.build(registry, new TypeAdapters())
+					.build(registry, new TypeAdaptersLegacy())
 					);
 
 		Assert.assertNotNull(
@@ -451,7 +451,7 @@ public class ProjectionBuilderTest {
 					
 					.map("id").provided("id")
 					
-					.build(registry, new TypeAdapters())
+					.build(registry, new TypeAdaptersLegacy())
 					);
 		
 		Object1 object1 = new Object1();
@@ -486,7 +486,7 @@ public class ProjectionBuilderTest {
 						.source(UriObject.class)
 						.conversion(Suffix.class, "/d/e/f")
 					
-					.build(registry, new TypeAdapters())
+					.build(registry, new TypeAdaptersLegacy())
 					);
 
 		UriObject object1 = new UriObject();
@@ -515,7 +515,7 @@ public class ProjectionBuilderTest {
 
 					.map("id").provided("id")
 					
-					.build(registry, new TypeAdapters())
+					.build(registry, new TypeAdaptersLegacy())
 					);
 
 		Assert.assertNotNull(
@@ -524,7 +524,7 @@ public class ProjectionBuilderTest {
 					
 					.map("id").provided("id")
 					
-					.build(registry, new TypeAdapters())
+					.build(registry, new TypeAdaptersLegacy())
 					);
 		
 		Object1To to = new Object1To();

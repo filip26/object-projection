@@ -8,8 +8,9 @@ import org.apache.commons.lang3.StringUtils;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.type.TypeAdapters;
+import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.builder.ConstantPropertyBuilder;
+import com.apicatalog.projection.conversion.implicit.ImplicitConversions;
 import com.apicatalog.projection.objects.ObjectType;
 import com.apicatalog.projection.objects.ObjectUtils;
 import com.apicatalog.projection.objects.getter.FieldGetter;
@@ -22,6 +23,8 @@ public class MappedPropertyBuilderApi<P> {
 	
 	final ProjectionBuilder<P> projectionBuilder;
 	
+	final ImplicitConversions implicitConversions;
+	
 	SourcePropertyBuilderApi<P> sourcePropertyBuilder;
 	ProvidedPropertyBuilderApi<P> providedPropertyBuilder;
 	SourcesPropertyBuilderApi<P> sourcesPropertyBuilder;
@@ -32,8 +35,9 @@ public class MappedPropertyBuilderApi<P> {
 	
 	boolean reference;
 	
-	protected MappedPropertyBuilderApi(ProjectionBuilder<P> projection, String propertyName, boolean reference) {
+	protected MappedPropertyBuilderApi(ProjectionBuilder<P> projection, ImplicitConversions implicitConversions, String propertyName, boolean reference) {
 		this.projectionBuilder = projection;
+		this.implicitConversions = implicitConversions;
 		this.targetPropertyName = propertyName;
 		this.reference = reference;
 	}
@@ -55,12 +59,12 @@ public class MappedPropertyBuilderApi<P> {
 	}
 
 	public SourcesPropertyBuilderApi<P> sources() {
-		SourcesPropertyBuilderApi<P> builder = new SourcesPropertyBuilderApi<>(projectionBuilder, targetPropertyName);
+		SourcesPropertyBuilderApi<P> builder = new SourcesPropertyBuilderApi<>(projectionBuilder, targetPropertyName, implicitConversions);
 		this.sourcesPropertyBuilder = builder;
 		return builder;
 	}
 
-	public Projection<P> build(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
+	public Projection<P> build(ProjectionRegistry factory, TypeAdaptersLegacy typeAdapters) throws ProjectionError {
 		return projectionBuilder.build(factory, typeAdapters);
 	}
 
@@ -80,7 +84,7 @@ public class MappedPropertyBuilderApi<P> {
 		return projectionBuilder;
 	}
 	
-	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry registry, TypeAdapters typeAdapters) throws ProjectionError {
+	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry registry, TypeAdaptersLegacy typeAdapters) throws ProjectionError {
 		
 		final Field field = ObjectUtils.getProperty(projectionBuilder.projectionClass(), targetPropertyName);
 		

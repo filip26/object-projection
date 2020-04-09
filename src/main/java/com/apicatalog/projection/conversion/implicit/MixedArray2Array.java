@@ -1,8 +1,8 @@
-package com.apicatalog.projection.adapter.type;
+package com.apicatalog.projection.conversion.implicit;
 
 import java.lang.reflect.Array;
 
-import com.apicatalog.projection.adapter.Conversion;
+import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.ConverterError;
 
 public class MixedArray2Array implements Conversion<Object[], Object[]> { 

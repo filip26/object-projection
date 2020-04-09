@@ -8,7 +8,7 @@ import java.util.Optional;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.type.TypeAdapters;
+import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.builder.ConversionBuilder;
 import com.apicatalog.projection.builder.SingleSourceBuilder;
@@ -90,7 +90,7 @@ public class SourcePropertyBuilderApi<P> {
 		return projectionBuilder.map(propertyName);
 	}
 
-	public Projection<P> build(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
+	public Projection<P> build(ProjectionRegistry factory, TypeAdaptersLegacy typeAdapters) throws ProjectionError {
 		return projectionBuilder.build(factory, typeAdapters);
 	}
 
@@ -99,7 +99,7 @@ public class SourcePropertyBuilderApi<P> {
 		return this;
 	}
 
-	protected Optional<Source> buildSource(TypeAdapters typeAdapters, SingleSourceBuilder sourceBuilder) throws ProjectionError {
+	protected Optional<Source> buildSource(TypeAdaptersLegacy typeAdapters, SingleSourceBuilder sourceBuilder) throws ProjectionError {
 
 		Collection<ConverterMapping> converters = new ArrayList<>(conversionBuilder.size()*2);
 		
@@ -124,7 +124,7 @@ public class SourcePropertyBuilderApi<P> {
 							;		
 	}	
 
-	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
+	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry factory, TypeAdaptersLegacy typeAdapters) throws ProjectionError {
 		
 		final Optional<Source> source = buildSource(typeAdapters, sourceBuilder);
 		

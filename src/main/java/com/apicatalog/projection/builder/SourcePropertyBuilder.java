@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.type.TypeAdapters;
+import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.objects.getter.Getter;
 import com.apicatalog.projection.objects.setter.Setter;
@@ -36,7 +36,7 @@ public class SourcePropertyBuilder {
 		return new SourcePropertyBuilder();
 	}
 			
-	public Optional<SourceProperty> build(ProjectionRegistry factory, TypeAdapters typeAdapters) {
+	public Optional<SourceProperty> build(ProjectionRegistry factory, TypeAdaptersLegacy typeAdapters) {
 
 		if (targetGetter == null && targetSetter == null) {
 			return Optional.empty();

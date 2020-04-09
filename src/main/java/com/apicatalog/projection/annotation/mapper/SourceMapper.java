@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.type.TypeAdapters;
+import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.annotation.Conversion;
 import com.apicatalog.projection.annotation.Source;
@@ -23,6 +23,7 @@ import com.apicatalog.projection.builder.ArraySourceBuilder;
 import com.apicatalog.projection.builder.ConversionBuilder;
 import com.apicatalog.projection.builder.SingleSourceBuilder;
 import com.apicatalog.projection.builder.SourcePropertyBuilder;
+import com.apicatalog.projection.conversion.implicit.ImplicitConversions;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.objects.ObjectType;
@@ -41,11 +42,13 @@ class SourceMapper {
 	
 	static final String SOURCE_IS_MISSING = "Source is missing. Property {} is ignored."; 
 	
-	final TypeAdapters typeAdapters;
-	final ProjectionRegistry factory;
+	final TypeAdaptersLegacy typeAdapters;
+	final ImplicitConversions implicitConversions;
+	final ProjectionRegistry index;
 	
-	public SourceMapper(ProjectionRegistry index, TypeAdapters typeAdapters) {
-		this.factory = index;
+	public SourceMapper(ProjectionRegistry index, ImplicitConversions implicitConversions, TypeAdaptersLegacy typeAdapters) {
+		this.index = index;
+		this.implicitConversions = implicitConversions;
 		this.typeAdapters = typeAdapters;
 	}
 		
@@ -72,7 +75,7 @@ class SourceMapper {
 				.targetGetter(targetGetter)
 				.targetSetter(targetSetter)
 				.targetReference(PropertyMapper.isReference(targetSetter.getType()))
-				.build(factory, typeAdapters);
+				.build(index, typeAdapters);
 	}
 	
 	Optional<SourceProperty> getSourcePropertyMapping(final Field field, final Class<?> defaultSourceClass) {
@@ -103,7 +106,7 @@ class SourceMapper {
 					.targetGetter(targetGetter)
 					.targetSetter(targetSetter)
 					.targetReference(PropertyMapper.isReference(targetSetter.getType()))					
-					.build(factory, typeAdapters);
+					.build(index, typeAdapters);
 	}
 
 	Optional<SingleSource> getSingleSource(Source sourceAnnotation, Field field, Class<?> defaultSourceClass) {
@@ -180,7 +183,7 @@ class SourceMapper {
 		}
 
 		ArraySourceBuilder builder = 
-				ArraySourceBuilder.newInstance()
+				ArraySourceBuilder.newInstance(implicitConversions)
 					.optional(sourcesAnnotation.optional())
 					.sources(sources)
 					;

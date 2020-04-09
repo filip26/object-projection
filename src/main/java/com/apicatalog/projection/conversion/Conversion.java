@@ -1,4 +1,4 @@
-package com.apicatalog.projection.adapter;
+package com.apicatalog.projection.conversion;
 
 import com.apicatalog.projection.converter.ConverterError;
 

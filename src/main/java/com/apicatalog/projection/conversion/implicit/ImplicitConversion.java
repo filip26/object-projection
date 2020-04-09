@@ -1,7 +1,8 @@
-package com.apicatalog.projection.adapter;
+package com.apicatalog.projection.conversion.implicit;
 
 import com.apicatalog.projection.adapter.type.TypeAdapter;
 import com.apicatalog.projection.adapter.type.TypeAdapterError;
+import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.ConverterError;
 
 public class ImplicitConversion<S, T> implements Conversion<S, T> {
