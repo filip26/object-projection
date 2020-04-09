@@ -1,6 +1,6 @@
 # Object Projection
 
-```java
+```javascript
 ProjectionBuilder
           .bind(EmployeeTo.class)
 
