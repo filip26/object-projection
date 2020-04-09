@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
-import com.apicatalog.projection.conversion.implicit.ImplicitConversions;
+import com.apicatalog.projection.conversion.implicit.TypeConversions;
 import com.apicatalog.projection.property.ProjectionProperty;
 
 public class ProjectionMapper {
@@ -22,11 +22,11 @@ public class ProjectionMapper {
 	final PropertyMapper propertyMapper;
 
 	public ProjectionMapper(ProjectionRegistry factory) {
-		this(factory, new PropertyMapper(factory, new ImplicitConversions(), new TypeAdaptersLegacy()));	//FIXME remove new Implici
+		this(factory, new PropertyMapper(factory, new TypeConversions(), new TypeAdaptersLegacy()));	//FIXME remove new Implici
 	}
 
 	public ProjectionMapper(ProjectionRegistry factory, TypeAdaptersLegacy typeAdapters) {
-		this(factory, new PropertyMapper(factory, new ImplicitConversions(), typeAdapters));	//FIXME remove new Implici 
+		this(factory, new PropertyMapper(factory, new TypeConversions(), typeAdapters));	//FIXME remove new Implici 
 	}
 
 	public ProjectionMapper(ProjectionRegistry factory, PropertyMapper propertyMapper) {

@@ -7,7 +7,7 @@ import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
-import com.apicatalog.projection.conversion.implicit.ImplicitConversions;
+import com.apicatalog.projection.conversion.implicit.TypeConversions;
 import com.apicatalog.projection.property.ProjectionProperty;
 
 public class ProjectionBuilder<P> {
@@ -30,7 +30,7 @@ public class ProjectionBuilder<P> {
 	}
 
 	public MappedPropertyBuilderApi<P> map(String propertyName, boolean reference) {
-		final MappedPropertyBuilderApi<P> propertyBuilder = new MappedPropertyBuilderApi<>(this, new ImplicitConversions(), propertyName, reference); 	//FIXME remove new Implici
+		final MappedPropertyBuilderApi<P> propertyBuilder = new MappedPropertyBuilderApi<>(this, new TypeConversions(), propertyName, reference); 	//FIXME remove new Implici
 		propertyBuilders.add(propertyBuilder);
 		return propertyBuilder;
 	}

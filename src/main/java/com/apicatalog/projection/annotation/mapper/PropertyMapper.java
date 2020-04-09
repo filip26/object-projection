@@ -20,7 +20,7 @@ import com.apicatalog.projection.builder.ConstantPropertyBuilder;
 import com.apicatalog.projection.builder.ProvidedPropertyBuilder;
 import com.apicatalog.projection.builder.SingleSourceBuilder;
 import com.apicatalog.projection.builder.TargetBuilder;
-import com.apicatalog.projection.conversion.implicit.ImplicitConversions;
+import com.apicatalog.projection.conversion.implicit.TypeConversions;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
 import com.apicatalog.projection.object.getter.FieldGetter;
@@ -40,7 +40,7 @@ public class PropertyMapper {
 	
 	final SourceMapper sourceMapper;
 	
-	public PropertyMapper(ProjectionRegistry factory, ImplicitConversions implicitConversions, TypeAdaptersLegacy typeAdapters) {
+	public PropertyMapper(ProjectionRegistry factory, TypeConversions implicitConversions, TypeAdaptersLegacy typeAdapters) {
 		this.registry = factory;
 		this.typeAdapters = typeAdapters;
 		this.sourceMapper = new SourceMapper(factory, implicitConversions, typeAdapters);

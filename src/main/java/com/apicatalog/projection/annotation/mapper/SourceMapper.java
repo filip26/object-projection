@@ -20,10 +20,10 @@ import com.apicatalog.projection.annotation.Conversion;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.builder.ArraySourceBuilder;
-import com.apicatalog.projection.builder.ConversionBuilder;
+import com.apicatalog.projection.builder.ConversionMappingBuilder;
 import com.apicatalog.projection.builder.SingleSourceBuilder;
 import com.apicatalog.projection.builder.SourcePropertyBuilder;
-import com.apicatalog.projection.conversion.implicit.ImplicitConversions;
+import com.apicatalog.projection.conversion.implicit.TypeConversions;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.object.ObjectType;
@@ -43,10 +43,10 @@ class SourceMapper {
 	static final String SOURCE_IS_MISSING = "Source is missing. Property {} is ignored."; 
 	
 	final TypeAdaptersLegacy typeAdapters;
-	final ImplicitConversions implicitConversions;
+	final TypeConversions implicitConversions;
 	final ProjectionRegistry index;
 	
-	public SourceMapper(ProjectionRegistry index, ImplicitConversions implicitConversions, TypeAdaptersLegacy typeAdapters) {
+	public SourceMapper(ProjectionRegistry index, TypeConversions implicitConversions, TypeAdaptersLegacy typeAdapters) {
 		this.index = index;
 		this.implicitConversions = implicitConversions;
 		this.typeAdapters = typeAdapters;
@@ -209,7 +209,7 @@ class SourceMapper {
 
 		for (final Conversion conversion : conversions) {
 			converters.add(
-					ConversionBuilder
+					ConversionMappingBuilder
 							.newInstance()
 							.converter(conversion.type())
 							.parameters(conversion.value())

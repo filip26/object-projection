@@ -14,18 +14,18 @@ import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
 
-public class ConversionBuilder {
+public class ConversionMappingBuilder {
 
-	final Logger logger = LoggerFactory.getLogger(ConversionBuilder.class);
+	final Logger logger = LoggerFactory.getLogger(ConversionMappingBuilder.class);
 	
 	Class<?> converterClass;
 	String[] parameters;
 	
-	protected ConversionBuilder() {
+	protected ConversionMappingBuilder() {
 	}
 	
-	public static final ConversionBuilder newInstance() {
-		return new ConversionBuilder();
+	public static final ConversionMappingBuilder newInstance() {
+		return new ConversionMappingBuilder();
 	}
 		
 	public ConverterMapping build() throws ConverterError, ProjectionError {
@@ -72,12 +72,12 @@ public class ConversionBuilder {
 		return converter;		
 	}
 	
-	public ConversionBuilder converter(Class<?> converterClass) {
+	public ConversionMappingBuilder converter(Class<?> converterClass) {
 		this.converterClass = converterClass;
 		return this;
 	}
 	
-	public ConversionBuilder parameters(String[] parameters) {
+	public ConversionMappingBuilder parameters(String[] parameters) {
 		this.parameters = parameters;
 		return this;
 	}

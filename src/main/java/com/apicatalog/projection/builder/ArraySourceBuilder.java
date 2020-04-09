@@ -13,7 +13,7 @@ import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.conversion.explicit.BackwardExplicitConversion;
 import com.apicatalog.projection.conversion.explicit.ForwardExplicitConversion;
-import com.apicatalog.projection.conversion.implicit.ImplicitConversions;
+import com.apicatalog.projection.conversion.implicit.TypeConversions;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.property.source.ArraySource;
@@ -29,14 +29,14 @@ public class ArraySourceBuilder {
 	
 	Collection<ConverterMapping> converters;
 	
-	final ImplicitConversions typeConverters;
+	final TypeConversions typeConverters;
 	
-	protected ArraySourceBuilder(ImplicitConversions typeConverters) {
+	protected ArraySourceBuilder(TypeConversions typeConverters) {
 		this.typeConverters = typeConverters;
 		this.optional = false;
 	}
 
-	public static final ArraySourceBuilder newInstance(ImplicitConversions typeConverters) {
+	public static final ArraySourceBuilder newInstance(TypeConversions typeConverters) {
 		return new ArraySourceBuilder(typeConverters);
 	}
 	

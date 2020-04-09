@@ -21,15 +21,16 @@ import com.apicatalog.projection.adapter.type.legacy.StringAdapter;
 import com.apicatalog.projection.adapter.type.legacy.UriAdapter;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.object.ObjectType;
-import com.apicatalog.projection.property.source.ArraySource;
 
-public class ImplicitConversions {
+public class TypeConversions {
 	
-	final Logger logger = LoggerFactory.getLogger(ImplicitConversions.class);
+	final Logger logger = LoggerFactory.getLogger(TypeConversions.class);
 
-	final Map<Class<?>, TypeAdapter<?>> adapters;
+	final Map<Class<?>, TypeAdapter<Object>> adapters;
 	
-	public ImplicitConversions() {
+	static final String MSG_CONVERTER_FROM_TO = "Get converter from {} to {}";
+	
+	public TypeConversions() {
 		this.adapters = new LinkedHashMap<>();
 
 		add(new StringAdapter())
@@ -44,15 +45,15 @@ public class ImplicitConversions {
 			;
 	}
 	
-	public ImplicitConversions add(TypeAdapter<?> adapter) {
-		adapters.put(adapter.consumes(), adapter);
+	public TypeConversions add(TypeAdapter<?> adapter) {
+		adapters.put(adapter.consumes(), (TypeAdapter<Object>)adapter);
 		return this;
 	}
 	
-	public Optional<Conversion<Object, Object>> get(Collection<ObjectType> sources, ObjectType target)  {
+	public Optional<Conversion<Object[], Object[]>> get(Collection<ObjectType> sources, ObjectType target)  {
 		
 		if (logger.isDebugEnabled()) {
-			logger.debug("Get converter from {} to {}", sources, target);
+			logger.debug(MSG_CONVERTER_FROM_TO, sources, target);
 		}
 		
 		if (sources.isEmpty() || target == null) {
@@ -67,24 +68,17 @@ public class ImplicitConversions {
 			System.out.println("TODOOOOOOOOOO");	//FIXME
 		}
 		
-		final Collection<Conversion<Object, Object>> conversions = new ArrayList<>();
+		final Collection<TypeConversion> conversions = new ArrayList<>();
 		
 		for (ObjectType source : sources) {
-			Conversion<Object, Object> conversion = get(source.getType(), target.getType().getComponentType()).orElse(null);
+			TypeConversion conversion = get(source.getType(), target.getType().getComponentType()).orElse(null);
 			conversions.add(conversion);
 		}
 		
-		
-		final MixedArray2Array mixedArray = new MixedArray2Array();
-		
-		mixedArray.setConversions(conversions.toArray(new Conversion[0]));
-		
-		mixedArray.setTargetType(target.getType().getComponentType());
-		
-		return Optional.of((Conversion)mixedArray);
+		return Optional.of( new MixedArray2Array(conversions.toArray(new TypeConversion[0]),target.getType().getComponentType() ));				
 	}
 
-	public Optional<Conversion<Object, Object>> get(Class<?> source, Class<?> target) {
+	public Optional<TypeConversion> get(Class<?> source, Class<?> target) {
 
 		if (source == null || target == null) {
 			throw new IllegalArgumentException();
@@ -95,30 +89,30 @@ public class ImplicitConversions {
 		}
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("Get converter from {} to {}", source.getCanonicalName(), target.getCanonicalName());
+			logger.debug(MSG_CONVERTER_FROM_TO, source.getCanonicalName(), target.getCanonicalName());
 		}
 		
-		TypeAdapter<Object> typeAdapter = (TypeAdapter<Object>) adapters.get(source);
+		TypeAdapter<Object> typeAdapter = adapters.get(source);
 
 		if (typeAdapter == null) {
 			return Optional.empty();
 		}
 		
-		return Optional.of(ImplicitConversion.of(typeAdapter, (Class<Object>)target));
+		return Optional.of(TypeConversion.of(typeAdapter, target));
 	}
 
 	public Optional<Conversion<Object, Object>> get(ObjectType sourceType, ObjectType targetType) {
 		
 		if (logger.isDebugEnabled()) {
-			logger.debug("Get converter from {} to {}", sourceType, targetType);
+			logger.debug(MSG_CONVERTER_FROM_TO, sourceType, targetType);
 		}
 
 		return Optional.empty();
 	}
 
-	public Optional<Conversion<Object, Object>> get(ObjectType source, Collection<ObjectType> targets) {
+	public Optional<Conversion<Object[], Object[]>> get(ObjectType source, Collection<ObjectType> targets) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Get converter from {} to {}", source, targets);
+			logger.debug(MSG_CONVERTER_FROM_TO, source, targets);
 		}
 		
 		if (targets.isEmpty() || source == null) {
@@ -133,20 +127,17 @@ public class ImplicitConversions {
 			System.out.println("TODOOOOOOOOOO");	//FIXME
 		}
 		
-		final Collection<Conversion<Object, Object>> conversions = new ArrayList<>();
+		final Collection<TypeConversion> conversions = new ArrayList<>();
 		
 		for (ObjectType target : targets) {
-			Conversion<Object, Object> conversion = get(source.getType().getComponentType(), target.getType()).orElse(null);
+			TypeConversion conversion = get(source.getType().getComponentType(), target.getType()).orElse(null);
 			conversions.add(conversion);
 		}
 		
 		
-		final MixedArray2Array mixedArray = new MixedArray2Array();
-		
-		mixedArray.setConversions(conversions.toArray(new Conversion[0]));
-		
-		mixedArray.setTargetType(Object.class);
-		
-		return Optional.of((Conversion)mixedArray);
+		return Optional.of(new MixedArray2Array(
+				conversions.toArray(new TypeConversion[0]),
+				Object.class
+				));		
 	}
 }

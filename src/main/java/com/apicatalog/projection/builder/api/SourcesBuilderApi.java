@@ -12,7 +12,7 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.annotation.AccessMode;
-import com.apicatalog.projection.builder.ConversionBuilder;
+import com.apicatalog.projection.builder.ConversionMappingBuilder;
 import com.apicatalog.projection.builder.SingleSourceBuilder;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterError;
@@ -74,7 +74,7 @@ public class SourcesBuilderApi<P> {
 	}
 
 	public SourcesBuilderApi<P> conversion(Class<? extends Converter<?, ?>> converter, String...params) {
-		sourceHolders.getLast().conversions.add(ConversionBuilder.newInstance().converter(converter).parameters(params));
+		sourceHolders.getLast().conversions.add(ConversionMappingBuilder.newInstance().converter(converter).parameters(params));
 		return this;
 	}
 
@@ -84,7 +84,7 @@ public class SourcesBuilderApi<P> {
 				
 		try {
 			
-			for (ConversionBuilder cb : sourceHolder.conversions) {
+			for (ConversionMappingBuilder cb : sourceHolder.conversions) {
 				converters.add(cb.build());
 			}
 			
@@ -116,7 +116,7 @@ public class SourcesBuilderApi<P> {
 	
 	class SourceHolder {
 		
-		protected List<ConversionBuilder> conversions;
+		protected List<ConversionMappingBuilder> conversions;
 		SingleSourceBuilder builder;
 		Class<?> objectClass;
 		String propertyName;

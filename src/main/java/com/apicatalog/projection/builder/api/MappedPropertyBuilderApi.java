@@ -10,7 +10,7 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.builder.ConstantPropertyBuilder;
-import com.apicatalog.projection.conversion.implicit.ImplicitConversions;
+import com.apicatalog.projection.conversion.implicit.TypeConversions;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
 import com.apicatalog.projection.object.getter.FieldGetter;
@@ -23,7 +23,7 @@ public class MappedPropertyBuilderApi<P> {
 	
 	final ProjectionBuilder<P> projectionBuilder;
 	
-	final ImplicitConversions implicitConversions;
+	final TypeConversions implicitConversions;
 	
 	SourcePropertyBuilderApi<P> sourcePropertyBuilder;
 	ProvidedPropertyBuilderApi<P> providedPropertyBuilder;
@@ -35,7 +35,7 @@ public class MappedPropertyBuilderApi<P> {
 	
 	boolean reference;
 	
-	protected MappedPropertyBuilderApi(ProjectionBuilder<P> projection, ImplicitConversions implicitConversions, String propertyName, boolean reference) {
+	protected MappedPropertyBuilderApi(ProjectionBuilder<P> projection, TypeConversions implicitConversions, String propertyName, boolean reference) {
 		this.projectionBuilder = projection;
 		this.implicitConversions = implicitConversions;
 		this.targetPropertyName = propertyName;

@@ -6,12 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
+import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.ConverterError;
-import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
 import com.apicatalog.projection.object.getter.Getter;
@@ -22,8 +21,6 @@ public final class SingleSource implements Source {
 
 	final Logger logger = LoggerFactory.getLogger(SingleSource.class);
 
-	final TypeAdaptersLegacy typeAdapters;	//TODO use concrete adapters set during mapping
-	
 	Getter getter;
 	Setter setter;
 
@@ -31,14 +28,11 @@ public final class SingleSource implements Source {
 	
 	ObjectType targetType;
 	
-	ConverterMapping[] conversions;
+	Conversion<Object, Object>[] readConversions;
+	Conversion<Object, Object>[] writeConversions;
 	
 	boolean optional;
 
-	public SingleSource(TypeAdaptersLegacy typeAdapters) {
-		this.typeAdapters = typeAdapters;
-	}
-	
 	@Override
 	public Optional<Object> read(ProjectionStack queue, CompositionContext context) throws ProjectionError {
 		
@@ -70,11 +64,11 @@ public final class SingleSource implements Source {
 		
 		
 		// apply explicit conversions
-		if (conversions != null) {
+		if (readConversions != null) {
 			try {
-				for (ConverterMapping conversion : conversions) {
+				for (Conversion<Object, Object> conversion : readConversions) {
 					if (object.isPresent()) {
-						object = Optional.ofNullable(conversion.getConversion().forward(typeAdapters.convert(conversion.getSourceType(), object.get())));
+						object = Optional.ofNullable(conversion.convert(object.get()));
 					}
 				}
 			} catch (ConverterError e) {
@@ -95,11 +89,11 @@ public final class SingleSource implements Source {
 		
 		logger.debug("Write {} to {}.{}, optional = {}, depth = {}", object, sourceType, setter.getName(), optional, queue.length());
 
-		// apply explicit conversions in reverse order
-		if (conversions != null) {
+		// apply explicit conversions
+		if (writeConversions != null) {
 			try {
-				for (int i=conversions.length - 1; i >= 0; i--) {
-					object = conversions[i].getConversion().backward(object);
+				for (Conversion<Object, Object> conversion : writeConversions) {
+					object = Optional.ofNullable(conversion.convert(object));
 				}
 			} catch (ConverterError e) {
 				throw new ProjectionError(e);
@@ -120,11 +114,7 @@ public final class SingleSource implements Source {
 			context.set(sourceType.getName(), instance.get());
 		}
 
-		setter.set(instance.get(), typeAdapters.convert(setter.getType().getType(), setter.getType().getComponentClass(), object));
-	}
-	
-	public void setConversions(ConverterMapping[] conversions) {
-		this.conversions = conversions;
+		setter.set(instance.get(), object);
 	}
 	
 	public void setGetter(Getter getter) {
@@ -156,11 +146,7 @@ public final class SingleSource implements Source {
 	public ObjectType getTargetType() {
 		return targetType;
 	}
-	
-	public ConverterMapping[] getConversions() {
-		return conversions;
-	}
-	
+		
 	public void setSourceType(SourceType sourceType) {
 		this.sourceType = sourceType;
 	}
@@ -173,5 +159,13 @@ public final class SingleSource implements Source {
 			}
 		}
 		return false;
+	}
+	
+	public void setWriteConversions(Conversion<Object, Object>[] writeConversions) {
+		this.writeConversions = writeConversions;
+	}
+	
+	public void setReadConversions(Conversion<Object, Object>[] readConversions) {
+		this.readConversions = readConversions;
 	}
 }

@@ -5,24 +5,24 @@ import com.apicatalog.projection.adapter.type.TypeAdapterError;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.ConverterError;
 
-public class ImplicitConversion<S, T> implements Conversion<S, T> {
+public class TypeConversion implements Conversion<Object, Object> {
 
-	final TypeAdapter<S> adapter;
-	final Class<T> targetType;
+	final TypeAdapter<Object> adapter;
+	final Class<?> targetType;
 
-	protected ImplicitConversion(TypeAdapter<S> adapter, Class<T> targetType) {
+	protected TypeConversion(TypeAdapter<Object> adapter, Class<?> targetType) {
 		this.adapter = adapter;
 		this.targetType = targetType;
 	}
 	
-	public static <S, T> ImplicitConversion<S, T> of(TypeAdapter<S> adapter, Class<T> targetType) {
-		return new ImplicitConversion<>(adapter, targetType);
+	public static TypeConversion of(TypeAdapter<Object> adapter, Class<?> targetType) {
+		return new TypeConversion(adapter, targetType);
 	}
 
 	@Override
-	public T convert(S object) throws ConverterError {
+	public Object convert(Object object) throws ConverterError {
 		try {
-			return (T)adapter.convert(targetType, object);
+			return adapter.convert(targetType, object);
 			
 		} catch (TypeAdapterError e) {
 			throw new ConverterError(e);

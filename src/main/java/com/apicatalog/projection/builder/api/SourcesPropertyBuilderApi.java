@@ -10,9 +10,9 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.builder.ArraySourceBuilder;
-import com.apicatalog.projection.builder.ConversionBuilder;
+import com.apicatalog.projection.builder.ConversionMappingBuilder;
 import com.apicatalog.projection.builder.SourcePropertyBuilder;
-import com.apicatalog.projection.conversion.implicit.ImplicitConversions;
+import com.apicatalog.projection.conversion.implicit.TypeConversions;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
@@ -26,7 +26,7 @@ public class SourcesPropertyBuilderApi<P> {
 	
 	ProjectionBuilder<P> projectionBuilder;
 
-	final List<ConversionBuilder> conversionBuilder;
+	final List<ConversionMappingBuilder> conversionBuilder;
 
 	SourcesBuilderApi<P> sourcesBuilderApi;
 	
@@ -36,7 +36,7 @@ public class SourcesPropertyBuilderApi<P> {
 	
 	final String projectionPropertyName;
 	
-	protected SourcesPropertyBuilderApi(ProjectionBuilder<P> projection, String projectionPropertyName, ImplicitConversions implicitConversions) {
+	protected SourcesPropertyBuilderApi(ProjectionBuilder<P> projection, String projectionPropertyName, TypeConversions implicitConversions) {
 		this.projectionBuilder = projection;
 		this.conversionBuilder = new ArrayList<>();
 		this.sourcePropertyBuilder = SourcePropertyBuilder.newInstance();
@@ -74,7 +74,7 @@ public class SourcesPropertyBuilderApi<P> {
 	}
 
 	public SourcesPropertyBuilderApi<P> conversion(Class<? extends Converter<?, ?>> converter, String...params) {
-		conversionBuilder.add(ConversionBuilder.newInstance().converter(converter).parameters(params));
+		conversionBuilder.add(ConversionMappingBuilder.newInstance().converter(converter).parameters(params));
 		return this;
 	}
 
@@ -102,7 +102,7 @@ public class SourcesPropertyBuilderApi<P> {
 		final Collection<ConverterMapping> converters = new ArrayList<>(conversionBuilder.size()*2);
 		
 		try {
-			for (ConversionBuilder cb : conversionBuilder) {
+			for (ConversionMappingBuilder cb : conversionBuilder) {
 				converters.add(cb.build());
 			}
 						

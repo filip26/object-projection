@@ -53,7 +53,7 @@ public class SingleSourceBuilder {
 			return Optional.empty();
 		}
 
-		final SingleSource source = new SingleSource(typeAdapters);
+		final SingleSource source = new SingleSource();
 
 		source.setSourceType(SourceType.of(StringUtils.isNotBlank(qualifier) ? qualifier : null, sourceObjectClass));
 		
@@ -76,7 +76,7 @@ public class SingleSourceBuilder {
 		//TODO add implicit conversions into the chain
 		
 		// set conversions to apply
-		source.setConversions(converters != null ? converters.toArray(new ConverterMapping[0]) : null);
+//		source.setConversions(converters != null ? converters.toArray(new ConverterMapping[0]) : null);
 
 		// set optional 
 		source.setOptional(optional);
@@ -86,14 +86,14 @@ public class SingleSourceBuilder {
 
 		source.setTargetType(targetType);
 
-		// extract actual target object class 
-		if (source.getConversions() != null) {
-			
-			Stream.of(source.getConversions())
-					.reduce((first, second) -> second)
-					.ifPresent(m -> source.setTargetType(m.getSourceType()));
-
-		}
+//		// extract actual target object class 
+//		if (source.getConversions() != null) {
+//			
+//			Stream.of(source.getConversions())
+//					.reduce((first, second) -> second)
+//					.ifPresent(m -> source.setTargetType(m.getSourceType()));
+//
+//		}
 		return Optional.of(source);
 	}
 	

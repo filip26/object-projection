@@ -4,22 +4,16 @@ import java.util.Optional;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.context.CompositionContext;
-import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.source.SourceType;
 
-//TODO decouple as SourceReader and SourceWriter
-public interface Source  {
+public interface SourceReader  {
 
 	Optional<Object> read(ProjectionStack queue, CompositionContext context) throws ProjectionError;
 		
-	void write(ProjectionStack queue, ExtractionContext context, Object object) throws ProjectionError;
-
 	boolean isReadable();
 
-	boolean isWritable();
-	
 	ObjectType getTargetType();
 	
 	boolean isAnyTypeOf(SourceType...sourceTypes);

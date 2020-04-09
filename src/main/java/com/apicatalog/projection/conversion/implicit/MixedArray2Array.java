@@ -7,9 +7,14 @@ import com.apicatalog.projection.converter.ConverterError;
 
 public class MixedArray2Array implements Conversion<Object[], Object[]> { 
 
-	Conversion<Object, Object>[] conversions;
+	final TypeConversion[] conversions;
 	
-	Class<?> targetType;
+	final Class<?> targetType;
+	
+	public MixedArray2Array(TypeConversion[] conversions, Class<?> targetType) {
+		this.conversions = conversions;
+		this.targetType = targetType;
+	}
 	
 	@Override
 	public Object[] convert(Object[] objects) throws ConverterError {
@@ -21,13 +26,5 @@ public class MixedArray2Array implements Conversion<Object[], Object[]> {
 		}
 
 		return target;
-	}
-	
-	public void setConversions(Conversion<Object, Object>[] conversions) {
-		this.conversions = conversions;
-	}
-	
-	public void setTargetType(Class<?> targetType) {
-		this.targetType = targetType;
 	}
 }
