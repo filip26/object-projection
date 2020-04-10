@@ -55,7 +55,7 @@ public class SingleSourceWriterBuilder {
 
 		final SingleSourceWriter source = new SingleSourceWriter();
 
-		source.setSourceType(SourceType.of(StringUtils.isNotBlank(qualifier) ? qualifier : null, sourceObjectClass));
+		source.setSourceType(SourceType.of(qualifier, sourceObjectClass));
 		
 		// set source access
 		switch (mode) {
@@ -76,7 +76,7 @@ public class SingleSourceWriterBuilder {
 		source.setTargetType(targetType);
 
 		// set conversions to apply
-		buildChain(source, converters != null ? converters.toArray(new ConverterMapping[0]) : null, typeConverters);
+		buildChain(source, converters, typeConverters);
 
 		// set optional 
 		source.setOptional(optional);
@@ -114,30 +114,31 @@ public class SingleSourceWriterBuilder {
 		return this;
 	}
 	
-	final void buildChain(SingleSourceWriter source, final ConverterMapping[] converters, final TypeConversions typeConversions) {
+	final void buildChain(SingleSourceWriter source, final Collection<ConverterMapping> converters, final TypeConversions typeConversions) {
 
 		// no conversions to set
-		if (converters == null || converters.length == 0) {
+		if (converters == null || converters.isEmpty()) {
 			return;
 		}
 
-		final ArrayList<Conversion> conversions = new ArrayList<>(converters.length * 2);
+		final ArrayList<Conversion> conversions = new ArrayList<>(converters.size() * 2);
 
-		for (int i = 1; i < converters.length; i++) {
+		final ConverterMapping[] mapping = converters.toArray(new ConverterMapping[0]); 
+		
+		for (int i = 1; i < mapping.length; i++) {
 			
-			conversions.add(BackwardExplicitConversion.of(converters[converters.length - i].getConversion()));
+			conversions.add(BackwardExplicitConversion.of(mapping[mapping.length - i].getConversion()));
 			
 			typeConversions.get(
-					converters[converters.length - i].getSourceType(),
-					converters[converters.length - i - 1].getTargetType())
+					mapping[mapping.length - i].getSourceType(),
+					mapping[mapping.length - i - 1].getTargetType())
 				.ifPresent(conversions::add);
-
 		}
 		
-		conversions.add(BackwardExplicitConversion.of(converters[0].getConversion()));
-		typeConversions.get(converters[0].getSourceType(), source.getTargetType()).ifPresent(conversions::add);
+		conversions.add(BackwardExplicitConversion.of(mapping[0].getConversion()));
+		typeConversions.get(mapping[0].getSourceType(), source.getTargetType()).ifPresent(conversions::add);
 			
-		source.setTargetType(converters[converters.length - 1].getTargetType());
+		source.setTargetType(mapping[mapping.length - 1].getTargetType());
 	
 		source.setConversions(conversions.toArray(new Conversion[0]));
 	}

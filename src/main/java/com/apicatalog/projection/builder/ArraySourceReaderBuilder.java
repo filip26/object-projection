@@ -3,6 +3,7 @@ package com.apicatalog.projection.builder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -46,7 +47,7 @@ public class ArraySourceReaderBuilder {
 		source.setSources(sources);
 
 		// set conversions to apply
-		buildChain(source, sources, converters != null ? converters.toArray(new ConverterMapping[0]) : null, typeConversions);
+		buildChain(source, sources, converters, typeConversions);
 
 		// set optional 
 		source.setOptional(optional);
@@ -69,37 +70,44 @@ public class ArraySourceReaderBuilder {
 		return this;
 	}
 	
-	final void buildChain(ArraySourceReader source, SourceReader[] sources, ConverterMapping[] converters, TypeConversions typeConversions) {
+	final void buildChain(ArraySourceReader source, SourceReader[] sources, Collection<ConverterMapping> converters, TypeConversions typeConversions) {
 
 		// set default source type for an array of sources
 		source.setTargetType(ObjectType.of(Object[].class));
 		
 		// no conversions to set
-		if (converters == null || converters.length == 0) {
+		if (converters == null || converters.isEmpty()) {
 			return;
 		}
 
 		// get source types
 		final Collection<ObjectType> sourceTypes = Arrays.stream(sources).map(SourceReader::getTargetType).collect(Collectors.toList());
 
-		final ArrayList<Conversion> readConversions = new ArrayList<>(converters.length * 2);
+		final ArrayList<Conversion> readConversions = new ArrayList<>(converters.size() * 2);
+		
+		final Iterator<ConverterMapping> it = converters.iterator();
+		
+		ConverterMapping mapping = it.next();
+		
+		typeConversions.get(sourceTypes, mapping.getSourceType()).ifPresent(readConversions::add);
+		readConversions.add(ForwardExplicitConversion.of(mapping.getConversion()));
 
-		typeConversions.get(sourceTypes, converters[0].getSourceType()).ifPresent(readConversions::add);
-		readConversions.add(ForwardExplicitConversion.of(converters[0].getConversion()));
+		while (it.hasNext()) {
 
-		for (int i = 1; i < converters.length; i++) {
-
-			// read chain
-			typeConversions.get(
-					converters[i - 1].getTargetType(),
-					converters[i].getSourceType())
-				.ifPresent(readConversions::add);
+			ConverterMapping next = it.next();
 			
-			readConversions.add(ForwardExplicitConversion.of(converters[i].getConversion()));
+			typeConversions.get(
+								mapping.getTargetType(),
+								next.getSourceType()
+								)
+							.ifPresent(readConversions::add);
+			
+			readConversions.add(ForwardExplicitConversion.of(next.getConversion()));
+			
+			mapping = next;
 		}
 		
-			
-		source.setTargetType(converters[converters.length - 1].getTargetType());
+		source.setTargetType(mapping.getTargetType());
 	
 		source.setConversions(readConversions.toArray(new Conversion[0]));
 	}

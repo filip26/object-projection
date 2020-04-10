@@ -109,7 +109,7 @@ public class SourcesPropertyBuilderApi<P> {
 			return Optional.empty();
 		}
 		
-		final Collection<ConverterMapping> converters = new ArrayList<>(conversionBuilder.size()*2);
+		final Collection<ConverterMapping> converters = new ArrayList<>(conversionBuilder.size());
 		
 		try {
 			for (ConversionMappingBuilder cb : conversionBuilder) {

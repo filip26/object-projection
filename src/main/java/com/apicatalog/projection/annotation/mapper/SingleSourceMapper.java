@@ -3,6 +3,7 @@ package com.apicatalog.projection.annotation.mapper;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -205,10 +206,10 @@ class SingleSourceMapper {
 	
 	protected static final Collection<ConverterMapping> getConverterMapping(Conversion[] conversions) throws ConverterError, ProjectionError {
 
-		final List<ConverterMapping> converters = new ArrayList<>();
+		final List<ConverterMapping> converters = new ArrayList<>(conversions.length);
 		
 		if (conversions.length == 0) {
-			return converters;
+			return Collections.emptyList();
 		}
 
 		for (final Conversion conversion : conversions) {

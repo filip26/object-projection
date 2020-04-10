@@ -2,6 +2,7 @@ package com.apicatalog.projection.builder;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -55,7 +56,7 @@ public class SingleSourceReaderBuilder {
 
 		final SingleSourceReader source = new SingleSourceReader();
 
-		source.setSourceType(SourceType.of(StringUtils.isNotBlank(qualifier) ? qualifier : null, sourceObjectClass));
+		source.setSourceType(SourceType.of(qualifier, sourceObjectClass));
 		
 		// set source access
 		switch (mode) {
@@ -76,7 +77,7 @@ public class SingleSourceReaderBuilder {
 		source.setTargetType(targetType);
 
 		// set conversions to apply
-		buildChain(source, converters != null ? converters.toArray(new ConverterMapping[0]) : null, typeConverters);
+		buildChain(source, converters, typeConverters);
 
 		// set optional 
 		source.setOptional(optional);
@@ -114,28 +115,36 @@ public class SingleSourceReaderBuilder {
 		return this;
 	}
 	
-	final void buildChain(final SingleSourceReader source, final ConverterMapping[] converters, final TypeConversions typeConversions) {
+	final void buildChain(final SingleSourceReader source, final Collection<ConverterMapping> converters, final TypeConversions typeConversions) {
 
 		// no conversions to set
-		if (converters == null || converters.length == 0) {
+		if (converters == null || converters.isEmpty()) {
 			return;
 		}
 
-		final ArrayList<Conversion> conversions = new ArrayList<>(converters.length * 2);
+		final ArrayList<Conversion> conversions = new ArrayList<>(converters.size() * 2);
 
-		typeConversions.get(source.getTargetType(), converters[0].getSourceType()).ifPresent(conversions::add);
-		conversions.add(ForwardExplicitConversion.of(converters[0].getConversion()));
+		final Iterator<ConverterMapping> it = converters.iterator();
+		
+		ConverterMapping mapping = it.next();
+		
+		typeConversions.get(source.getTargetType(), mapping.getSourceType()).ifPresent(conversions::add);
+		conversions.add(ForwardExplicitConversion.of(mapping.getConversion()));
 
-		for (int i = 1; i < converters.length; i++) {
+		while (it.hasNext()) {
+			ConverterMapping next = it.next();
+
 			typeConversions.get(
-					converters[i - 1].getTargetType(),
-					converters[i].getSourceType())
+					mapping.getTargetType(),
+					next.getSourceType())
 				.ifPresent(conversions::add);
 			
-			conversions.add(ForwardExplicitConversion.of(converters[i].getConversion()));			
+			conversions.add(ForwardExplicitConversion.of(next.getConversion()));			
+
+			mapping = next;
 		}
-					
-		source.setTargetType(converters[converters.length - 1].getTargetType());
+
+		source.setTargetType(mapping.getTargetType());
 	
 		source.setConversions(conversions.toArray(new Conversion[0]));
 	}

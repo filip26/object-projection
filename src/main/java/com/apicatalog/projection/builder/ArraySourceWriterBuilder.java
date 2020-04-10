@@ -46,7 +46,7 @@ public class ArraySourceWriterBuilder {
 		source.setSources(sources);
 
 		// set conversions to apply
-		buildChain(source, sources, converters != null ? converters.toArray(new ConverterMapping[0]) : null, typeConversions);
+		buildChain(source, sources, converters, typeConversions);
 
 		// set optional 
 		source.setOptional(optional);
@@ -69,37 +69,38 @@ public class ArraySourceWriterBuilder {
 		return this;
 	}
 	
-	final void buildChain(ArraySourceWriter source, SourceWriter[] sources, ConverterMapping[] converters, TypeConversions typeConversions) {
+	final void buildChain(ArraySourceWriter source, SourceWriter[] sources, Collection<ConverterMapping> converters, TypeConversions typeConversions) {
 
 		// set default source type for an array of sources
 		source.setTargetType(ObjectType.of(Object[].class));
 		
 		// no conversions to set
-		if (converters == null || converters.length == 0) {
+		if (converters == null || converters.isEmpty()) {
 			return;
 		}
 
 		// get source types
 		final Collection<ObjectType> sourceTypes = Arrays.stream(sources).map(SourceWriter::getTargetType).collect(Collectors.toList());
 
-		final ArrayList<Conversion> writeConversions = new ArrayList<>(converters.length * 2);
+		final ArrayList<Conversion> conversions = new ArrayList<>(converters.size() * 2);
+		final ConverterMapping[] mapping = converters.toArray(new ConverterMapping[0]);
 
-		for (int i = 1; i < converters.length; i++) {
+		for (int i = 1; i < mapping.length; i++) {
 
-			writeConversions.add(BackwardExplicitConversion.of(converters[converters.length - i].getConversion()));
+			conversions.add(BackwardExplicitConversion.of(mapping[mapping.length - i].getConversion()));
 			
 			typeConversions.get(
-					converters[converters.length - i].getSourceType(),
-					converters[converters.length - i - 1].getTargetType())
-				.ifPresent(writeConversions::add);
+					mapping[mapping.length - i].getSourceType(),
+					mapping[mapping.length - i - 1].getTargetType())
+				.ifPresent(conversions::add);
 
 		}
 		
-		writeConversions.add(BackwardExplicitConversion.of(converters[0].getConversion()));
-		typeConversions.get(converters[0].getSourceType(), sourceTypes).ifPresent(writeConversions::add);
+		conversions.add(BackwardExplicitConversion.of(mapping[0].getConversion()));
+		typeConversions.get(mapping[0].getSourceType(), sourceTypes).ifPresent(conversions::add);
 			
-		source.setTargetType(converters[converters.length - 1].getTargetType());
+		source.setTargetType(mapping[mapping.length - 1].getTargetType());
 	
-		source.setConversions(writeConversions.toArray(new Conversion[0]));
+		source.setConversions(conversions.toArray(new Conversion[0]));
 	}
 }
