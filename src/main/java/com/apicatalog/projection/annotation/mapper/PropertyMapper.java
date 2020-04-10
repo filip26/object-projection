@@ -18,7 +18,8 @@ import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.annotation.Visibility;
 import com.apicatalog.projection.builder.ConstantPropertyBuilder;
 import com.apicatalog.projection.builder.ProvidedPropertyBuilder;
-import com.apicatalog.projection.builder.SingleSourceBuilder;
+import com.apicatalog.projection.builder.SingleSourceReaderBuilder;
+import com.apicatalog.projection.builder.SingleSourceWriterBuilder;
 import com.apicatalog.projection.builder.TargetBuilder;
 import com.apicatalog.projection.conversion.implicit.TypeConversions;
 import com.apicatalog.projection.object.ObjectType;
@@ -29,7 +30,8 @@ import com.apicatalog.projection.object.setter.FieldSetter;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.ProjectionProperty;
 import com.apicatalog.projection.property.SourceProperty;
-import com.apicatalog.projection.property.source.SingleSource;
+import com.apicatalog.projection.property.source.SingleSourceReader;
+import com.apicatalog.projection.property.source.SingleSourceWriter;
 
 public class PropertyMapper {
 
@@ -39,13 +41,15 @@ public class PropertyMapper {
 	final TypeConversions typeConversions;
 	final ProjectionRegistry registry;
 	
-	final SourceMapper sourceMapper;
+	final SingleSourceMapper singleSourceMapper;
+	final ArraySourceMapper arraySourceMapper;
 	
 	public PropertyMapper(ProjectionRegistry factory, TypeConversions typeConversions, TypeAdaptersLegacy typeAdapters) {
 		this.registry = factory;
 		this.typeConversions = typeConversions;
 		this.typeAdapters = typeAdapters;
-		this.sourceMapper = new SourceMapper(factory, typeConversions, typeAdapters);
+		this.singleSourceMapper = new SingleSourceMapper(factory, typeConversions, typeAdapters);
+		this.arraySourceMapper = new ArraySourceMapper(factory, typeConversions, typeAdapters);
 	}
 	
 	Optional<ProjectionProperty> getPropertyMapping(final Field field, final Class<?> defaultSourceClass) {
@@ -54,11 +58,11 @@ public class PropertyMapper {
 		
 		// single source? 
 		if (field.isAnnotationPresent(Source.class)) {
-			mapping = sourceMapper.getSourcePropertyMapping(field, defaultSourceClass);
+			mapping = singleSourceMapper.getSourcePropertyMapping(field, defaultSourceClass);
 
 		// multiple sources?
 		} else if (field.isAnnotationPresent(Sources.class) ) {
-			mapping = sourceMapper.getSourcesPropertyMapping(field, defaultSourceClass);
+			mapping = arraySourceMapper.getSourcesPropertyMapping(field, defaultSourceClass);
 
 		// provided -> global source
 		} else if (field.isAnnotationPresent(Provided.class)) {
@@ -89,22 +93,37 @@ public class PropertyMapper {
 		if (defaultSourceClass == null) {
 			logger.warn("Source class is missing. Property {} is ignored.", field.getName());
 			return Optional.empty();				
-		}
 
-		final SingleSourceBuilder sourceBuilder = SingleSourceBuilder.newInstance(typeConversions)
-				.objectClass(defaultSourceClass)
-				.optional(true);
+		}
 		
-		final Optional<SingleSource> source = sourceMapper.getSingleSource(defaultSourceClass, field.getName(), sourceBuilder);
+		final Optional<SingleSourceReader> sourceReader = 
+				singleSourceMapper.getSingleSourceReader(
+						defaultSourceClass, 
+						field.getName(), 
+						SingleSourceReaderBuilder.newInstance()
+							.objectClass(defaultSourceClass)
+							.optional(true)
+						);
 		
-		if (source.isEmpty()) {
+		
+		final Optional<SingleSourceWriter> sourceWriter = 
+				singleSourceMapper.getSingleSourceWriter(
+						defaultSourceClass, 
+						field.getName(),
+						SingleSourceWriterBuilder.newInstance()
+							.objectClass(defaultSourceClass)
+							.optional(true)						
+						);
+		
+		if (sourceReader.isEmpty() && sourceWriter.isEmpty()) {
 			logger.warn("Source is missing. Property {} is ignored.", field.getName());
 			return Optional.empty();
 		}
 		
 		final SourceProperty property = new SourceProperty();
 		
-		property.setSource(source.get());
+		property.setSourceReader(sourceReader.orElse(null));
+		property.setSourceWriter(sourceWriter.orElse(null));
 		
 		final Getter targetGetter = FieldGetter.from(field, ObjectUtils.getTypeOf(field));
 		final Setter targetSetter = FieldSetter.from(field, ObjectUtils.getTypeOf(field));
@@ -114,7 +133,7 @@ public class PropertyMapper {
 		
 		property.setTargetAdapter(
 				TargetBuilder.newInstance()
-					.source(source.get().getTargetType())
+					.source(sourceReader.get().getTargetType())	//FIXME !!!!
 					.target(targetSetter.getType(), isReference(targetSetter.getType()))
 					.build(registry, typeAdapters)
 					);

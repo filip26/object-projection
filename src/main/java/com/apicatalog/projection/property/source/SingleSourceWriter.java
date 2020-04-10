@@ -7,86 +7,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
-import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.source.SourceType;
 
-public final class SingleSource implements Source {
+public final class SingleSourceWriter implements SourceWriter {
 
-	final Logger logger = LoggerFactory.getLogger(SingleSource.class);
+	final Logger logger = LoggerFactory.getLogger(SingleSourceWriter.class);
 
-	Getter getter;
 	Setter setter;
 
 	SourceType sourceType;
 	
 	ObjectType targetType;
 	
-	Conversion[] readConversions;
-	Conversion[] writeConversions;
+	Conversion[] conversions;
 	
 	boolean optional;
 
 	@Override
-	public Optional<Object> read(ProjectionStack queue, CompositionContext context) throws ProjectionError {
-		
-		if (!isReadable()) {
-			return Optional.empty();
-		}
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Read {}.{}, optional = {}, depth = {}", sourceType, getter.getName(), optional, queue.length());
-		}
-
-		final Optional<Object> instance = context.get(sourceType);
-
-		if (instance.isEmpty()) {
-			if (optional) {
-				return Optional.empty();
-			}
-			throw new ProjectionError("Source instance of " + sourceType + ",  is not present.");
-		}
-
-		// get source value
-		Optional<Object> object = getter.get(instance.get());
-
-		if (object.isEmpty()) {
-			return Optional.empty();
-		}
-
-		logger.trace("{}.{} = {}", sourceType, getter.getName(), object.get());
-		
-		
-		// apply explicit conversions
-		if (readConversions != null) {
-			try {
-				for (final Conversion conversion : readConversions) {
-					System.out.println(">>> " + object + ", " + conversion);
-					if (object.isEmpty()) {
-						break;
-					}
-					object = Optional.ofNullable(conversion.convert(object.get()));
-				}
-			} catch (ConverterError e) {
-				throw new ProjectionError(e);
-			}
-
-		}
-
-		return object;
-	}
-
-	@Override
 	public void write(ProjectionStack queue, ExtractionContext context, Object object) throws ProjectionError {
 		
-		if (!isWritable() || !context.isAccepted(sourceType)) {
+		if (!context.isAccepted(sourceType)) {
 			return;
 		}
 		
@@ -99,9 +46,9 @@ public final class SingleSource implements Source {
 		}
 		
 		// apply explicit conversions
-		if (writeConversions != null) {
+		if (conversions != null) {
 			try {
-				for (final Conversion conversion : writeConversions) {
+				for (final Conversion conversion : conversions) {
 					if (value.isEmpty()) {
 						break;
 					}
@@ -129,10 +76,6 @@ public final class SingleSource implements Source {
 		setter.set(instance.get(), value.get());
 	}
 	
-	public void setGetter(Getter getter) {
-		this.getter = getter;
-	}
-	
 	public void setSetter(Setter setter) {
 		this.setter = setter;
 	}
@@ -141,16 +84,6 @@ public final class SingleSource implements Source {
 		this.optional = optional;
 	}
 	
-	@Override
-	public boolean isReadable() {
-		return getter != null;
-	}
-
-	@Override
-	public boolean isWritable() {
-		return setter != null;
-	}
-
 	public void setTargetType(ObjectType targetType) {
 		this.targetType = targetType;
 	}
@@ -168,11 +101,7 @@ public final class SingleSource implements Source {
 		return Arrays.stream(sourceTypes).anyMatch(type -> type.isAssignableFrom(sourceType));
 	}
 	
-	public void setWriteConversions(Conversion[] writeConversions) {
-		this.writeConversions = writeConversions;
-	}
-	
-	public void setReadConversions(Conversion[] readConversions) {
-		this.readConversions = readConversions;
-	}
+	public void setConversions(Conversion[] conversions) {
+		this.conversions = conversions;
+	}	
 }

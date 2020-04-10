@@ -11,7 +11,8 @@ import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.SourceProperty;
-import com.apicatalog.projection.property.source.Source;
+import com.apicatalog.projection.property.source.SourceReader;
+import com.apicatalog.projection.property.source.SourceWriter;
 
 public class SourcePropertyBuilder {
 
@@ -19,7 +20,8 @@ public class SourcePropertyBuilder {
 	
 	static final String SOURCE_IS_MISSING = "Source is missing. Property {} is ignored."; 
 	
-	Source source;
+	SourceReader sourceReader;
+	SourceWriter sourceWriter;
 	
 	AccessMode mode;
 	
@@ -42,14 +44,15 @@ public class SourcePropertyBuilder {
 			return Optional.empty();
 		}
 		
-		if (source == null) {
+		if (sourceReader == null || sourceWriter == null) {
 			logger.warn(SOURCE_IS_MISSING, targetSetter != null ? targetSetter.getName() : targetGetter.getName());
 			return Optional.empty();
 		}
 
 		final SourceProperty property = new SourceProperty();
 
-		property.setSource(source);
+		property.setSourceReader(sourceReader);
+		property.setSourceWriter(sourceWriter);
 		
 		// set access mode
 		switch (mode) {
@@ -69,7 +72,7 @@ public class SourcePropertyBuilder {
 
 		property.setTargetAdapter(
 				TargetBuilder.newInstance()
-					.source(source.getTargetType())
+					.source(sourceReader.getTargetType())		//FIXME split it reader/writer type
 					.target(targetSetter.getType(), targetReference)
 					.build(factory, typeAdapters)
 					);
@@ -77,25 +80,30 @@ public class SourcePropertyBuilder {
 		return Optional.of(property);		
 	}
 
-	public SourcePropertyBuilder source(Source source) {
-		this.source = source;
-		return this;
-	}
-	
-	public SourcePropertyBuilder mode(AccessMode mode) {
-		this.mode = mode;
-		return this;
-	}
-	
-	public SourcePropertyBuilder targetGetter(Getter getter) {
-		this.targetGetter = getter;
+	public SourcePropertyBuilder sourceReader(SourceReader sourceReader) {
+		this.sourceReader = sourceReader;
 		return this;
 	}
 
-	public SourcePropertyBuilder targetSetter(Setter setter) {
-		this.targetSetter = setter;
+	public SourcePropertyBuilder targetSetter(Setter targetSetter) {
+		this.targetSetter = targetSetter;
 		return this;
 	}
+
+	public SourcePropertyBuilder sourceWriter(SourceWriter sourceWriter) {
+		this.sourceWriter = sourceWriter;
+		return this;
+	}
+
+	public SourcePropertyBuilder targetGetter(Getter targetGetter) {
+		this.targetGetter = targetGetter;
+		return this;
+	}
+
+	public SourcePropertyBuilder mode(AccessMode mode) {
+		this.mode = mode;
+		return this;
+	}	
 
 	public SourcePropertyBuilder targetReference(boolean targetReference) {
 		this.targetReference = targetReference;

@@ -13,13 +13,15 @@ import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.object.setter.Setter;
-import com.apicatalog.projection.property.source.Source;
+import com.apicatalog.projection.property.source.SourceReader;
+import com.apicatalog.projection.property.source.SourceWriter;
 
 public class SourceProperty implements ProjectionProperty {
 
 	final Logger logger = LoggerFactory.getLogger(SourceProperty.class);
 
-	Source source;
+	SourceReader sourceReader;
+	SourceWriter sourceWriter;
 	
 	ProjectionAdapter targetAdapter;
 	
@@ -31,14 +33,14 @@ public class SourceProperty implements ProjectionProperty {
 	@Override
 	public void forward(ProjectionStack queue, CompositionContext context) throws ProjectionError {
 
-		if (!source.isReadable() || targetSetter == null) {
+		if (sourceReader == null || targetSetter == null) {
 			return;
 		}
 		
 		logger.debug("Forward {} : {}, depth = {}", targetSetter.getName(), targetSetter.getType(), queue.length());
 
 		// get source value
-		Optional<Object> object = source.read(queue, context);
+		Optional<Object> object = sourceReader.read(queue, context);
 		
 		if (object.isEmpty()) {
 			return;
@@ -58,7 +60,7 @@ public class SourceProperty implements ProjectionProperty {
 	@Override
 	public void backward(ProjectionStack queue, ExtractionContext context) throws ProjectionError {
 
-		if (!source.isWritable() || targetGetter == null || !source.isAnyTypeOf(context.getAcceptedTypes())) {
+		if (sourceWriter == null || targetGetter == null || !sourceWriter.isAnyTypeOf(context.getAcceptedTypes())) {
 			return;
 		}
 		
@@ -71,11 +73,11 @@ public class SourceProperty implements ProjectionProperty {
 		}
 
 		if (targetAdapter != null) {			
-			object = Optional.ofNullable(targetAdapter.backward(source.getTargetType(), object.get(), context));
+			object = Optional.ofNullable(targetAdapter.backward(sourceWriter.getTargetType(), object.get(), context));
 		}
 
 		if (object.isPresent()) {
-			source.write(queue, context, object.get());
+			sourceWriter.write(queue, context, object.get());
 		}
 	}
 	
@@ -91,10 +93,6 @@ public class SourceProperty implements ProjectionProperty {
 		this.targetSetter = targetSetter;
 	}
 
-	public void setSource(Source source) {
-		this.source = source;
-	}
-	
 	@Override
 	public boolean isVisible(int depth) {
 		return visibleLevels == null || visibleLevels.isEmpty() || visibleLevels.contains(depth);
@@ -102,5 +100,13 @@ public class SourceProperty implements ProjectionProperty {
 	
 	public void setVisibility(final Set<Integer> levels) {
 		this.visibleLevels = levels;
+	}
+	
+	public void setSourceReader(SourceReader sourceReader) {
+		this.sourceReader = sourceReader;
+	}
+	
+	public void setSourceWriter(SourceWriter sourceWriter) {
+		this.sourceWriter = sourceWriter;
 	}
 }
