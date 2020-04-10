@@ -20,8 +20,8 @@ public class TestProjection {
 
   @Sources(
       value = {
-              @Source(type=User.class, value = "username"),
-              @Source(type=Repository.class, value = "id"),
+              @Source(type=User.class, property = "username"),
+              @Source(type=Repository.class, property = "id"),
               },
       map = @Conversion(
               type = URLTemplate.class,
