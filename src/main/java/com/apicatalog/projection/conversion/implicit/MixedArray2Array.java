@@ -5,7 +5,7 @@ import java.lang.reflect.Array;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.ConverterError;
 
-public class MixedArray2Array implements Conversion<Object[], Object[]> { 
+public class MixedArray2Array implements Conversion { 
 
 	final TypeConversion[] conversions;
 	
@@ -17,7 +17,9 @@ public class MixedArray2Array implements Conversion<Object[], Object[]> {
 	}
 	
 	@Override
-	public Object[] convert(Object[] objects) throws ConverterError {
+	public Object convert(Object object) throws ConverterError {
+		
+		Object[] objects = (Object[])object;
 		
 		final Object[] target = (Object[]) Array.newInstance(targetType, objects.length);
 

@@ -51,7 +51,7 @@ public class ArraySourceBuilder {
 		source.setSources(sources);
 
 		// set conversions to apply
-		setConversions(source, sources, converters != null ? converters.toArray(new ConverterMapping[0]) : null);
+		makeChain(source, sources, converters != null ? converters.toArray(new ConverterMapping[0]) : null);
 
 		// set optional 
 		source.setOptional(optional);
@@ -79,8 +79,7 @@ public class ArraySourceBuilder {
 		return this;
 	}
 	
-	
-	final void setConversions(ArraySource source, Source[] sources, ConverterMapping[] converters) {
+	final void makeChain(ArraySource source, Source[] sources, ConverterMapping[] converters) {
 
 		// set default source type for an array of sources
 		source.setTargetType(ObjectType.of(Object[].class));
@@ -93,41 +92,30 @@ public class ArraySourceBuilder {
 		// get source types
 		final Collection<ObjectType> sourceTypes = Arrays.stream(sources).map(Source::getTargetType).collect(Collectors.toList());
 
-		final ArrayList<Conversion<?, ?>> readConversions = new ArrayList<>(converters.length * 2);
+		final ArrayList<Conversion> readConversions = new ArrayList<>(converters.length * 2);
+		final ArrayList<Conversion> writeConversions = new ArrayList<>(converters.length * 2);
 
-		// add conversion if needed
-		
 		typeConverters.get(sourceTypes, converters[0].getSourceType()).ifPresent(readConversions::add);
 		readConversions.add(ForwardExplicitConversion.of(converters[0].getConversion()));
 
 		for (int i = 1; i < converters.length; i++) {
 
+			// read chain
 			typeConverters.get(converters[i - 1].getTargetType(), converters[i].getSourceType()).ifPresent(readConversions::add);
-			
 			readConversions.add(ForwardExplicitConversion.of(converters[i].getConversion()));
-		}
-
-		
-		final ArrayList<Conversion<?, ?>> writeConversions = new ArrayList<>(converters.length * 2);
-
-		for (int i = converters.length - 1; i > 0 ; i--) {
-
-			writeConversions.add(ForwardExplicitConversion.of(converters[i].getConversion()));
 			
-			typeConverters.get(converters[i].getSourceType(), converters[i - 1].getTargetType()).ifPresent(writeConversions::add);
-		}
+			//write chain
+			writeConversions.add(ForwardExplicitConversion.of(converters[converters.length - i].getConversion()));
+			typeConverters.get(converters[converters.length - i].getSourceType(), converters[converters.length - i - 1].getTargetType()).ifPresent(writeConversions::add);
 
+		}
 		
 		writeConversions.add(BackwardExplicitConversion.of(converters[0].getConversion()));
-
 		typeConverters.get(converters[0].getSourceType(), sourceTypes).ifPresent(writeConversions::add);
 			
-		
-		
 		source.setTargetType(converters[converters.length - 1].getTargetType());
 	
 		source.setReadConversions(readConversions.toArray(new Conversion[0]));
 		source.setWriteConversions(writeConversions.toArray(new Conversion[0]));
-
 	}
 }

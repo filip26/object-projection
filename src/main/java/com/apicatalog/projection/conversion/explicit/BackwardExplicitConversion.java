@@ -4,7 +4,7 @@ import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterError;
 
-public class BackwardExplicitConversion implements Conversion<Object, Object> {
+public class BackwardExplicitConversion implements Conversion {
 
 	final Converter<Object, Object> converter;
 	

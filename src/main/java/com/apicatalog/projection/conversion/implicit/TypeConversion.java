@@ -5,7 +5,7 @@ import com.apicatalog.projection.adapter.type.TypeAdapterError;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.ConverterError;
 
-public class TypeConversion implements Conversion<Object, Object> {
+public class TypeConversion implements Conversion {
 
 	final TypeAdapter<Object> adapter;
 	final Class<?> targetType;

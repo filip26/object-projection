@@ -50,7 +50,7 @@ public class TypeConversions {
 		return this;
 	}
 	
-	public Optional<Conversion<Object[], Object[]>> get(Collection<ObjectType> sources, ObjectType target)  {
+	public Optional<Conversion> get(Collection<ObjectType> sources, ObjectType target)  {
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug(MSG_CONVERTER_FROM_TO, sources, target);
@@ -75,7 +75,7 @@ public class TypeConversions {
 			conversions.add(conversion);
 		}
 		
-		return Optional.of( new MixedArray2Array(conversions.toArray(new TypeConversion[0]),target.getType().getComponentType() ));				
+		return Optional.of( new MixedArray2Array(conversions.toArray(new TypeConversion[0]),target.getType().getComponentType()));				
 	}
 
 	public Optional<TypeConversion> get(Class<?> source, Class<?> target) {
@@ -101,7 +101,7 @@ public class TypeConversions {
 		return Optional.of(TypeConversion.of(typeAdapter, target));
 	}
 
-	public Optional<Conversion<Object, Object>> get(ObjectType sourceType, ObjectType targetType) {
+	public Optional<Conversion> get(ObjectType sourceType, ObjectType targetType) {
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug(MSG_CONVERTER_FROM_TO, sourceType, targetType);
@@ -110,7 +110,7 @@ public class TypeConversions {
 		return Optional.empty();
 	}
 
-	public Optional<Conversion<Object[], Object[]>> get(ObjectType source, Collection<ObjectType> targets) {
+	public Optional<Conversion> get(ObjectType source, Collection<ObjectType> targets) {
 		if (logger.isDebugEnabled()) {
 			logger.debug(MSG_CONVERTER_FROM_TO, source, targets);
 		}

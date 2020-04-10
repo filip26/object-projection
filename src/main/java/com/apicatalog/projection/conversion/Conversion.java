@@ -2,8 +2,8 @@ package com.apicatalog.projection.conversion;
 
 import com.apicatalog.projection.converter.ConverterError;
 
-public interface Conversion<S, T> {
+public interface Conversion {
 
-	T convert(S object) throws ConverterError;
+	Object convert(Object object) throws ConverterError;
 
 }

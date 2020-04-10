@@ -1,5 +1,6 @@
 package com.apicatalog.projection.property.source;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 
@@ -21,8 +22,8 @@ public final class ArraySource implements Source {
 
 	Source[] sources;
 	
-	Conversion<Object, Object>[] readConversions;
-	Conversion<Object, Object>[] writeConversions;
+	Conversion[] readConversions;
+	Conversion[] writeConversions;
 	
 	ObjectType targetType;
 	
@@ -54,7 +55,7 @@ public final class ArraySource implements Source {
 			
 			// apply explicit conversions
 			if (readConversions != null) {
-				for (Conversion<Object, Object> conversion : readConversions) {
+				for (Conversion conversion : readConversions) {
 					object = conversion.convert(object);
 				}
 			}
@@ -73,8 +74,8 @@ public final class ArraySource implements Source {
 		try {			
 			// apply explicit conversions
 			if (writeConversions != null) {
-					for (int i = 0; i< writeConversions.length; i++) {
-						object = writeConversions[i].convert(object);
+					for (Conversion conversion : writeConversions) {
+						object = conversion.convert(object);
 					}
 			}
 
@@ -122,12 +123,7 @@ public final class ArraySource implements Source {
 
 	@Override
 	public boolean isAnyTypeOf(SourceType... sourceTypes) {
-		for (Source source : sources) {
-			if (source.isAnyTypeOf(sourceTypes)) {
-				return true;
-			}
-		}
-		return false;
+		return Arrays.stream(sources).anyMatch(s -> s.isAnyTypeOf(sourceTypes));
 	}
 	
 	public void setReadable(boolean readable) {
@@ -138,11 +134,11 @@ public final class ArraySource implements Source {
 		this.writable = writable;
 	}
 	
-	public void setReadConversions(Conversion<Object, Object>[] readConversions) {
+	public void setReadConversions(Conversion[] readConversions) {
 		this.readConversions = readConversions;
 	}
 	
-	public void setWriteConversions(Conversion<Object, Object>[] writeConversions) {
+	public void setWriteConversions(Conversion[] writeConversions) {
 		this.writeConversions = writeConversions;
 	}
 }

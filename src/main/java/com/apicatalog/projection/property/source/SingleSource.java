@@ -1,5 +1,6 @@
 package com.apicatalog.projection.property.source;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -28,8 +29,8 @@ public final class SingleSource implements Source {
 	
 	ObjectType targetType;
 	
-	Conversion<Object, Object>[] readConversions;
-	Conversion<Object, Object>[] writeConversions;
+	Conversion[] readConversions;
+	Conversion[] writeConversions;
 	
 	boolean optional;
 
@@ -66,10 +67,11 @@ public final class SingleSource implements Source {
 		// apply explicit conversions
 		if (readConversions != null) {
 			try {
-				for (Conversion<Object, Object> conversion : readConversions) {
-					if (object.isPresent()) {
-						object = Optional.ofNullable(conversion.convert(object.get()));
+				for (final Conversion conversion : readConversions) {
+					if (object.isEmpty()) {
+						break;
 					}
+					object = Optional.ofNullable(conversion.convert(object.get()));
 				}
 			} catch (ConverterError e) {
 				throw new ProjectionError(e);
@@ -89,11 +91,20 @@ public final class SingleSource implements Source {
 		
 		logger.debug("Write {} to {}.{}, optional = {}, depth = {}", object, sourceType, setter.getName(), optional, queue.length());
 
+		Optional<Object> value = Optional.ofNullable(object);
+		
+		if (value.isEmpty()) {
+			return;
+		}
+		
 		// apply explicit conversions
 		if (writeConversions != null) {
 			try {
-				for (Conversion<Object, Object> conversion : writeConversions) {
-					object = Optional.ofNullable(conversion.convert(object));
+				for (final Conversion conversion : writeConversions) {
+					if (value.isEmpty()) {
+						break;
+					}
+					value = Optional.ofNullable(conversion.convert(value.get()));
 				}
 			} catch (ConverterError e) {
 				throw new ProjectionError(e);
@@ -114,7 +125,7 @@ public final class SingleSource implements Source {
 			context.set(sourceType.getName(), instance.get());
 		}
 
-		setter.set(instance.get(), object);
+		setter.set(instance.get(), value.get());
 	}
 	
 	public void setGetter(Getter getter) {
@@ -152,20 +163,15 @@ public final class SingleSource implements Source {
 	}
 
 	@Override
-	public boolean isAnyTypeOf(SourceType... sourceTypes) {
-		for (SourceType type : sourceTypes) {
-			if (type.isAssignableFrom(sourceType)) {
-				return true;
-			}
-		}
-		return false;
+	public boolean isAnyTypeOf(final SourceType... sourceTypes) {
+		return Arrays.stream(sourceTypes).anyMatch(type -> type.isAssignableFrom(sourceType));
 	}
 	
-	public void setWriteConversions(Conversion<Object, Object>[] writeConversions) {
+	public void setWriteConversions(Conversion[] writeConversions) {
 		this.writeConversions = writeConversions;
 	}
 	
-	public void setReadConversions(Conversion<Object, Object>[] readConversions) {
+	public void setReadConversions(Conversion[] readConversions) {
 		this.readConversions = readConversions;
 	}
 }
