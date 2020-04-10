@@ -43,12 +43,12 @@ class SourceMapper {
 	static final String SOURCE_IS_MISSING = "Source is missing. Property {} is ignored."; 
 	
 	final TypeAdaptersLegacy typeAdapters;
-	final TypeConversions implicitConversions;
+	final TypeConversions typeConversions;
 	final ProjectionRegistry index;
 	
-	public SourceMapper(ProjectionRegistry index, TypeConversions implicitConversions, TypeAdaptersLegacy typeAdapters) {
+	public SourceMapper(ProjectionRegistry index, TypeConversions typeConversions, TypeAdaptersLegacy typeAdapters) {
 		this.index = index;
-		this.implicitConversions = implicitConversions;
+		this.typeConversions = typeConversions;
 		this.typeAdapters = typeAdapters;
 	}
 		
@@ -131,7 +131,7 @@ class SourceMapper {
 			sourceFieldName = sourceAnnotation.value();
 		}
 		
-		SingleSourceBuilder sourceBuilder = SingleSourceBuilder.newInstance()
+		SingleSourceBuilder sourceBuilder = SingleSourceBuilder.newInstance(typeConversions)
 				.objectClass(sourceObjectClass)
 				.optional(sourceAnnotation.optional())
 				.qualifier(sourceAnnotation.name())
@@ -183,7 +183,7 @@ class SourceMapper {
 		}
 
 		ArraySourceBuilder builder = 
-				ArraySourceBuilder.newInstance(implicitConversions)
+				ArraySourceBuilder.newInstance(typeConversions)
 					.optional(sourcesAnnotation.optional())
 					.sources(sources)
 					;

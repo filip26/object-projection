@@ -14,6 +14,7 @@ import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
 import com.apicatalog.projection.builder.SingleSourceBuilder;
+import com.apicatalog.projection.conversion.implicit.TypeConversions;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
@@ -30,10 +31,13 @@ public class SourcesBuilderApi<P> {
 	
 	final String targetPropertyName;
 	
-	protected SourcesBuilderApi(ProjectionBuilder<P> projection, String targetPropertyName) {
+	final TypeConversions typeConversions;
+	
+	protected SourcesBuilderApi(ProjectionBuilder<P> projection, String targetPropertyName, TypeConversions typeConversions) {
 		this.projectionBuilder = projection;
 		this.sourceHolders = new LinkedList<>();
 		this.targetPropertyName = targetPropertyName;
+		this.typeConversions = typeConversions;
 	}
 
 	public SourcesBuilderApi<P> optional() {
@@ -124,7 +128,7 @@ public class SourcesBuilderApi<P> {
 		public SourceHolder(Class<?> objectClass, String propertyName) {
 			this.objectClass = objectClass;
 			this.propertyName = propertyName;
-			this.builder = SingleSourceBuilder.newInstance();
+			this.builder = SingleSourceBuilder.newInstance(typeConversions);
 			this.conversions = new ArrayList<>(5);
 		}
 	}

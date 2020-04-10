@@ -23,7 +23,7 @@ public class MappedPropertyBuilderApi<P> {
 	
 	final ProjectionBuilder<P> projectionBuilder;
 	
-	final TypeConversions implicitConversions;
+	final TypeConversions typeConversions;
 	
 	SourcePropertyBuilderApi<P> sourcePropertyBuilder;
 	ProvidedPropertyBuilderApi<P> providedPropertyBuilder;
@@ -35,9 +35,9 @@ public class MappedPropertyBuilderApi<P> {
 	
 	boolean reference;
 	
-	protected MappedPropertyBuilderApi(ProjectionBuilder<P> projection, TypeConversions implicitConversions, String propertyName, boolean reference) {
+	protected MappedPropertyBuilderApi(ProjectionBuilder<P> projection, TypeConversions typeConversions, String propertyName, boolean reference) {
 		this.projectionBuilder = projection;
-		this.implicitConversions = implicitConversions;
+		this.typeConversions = typeConversions;
 		this.targetPropertyName = propertyName;
 		this.reference = reference;
 	}
@@ -52,14 +52,15 @@ public class MappedPropertyBuilderApi<P> {
 				projectionBuilder,
 				sourceClass,
 				// use the same name if source property name is not present
-				StringUtils.isNotBlank(sourceProperty) ? sourceProperty : targetPropertyName
+				StringUtils.isNotBlank(sourceProperty) ? sourceProperty : targetPropertyName,
+				typeConversions
 				);
 		this.sourcePropertyBuilder = builder;
 		return builder;
 	}
 
 	public SourcesPropertyBuilderApi<P> sources() {
-		SourcesPropertyBuilderApi<P> builder = new SourcesPropertyBuilderApi<>(projectionBuilder, targetPropertyName, implicitConversions);
+		SourcesPropertyBuilderApi<P> builder = new SourcesPropertyBuilderApi<>(projectionBuilder, targetPropertyName, typeConversions);
 		this.sourcesPropertyBuilder = builder;
 		return builder;
 	}

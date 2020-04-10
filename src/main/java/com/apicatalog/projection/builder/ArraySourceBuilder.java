@@ -101,12 +101,20 @@ public class ArraySourceBuilder {
 		for (int i = 1; i < converters.length; i++) {
 
 			// read chain
-			typeConverters.get(converters[i - 1].getTargetType(), converters[i].getSourceType()).ifPresent(readConversions::add);
+			typeConverters.get(
+					converters[i - 1].getTargetType(),
+					converters[i].getSourceType())
+				.ifPresent(readConversions::add);
+			
 			readConversions.add(ForwardExplicitConversion.of(converters[i].getConversion()));
 			
 			//write chain
-			writeConversions.add(ForwardExplicitConversion.of(converters[converters.length - i].getConversion()));
-			typeConverters.get(converters[converters.length - i].getSourceType(), converters[converters.length - i - 1].getTargetType()).ifPresent(writeConversions::add);
+			writeConversions.add(BackwardExplicitConversion.of(converters[converters.length - i].getConversion()));
+			
+			typeConverters.get(
+					converters[converters.length - i].getSourceType(),
+					converters[converters.length - i - 1].getTargetType())
+				.ifPresent(writeConversions::add);
 
 		}
 		

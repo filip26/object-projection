@@ -13,6 +13,7 @@ import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
 import com.apicatalog.projection.builder.SingleSourceBuilder;
 import com.apicatalog.projection.builder.SourcePropertyBuilder;
+import com.apicatalog.projection.conversion.implicit.TypeConversions;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
@@ -35,9 +36,9 @@ public class SourcePropertyBuilderApi<P> {
 	Class<?> sourceObjectClass;
 	String sourcePropertyName;
 	
-	protected SourcePropertyBuilderApi(ProjectionBuilder<P> projectionBuilder, Class<?> sourceObjectClass, String sourcePropertyName) {
+	protected SourcePropertyBuilderApi(ProjectionBuilder<P> projectionBuilder, Class<?> sourceObjectClass, String sourcePropertyName, TypeConversions typeConversions) {
 		this.projectionBuilder = projectionBuilder;
-		this.sourceBuilder = SingleSourceBuilder.newInstance().objectClass(sourceObjectClass);
+		this.sourceBuilder = SingleSourceBuilder.newInstance(typeConversions).objectClass(sourceObjectClass);
 		this.sourcePropertyBuilder = SourcePropertyBuilder.newInstance();
 		this.sourceObjectClass = sourceObjectClass;
 		this.sourcePropertyName = sourcePropertyName;

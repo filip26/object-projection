@@ -36,12 +36,15 @@ public class SourcesPropertyBuilderApi<P> {
 	
 	final String projectionPropertyName;
 	
-	protected SourcesPropertyBuilderApi(ProjectionBuilder<P> projection, String projectionPropertyName, TypeConversions implicitConversions) {
+	final TypeConversions typeConversions;
+	
+	protected SourcesPropertyBuilderApi(ProjectionBuilder<P> projection, String projectionPropertyName, TypeConversions typeConversions) {
 		this.projectionBuilder = projection;
 		this.conversionBuilder = new ArrayList<>();
 		this.sourcePropertyBuilder = SourcePropertyBuilder.newInstance();
-		this.arraySourceBuilder = ArraySourceBuilder.newInstance(implicitConversions);
+		this.arraySourceBuilder = ArraySourceBuilder.newInstance(typeConversions);
 		this.projectionPropertyName = projectionPropertyName;
+		this.typeConversions = typeConversions;
 	}
 
 	public SourcesPropertyBuilderApi<P> optional() {
@@ -56,7 +59,7 @@ public class SourcesPropertyBuilderApi<P> {
 
 	public SourcesBuilderApi<P> source(Class<?> sourceClass, String sourceProperty) {
 
-		sourcesBuilderApi = new SourcesBuilderApi<>(projectionBuilder, projectionPropertyName)
+		sourcesBuilderApi = new SourcesBuilderApi<>(projectionBuilder, projectionPropertyName, typeConversions)
 								.source(sourceClass, sourceProperty);
 		return sourcesBuilderApi;
 	}

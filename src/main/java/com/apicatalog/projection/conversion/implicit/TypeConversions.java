@@ -68,17 +68,17 @@ public class TypeConversions {
 			System.out.println("TODOOOOOOOOOO");	//FIXME
 		}
 		
-		final Collection<TypeConversion> conversions = new ArrayList<>();
+		final Collection<Conversion> conversions = new ArrayList<>();
 		
 		for (ObjectType source : sources) {
-			TypeConversion conversion = get(source.getType(), target.getType().getComponentType()).orElse(null);
+			Conversion conversion = get(source.getType(), target.getType().getComponentType()).orElse(null);
 			conversions.add(conversion);
 		}
 		
 		return Optional.of( new MixedArray2Array(conversions.toArray(new TypeConversion[0]),target.getType().getComponentType()));				
 	}
 
-	public Optional<TypeConversion> get(Class<?> source, Class<?> target) {
+	public Optional<Conversion> get(Class<?> source, Class<?> target) {
 
 		if (source == null || target == null) {
 			throw new IllegalArgumentException();
@@ -102,15 +102,22 @@ public class TypeConversions {
 	}
 
 	public Optional<Conversion> get(ObjectType sourceType, ObjectType targetType) {
+
+		if (sourceType == null || targetType == null) {
+			throw new IllegalArgumentException();
+		}
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug(MSG_CONVERTER_FROM_TO, sourceType, targetType);
 		}
 
-		return Optional.empty();
+		//TODO deal with collections
+		
+		return get(sourceType.getType(), targetType.getType());
 	}
 
 	public Optional<Conversion> get(ObjectType source, Collection<ObjectType> targets) {
+		
 		if (logger.isDebugEnabled()) {
 			logger.debug(MSG_CONVERTER_FROM_TO, source, targets);
 		}
@@ -127,10 +134,10 @@ public class TypeConversions {
 			System.out.println("TODOOOOOOOOOO");	//FIXME
 		}
 		
-		final Collection<TypeConversion> conversions = new ArrayList<>();
+		final Collection<Conversion> conversions = new ArrayList<>();
 		
 		for (ObjectType target : targets) {
-			TypeConversion conversion = get(source.getType().getComponentType(), target.getType()).orElse(null);
+			Conversion conversion = get(source.getType().getComponentType(), target.getType()).orElse(null);
 			conversions.add(conversion);
 		}
 		

@@ -36,14 +36,16 @@ public class PropertyMapper {
 	final Logger logger = LoggerFactory.getLogger(PropertyMapper.class);
 	
 	final TypeAdaptersLegacy typeAdapters;
+	final TypeConversions typeConversions;
 	final ProjectionRegistry registry;
 	
 	final SourceMapper sourceMapper;
 	
-	public PropertyMapper(ProjectionRegistry factory, TypeConversions implicitConversions, TypeAdaptersLegacy typeAdapters) {
+	public PropertyMapper(ProjectionRegistry factory, TypeConversions typeConversions, TypeAdaptersLegacy typeAdapters) {
 		this.registry = factory;
+		this.typeConversions = typeConversions;
 		this.typeAdapters = typeAdapters;
-		this.sourceMapper = new SourceMapper(factory, implicitConversions, typeAdapters);
+		this.sourceMapper = new SourceMapper(factory, typeConversions, typeAdapters);
 	}
 	
 	Optional<ProjectionProperty> getPropertyMapping(final Field field, final Class<?> defaultSourceClass) {
@@ -89,7 +91,7 @@ public class PropertyMapper {
 			return Optional.empty();				
 		}
 
-		final SingleSourceBuilder sourceBuilder = SingleSourceBuilder.newInstance()
+		final SingleSourceBuilder sourceBuilder = SingleSourceBuilder.newInstance(typeConversions)
 				.objectClass(defaultSourceClass)
 				.optional(true);
 		

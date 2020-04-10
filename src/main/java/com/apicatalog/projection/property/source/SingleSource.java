@@ -68,6 +68,7 @@ public final class SingleSource implements Source {
 		if (readConversions != null) {
 			try {
 				for (final Conversion conversion : readConversions) {
+					System.out.println(">>> " + object + ", " + conversion);
 					if (object.isEmpty()) {
 						break;
 					}

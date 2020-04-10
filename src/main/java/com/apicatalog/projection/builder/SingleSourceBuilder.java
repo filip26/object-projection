@@ -1,7 +1,10 @@
 package com.apicatalog.projection.builder;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -9,11 +12,16 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.annotation.AccessMode;
+import com.apicatalog.projection.conversion.Conversion;
+import com.apicatalog.projection.conversion.explicit.BackwardExplicitConversion;
+import com.apicatalog.projection.conversion.explicit.ForwardExplicitConversion;
+import com.apicatalog.projection.conversion.implicit.TypeConversions;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.source.SingleSource;
+import com.apicatalog.projection.property.source.Source;
 import com.apicatalog.projection.source.SourceType;
 
 public class SingleSourceBuilder {
@@ -35,13 +43,16 @@ public class SingleSourceBuilder {
 	Getter sourceGetter;
 	Setter sourceSetter;
 	
-	protected SingleSourceBuilder() {		
+	final TypeConversions typeConverters;
+	
+	protected SingleSourceBuilder(TypeConversions typeConverters) {
+		this.typeConverters = typeConverters;
 		this.mode = AccessMode.READ_WRITE;
 		this.optional = false;
 	}
 	
-	public static SingleSourceBuilder newInstance() {
-		return new SingleSourceBuilder();
+	public static SingleSourceBuilder newInstance(TypeConversions typeConverters) {
+		return new SingleSourceBuilder(typeConverters);
 	}
 	
 	public Optional<SingleSource> build(TypeAdaptersLegacy typeAdapters) {
@@ -72,6 +83,15 @@ public class SingleSourceBuilder {
 			break;
 		}			
 
+		// set default source type for an array of sources
+		ObjectType targetType = sourceGetter != null ? sourceGetter.getType() : sourceSetter.getType(); 
+
+		source.setTargetType(targetType);
+
+		// set conversions to apply
+		makeChain(source, converters != null ? converters.toArray(new ConverterMapping[0]) : null);
+
+		
 		//TODO add implicit conversions into the chain
 		
 		// set conversions to apply
@@ -80,10 +100,6 @@ public class SingleSourceBuilder {
 		// set optional 
 		source.setOptional(optional);
 				
-		// set target class
-		ObjectType targetType = sourceGetter != null ? sourceGetter.getType() : sourceSetter.getType(); 
-
-		source.setTargetType(targetType);
 
 //		// extract actual target object class 
 //		if (source.getConversions() != null) {
@@ -129,5 +145,47 @@ public class SingleSourceBuilder {
 	public SingleSourceBuilder getter(Getter getter) {
 		this.sourceGetter = getter;
 		return this;
+	}
+	
+	final void makeChain(SingleSource source, ConverterMapping[] converters) {
+
+		// no conversions to set
+		if (converters == null || converters.length == 0) {
+			return;
+		}
+
+		final ArrayList<Conversion> readConversions = new ArrayList<>(converters.length * 2);
+		final ArrayList<Conversion> writeConversions = new ArrayList<>(converters.length * 2);
+
+		typeConverters.get(source.getTargetType(), converters[0].getSourceType()).ifPresent(readConversions::add);
+		readConversions.add(ForwardExplicitConversion.of(converters[0].getConversion()));
+
+		for (int i = 1; i < converters.length; i++) {
+
+			// read chain
+			typeConverters.get(
+					converters[i - 1].getTargetType(),
+					converters[i].getSourceType())
+				.ifPresent(readConversions::add);
+			
+			readConversions.add(ForwardExplicitConversion.of(converters[i].getConversion()));
+			
+			//write chain
+			writeConversions.add(BackwardExplicitConversion.of(converters[converters.length - i].getConversion()));
+			
+			typeConverters.get(
+					converters[converters.length - i].getSourceType(),
+					converters[converters.length - i - 1].getTargetType())
+				.ifPresent(writeConversions::add);
+
+		}
+		
+		writeConversions.add(BackwardExplicitConversion.of(converters[0].getConversion()));
+		typeConverters.get(converters[0].getSourceType(), source.getTargetType()).ifPresent(writeConversions::add);
+			
+		source.setTargetType(converters[converters.length - 1].getTargetType());
+	
+		source.setReadConversions(readConversions.toArray(new Conversion[0]));
+		source.setWriteConversions(writeConversions.toArray(new Conversion[0]));
 	}
 }
