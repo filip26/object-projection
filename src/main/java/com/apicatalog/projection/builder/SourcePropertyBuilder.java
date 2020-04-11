@@ -44,7 +44,7 @@ public class SourcePropertyBuilder {
 			return Optional.empty();
 		}
 		
-		if (sourceReader == null || sourceWriter == null) {
+		if (sourceReader == null && sourceWriter == null) {
 			logger.warn(SOURCE_IS_MISSING, targetSetter != null ? targetSetter.getName() : targetGetter.getName());
 			return Optional.empty();
 		}
@@ -72,8 +72,8 @@ public class SourcePropertyBuilder {
 
 		property.setTargetAdapter(
 				TargetBuilder.newInstance()
-					.source(sourceReader.getTargetType())		//FIXME split it reader/writer type
-					.target(targetSetter.getType(), targetReference)
+					.source(sourceReader != null ? sourceReader.getTargetType() : sourceWriter.getTargetType())		//FIXME split it reader/writer type
+					.target(targetSetter != null ? targetSetter.getType() : targetGetter.getType(), targetReference) //TODO dtto
 					.build(factory, typeAdapters)
 					);
 

@@ -121,20 +121,23 @@ public class PropertyMapper {
 		}
 		
 		final SourceProperty property = new SourceProperty();
-		
-		property.setSourceReader(sourceReader.orElse(null));
-		property.setSourceWriter(sourceWriter.orElse(null));
-		
-		final Getter targetGetter = FieldGetter.from(field, ObjectUtils.getTypeOf(field));
+	
 		final Setter targetSetter = FieldSetter.from(field, ObjectUtils.getTypeOf(field));
-
-		property.setTargetGetter(targetGetter);
-		property.setTargetSetter(targetSetter);
+	
+		sourceReader.ifPresent(reader -> {
+								property.setSourceReader(reader);
+								property.setTargetSetter(targetSetter);								
+								});
 		
+		sourceWriter.ifPresent(writer -> {
+								property.setSourceWriter(writer);
+								property.setTargetGetter(FieldGetter.from(field, ObjectUtils.getTypeOf(field)));								
+								});
+
 		property.setTargetAdapter(
 				TargetBuilder.newInstance()
 					.source(sourceReader.get().getTargetType())	//FIXME !!!!
-					.target(targetSetter.getType(), isReference(targetSetter.getType()))
+					.target(targetSetter.getType(), isReference(targetSetter.getType()))	//FIXME
 					.build(registry, typeAdapters)
 					);
 

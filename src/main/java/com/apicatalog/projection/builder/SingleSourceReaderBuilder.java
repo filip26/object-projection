@@ -48,6 +48,7 @@ public class SingleSourceReaderBuilder {
 
 	public Optional<SingleSourceReader> build(TypeConversions typeConverters) {
 
+		
 		// no getter ? 
 		if (sourceGetter == null) {
 			// nothing to do with this

@@ -32,7 +32,7 @@ public class ConstantProperty implements ProjectionProperty {
 	}
 
 	@Override
-	public void backward(ProjectionStack queue, ExtractionContext context) throws ProjectionError {
+	public void backward(ProjectionStack queue, ExtractionContext context) {
 		logger.trace("Backward is ignored for a constant");
 		// nothing to do, it's a constant
 	}

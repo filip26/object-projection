@@ -15,6 +15,8 @@ import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.source.SourceReader;
 import com.apicatalog.projection.property.source.SourceWriter;
+import com.apicatalog.projection.property.target.TargetReader;
+import com.apicatalog.projection.property.target.TargetWriter;
 
 public class SourceProperty implements ProjectionProperty {
 
@@ -23,13 +25,17 @@ public class SourceProperty implements ProjectionProperty {
 	SourceReader sourceReader;
 	SourceWriter sourceWriter;
 	
+	TargetReader targetReader;
+	TargetWriter targetWriter;
+	
+	Set<Integer> visibleLevels;
+
+	//TODO remove
 	ProjectionAdapter targetAdapter;
 	
 	Getter targetGetter;
-	Setter targetSetter;
-	
-	Set<Integer> visibleLevels;
-	
+	Setter targetSetter;	
+
 	@Override
 	public void forward(ProjectionStack queue, CompositionContext context) throws ProjectionError {
 
@@ -65,6 +71,12 @@ public class SourceProperty implements ProjectionProperty {
 		}
 		
 		logger.debug("Backward {} : {}, depth = {}", targetGetter.getName(), targetGetter.getType(), queue.length());
+//
+//		final Optional<Object> object = targetReader.read(queue, context);
+//
+//		if (object.isPresent()) {
+//			sourceWriter.write(queue, context, object.get());
+//		}
 
 		Optional<Object> object = targetGetter.get(queue.peek());
 
@@ -79,6 +91,7 @@ public class SourceProperty implements ProjectionProperty {
 		if (object.isPresent()) {
 			sourceWriter.write(queue, context, object.get());
 		}
+
 	}
 	
 	public void setTargetAdapter(ProjectionAdapter targetAdapter) {

@@ -54,12 +54,14 @@ public class TwoSourceCompositeTest {
     }
     
     static void checkReference(Object object, String ref) {
+    	Assert.assertNotNull(object);
     	Assert.assertEquals(Reference.class, object.getClass());
     	Reference source2 = (Reference)object;
     	Assert.assertEquals(ref, source2.stringValue);
     }
     
     static void checkBasic(Object object, Long ref) {
+    	Assert.assertNotNull(object);
     	Assert.assertEquals(BasicTypes.class, object.getClass());
     	BasicTypes source1 = (BasicTypes)object;
     	Assert.assertEquals(ref, source1.longValue);    	
