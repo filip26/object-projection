@@ -55,6 +55,15 @@ public class SingleSourceWriterBuilder {
 			return Optional.empty();
 		}
 
+		if (logger.isDebugEnabled()) {
+			logger.debug("Building single source writer from {} to {}.{} : {}",
+							targetType,
+							sourceObjectClass.getSimpleName(),
+							sourceSetter.getName(),
+							sourceSetter.getType()
+							);
+		}
+		
 		final SingleSourceWriter source = new SingleSourceWriter();
 
 		source.setSourceType(SourceType.of(qualifier, sourceObjectClass));
@@ -77,7 +86,7 @@ public class SingleSourceWriterBuilder {
 
 		// set conversions to apply
 		buildChain(source, converters, typeConverters, targetType);
-
+		
 		// set optional 
 		source.setOptional(optional);
 
@@ -129,6 +138,11 @@ public class SingleSourceWriterBuilder {
 					sourceSetter.getType())
 				.ifPresent(conversions::add);
 			source.setConversions(conversions.toArray(new Conversion[0]));
+			
+			if (logger.isTraceEnabled()) {
+				logger.trace("1 conversion attached");
+			}
+
 			return;
 		}
 		
@@ -152,6 +166,10 @@ public class SingleSourceWriterBuilder {
 		conversions.add(BackwardExplicitConversion.of(mapping[0].getConversion()));
 		typeConversions.get(mapping[0].getSourceType(), sourceSetter.getType()).ifPresent(conversions::add);
 			
+		if (logger.isTraceEnabled()) {
+			logger.trace("{} conversions attached", conversions.size());
+		}
+		
 		source.setConversions(conversions.toArray(new Conversion[0]));
 	}
 }

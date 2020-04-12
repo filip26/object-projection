@@ -2,23 +2,11 @@ package com.apicatalog.projection.conversion.implicit;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.adapter.type.TypeAdapter;
-import com.apicatalog.projection.adapter.type.legacy.BooleanAdapter;
-import com.apicatalog.projection.adapter.type.legacy.DoubleAdapter;
-import com.apicatalog.projection.adapter.type.legacy.FloatAdapter;
-import com.apicatalog.projection.adapter.type.legacy.InstantAdapter;
-import com.apicatalog.projection.adapter.type.legacy.IntegerAdapter;
-import com.apicatalog.projection.adapter.type.legacy.LongAdapter;
-import com.apicatalog.projection.adapter.type.legacy.Object2String;
-import com.apicatalog.projection.adapter.type.legacy.StringAdapter;
-import com.apicatalog.projection.adapter.type.legacy.UriAdapter;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.object.ObjectType;
 
@@ -26,28 +14,10 @@ public class TypeConversions {
 	
 	final Logger logger = LoggerFactory.getLogger(TypeConversions.class);
 
-	final Map<Class<?>, TypeAdapter<Object>> adapters;
-	
 	static final String MSG_CONVERTER_FROM_TO = "Get converter from {} to {}";
 	
 	public TypeConversions() {
-		this.adapters = new LinkedHashMap<>();
 
-		add(new StringAdapter())
-			.add(new BooleanAdapter())
-			.add(new LongAdapter())
-			.add(new InstantAdapter())
-			.add(new DoubleAdapter())
-			.add(new IntegerAdapter())
-			.add(new FloatAdapter())
-			.add(new UriAdapter())
-			.add(new Object2String())
-			;
-	}
-	
-	public TypeConversions add(TypeAdapter<?> adapter) {
-		adapters.put(adapter.consumes(), (TypeAdapter<Object>)adapter);
-		return this;
 	}
 	
 	public Optional<Conversion> get(Collection<ObjectType> sources, ObjectType target)  {
@@ -92,20 +62,23 @@ public class TypeConversions {
 			logger.debug(MSG_CONVERTER_FROM_TO, source.getCanonicalName(), target.getCanonicalName());
 		}
 		
-		TypeAdapter<Object> typeAdapter = adapters.get(source);
 
-		if (typeAdapter == null) {
-			if (logger.isTraceEnabled()) {
-				logger.trace("No conversion from {} to {} does exist", source.getSimpleName(), target.getSimpleName());
-			}
-			return Optional.empty();
-		}
-
-		if (logger.isTraceEnabled()) {
-			logger.trace("Found conversion {} from {} to {}.",  typeAdapter, source.getSimpleName(), target.getSimpleName());
-		}
-
-		return Optional.of(TypeConversion.of(typeAdapter, target));
+		return Optional.ofNullable(PrimitiveTypeConversions.get(source, target));
+		
+//		TypeAdapter<Object> typeAdapter = adapters.get(source);
+//
+//		if (typeAdapter == null) {
+//			if (logger.isTraceEnabled()) {
+//				logger.trace("No conversion from {} to {} does exist", source.getSimpleName(), target.getSimpleName());
+//			}
+//			return Optional.empty();
+//		}
+//
+//		if (logger.isTraceEnabled()) {
+//			logger.trace("Found conversion {} from {} to {}.",  typeAdapter, source.getSimpleName(), target.getSimpleName());
+//		}
+//
+//		return Optional.of(TypeConversion.of(typeAdapter, target));
 	}
 
 	public Optional<Conversion> get(ObjectType sourceType, ObjectType targetType) {

@@ -42,6 +42,10 @@ public class SourcesPropertyBuilderApi<P> {
 	
 	final TypeConversions typeConversions;
 	
+	Getter targetGetter;
+	Setter targetSetter;
+	boolean targetReference;
+	
 	protected SourcesPropertyBuilderApi(ProjectionBuilder<P> projection, String projectionPropertyName, TypeConversions typeConversions) {
 		this.projectionBuilder = projection;
 		this.conversionBuilder = new ArrayList<>();
@@ -89,16 +93,19 @@ public class SourcesPropertyBuilderApi<P> {
 	}
 
 	protected SourcesPropertyBuilderApi<P> targetGetter(Getter targetGetter) {
+		this.targetGetter = targetGetter;
 		sourcePropertyBuilder = sourcePropertyBuilder.targetGetter(targetGetter); 
 		return this;
 	}
 
 	protected SourcesPropertyBuilderApi<P> targetSetter(Setter targetSetter) {
+		this.targetSetter = targetSetter;
 		sourcePropertyBuilder = sourcePropertyBuilder.targetSetter(targetSetter);
 		return this;
 	}
 	
 	protected SourcesPropertyBuilderApi<P> targetReference(boolean reference) {
+		this.targetReference = reference;
 		sourcePropertyBuilder = sourcePropertyBuilder.targetReference(reference);
 		return this;
 	}
@@ -126,11 +133,13 @@ public class SourcesPropertyBuilderApi<P> {
 		Optional<ArraySourceReader> sourceReader = arraySourceReaderBuilder
 														.sources(sourceReaders)
 														.converters(converters)
+														.targetType(targetSetter.getType())
 														.build(typeConversions);
 
 		Optional<ArraySourceWriter> sourceWriter = arraySourceWriterBuilder
 														.sources(sourceWriters)
 														.converters(converters)
+														.targetType(targetGetter.getType())
 														.build(typeConversions);
 
 		if (sourceReader.isEmpty() && sourceWriter.isEmpty()) {
