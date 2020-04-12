@@ -17,10 +17,11 @@ public final class PrimitiveTypeConversions {
 		if (source == Long.class) return fromLong(target);
 		if (source == Float.class) return fromFloat(target);
 		if (source == Double.class) return fromDouble(target);
-		if (source == Character.class) return fromCharacter(target);
 		if (source == Boolean.class) return fromBoolean(target);
 		if (source == Instant.class) return fromInstant(target);
 		if (source == URI.class) return fromURI(target);
+		
+		if (target == String.class) return Object::toString;
 		
 		return null;
 	}
@@ -85,11 +86,6 @@ public final class PrimitiveTypeConversions {
 		if (target == Integer.class) return o -> ((Double)o).intValue();
 		if (target == Long.class) return o -> ((Double)o).longValue();
 		if (target == Float.class) return o -> ((Double)o).floatValue();
-		
-		return null;
-	}
-
-	static final Conversion fromCharacter(final Class<?> source) {
 		
 		return null;
 	}

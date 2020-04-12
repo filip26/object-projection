@@ -88,7 +88,7 @@ public class ArraySourceReaderBuilder {
 		}
 
 		// get source types
-		final Collection<ObjectType> sourceTypes = Arrays.stream(sources).map(SourceReader::getTargetType).collect(Collectors.toList());
+//		final Collection<ObjectType> sourceTypes = Arrays.stream(sources).map(SourceReader::getTargetType).collect(Collectors.toList());
 
 		final ArrayList<Conversion> readConversions = new ArrayList<>(converters.size() * 2);
 		
@@ -96,7 +96,7 @@ public class ArraySourceReaderBuilder {
 		
 		ConverterMapping mapping = it.next();
 		
-		typeConversions.get(sourceTypes, mapping.getSourceType()).ifPresent(readConversions::add);
+		typeConversions.get(ObjectType.of(Object[].class), mapping.getSourceType()).ifPresent(readConversions::add);
 		readConversions.add(ForwardExplicitConversion.of(mapping.getConversion()));
 
 		while (it.hasNext()) {
