@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.getter.Getter;
@@ -40,7 +39,7 @@ public class ProvidedPropertyBuilder {
 		return new ProvidedPropertyBuilder();
 	}
 	
-	public Optional<ProjectionProperty> build(ProjectionRegistry factory, TypeAdaptersLegacy typeAdapters) {
+	public Optional<ProjectionProperty> build(ProjectionRegistry registry) {
 
 		if (targetSetter == null && targetGetter == null) {
 			return Optional.empty();
@@ -49,7 +48,7 @@ public class ProvidedPropertyBuilder {
 		final ObjectType targetType = targetGetter != null ? targetGetter.getType() : targetSetter.getType(); 
 		
 		if (targetReference && !targetType.isCollection()) {
-			return buildReference(factory);
+			return buildReference(registry);
 		}
 		
 		final ProvidedObjectProperty property = new ProvidedObjectProperty();
@@ -79,7 +78,7 @@ public class ProvidedPropertyBuilder {
 					TargetBuilder.newInstance()
 						.source(targetSetter != null ? targetSetter.getType() : targetGetter.getType())
 						.target(targetSetter != null ? targetSetter.getType() : targetGetter.getType(), targetReference)
-						.build(factory, typeAdapters)
+						.build(registry)
 						);
 
 		return Optional.of(property);

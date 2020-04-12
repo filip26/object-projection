@@ -8,7 +8,6 @@ import java.util.Optional;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
 import com.apicatalog.projection.builder.SingleSourceReaderBuilder;
@@ -114,8 +113,8 @@ public class SourcePropertyBuilderApi<P> {
 		return projectionBuilder.map(propertyName);
 	}
 
-	public Projection<P> build(ProjectionRegistry factory, TypeAdaptersLegacy typeAdapters) throws ProjectionError {
-		return projectionBuilder.build(factory, typeAdapters);
+	public Projection<P> build(ProjectionRegistry factory) throws ProjectionError {
+		return projectionBuilder.build(factory);
 	}
 
 	public SourcePropertyBuilderApi<P> conversion(Class<? extends Converter<?, ?>> converter, String...params) {
@@ -139,7 +138,7 @@ public class SourcePropertyBuilderApi<P> {
 		return sourceBuilder.setter(sourceSetter).targetType(targetGetter.getType()).build(typeConversions).map(SourceWriter.class::cast);		
 	}	
 
-	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry factory, TypeAdaptersLegacy typeAdapters) throws ProjectionError {
+	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry factory) throws ProjectionError {
 
 		Collection<ConverterMapping> converters = new ArrayList<>(conversionBuilder.size()*2);
 		
@@ -165,6 +164,6 @@ public class SourcePropertyBuilderApi<P> {
 		sourceReader.ifPresent(reader -> sourcePropertyBuilder.sourceReader(reader));
 		sourceWriter.ifPresent(writer -> sourcePropertyBuilder.sourceWriter(writer));
 
-		return sourcePropertyBuilder.build(factory, typeAdapters).map(ProjectionProperty.class::cast);
+		return sourcePropertyBuilder.build(factory).map(ProjectionProperty.class::cast);
 	}
 }

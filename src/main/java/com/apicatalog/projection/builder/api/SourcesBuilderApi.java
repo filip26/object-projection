@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
 import com.apicatalog.projection.builder.SingleSourceReaderBuilder;
@@ -75,8 +74,8 @@ public class SourcesBuilderApi<P> {
 		return projectionBuilder.map(propertyName);
 	}
 	
-	public Projection<P> build(ProjectionRegistry factory, TypeAdaptersLegacy typeAdapters) throws ProjectionError {
-		return projectionBuilder.build(factory, typeAdapters);
+	public Projection<P> build(ProjectionRegistry factory) throws ProjectionError {
+		return projectionBuilder.build(factory);
 	}
 
 	public SourcesBuilderApi<P> conversion(Class<? extends Converter<?, ?>> converter, String...params) {

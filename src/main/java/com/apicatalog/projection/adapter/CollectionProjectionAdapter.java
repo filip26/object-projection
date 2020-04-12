@@ -25,9 +25,9 @@ public class CollectionProjectionAdapter implements ProjectionAdapter {
 	
 	final ObjectType targetType;
 	
-	public CollectionProjectionAdapter(ProjectionRegistry factory, TypeAdaptersLegacy typeAdapters, ObjectType targetType) {
+	public CollectionProjectionAdapter(ProjectionRegistry factory, ObjectType targetType) {
 		this.factory = factory;
-		this.typeAdapters = typeAdapters;
+		this.typeAdapters = new TypeAdaptersLegacy();
 		
 		this.targetType = targetType;
 	}

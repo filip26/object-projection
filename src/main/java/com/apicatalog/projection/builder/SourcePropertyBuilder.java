@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.object.setter.Setter;
@@ -38,7 +37,7 @@ public class SourcePropertyBuilder {
 		return new SourcePropertyBuilder();
 	}
 			
-	public Optional<SourceProperty> build(ProjectionRegistry factory, TypeAdaptersLegacy typeAdapters) {
+	public Optional<SourceProperty> build(ProjectionRegistry factory) {
 
 		if (targetGetter == null && targetSetter == null) {
 			return Optional.empty();
@@ -74,7 +73,7 @@ public class SourcePropertyBuilder {
 				TargetBuilder.newInstance()
 					.source(sourceReader != null ? sourceReader.getTargetType() : sourceWriter.getTargetType())		//FIXME split it reader/writer type
 					.target(targetSetter != null ? targetSetter.getType() : targetGetter.getType(), targetReference) //TODO dtto
-					.build(factory, typeAdapters)
+					.build(factory)
 					);
 
 		return Optional.of(property);		

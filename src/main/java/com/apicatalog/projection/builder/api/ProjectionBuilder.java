@@ -6,7 +6,6 @@ import java.util.List;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.conversion.implicit.TypeConversions;
 import com.apicatalog.projection.property.ProjectionProperty;
 
@@ -35,13 +34,13 @@ public class ProjectionBuilder<P> {
 		return propertyBuilder;
 	}
 	
-	public Projection<P> build(ProjectionRegistry factory, TypeAdaptersLegacy typeAdapters) throws ProjectionError {
+	public Projection<P> build(ProjectionRegistry factory) throws ProjectionError {
 
 		final List<ProjectionProperty> properties = new ArrayList<>(); 
 		
 		for (final MappedPropertyBuilderApi<P> propertyBuilder : propertyBuilders) {
 			propertyBuilder
-					.buildProperty(factory, typeAdapters)
+					.buildProperty(factory)
 					.ifPresent(properties::add);
 		}
 		

@@ -6,10 +6,10 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.object.ObjectUtils;
-import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.property.ProjectionProperty;
 
 public final class Projection<P> {

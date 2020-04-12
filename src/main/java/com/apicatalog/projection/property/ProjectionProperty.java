@@ -3,9 +3,9 @@ package com.apicatalog.projection.property;
 import java.util.Set;
 
 import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
-import com.apicatalog.projection.context.CompositionContext;
 
 public interface ProjectionProperty {
 

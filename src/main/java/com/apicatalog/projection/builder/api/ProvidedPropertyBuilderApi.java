@@ -5,7 +5,6 @@ import java.util.Optional;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.builder.ProvidedPropertyBuilder;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.object.setter.Setter;
@@ -57,11 +56,11 @@ public class ProvidedPropertyBuilderApi<P> {
 		return projectionBuilder.map(propertyName);
 	}
 
-	public Projection<P> build(ProjectionRegistry factory, TypeAdaptersLegacy typeAdapters) throws ProjectionError {
-		return projectionBuilder.build(factory, typeAdapters);
+	public Projection<P> build(ProjectionRegistry factory) throws ProjectionError {
+		return projectionBuilder.build(factory);
 	}	
 	
-	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry factory, TypeAdaptersLegacy typeAdapters) {
-		return providedPropertyBuilder.build(factory, typeAdapters);
+	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry factory) {
+		return providedPropertyBuilder.build(factory);
 	}
 }

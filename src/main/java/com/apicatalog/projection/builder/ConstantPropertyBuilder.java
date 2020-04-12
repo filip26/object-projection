@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.ConstantProperty;
@@ -28,7 +27,7 @@ public class ConstantPropertyBuilder {
 		return new ConstantPropertyBuilder();
 	}
 	
-	public Optional<ProjectionProperty> build(ProjectionRegistry registry, TypeAdaptersLegacy typeAdapters) {
+	public Optional<ProjectionProperty> build(ProjectionRegistry registry) {
 		
 		final ConstantProperty property = new ConstantProperty();
 		
@@ -39,7 +38,7 @@ public class ConstantPropertyBuilder {
 				TargetBuilder.newInstance()
 					.source(ObjectType.of(String[].class))
 					.target(targetSetter.getType(), targetReference)
-					.build(registry, typeAdapters)
+					.build(registry)
 					);
 
 		// set target setter

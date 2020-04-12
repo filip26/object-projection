@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.builder.ArraySourceReaderBuilder;
@@ -38,15 +37,12 @@ class ArraySourceMapper {
 	final TypeConversions typeConversions;
 	final ProjectionRegistry index;
 	
-	final TypeAdaptersLegacy typeAdapters;
-	
 	final SingleSourceMapper singleSourceMapper;
 	
-	public ArraySourceMapper(ProjectionRegistry index, TypeConversions typeConversions, TypeAdaptersLegacy typeAdapters) {
+	public ArraySourceMapper(ProjectionRegistry index, TypeConversions typeConversions) {
 		this.index = index;
 		this.typeConversions = typeConversions;
-		this.typeAdapters = typeAdapters;
-		this.singleSourceMapper = new SingleSourceMapper(index, typeConversions, typeAdapters);
+		this.singleSourceMapper = new SingleSourceMapper(index, typeConversions);
 	}
 		
 	Optional<SourceProperty> getSourcesPropertyMapping(final Field field, final Class<?> defaultSourceClass) {
@@ -80,7 +76,7 @@ class ArraySourceMapper {
 		return builder
 				.mode(AccessMode.READ_WRITE)
 				.targetReference(PropertyMapper.isReference(targetSetter.getType()))	//FIXME
-				.build(index, typeAdapters);
+				.build(index);
 	}
 	
 	Optional<ArraySourceReader> getArraySourceReader(final Sources sourcesAnnotation, final Field field, final Class<?> defaultSourceObjectClass) {

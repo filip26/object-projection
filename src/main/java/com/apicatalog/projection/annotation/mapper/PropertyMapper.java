@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.annotation.Constant;
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Provided;
@@ -37,19 +36,18 @@ public class PropertyMapper {
 
 	final Logger logger = LoggerFactory.getLogger(PropertyMapper.class);
 	
-	final TypeAdaptersLegacy typeAdapters;
 	final TypeConversions typeConversions;
 	final ProjectionRegistry registry;
 	
 	final SingleSourceMapper singleSourceMapper;
 	final ArraySourceMapper arraySourceMapper;
 	
-	public PropertyMapper(ProjectionRegistry factory, TypeConversions typeConversions, TypeAdaptersLegacy typeAdapters) {
+	public PropertyMapper(ProjectionRegistry factory, TypeConversions typeConversions) {
 		this.registry = factory;
 		this.typeConversions = typeConversions;
-		this.typeAdapters = typeAdapters;
-		this.singleSourceMapper = new SingleSourceMapper(factory, typeConversions, typeAdapters);
-		this.arraySourceMapper = new ArraySourceMapper(factory, typeConversions, typeAdapters);
+
+		this.singleSourceMapper = new SingleSourceMapper(factory, typeConversions);
+		this.arraySourceMapper = new ArraySourceMapper(factory, typeConversions);
 	}
 	
 	Optional<ProjectionProperty> getPropertyMapping(final Field field, final Class<?> defaultSourceClass) {
@@ -142,7 +140,7 @@ public class PropertyMapper {
 				TargetBuilder.newInstance()
 					.source(sourceReader.get().getTargetType())	//FIXME !!!!
 					.target(targetSetter.getType(), isReference(targetSetter.getType()))	//FIXME
-					.build(registry, typeAdapters)
+					.build(registry)
 					);
 
 		return Optional.of(property);
@@ -163,7 +161,7 @@ public class PropertyMapper {
 					.targetGetter(targetGetter)
 					.targetSetter(targetSetter)
 					.targetReference(isReference(targetSetter.getType()))
-					.build(registry, typeAdapters);
+					.build(registry);
 	}				
 
 	Optional<ProjectionProperty> getConstantMapping(Field field) {
@@ -176,7 +174,7 @@ public class PropertyMapper {
 					.newInstance()
 					.constants(constant.value())
 					.targetSetter(targetSetter, isReference(targetSetter.getType()))
-					.build(registry, typeAdapters);
+					.build(registry);
 	}
 	
 	protected static final boolean isReference(ObjectType objectType) {

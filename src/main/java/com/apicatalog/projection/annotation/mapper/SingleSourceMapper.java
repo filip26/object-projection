@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.annotation.Conversion;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
@@ -42,12 +41,9 @@ class SingleSourceMapper {
 	final TypeConversions typeConversions;
 	final ProjectionRegistry index;
 	
-	final TypeAdaptersLegacy typeAdapters;
-	
-	public SingleSourceMapper(ProjectionRegistry index, TypeConversions typeConversions, TypeAdaptersLegacy typeAdapters) {
+	public SingleSourceMapper(ProjectionRegistry index, TypeConversions typeConversions) {
 		this.index = index;
 		this.typeConversions = typeConversions;
-		this.typeAdapters = typeAdapters;
 	}
 	
 	Optional<SourceProperty> getSourcePropertyMapping(final Field field, final Class<?> defaultSourceClass) {
@@ -94,7 +90,7 @@ class SingleSourceMapper {
 		return builder
 					.mode(sourceAnnotation.mode())
 					.targetReference(PropertyMapper.isReference(targetType))						
-					.build(index, typeAdapters);
+					.build(index);
 	}
 
 	protected Optional<SingleSourceReader> getSingleSourceReader(Source sourceAnnotation, String fieldName, ObjectType targetType, Class<?> defaultSourceClass) {

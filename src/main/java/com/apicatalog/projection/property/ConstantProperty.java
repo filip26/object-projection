@@ -7,10 +7,10 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.adapter.ProjectionAdapter;
+import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.object.setter.Setter;
-import com.apicatalog.projection.context.CompositionContext;
 
 public class ConstantProperty implements ProjectionProperty {
 

@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.builder.ConstantPropertyBuilder;
 import com.apicatalog.projection.conversion.implicit.TypeConversions;
 import com.apicatalog.projection.object.ObjectType;
@@ -65,8 +64,8 @@ public class MappedPropertyBuilderApi<P> {
 		return builder;
 	}
 
-	public Projection<P> build(ProjectionRegistry factory, TypeAdaptersLegacy typeAdapters) throws ProjectionError {
-		return projectionBuilder.build(factory, typeAdapters);
+	public Projection<P> build(ProjectionRegistry factory) throws ProjectionError {
+		return projectionBuilder.build(factory);
 	}
 
 	public ProvidedPropertyBuilderApi<P> provided() {
@@ -85,7 +84,7 @@ public class MappedPropertyBuilderApi<P> {
 		return projectionBuilder;
 	}
 	
-	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry registry, TypeAdaptersLegacy typeAdapters) throws ProjectionError {
+	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry registry) throws ProjectionError {
 		
 		final Field field = ObjectUtils.getProperty(projectionBuilder.projectionClass(), targetPropertyName);
 		
@@ -103,7 +102,7 @@ public class MappedPropertyBuilderApi<P> {
 			sourcePropertyBuilder.targetSetter(targetSetter);
 			sourcePropertyBuilder.targetReference(reference);
 			
-			return sourcePropertyBuilder.buildProperty(registry, typeAdapters);
+			return sourcePropertyBuilder.buildProperty(registry);
 			
 		} else 	if (Optional.ofNullable(providedPropertyBuilder).isPresent()) {
 
@@ -114,13 +113,13 @@ public class MappedPropertyBuilderApi<P> {
 			providedPropertyBuilder.targetSetter(targetSetter);
 			providedPropertyBuilder.targetReference(reference);
 			
-			return providedPropertyBuilder.buildProperty(registry, typeAdapters);
+			return providedPropertyBuilder.buildProperty(registry);
 			
 		} else 	if (Optional.ofNullable(constantBuilder).isPresent()) {
 			
 			constantBuilder.targetSetter(targetSetter, reference);
 			
-			return constantBuilder.build(registry, typeAdapters);
+			return constantBuilder.build(registry);
 			
 		} else 	if  (Optional.ofNullable(sourcesPropertyBuilder).isPresent()) {
 
@@ -131,7 +130,7 @@ public class MappedPropertyBuilderApi<P> {
 			sourcesPropertyBuilder.targetSetter(targetSetter);
 			sourcesPropertyBuilder.targetReference(reference);
 			
-			return sourcesPropertyBuilder.buildProperty(registry, typeAdapters);
+			return sourcesPropertyBuilder.buildProperty(registry);
 
 		}
 		return Optional.empty();
