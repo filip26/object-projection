@@ -27,14 +27,14 @@ public class TargetTypeConverter implements ProjectionAdapter {
 	@Override
 	public Object forward(ProjectionStack queue, Object object, CompositionContext context) throws ProjectionError {
 		logger.debug("Construct {} from {}, depth = {}", targetType, object, queue.length());
-
-		return typeAdapters.convert(targetType, object);
+		return object;
+	//	return typeAdapters.convert(targetType, object);
 	}
 
 	@Override
 	public Object backward(ObjectType sourceType, Object object, ExtractionContext context) throws ProjectionError {
 		logger.debug("Extract {} from {}", sourceType, object);
-		
-		return typeAdapters.convert(sourceType, object);
+		return object;
+		//return typeAdapters.convert(sourceType, object);
 	}
 }

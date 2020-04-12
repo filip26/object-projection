@@ -3,7 +3,6 @@ package com.apicatalog.projection.conversion.implicit;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Date;
-import java.util.Optional;
 
 import com.apicatalog.projection.conversion.Conversion;
 
@@ -13,21 +12,20 @@ public final class PrimitiveTypeConversions {
 	
 	public static final Conversion get(final Class<?> source, final Class<?> target) {
 		
-		if (source == String.class) fromString(target);
-		if (source == Integer.class) fromInteger(target);
-		if (source == Long.class) fromLong(target);
-		if (source == Float.class) fromFloat(target);
-		if (source == Double.class) fromDouble(target);
-		if (source == Character.class) fromCharacter(target);
-		if (source == Boolean.class) fromBoolean(target);
-		if (source == Instant.class) fromInstant(target);
-		if (source == URI.class) fromURI(target);
+		if (source == String.class) return fromString(target);
+		if (source == Integer.class) return fromInteger(target);
+		if (source == Long.class) return fromLong(target);
+		if (source == Float.class) return fromFloat(target);
+		if (source == Double.class) return fromDouble(target);
+		if (source == Character.class) return fromCharacter(target);
+		if (source == Boolean.class) return fromBoolean(target);
+		if (source == Instant.class) return fromInstant(target);
+		if (source == URI.class) return fromURI(target);
 		
 		return null;
 	}
 	
 	static final Conversion fromString(final Class<?> target) {
-
 		if (target == Byte.class) return o -> Byte.valueOf((String)o);
 		if (target == Short.class) return o -> Short.valueOf((String)o);
 		if (target == Long.class) return o -> Long.valueOf((String)o);
@@ -91,9 +89,9 @@ public final class PrimitiveTypeConversions {
 		return null;
 	}
 
-	static final Optional<Conversion> fromCharacter(final Class<?> source) {
+	static final Conversion fromCharacter(final Class<?> source) {
 		
-		return Optional.empty();
+		return null;
 	}
 
 	static final Conversion fromInstant(final Class<?> target) {

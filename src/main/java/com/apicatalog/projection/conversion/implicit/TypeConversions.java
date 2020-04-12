@@ -15,11 +15,8 @@ public class TypeConversions {
 	final Logger logger = LoggerFactory.getLogger(TypeConversions.class);
 
 	static final String MSG_CONVERTER_FROM_TO = "Get converter from {} to {}";
-	
-	public TypeConversions() {
 
-	}
-	
+	@Deprecated
 	public Optional<Conversion> get(Collection<ObjectType> sources, ObjectType target)  {
 		
 		if (logger.isDebugEnabled()) {
@@ -63,22 +60,17 @@ public class TypeConversions {
 		}
 		
 
-		return Optional.ofNullable(PrimitiveTypeConversions.get(source, target));
+		final Optional<Conversion> conversion = Optional.ofNullable(PrimitiveTypeConversions.get(source, target));
 		
-//		TypeAdapter<Object> typeAdapter = adapters.get(source);
-//
-//		if (typeAdapter == null) {
-//			if (logger.isTraceEnabled()) {
-//				logger.trace("No conversion from {} to {} does exist", source.getSimpleName(), target.getSimpleName());
-//			}
-//			return Optional.empty();
-//		}
-//
-//		if (logger.isTraceEnabled()) {
-//			logger.trace("Found conversion {} from {} to {}.",  typeAdapter, source.getSimpleName(), target.getSimpleName());
-//		}
-//
-//		return Optional.of(TypeConversion.of(typeAdapter, target));
+		if (logger.isTraceEnabled() && conversion.isEmpty()) {
+			logger.trace("No conversion from {} to {} does exist", source.getSimpleName(), target.getSimpleName());
+		}
+
+		if (logger.isTraceEnabled() && conversion.isPresent()) {
+			logger.trace("Found conversion {} from {} to {}.",  conversion.get(), source.getSimpleName(), target.getSimpleName());
+		}
+
+		return conversion;
 	}
 
 	public Optional<Conversion> get(ObjectType sourceType, ObjectType targetType) {
