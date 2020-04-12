@@ -95,9 +95,16 @@ public class TypeConversions {
 		TypeAdapter<Object> typeAdapter = adapters.get(source);
 
 		if (typeAdapter == null) {
+			if (logger.isTraceEnabled()) {
+				logger.trace("No conversion from {} to {} does exist", source.getSimpleName(), target.getSimpleName());
+			}
 			return Optional.empty();
 		}
-		
+
+		if (logger.isTraceEnabled()) {
+			logger.trace("Found conversion {} from {} to {}.",  typeAdapter, source.getSimpleName(), target.getSimpleName());
+		}
+
 		return Optional.of(TypeConversion.of(typeAdapter, target));
 	}
 

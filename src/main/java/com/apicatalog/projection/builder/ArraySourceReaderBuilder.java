@@ -28,6 +28,8 @@ public class ArraySourceReaderBuilder {
 	
 	Collection<ConverterMapping> converters;
 	
+	ObjectType targetType;
+	
 	protected ArraySourceReaderBuilder() {
 		this.optional = false;
 	}
@@ -40,7 +42,7 @@ public class ArraySourceReaderBuilder {
 		
 		final ArraySourceReader source = new ArraySourceReader();
 		
-		if (sources.length == 0) {
+		if (sources == null || sources.length == 0 || targetType == null) {
 			return Optional.empty();
 		}
 
@@ -69,7 +71,12 @@ public class ArraySourceReaderBuilder {
 		this.converters = converters;
 		return this;
 	}
-	
+
+	public ArraySourceReaderBuilder targetType(ObjectType targetType) {
+		this.targetType = targetType;
+		return this;
+	}
+
 	final void buildChain(ArraySourceReader source, SourceReader[] sources, Collection<ConverterMapping> converters, TypeConversions typeConversions) {
 
 		// set default source type for an array of sources

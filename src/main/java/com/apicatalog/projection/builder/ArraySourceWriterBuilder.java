@@ -27,6 +27,8 @@ public class ArraySourceWriterBuilder {
 	
 	Collection<ConverterMapping> converters;
 	
+	ObjectType targetType;
+	
 	protected ArraySourceWriterBuilder() {
 		this.optional = false;
 	}
@@ -39,7 +41,7 @@ public class ArraySourceWriterBuilder {
 		
 		final ArraySourceWriter source = new ArraySourceWriter();
 		
-		if (sources.length == 0) {
+		if (sources == null || sources.length == 0 || targetType == null) {
 			return Optional.empty();
 		}
 
@@ -48,6 +50,9 @@ public class ArraySourceWriterBuilder {
 		// set conversions to apply
 		buildChain(source, sources, converters, typeConversions);
 
+		// set default target type
+		source.setTargetType(targetType);
+		
 		// set optional 
 		source.setOptional(optional);
 		
@@ -68,7 +73,12 @@ public class ArraySourceWriterBuilder {
 		this.converters = converters;
 		return this;
 	}
-	
+
+	public ArraySourceWriterBuilder targetType(ObjectType targetTYpe) {
+		this.targetType = targetTYpe;
+		return this;
+	}
+
 	final void buildChain(ArraySourceWriter source, SourceWriter[] sources, Collection<ConverterMapping> converters, TypeConversions typeConversions) {
 
 		// set default source type for an array of sources
@@ -80,7 +90,7 @@ public class ArraySourceWriterBuilder {
 		}
 
 		// get source types
-		final Collection<ObjectType> sourceTypes = Arrays.stream(sources).map(SourceWriter::getTargetType).collect(Collectors.toList());
+//		final Collection<ObjectType> sourceTypes = Arrays.stream(sources).map(SourceWriter::getTargetType).collect(Collectors.toList());
 
 		final ArrayList<Conversion> conversions = new ArrayList<>(converters.size() * 2);
 		final ConverterMapping[] mapping = converters.toArray(new ConverterMapping[0]);
@@ -97,9 +107,9 @@ public class ArraySourceWriterBuilder {
 		}
 		
 		conversions.add(BackwardExplicitConversion.of(mapping[0].getConversion()));
-		typeConversions.get(mapping[0].getSourceType(), sourceTypes).ifPresent(conversions::add);
+		typeConversions.get(mapping[0].getSourceType(), ObjectType.of(Object[].class)).ifPresent(conversions::add);
 			
-		source.setTargetType(mapping[mapping.length - 1].getTargetType());
+//		source.setTargetType(mapping[mapping.length - 1].getTargetType());
 	
 		source.setConversions(conversions.toArray(new Conversion[0]));
 	}

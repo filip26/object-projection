@@ -53,6 +53,8 @@ class ArraySourceMapper {
 		
 		final Sources sourcesAnnotation = field.getAnnotation(Sources.class);
 
+		final ObjectType targetType =  ObjectUtils.getTypeOf(field);
+		
 		final Optional<ArraySourceReader> arraySourceReader = getArraySourceReader(sourcesAnnotation, field, defaultSourceClass);
 		final Optional<ArraySourceWriter> arraySourceWriter = getArraySourceWriter(sourcesAnnotation, field, defaultSourceClass);
 
@@ -61,8 +63,6 @@ class ArraySourceMapper {
 			return Optional.empty();
 		}
 		
-		ObjectType targetType =  ObjectUtils.getTypeOf(field);
-
 		final SourcePropertyBuilder builder = SourcePropertyBuilder.newInstance();
 		
 		final Setter targetSetter = FieldSetter.from(field, targetType);
@@ -108,6 +108,7 @@ class ArraySourceMapper {
 				ArraySourceReaderBuilder.newInstance()
 					.optional(sourcesAnnotation.optional())
 					.sources(sources)
+					.targetType(targetType)
 					;
 
 		try {
@@ -147,6 +148,7 @@ targetType = ObjectType.of(targetType.getType().getComponentType()) : targetType
 				ArraySourceWriterBuilder.newInstance()
 					.optional(sourcesAnnotation.optional())
 					.sources(sources)
+					.targetType(targetType)
 					;
 
 		try {

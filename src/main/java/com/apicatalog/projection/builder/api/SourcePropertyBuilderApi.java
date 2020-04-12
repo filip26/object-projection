@@ -39,6 +39,10 @@ public class SourcePropertyBuilderApi<P> {
 	Class<?> sourceObjectClass;
 	String sourcePropertyName;
 	
+	Getter targetGetter;
+	Setter targetSetter;
+	boolean targetReference;
+	
 	final TypeConversions typeConversions;
 	
 	protected SourcePropertyBuilderApi(ProjectionBuilder<P> projectionBuilder, Class<?> sourceObjectClass, String sourcePropertyName, TypeConversions typeConversions) {
@@ -89,16 +93,19 @@ public class SourcePropertyBuilderApi<P> {
 	}
 	
 	protected SourcePropertyBuilderApi<P> targetGetter(Getter targetGetter) {
+		this.targetGetter = targetGetter;
 		sourcePropertyBuilder = sourcePropertyBuilder.targetGetter(targetGetter); 
 		return this;
 	}
 
 	protected SourcePropertyBuilderApi<P> targetSetter(Setter targetSetter) {
+		this.targetSetter = targetSetter;
 		sourcePropertyBuilder = sourcePropertyBuilder.targetSetter(targetSetter);
 		return this;
 	}
 	
 	protected SourcePropertyBuilderApi<P> targetReference(boolean targetReference) {
+		this.targetReference = targetReference;
 		sourcePropertyBuilder = sourcePropertyBuilder.targetReference(targetReference);
 		return this;		
 	}
@@ -121,7 +128,7 @@ public class SourcePropertyBuilderApi<P> {
 		// extract getter
 		final Getter sourceGetter = ObjectUtils.getGetter(sourceObjectClass, sourcePropertyName);
 		
-		return sourceBuilder.getter(sourceGetter).build(typeConversions).map(SourceReader.class::cast);
+		return sourceBuilder.getter(sourceGetter).targetType(targetSetter.getType()).build(typeConversions).map(SourceReader.class::cast);
 	}	
 
 	protected Optional<SourceWriter> buildSourceWriter(TypeConversions typeConversions, SingleSourceWriterBuilder sourceBuilder) {
@@ -129,7 +136,7 @@ public class SourcePropertyBuilderApi<P> {
 		// extract setter
 		final Setter sourceSetter = ObjectUtils.getSetter(sourceObjectClass, sourcePropertyName);
 		
-		return sourceBuilder.setter(sourceSetter).build(typeConversions).map(SourceWriter.class::cast);		
+		return sourceBuilder.setter(sourceSetter).targetType(targetGetter.getType()).build(typeConversions).map(SourceWriter.class::cast);		
 	}	
 
 	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry factory, TypeAdaptersLegacy typeAdapters) throws ProjectionError {
