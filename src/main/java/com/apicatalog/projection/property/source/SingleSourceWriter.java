@@ -59,6 +59,10 @@ public final class SingleSourceWriter implements SourceWriter {
 			}
 		}
 		
+		if (value.isEmpty()) {
+			return;
+		}
+		
 		Optional<?> instance =  context.get(sourceType);
 
 		if (instance.isEmpty()) {

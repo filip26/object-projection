@@ -5,6 +5,7 @@ import java.lang.reflect.Array;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.ConverterError;
 
+@Deprecated
 public class MixedArray2Array implements Conversion { 
 
 	final TypeConversion[] conversions;

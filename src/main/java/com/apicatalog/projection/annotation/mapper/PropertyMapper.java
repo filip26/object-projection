@@ -96,13 +96,16 @@ public class PropertyMapper {
 
 		}
 		
+		final ObjectType targetType =  ObjectUtils.getTypeOf(field);
+		
 		final Optional<SingleSourceReader> sourceReader = 
 				singleSourceMapper.getSingleSourceReader(
 						defaultSourceClass, 
-						field.getName(), 
+						field.getName(),
 						SingleSourceReaderBuilder.newInstance()
 							.objectClass(defaultSourceClass)
 							.optional(true)
+							.targetType(PropertyMapper.getSourceTargetType(targetType))
 						);
 		
 		
@@ -113,6 +116,7 @@ public class PropertyMapper {
 						SingleSourceWriterBuilder.newInstance()
 							.objectClass(defaultSourceClass)
 							.optional(true)						
+							.targetType(PropertyMapper.getSourceTargetType(targetType))
 						);
 		
 		if (sourceReader.isEmpty() && sourceWriter.isEmpty()) {
@@ -177,9 +181,23 @@ public class PropertyMapper {
 	
 	protected static final boolean isReference(ObjectType objectType) {
 		return objectType.isCollection()
-				? objectType.getComponentClass().isAnnotationPresent(Projection.class)
+				? objectType.getComponentType().isAnnotationPresent(Projection.class)
 				: objectType.getType().isAnnotationPresent(Projection.class)
 				;		
+	}
+	
+	protected static final ObjectType getSourceTargetType(ObjectType targetType) {
+		
+		if (targetType.isCollection() && targetType.getComponentType().isAnnotationPresent(Projection.class)) {
+			return ObjectType.of(targetType.getType(), Object.class);
+		}
+		if (targetType.isArray() && targetType.getType().getComponentType().isAnnotationPresent(Projection.class)) {
+			return ObjectType.of(Object[].class);
+		}
+		if (targetType.getType().isAnnotationPresent(Projection.class)) {
+			return ObjectType.of(Object.class);
+		}
+		return targetType;
 	}
 	
 }

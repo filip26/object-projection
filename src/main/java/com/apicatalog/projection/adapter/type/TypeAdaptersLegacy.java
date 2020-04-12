@@ -54,7 +54,7 @@ public class TypeAdaptersLegacy {
 	}
 
 	public Object convert(ObjectType objectType, Object object) throws ProjectionError {
-		return convert(objectType.getType(),objectType.getComponentClass(), object);
+		return convert(objectType.getType(), objectType.getComponentType(), object);
 	}
 	
 	public Object convert(Class<?> targetClass, Object object) throws ProjectionError {

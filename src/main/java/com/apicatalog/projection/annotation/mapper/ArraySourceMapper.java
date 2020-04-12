@@ -85,8 +85,15 @@ class ArraySourceMapper {
 	
 	Optional<ArraySourceReader> getArraySourceReader(final Sources sourcesAnnotation, final Field field, final Class<?> defaultSourceObjectClass) {
 		
+		ObjectType targetType =  PropertyMapper.getSourceTargetType(ObjectUtils.getTypeOf(field));
+
+		final ObjectType sourceTargetType = (targetType.isCollection()) ? targetType = ObjectType.of(targetType.getComponentType())
+		
+								: ((targetType.isArray()) ?
+			targetType = ObjectType.of(targetType.getType().getComponentType()) : targetType);
+		
 		SingleSourceReader[] sources = Arrays.stream(sourcesAnnotation.value())
-										.map(s -> singleSourceMapper.getSingleSourceReader(s, field, defaultSourceObjectClass))
+										.map(s -> singleSourceMapper.getSingleSourceReader(s, field.getName(), sourceTargetType, defaultSourceObjectClass))
 										.flatMap(Optional::stream)
 										.collect(Collectors.toList())
 										.toArray(new SingleSourceReader[0])
@@ -115,9 +122,17 @@ class ArraySourceMapper {
 	}	
 
 	Optional<ArraySourceWriter> getArraySourceWriter(final Sources sourcesAnnotation, final Field field, final Class<?> defaultSourceObjectClass) {
-		
+
+		ObjectType targetType =  PropertyMapper.getSourceTargetType(ObjectUtils.getTypeOf(field));
+
+		final ObjectType sourceTargetType = (targetType.isCollection()) ? targetType = ObjectType.of(targetType.getComponentType())
+				
+				: ((targetType.isArray()) ?
+targetType = ObjectType.of(targetType.getType().getComponentType()) : targetType);
+
+
 		SingleSourceWriter[] sources = Arrays.stream(sourcesAnnotation.value())
-										.map(s -> singleSourceMapper.getSingleSourceWriter(s, field, defaultSourceObjectClass))
+										.map(s -> singleSourceMapper.getSingleSourceWriter(s, field.getName(), sourceTargetType, defaultSourceObjectClass))
 										.flatMap(Optional::stream)
 										.collect(Collectors.toList())
 										.toArray(new SingleSourceWriter[0])

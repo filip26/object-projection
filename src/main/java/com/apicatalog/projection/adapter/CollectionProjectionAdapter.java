@@ -42,10 +42,10 @@ public class CollectionProjectionAdapter implements ProjectionAdapter {
 		final Collection<Object> collection = new ArrayList<>();
 
 		@SuppressWarnings("unchecked")
-		final Projection<Object> projection = (Projection<Object>) factory.get(targetType.getComponentClass());
+		final Projection<Object> projection = (Projection<Object>) factory.get(targetType.getComponentType());
 		
 		if (projection == null) {
-			throw new ProjectionError("Projection " + targetType.getComponentClass().getCanonicalName() +  " is not present.");
+			throw new ProjectionError("Projection " + targetType.getComponentType().getCanonicalName() +  " is not present.");
 		}
 		
 		// compose a projection from each object in the collection
@@ -66,18 +66,18 @@ public class CollectionProjectionAdapter implements ProjectionAdapter {
 		logger.debug("Convert {} to {}, reference = true, collection = true", targetType, sourceType);
 		
 		@SuppressWarnings("unchecked")
-		final Projection<Object> projection = (Projection<Object>) factory.get(targetType.getComponentClass()); 
+		final Projection<Object> projection = (Projection<Object>) factory.get(targetType.getComponentType()); 
 		
 		if (projection == null) {
-			throw new ProjectionError("Projection " + targetType.getComponentClass().getCanonicalName() +  " is not present.");
+			throw new ProjectionError("Projection " + targetType.getComponentType().getCanonicalName() +  " is not present.");
 		}
 		
 
 		final Collection<Object> collection = new ArrayList<>();
 
-		final Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, targetType.getComponentClass(), object);
+		final Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, targetType.getComponentType(), object);
 
-		final Class<?> componentClass = sourceType.getComponentClass();
+		final Class<?> componentClass = sourceType.getComponentType();
 				
 		// extract objects from each projection in the collection
 		for (final Object item : sourceCollection) {

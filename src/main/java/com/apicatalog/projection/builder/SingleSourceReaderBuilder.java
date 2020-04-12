@@ -35,7 +35,9 @@ public class SingleSourceReaderBuilder {
 	
 	Class<?> sourceObjectClass;
 	
-	 Getter sourceGetter;
+	Getter sourceGetter;
+	
+	ObjectType targetType;
 
 	protected SingleSourceReaderBuilder() {
 		this.mode = AccessMode.READ_ONLY;
@@ -48,9 +50,8 @@ public class SingleSourceReaderBuilder {
 
 	public Optional<SingleSourceReader> build(TypeConversions typeConverters) {
 
-		
 		// no getter ? 
-		if (sourceGetter == null) {
+		if (sourceGetter == null || targetType == null) {
 			// nothing to do with this
 			return Optional.empty();
 		}
@@ -73,8 +74,6 @@ public class SingleSourceReaderBuilder {
 		}			
 
 		// set default source type for an array of sources
-		ObjectType targetType = sourceGetter.getType(); 
-
 		source.setTargetType(targetType);
 
 		// set conversions to apply
@@ -116,20 +115,33 @@ public class SingleSourceReaderBuilder {
 		return this;
 	}
 	
+	public SingleSourceReaderBuilder targetType(ObjectType targetType) {
+		this.targetType= targetType;
+		return this;
+	}	
+	
 	final void buildChain(final SingleSourceReader source, final Collection<ConverterMapping> converters, final TypeConversions typeConversions) {
 
-		// no conversions to set
+		final ArrayList<Conversion> conversions = new ArrayList<>((converters != null ? converters.size() : 0) * 2 + 1);
+
 		if (converters == null || converters.isEmpty()) {
+			
+			typeConversions.get(
+					sourceGetter.getType(),
+					targetType)
+				.ifPresent(conversions::add);
+
+
+			source.setConversions(conversions.toArray(new Conversion[0]));
 			return;
 		}
-
-		final ArrayList<Conversion> conversions = new ArrayList<>(converters.size() * 2);
-
+		
 		final Iterator<ConverterMapping> it = converters.iterator();
 		
 		ConverterMapping mapping = it.next();
 		
-		typeConversions.get(source.getTargetType(), mapping.getSourceType()).ifPresent(conversions::add);
+		typeConversions.get(sourceGetter.getType(), mapping.getSourceType()).ifPresent(conversions::add);
+		
 		conversions.add(ForwardExplicitConversion.of(mapping.getConversion()));
 
 		while (it.hasNext()) {
@@ -144,9 +156,13 @@ public class SingleSourceReaderBuilder {
 
 			mapping = next;
 		}
+		
+		typeConversions.get(
+				mapping.getTargetType(),
+				targetType)
+			.ifPresent(conversions::add);
 
-		source.setTargetType(mapping.getTargetType());
-	
+
 		source.setConversions(conversions.toArray(new Conversion[0]));
 	}
 }

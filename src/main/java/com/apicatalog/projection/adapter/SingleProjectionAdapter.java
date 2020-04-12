@@ -59,9 +59,9 @@ public class SingleProjectionAdapter implements ProjectionAdapter {
 		projection.extract(
 						object, 
 						context
-							.accept(null, sourceType.getType(), sourceType.getComponentClass())
+							.accept(null, sourceType.getType(), sourceType.getComponentType())
 						);
 						
-		return context.remove(null, sourceType.getType(), sourceType.getComponentClass()).orElse(null);
+		return context.remove(null, sourceType.getType(), sourceType.getComponentType()).orElse(null);
 	}
 }

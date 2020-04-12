@@ -28,7 +28,7 @@ public final class ObjectType {
 		return type;
 	}
 	
-	public Class<?> getComponentClass() {
+	public Class<?> getComponentType() {
 		return componentType;
 	}
 

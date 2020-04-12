@@ -54,17 +54,21 @@ class SingleSourceMapper {
 
 		final Source sourceAnnotation = field.getAnnotation(Source.class);
 		
+		final ObjectType targetType =  ObjectUtils.getTypeOf(field);
+
 		final Optional<SingleSourceReader> sourceReader = 
 					getSingleSourceReader( 
 						sourceAnnotation,
-						field,
+						field.getName(),
+						targetType,
 						defaultSourceClass
 						); 
 
 		final Optional<SingleSourceWriter> sourceWriter = 
 				getSingleSourceWriter( 
 					sourceAnnotation,
-					field,
+					field.getName(),
+					targetType,
 					defaultSourceClass
 					); 
 		
@@ -72,8 +76,6 @@ class SingleSourceMapper {
 			logger.warn(SOURCE_IS_MISSING, field.getName());
 			return Optional.empty();
 		}
-		
-		final ObjectType targetType =  ObjectUtils.getTypeOf(field);
 		
 		final SourcePropertyBuilder builder = SourcePropertyBuilder.newInstance();
 		
@@ -91,11 +93,11 @@ class SingleSourceMapper {
 		
 		return builder
 					.mode(sourceAnnotation.mode())
-					.targetReference(PropertyMapper.isReference(targetSetter.getType()))	//FIXME !!!!					
+					.targetReference(PropertyMapper.isReference(targetType))						
 					.build(index, typeAdapters);
 	}
 
-	protected Optional<SingleSourceReader> getSingleSourceReader(Source sourceAnnotation, Field field, Class<?> defaultSourceClass) {
+	protected Optional<SingleSourceReader> getSingleSourceReader(Source sourceAnnotation, String fieldName, ObjectType targetType, Class<?> defaultSourceClass) {
 				
 		Class<?> sourceObjectClass = defaultSourceClass;
 		
@@ -105,12 +107,12 @@ class SingleSourceMapper {
 		}
 		
 		if (sourceObjectClass == null) {
-			logger.warn(SOURCE_IS_MISSING, field.getName());
+			logger.warn(SOURCE_IS_MISSING, fieldName);
 			return Optional.empty();
 		}
 
 		// set default source object property name -> use the same name
-		String sourceFieldName = field.getName();
+		String sourceFieldName = fieldName;
 				
 		// override source property name
 		if (StringUtils.isNotBlank(sourceAnnotation.value())) {
@@ -122,6 +124,7 @@ class SingleSourceMapper {
 				.optional(sourceAnnotation.optional())
 				.qualifier(sourceAnnotation.name())
 				.mode(sourceAnnotation.mode())
+				.targetType(PropertyMapper.getSourceTargetType(targetType))				
 				;
 
 		// set conversions to apply
@@ -142,7 +145,7 @@ class SingleSourceMapper {
 					);
 	}
 	
-	Optional<SingleSourceWriter> getSingleSourceWriter(Source sourceAnnotation, Field field, Class<?> defaultSourceClass) {
+	Optional<SingleSourceWriter> getSingleSourceWriter(Source sourceAnnotation, String fieldName, ObjectType targetType, Class<?> defaultSourceClass) {
 		
 		Class<?> sourceObjectClass = defaultSourceClass;
 		
@@ -152,12 +155,12 @@ class SingleSourceMapper {
 		}
 		
 		if (sourceObjectClass == null) {
-			logger.warn(SOURCE_IS_MISSING, field.getName());
+			logger.warn(SOURCE_IS_MISSING, fieldName);
 			return Optional.empty();
 		}
 
 		// set default source object property name -> use the same name
-		String sourceFieldName = field.getName();
+		String sourceFieldName = fieldName;
 				
 		// override source property name
 		if (StringUtils.isNotBlank(sourceAnnotation.value())) {
@@ -169,6 +172,7 @@ class SingleSourceMapper {
 				.optional(sourceAnnotation.optional())
 				.qualifier(sourceAnnotation.name())
 				.mode(sourceAnnotation.mode())
+				.targetType(PropertyMapper.getSourceTargetType(targetType))
 				;
 
 		// set conversions to apply
@@ -181,7 +185,7 @@ class SingleSourceMapper {
 				return Optional.empty();
 			}
 		}
-
+		
 		return getSingleSourceWriter(
 					sourceObjectClass, 
 					sourceFieldName, 

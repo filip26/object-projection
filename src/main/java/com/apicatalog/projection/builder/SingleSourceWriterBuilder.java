@@ -35,6 +35,8 @@ public class SingleSourceWriterBuilder {
 	Class<?> sourceObjectClass;
 	
 	Setter sourceSetter;
+	
+	ObjectType targetType;
 
 	protected SingleSourceWriterBuilder() {
 		this.mode = AccessMode.WRITE_ONLY;
@@ -48,7 +50,7 @@ public class SingleSourceWriterBuilder {
 	public Optional<SingleSourceWriter> build(TypeConversions typeConverters) {
 
 		// no setter ? 
-		if (sourceSetter == null) {
+		if (sourceSetter == null || targetType == null) {
 			// nothing to do with this
 			return Optional.empty();
 		}
@@ -71,12 +73,10 @@ public class SingleSourceWriterBuilder {
 		}			
 
 		// set default source type for an array of sources
-		ObjectType targetType = sourceSetter.getType(); 
-
 		source.setTargetType(targetType);
 
 		// set conversions to apply
-		buildChain(source, converters, typeConverters);
+		buildChain(source, converters, typeConverters, targetType);
 
 		// set optional 
 		source.setOptional(optional);
@@ -114,16 +114,30 @@ public class SingleSourceWriterBuilder {
 		return this;
 	}
 	
-	final void buildChain(SingleSourceWriter source, final Collection<ConverterMapping> converters, final TypeConversions typeConversions) {
+	public SingleSourceWriterBuilder targetType(ObjectType targetType) {
+		this.targetType= targetType;
+		return this;
+	}	
+	
+	final void buildChain(SingleSourceWriter source, final Collection<ConverterMapping> converters, final TypeConversions typeConversions, ObjectType targetType) {
 
-		// no conversions to set
+		final ArrayList<Conversion> conversions = new ArrayList<>((converters == null ? 0 : converters.size()) * 2 + 1);
+
 		if (converters == null || converters.isEmpty()) {
+			typeConversions.get(
+					targetType,
+					sourceSetter.getType())
+				.ifPresent(conversions::add);
+			source.setConversions(conversions.toArray(new Conversion[0]));
 			return;
 		}
-
-		final ArrayList<Conversion> conversions = new ArrayList<>(converters.size() * 2);
-
+		
 		final ConverterMapping[] mapping = converters.toArray(new ConverterMapping[0]); 
+
+		typeConversions.get(
+				targetType,
+				mapping[mapping.length - 1].getTargetType())
+			.ifPresent(conversions::add);
 		
 		for (int i = 1; i < mapping.length; i++) {
 			
@@ -136,10 +150,8 @@ public class SingleSourceWriterBuilder {
 		}
 		
 		conversions.add(BackwardExplicitConversion.of(mapping[0].getConversion()));
-		typeConversions.get(mapping[0].getSourceType(), source.getTargetType()).ifPresent(conversions::add);
+		typeConversions.get(mapping[0].getSourceType(), sourceSetter.getType()).ifPresent(conversions::add);
 			
-		source.setTargetType(mapping[mapping.length - 1].getTargetType());
-	
 		source.setConversions(conversions.toArray(new Conversion[0]));
 	}
 }
