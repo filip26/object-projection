@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.type.TypeAdaptersLegacy;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
@@ -22,13 +21,12 @@ public class CollectionProjectionAdapter   {
 
 	final ProjectionRegistry factory;
 	
-	final TypeAdaptersLegacy typeAdapters;	//TODO use just concrete adapter(s), not whole factory
 	
 	final ObjectType targetType;
 	
 	public CollectionProjectionAdapter(ProjectionRegistry factory, ObjectType targetType) {
 		this.factory = factory;
-		this.typeAdapters = new TypeAdaptersLegacy();
+//		this.typeAdapters = new TypeAdaptersLegacy();
 		
 		this.targetType = targetType;
 	}
@@ -38,7 +36,7 @@ public class CollectionProjectionAdapter   {
 		
 		logger.debug("Convert {} to {}, depth = {}, reference = true, collection = true", object.getClass().getSimpleName(), targetType, queue.length());
 
-		final Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, Object.class, object);
+//		final Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, Object.class, object);
 		
 		final Collection<Object> collection = new ArrayList<>();
 
@@ -50,14 +48,14 @@ public class CollectionProjectionAdapter   {
 		}
 		
 		// compose a projection from each object in the collection
-		for (final Object item : sourceCollection) {				
-			collection.add(projection
-							.compose(
-								queue,										
-								(new CompositionContext(context)).put(item)
-								)
-							);
-		}
+//		for (final Object item : sourceCollection) {				
+//			collection.add(projection
+//							.compose(
+//								queue,										
+//								(new CompositionContext(context)).put(item)
+//								)
+//							);
+//		}
 		
 		return collection;
 	}
@@ -76,17 +74,17 @@ public class CollectionProjectionAdapter   {
 
 		final Collection<Object> collection = new ArrayList<>();
 
-		final Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, targetType.getComponentType(), object);
+//		final Collection<?> sourceCollection = (Collection<?>)typeAdapters.convert(ArrayList.class, targetType.getComponentType(), object);
 
 		final Class<?> componentClass = sourceType.getComponentType();
 				
 		// extract objects from each projection in the collection
-		for (final Object item : sourceCollection) {
-			
-			projection.extract(item, context.accept(null, componentClass, null));
-			
-			context.remove(null, componentClass, null).ifPresent(collection::add);
-		}
+//		for (final Object item : sourceCollection) {
+//			
+//			projection.extract(item, context.accept(null, componentClass, null));
+//			
+//			context.remove(null, componentClass, null).ifPresent(collection::add);
+//		}
 		
 		return collection;
 	}

@@ -78,8 +78,6 @@ public class TypeConversions {
 
 	Optional<Conversion> collectionToCollection(final ObjectType sourceType, final ObjectType targetType) throws UnknownConversion {
 		
-		System.out.println(">>>> " + sourceType + ", " + targetType);
-		
 		final Conversion componentConversion = 
 				!targetType.getComponentType().isAssignableFrom(sourceType.getComponentType())
 						? get(sourceType.getComponentType(), targetType.getComponentType())
