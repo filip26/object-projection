@@ -37,7 +37,7 @@ public final class ConstantPropertyWriterBuilder {
 		
 		final ConstantPropertyWriter property = new ConstantPropertyWriter();
 		
-		Optional<TargetWriter> targetWriter = TargetWriterBuilder.newInstance()
+		final Optional<TargetWriter> targetWriter = TargetWriterBuilder.newInstance()
 										.setter(setter, reference)
 										.build(registry);
  
@@ -69,10 +69,9 @@ public final class ConstantPropertyWriterBuilder {
 		final ArrayList<Conversion> conversions = new ArrayList<>(1);
 		
 		if (constants.length == 1 && !targetType.isArray() && !targetType.isCollection()) {
-			conversions.add(o -> ((String[])o)[0]);
+			conversions.add(c -> ((String[])c)[0]);		// reduce to one string constant
 			sourceType = ObjectType.of(String.class);
 		}
-		
 
 		typeConversions.get(
 				sourceType,

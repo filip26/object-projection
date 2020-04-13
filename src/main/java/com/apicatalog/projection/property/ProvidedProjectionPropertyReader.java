@@ -38,7 +38,7 @@ public class ProvidedProjectionPropertyReader implements PropertyReader {
 			return;
 		}
 
-		logger.debug("Backward {} : {}, qualifier = {}, optional = {}, depth = {}", targetGetter.getName(), targetGetter.getType(), objectQualifier, optional, stack.length());
+		logger.debug("Read {} : {}, qualifier = {}, optional = {}, depth = {}", targetGetter.getName(), targetGetter.getType(), objectQualifier, optional, stack.length());
 
 		@SuppressWarnings("unchecked")
 		final Projection<Object> projection = (Projection<Object>) factory.get(targetGetter.getType().getType()); 
