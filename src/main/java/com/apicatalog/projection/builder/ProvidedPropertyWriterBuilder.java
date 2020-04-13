@@ -45,7 +45,7 @@ public class ProvidedPropertyWriterBuilder {
 				.orElseThrow(() -> new ProjectionError("Target is not readable"))
 				;
 
-		final ProvidedObjectPropertyWriter property = new ProvidedObjectPropertyWriter();
+		final ProvidedObjectPropertyWriter property = new ProvidedObjectPropertyWriter(registry);
 		
 		// set qualifier				
 		property.setObjectQualifier(qualifier);

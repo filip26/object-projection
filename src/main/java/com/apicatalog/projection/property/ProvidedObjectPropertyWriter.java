@@ -7,8 +7,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ProjectionStack;
+import com.apicatalog.projection.conversion.Conversion;
+import com.apicatalog.projection.conversion.UnknownConversion;
+import com.apicatalog.projection.converter.ConverterError;
+import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.property.target.TargetWriter;
 
 
@@ -16,6 +21,8 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 
 	final Logger logger = LoggerFactory.getLogger(ProvidedObjectPropertyWriter.class);
 
+	final ProjectionRegistry registry;
+	
 	TargetWriter targetWriter;
 	
 	Set<Integer> visibleLevels;
@@ -23,6 +30,10 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 	String objectQualifier;
 	
 	boolean optional;	
+	
+	public ProvidedObjectPropertyWriter(final ProjectionRegistry registry) {
+		this.registry = registry;
+	}
 	
 	@Override
 	public void write(final ProjectionStack stack, final CompositionContext context) throws ProjectionError {		
@@ -35,10 +46,29 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 			logger.debug("Write {}", targetWriter.getType());
 		}
 
-		final Optional<Object> object = context.get(objectQualifier, targetWriter.getType().getType());
+		Optional<Object> object = context.get(objectQualifier, targetWriter.getType().getType());
 
 		if (object.isPresent()) {
-			targetWriter.write(stack, context, object.get());
+			
+			try {
+				Optional<Conversion> conversion = 
+						registry.getTypeConversions()
+								.get(	
+									ObjectType.of(object.get().getClass(), Object.class),
+									targetWriter.getType()
+									);
+				
+				if (conversion.isPresent()) {
+					object = Optional.ofNullable(conversion.get().convert(object.get()));
+				}
+				
+				if (object.isPresent()) {
+					targetWriter.write(stack, context, object.get());
+				}
+				
+			} catch (UnknownConversion | ConverterError e) {
+				throw new ProjectionError(e);
+			}
 		}
 
 		

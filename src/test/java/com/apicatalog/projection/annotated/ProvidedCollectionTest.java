@@ -42,6 +42,9 @@ public class ProvidedCollectionTest {
     	Assert.assertEquals(href, projection.href);
     	
     	Assert.assertNotNull(projection.items);
+    	
+    	projection.items.stream().map(i -> i.getClass()).forEach(System.out::println);
+    	
     	Assert.assertArrayEquals(items.stream().map(l -> Long.toString(l)).collect(Collectors.toList()).toArray(new String[0]), projection.items.toArray(new String[0]));
     }
     

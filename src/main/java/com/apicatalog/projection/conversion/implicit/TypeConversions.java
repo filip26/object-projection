@@ -3,7 +3,10 @@ package com.apicatalog.projection.conversion.implicit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +76,9 @@ public class TypeConversions {
 		return conversion;
 	}
 
-	Optional<Conversion> collectionToCollection(ObjectType sourceType, ObjectType targetType) throws UnknownConversion {
+	Optional<Conversion> collectionToCollection(final ObjectType sourceType, final ObjectType targetType) throws UnknownConversion {
+		
+		System.out.println(">>>> " + sourceType + ", " + targetType);
 		
 		final Conversion componentConversion = 
 				!targetType.getComponentType().isAssignableFrom(sourceType.getComponentType())
@@ -86,11 +91,28 @@ public class TypeConversions {
 			return Optional.empty();
 		}		
 		
-		final Conversion conversion = collection -> {
+		final Conversion conversion = o -> {
 			
+			final Collection<?> collection = (Collection<?>)o;
 			
+			if (collection == null || collection.isEmpty()) {
+				return Collections.emptyList();
+			}
 			
-			return null;
+			Collection<Object> converted = null;
+			
+			if (Set.class.isAssignableFrom(targetType.getType())) {
+				converted = new LinkedHashSet<>(collection.size());
+			
+			} else {
+				converted = new ArrayList<>(collection.size());
+			}
+
+			for (Object object : collection) {
+				converted.add(componentConversion.convert(object));
+			}			
+			
+			return converted;
 		};
 		
 		return Optional.of(conversion);
