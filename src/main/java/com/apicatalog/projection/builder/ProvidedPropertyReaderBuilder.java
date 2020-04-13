@@ -11,6 +11,7 @@ import com.apicatalog.projection.builder.reader.TargetReaderBuilder;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.ProvidedObjectPropertyReader;
+import com.apicatalog.projection.property.ProvidedProjectionPropertyReader;
 import com.apicatalog.projection.property.target.TargetReader;
 
 public class ProvidedPropertyReaderBuilder {
@@ -39,6 +40,10 @@ public class ProvidedPropertyReaderBuilder {
 			return Optional.empty();
 		}
 
+		if (targetReference && !targetGetter.getType().isCollection()) {
+			return buildReference(registry);
+		}
+		
 		TargetReader targetReader = TargetReaderBuilder.newInstance()
 										.getter(targetGetter, targetReference)
 										.build(registry)
@@ -53,6 +58,21 @@ public class ProvidedPropertyReaderBuilder {
 		property.setOptional(optional);
 		property.setTargetReader(targetReader);
 		
+		return Optional.of(property);
+	}
+	
+
+	Optional<PropertyReader> buildReference(ProjectionRegistry registry) {
+		
+		final ProvidedProjectionPropertyReader property = new ProvidedProjectionPropertyReader(registry);
+
+		property.setTargetGetter(targetGetter);
+
+		// set qualifier
+		property.setObjectQualifier(qualifier);
+
+		property.setOptional(optional);
+
 		return Optional.of(property);
 	}
 	

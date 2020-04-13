@@ -11,6 +11,7 @@ import com.apicatalog.projection.builder.writer.TargetWriterBuilder;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.property.ProvidedObjectPropertyWriter;
+import com.apicatalog.projection.property.ProvidedProjectionPropertyWriter;
 import com.apicatalog.projection.property.target.TargetWriter;
 
 public class ProvidedPropertyWriterBuilder {
@@ -39,6 +40,10 @@ public class ProvidedPropertyWriterBuilder {
 			return Optional.empty();
 		}
 
+		if (targetReference && !targetSetter.getType().isCollection()) {
+			return buildReference(registry);
+		}
+		
 		TargetWriter targetWriter = TargetWriterBuilder.newInstance()
 				.setter(targetSetter, targetReference)
 				.build(registry)
@@ -57,6 +62,20 @@ public class ProvidedPropertyWriterBuilder {
 		return Optional.of(property);
 	}
 	
+
+	Optional<PropertyWriter> buildReference(ProjectionRegistry registry) {
+		
+		final ProvidedProjectionPropertyWriter property = new ProvidedProjectionPropertyWriter(registry);
+
+		property.setTargetSetter(targetSetter);
+		
+		// set qualifier
+		property.setObjectQualifier(qualifier);
+
+		property.setOptional(optional);
+
+		return Optional.of(property);
+	}
 
 	public ProvidedPropertyWriterBuilder targetSetter(Setter setter) {
 		this.targetSetter = setter;
