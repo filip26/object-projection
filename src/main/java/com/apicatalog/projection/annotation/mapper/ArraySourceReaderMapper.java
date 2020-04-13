@@ -35,7 +35,7 @@ final class ArraySourceReaderMapper {
 	
 	final SingleSourceReaderMapper singleSourceMapper;
 	
-	public ArraySourceReaderMapper(ProjectionRegistry registry) {
+	public ArraySourceReaderMapper(final ProjectionRegistry registry) {
 		this.registry = registry;
 		this.singleSourceMapper = new SingleSourceReaderMapper(registry);
 	}

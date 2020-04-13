@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.annotation.Constant;
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Provided;
 import com.apicatalog.projection.annotation.Source;
@@ -25,7 +24,7 @@ import com.apicatalog.projection.property.SourcePropertyReader;
 import com.apicatalog.projection.property.source.SingleSourceWriter;
 import com.apicatalog.projection.property.target.TargetReader;
 
-public class PropertyReaderMapper {
+final class PropertyReaderMapper {
 
 	final Logger logger = LoggerFactory.getLogger(PropertyReaderMapper.class);
 	
@@ -34,7 +33,7 @@ public class PropertyReaderMapper {
 	final SingleSourceReaderMapper singleSourceMapper;
 	final ArraySourceReaderMapper arraySourceMapper;
 	
-	public PropertyReaderMapper(ProjectionRegistry registry) {
+	public PropertyReaderMapper(final ProjectionRegistry registry) {
 		this.registry = registry;
 
 		this.singleSourceMapper = new SingleSourceReaderMapper(registry);
@@ -57,10 +56,6 @@ public class PropertyReaderMapper {
 		} else if (field.isAnnotationPresent(Provided.class)) {
 			mapping = getProvided(field);
 			
-		// constant value
-		} else if (field.isAnnotationPresent(Constant.class)) {
-			mapping = getConstant(field);
-
 		// direct mapping or a reference
 		} else {
 			mapping = getDefaultProperty(field, defaultSourceClass);
@@ -120,11 +115,6 @@ public class PropertyReaderMapper {
 					.targetReference(isReference(targetGetter.getType()))
 					.build(registry);
 	}				
-
-	Optional<PropertyReader> getConstant(final Field field) {
-		// nothing to do, constant is just writable
-		return Optional.empty();
-	}
 	
 	protected static final boolean isReference(final ObjectType objectType) {
 		return objectType.isCollection()

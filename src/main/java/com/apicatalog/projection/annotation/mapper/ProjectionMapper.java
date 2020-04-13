@@ -13,7 +13,7 @@ import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
-public class ProjectionMapper {
+public final class ProjectionMapper {
 
 	final Logger logger = LoggerFactory.getLogger(ProjectionMapper.class);
 
@@ -22,11 +22,11 @@ public class ProjectionMapper {
 	final PropertyReaderMapper propertyReaderMapper;
 	final PropertyWriterMapper propertyWriterMapper;
 
-	public ProjectionMapper(ProjectionRegistry registry) {
+	public ProjectionMapper(final ProjectionRegistry registry) {
 		this(registry, new PropertyReaderMapper(registry), new PropertyWriterMapper(registry));
 	}
 
-	public ProjectionMapper(ProjectionRegistry factory, PropertyReaderMapper propertyReaderMapper, PropertyWriterMapper propertyWriterMapper) {
+	public ProjectionMapper(final ProjectionRegistry factory, final PropertyReaderMapper propertyReaderMapper, final PropertyWriterMapper propertyWriterMapper) {
 		this.factory = factory;
 		this.propertyReaderMapper = propertyReaderMapper;
 		this.propertyWriterMapper = propertyWriterMapper;

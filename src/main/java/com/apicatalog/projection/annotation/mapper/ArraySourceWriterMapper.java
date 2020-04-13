@@ -25,7 +25,7 @@ import com.apicatalog.projection.property.source.ArraySourceReader;
 import com.apicatalog.projection.property.source.SingleSourceReader;
 import com.apicatalog.projection.property.target.TargetWriter;
 
-class ArraySourceWriterMapper {
+final class ArraySourceWriterMapper {
 
 	final Logger logger = LoggerFactory.getLogger(ArraySourceWriterMapper.class);
 	
@@ -35,7 +35,7 @@ class ArraySourceWriterMapper {
 	
 	final SingleSourceWriterMapper singleSourceMapper;
 	
-	public ArraySourceWriterMapper(ProjectionRegistry registry) {
+	public ArraySourceWriterMapper(final ProjectionRegistry registry) {
 		this.registry = registry;
 		this.singleSourceMapper = new SingleSourceWriterMapper(registry);
 	}

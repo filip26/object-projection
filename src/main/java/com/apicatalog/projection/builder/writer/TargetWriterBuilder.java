@@ -40,7 +40,7 @@ public class TargetWriterBuilder {
 				return Optional.of(new ProjectionsTargetWriter(setter));
 			}
 			
-			return Optional.of(new ProjectionTargetWriter(setter));
+			return Optional.of(new ProjectionTargetWriter(registry, setter));
 		}
 		
 

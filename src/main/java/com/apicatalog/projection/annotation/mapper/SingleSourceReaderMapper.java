@@ -30,7 +30,7 @@ import com.apicatalog.projection.property.SourcePropertyReader;
 import com.apicatalog.projection.property.source.SingleSourceWriter;
 import com.apicatalog.projection.property.target.TargetReader;
 
-class SingleSourceReaderMapper {
+final class SingleSourceReaderMapper {
 
 	final Logger logger = LoggerFactory.getLogger(SingleSourceReaderMapper.class);
 	
@@ -38,7 +38,7 @@ class SingleSourceReaderMapper {
 	
 	final ProjectionRegistry registry;
 	
-	public SingleSourceReaderMapper(ProjectionRegistry registry) {
+	public SingleSourceReaderMapper(final ProjectionRegistry registry) {
 		this.registry = registry;
 	}
 	
@@ -77,7 +77,7 @@ class SingleSourceReaderMapper {
 					.build(registry);
 	}
 
-	Optional<SingleSourceWriter> getSingleSourceWriter(Source sourceAnnotation, String fieldName, ObjectType targetType, Class<?> defaultSourceClass) throws ProjectionError {
+	Optional<SingleSourceWriter> getSingleSourceWriter(final Source sourceAnnotation, final String fieldName, final ObjectType targetType, final Class<?> defaultSourceClass) throws ProjectionError {
 		
 		Class<?> sourceObjectClass = defaultSourceClass;
 		
@@ -125,7 +125,7 @@ class SingleSourceReaderMapper {
 					);
 	}
 
-	Optional<SingleSourceWriter> getSingleSourceWriter(Class<?> sourceObjectClass, String sourceFieldName, SingleSourceWriterBuilder sourceBuilder) throws ProjectionError {
+	Optional<SingleSourceWriter> getSingleSourceWriter(final Class<?> sourceObjectClass, final String sourceFieldName, final SingleSourceWriterBuilder sourceBuilder) throws ProjectionError {
 		
 		// extract setter
 		final Setter sourceSetter = ObjectUtils.getSetter(sourceObjectClass, sourceFieldName);
@@ -133,7 +133,7 @@ class SingleSourceReaderMapper {
 		return sourceBuilder.setter(sourceSetter).build(registry.getTypeConversions());
 	}
 	
-	protected static final Collection<ConverterMapping> getConverterMapping(Conversion[] conversions) throws ConverterError, ProjectionError {
+	protected static final Collection<ConverterMapping> getConverterMapping(final Conversion[] conversions) throws ConverterError, ProjectionError {
 
 		final List<ConverterMapping> converters = new ArrayList<>(conversions.length);
 		

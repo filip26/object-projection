@@ -31,10 +31,10 @@ public class VisibilityTest {
     public void testCompose1() throws ProjectionError, ConverterError {
     	
     	Object1 o1 =new Object1();
-    	o1.id = "Object 1";
+    	o1.id = "Object #1";
 
     	Object2 o2 =new Object2();
-    	o2.id = "Object 2";
+    	o2.id = "Object #2";
 
     	o1.object2 = o2;
     	

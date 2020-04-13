@@ -29,7 +29,7 @@ import com.apicatalog.projection.property.SourcePropertyWriter;
 import com.apicatalog.projection.property.source.SingleSourceReader;
 import com.apicatalog.projection.property.target.TargetWriter;
 
-public class PropertyWriterMapper {
+final class PropertyWriterMapper {
 
 	final Logger logger = LoggerFactory.getLogger(PropertyWriterMapper.class);
 	
@@ -38,7 +38,7 @@ public class PropertyWriterMapper {
 	final SingleSourceWriterMapper singleSourceMapper;
 	final ArraySourceWriterMapper arraySourceMapper;
 	
-	public PropertyWriterMapper(ProjectionRegistry registry) {
+	public PropertyWriterMapper(final ProjectionRegistry registry) {
 		this.registry = registry;
 
 		this.singleSourceMapper = new SingleSourceWriterMapper(registry);
@@ -136,7 +136,7 @@ public class PropertyWriterMapper {
 					.build(registry);		
 	}				
 
-	Optional<PropertyWriter> getConstantProperty(Field field) throws ProjectionError {
+	Optional<PropertyWriter> getConstantProperty(final Field field) throws ProjectionError {
 		
 		final Constant constant = field.getAnnotation(Constant.class);
 		
@@ -149,7 +149,7 @@ public class PropertyWriterMapper {
 					.build(registry).map(PropertyWriter.class::cast);
 	}
 	
-	protected static final boolean isReference(ObjectType objectType) {
+	protected static final boolean isReference(final ObjectType objectType) {
 		return objectType.isCollection()
 				? objectType.getComponentType().isAnnotationPresent(Projection.class)
 				: objectType.getType().isAnnotationPresent(Projection.class)
