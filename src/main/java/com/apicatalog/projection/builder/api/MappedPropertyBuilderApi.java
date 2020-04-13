@@ -84,7 +84,7 @@ public class MappedPropertyBuilderApi<P> {
 		
 		final Field field = ObjectUtils.getProperty(projectionBuilder.projectionClass(), targetPropertyName);
 		
-		ObjectType targetType = ObjectUtils.getTypeOf(field);
+		final ObjectType targetType = ObjectUtils.getTypeOf(field);
 
 		if  (Optional.ofNullable(sourcePropertyBuilder).isPresent()) {
 
@@ -120,7 +120,7 @@ public class MappedPropertyBuilderApi<P> {
 		return Optional.empty();
 	}
 	
-	protected Optional<PropertyWriter> buildPropertyWriter(ProjectionRegistry registry) throws ProjectionError {
+	protected Optional<PropertyWriter> buildPropertyWriter(final ProjectionRegistry registry) throws ProjectionError {
 		
 		final Field field = ObjectUtils.getProperty(projectionBuilder.projectionClass(), targetPropertyName);
 		

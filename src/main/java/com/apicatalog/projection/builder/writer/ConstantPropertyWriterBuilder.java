@@ -40,7 +40,7 @@ public final class ConstantPropertyWriterBuilder {
 		final Optional<TargetWriter> targetWriter = TargetWriterBuilder.newInstance()
 										.setter(setter, reference)
 										.build(registry);
- 
+
 		if (targetWriter.isEmpty()) {
 			return Optional.empty();
 		}

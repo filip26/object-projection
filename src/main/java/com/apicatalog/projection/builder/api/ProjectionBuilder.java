@@ -51,7 +51,7 @@ public class ProjectionBuilder<P> {
 					.ifPresent(writers::add);
 		}
 		
-		if (readers.isEmpty()) {
+		if (readers.isEmpty() && writers.isEmpty()) {
 			return null;
 		}
 		
