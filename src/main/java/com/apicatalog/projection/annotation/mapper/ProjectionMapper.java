@@ -8,9 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.Projection;
+import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.conversion.implicit.TypeConversions;
-import com.apicatalog.projection.property.ProjectionProperty;
+import com.apicatalog.projection.property.PropertyReader;
+import com.apicatalog.projection.property.PropertyWriter;
 
 public class ProjectionMapper {
 
@@ -18,18 +19,20 @@ public class ProjectionMapper {
 
 	final ProjectionRegistry factory;
 	
-	final PropertyMapper propertyMapper;
+	final PropertyReaderMapper propertyReaderMapper;
+	final PropertyWriterMapper propertyWriterMapper;
 
-	public ProjectionMapper(ProjectionRegistry factory) {
-		this(factory, new PropertyMapper(factory, new TypeConversions()));
+	public ProjectionMapper(ProjectionRegistry registry) {
+		this(registry, new PropertyReaderMapper(registry), new PropertyWriterMapper(registry));
 	}
 
-	public ProjectionMapper(ProjectionRegistry factory, PropertyMapper propertyMapper) {
+	public ProjectionMapper(ProjectionRegistry factory, PropertyReaderMapper propertyReaderMapper, PropertyWriterMapper propertyWriterMapper) {
 		this.factory = factory;
-		this.propertyMapper = propertyMapper;
+		this.propertyReaderMapper = propertyReaderMapper;
+		this.propertyWriterMapper = propertyWriterMapper;
 	}
 
-	public <P> Projection<P> getProjectionOf(final Class<P> targetProjectionClass) {
+	public <P> Projection<P> getProjectionOf(final Class<P> targetProjectionClass) throws ProjectionError {
 
 		if (targetProjectionClass == null) {
 			throw new IllegalArgumentException();
@@ -46,7 +49,8 @@ public class ProjectionMapper {
 		
 		final Class<?> defaultSourceClass = Class.class.equals(projectionAnnotation.value()) ? null : projectionAnnotation.value();
 		
-		final ArrayList<ProjectionProperty> properties = new ArrayList<>();
+		final ArrayList<PropertyReader> readers = new ArrayList<>();
+		final ArrayList<PropertyWriter> writers = new ArrayList<>();
 		
 		// check all declared fields
 		for (Field field : targetProjectionClass.getDeclaredFields()) {
@@ -58,22 +62,36 @@ public class ProjectionMapper {
 					logger.trace("Skipped {}.{} because is transient or static", targetProjectionClass.getSimpleName(), field.getName());
 					continue;
 			}
-			
-			propertyMapper
-					.getPropertyMapping(field, defaultSourceClass)
+
+			propertyWriterMapper
+					.getProperty(field, defaultSourceClass)
 					.ifPresent(
 							projectionProperty -> {
-									logger.trace("Found {}.{} : {}", targetProjectionClass.getSimpleName(), field.getName(), field.getType().getSimpleName());
-									properties.add(projectionProperty);
+									logger.trace("Writer {}.{} : {}", targetProjectionClass.getSimpleName(), field.getName(), field.getType().getSimpleName());
+									writers.add(projectionProperty);
+								}
+							);
+			
+			propertyReaderMapper
+					.getProperty(field, defaultSourceClass)
+					.ifPresent(
+							projectionProperty -> {
+									logger.trace("Reader {}.{} : {}", targetProjectionClass.getSimpleName(), field.getName(), field.getType().getSimpleName());
+									readers.add(projectionProperty);
 								}
 							);				
+
 		}
 		
-		if (properties.isEmpty()) {
+		if (writers.isEmpty() && readers.isEmpty()) {
 			logger.debug("Ignored {} because has no projected properties", targetProjectionClass.getSimpleName());
 			return null;
 		}
 		
-		return Projection.newInstance(targetProjectionClass, properties.toArray(new ProjectionProperty[0]));
+		return Projection.newInstance(
+							targetProjectionClass, 
+							readers.toArray(new PropertyReader[0]), 
+							writers.toArray(new PropertyWriter[0])
+							);
 	}
 }

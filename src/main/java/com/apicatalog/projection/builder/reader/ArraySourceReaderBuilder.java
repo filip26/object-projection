@@ -1,4 +1,4 @@
-package com.apicatalog.projection.builder;
+package com.apicatalog.projection.builder.reader;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,7 +8,9 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.conversion.Conversion;
+import com.apicatalog.projection.conversion.UnknownConversion;
 import com.apicatalog.projection.conversion.explicit.ForwardExplicitConversion;
 import com.apicatalog.projection.conversion.implicit.TypeConversions;
 import com.apicatalog.projection.converter.ConverterMapping;
@@ -36,7 +38,7 @@ public class ArraySourceReaderBuilder {
 		return new ArraySourceReaderBuilder();
 	}
 	
-	public Optional<ArraySourceReader> build(TypeConversions typeConversions) {
+	public Optional<ArraySourceReader> build(TypeConversions typeConversions) throws ProjectionError {
 		
 		final ArraySourceReader source = new ArraySourceReader();
 		
@@ -44,15 +46,24 @@ public class ArraySourceReaderBuilder {
 			return Optional.empty();
 		}
 
+		// set sources
 		source.setSources(sources);
-
-		// set conversions to apply
-		buildChain(source, sources, converters, typeConversions);
-
-		// set optional 
-		source.setOptional(optional);
 		
-		return Optional.of(source);
+		// set default source type
+		source.setTargetType(targetType);
+
+		try {
+			// set conversions to apply
+			buildChain(source, converters, typeConversions);
+	
+			// set optional 
+			source.setOptional(optional);
+			
+			return Optional.of(source);
+			
+		} catch (UnknownConversion e) {
+			throw new ProjectionError(e);
+		}
 	}	
 
 	public ArraySourceReaderBuilder optional(boolean optional) {
@@ -75,27 +86,22 @@ public class ArraySourceReaderBuilder {
 		return this;
 	}
 
-	final void buildChain(ArraySourceReader source, SourceReader[] sources, Collection<ConverterMapping> converters, TypeConversions typeConversions) {
+	final void buildChain(ArraySourceReader source, Collection<ConverterMapping> converters, TypeConversions typeConversions) throws UnknownConversion {
 
-		// set default source type for an array of sources
-		source.setTargetType(ObjectType.of(Object[].class));
+		final ArrayList<Conversion> conversions = new ArrayList<>((converters != null ? converters.size() : 0) * 2 + 1);
 		
-		// no conversions to set
 		if (converters == null || converters.isEmpty()) {
+			typeConversions.get(ObjectType.of(Object[].class), targetType).ifPresent(conversions::add);
+			source.setConversions(conversions.toArray(new Conversion[0]));
 			return;
 		}
-
-		// get source types
-//		final Collection<ObjectType> sourceTypes = Arrays.stream(sources).map(SourceReader::getTargetType).collect(Collectors.toList());
-
-		final ArrayList<Conversion> readConversions = new ArrayList<>(converters.size() * 2);
-		
+							
 		final Iterator<ConverterMapping> it = converters.iterator();
 		
 		ConverterMapping mapping = it.next();
 		
-		typeConversions.get(ObjectType.of(Object[].class), mapping.getSourceType()).ifPresent(readConversions::add);
-		readConversions.add(ForwardExplicitConversion.of(mapping.getConversion()));
+		typeConversions.get(ObjectType.of(Object[].class), mapping.getSourceType()).ifPresent(conversions::add);
+		conversions.add(ForwardExplicitConversion.of(mapping.getConversion()));
 
 		while (it.hasNext()) {
 
@@ -105,15 +111,19 @@ public class ArraySourceReaderBuilder {
 								mapping.getTargetType(),
 								next.getSourceType()
 								)
-							.ifPresent(readConversions::add);
+							.ifPresent(conversions::add);
 			
-			readConversions.add(ForwardExplicitConversion.of(next.getConversion()));
+			conversions.add(ForwardExplicitConversion.of(next.getConversion()));
 			
 			mapping = next;
 		}
 		
-		source.setTargetType(mapping.getTargetType());
+		typeConversions.get(
+				mapping.getTargetType(),
+				targetType)
+			.ifPresent(conversions::add);
+
 	
-		source.setConversions(readConversions.toArray(new Conversion[0]));
+		source.setConversions(conversions.toArray(new Conversion[0]));
 	}
 }

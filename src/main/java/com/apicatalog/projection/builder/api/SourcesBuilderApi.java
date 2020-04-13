@@ -12,8 +12,8 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
-import com.apicatalog.projection.builder.SingleSourceReaderBuilder;
-import com.apicatalog.projection.builder.SingleSourceWriterBuilder;
+import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
+import com.apicatalog.projection.builder.writer.SingleSourceWriterBuilder;
 import com.apicatalog.projection.conversion.implicit.TypeConversions;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterError;
@@ -32,13 +32,10 @@ public class SourcesBuilderApi<P> {
 	
 	final String targetPropertyName;
 	
-	final TypeConversions typeConversions;
-	
-	protected SourcesBuilderApi(ProjectionBuilder<P> projection, String targetPropertyName, TypeConversions typeConversions) {
+	protected SourcesBuilderApi(ProjectionBuilder<P> projection, String targetPropertyName) {
 		this.projectionBuilder = projection;
 		this.sourceHolders = new LinkedList<>();
 		this.targetPropertyName = targetPropertyName;
-		this.typeConversions = typeConversions;
 	}
 
 	public SourcesBuilderApi<P> optional() {
@@ -177,5 +174,4 @@ public class SourcesBuilderApi<P> {
 			writerBuilder.mode(mode);
 		}
 	}
-	
 }

@@ -1,4 +1,4 @@
-package com.apicatalog.projection.builder;
+package com.apicatalog.projection.builder.writer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,7 +7,9 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.conversion.Conversion;
+import com.apicatalog.projection.conversion.UnknownConversion;
 import com.apicatalog.projection.conversion.explicit.BackwardExplicitConversion;
 import com.apicatalog.projection.conversion.implicit.TypeConversions;
 import com.apicatalog.projection.converter.ConverterMapping;
@@ -35,7 +37,7 @@ public class ArraySourceWriterBuilder {
 		return new ArraySourceWriterBuilder();
 	}
 	
-	public Optional<ArraySourceWriter> build(TypeConversions typeConversions) {
+	public Optional<ArraySourceWriter> build(TypeConversions typeConversions) throws ProjectionError {
 		
 		final ArraySourceWriter source = new ArraySourceWriter();
 		
@@ -45,16 +47,21 @@ public class ArraySourceWriterBuilder {
 
 		source.setSources(sources);
 
-		// set conversions to apply
-		buildChain(source, sources, converters, typeConversions);
-
-		// set default target type
-		source.setTargetType(targetType);
-		
-		// set optional 
-		source.setOptional(optional);
-		
-		return Optional.of(source);
+		try {
+			// set conversions to apply
+			buildChain(source, converters, typeConversions);
+	
+			// set default target type
+			source.setTargetType(targetType);
+			
+			// set optional 
+			source.setOptional(optional);
+			
+			return Optional.of(source);
+			
+		} catch (UnknownConversion e) {
+			throw new ProjectionError(e);
+		}
 	}	
 
 	public ArraySourceWriterBuilder optional(boolean optional) {
@@ -77,22 +84,30 @@ public class ArraySourceWriterBuilder {
 		return this;
 	}
 
-	final void buildChain(ArraySourceWriter source, SourceWriter[] sources, Collection<ConverterMapping> converters, TypeConversions typeConversions) {
+	final void buildChain(ArraySourceWriter source, Collection<ConverterMapping> converters, TypeConversions typeConversions) throws UnknownConversion {
 
-		// set default source type for an array of sources
-		source.setTargetType(ObjectType.of(Object[].class));
+		final ArrayList<Conversion> conversions = new ArrayList<>((converters == null ? 0 : converters.size()) * 2 + 1);
 		
 		// no conversions to set
 		if (converters == null || converters.isEmpty()) {
+
+			typeConversions.get(
+					targetType,
+					ObjectType.of(Object[].class))
+				.ifPresent(conversions::add);
+			source.setConversions(conversions.toArray(new Conversion[0]));
+
 			return;
 		}
 
-		// get source types
-//		final Collection<ObjectType> sourceTypes = Arrays.stream(sources).map(SourceWriter::getTargetType).collect(Collectors.toList());
-
-		final ArrayList<Conversion> conversions = new ArrayList<>(converters.size() * 2);
 		final ConverterMapping[] mapping = converters.toArray(new ConverterMapping[0]);
 
+		typeConversions.get(
+				targetType,
+				mapping[mapping.length - 1].getTargetType())
+			.ifPresent(conversions::add);
+
+		
 		for (int i = 1; i < mapping.length; i++) {
 
 			conversions.add(BackwardExplicitConversion.of(mapping[mapping.length - i].getConversion()));
@@ -107,7 +122,7 @@ public class ArraySourceWriterBuilder {
 		conversions.add(BackwardExplicitConversion.of(mapping[0].getConversion()));
 		typeConversions.get(mapping[0].getSourceType(), ObjectType.of(Object[].class)).ifPresent(conversions::add);
 			
-//		source.setTargetType(mapping[mapping.length - 1].getTargetType());
+
 	
 		source.setConversions(conversions.toArray(new Conversion[0]));
 	}

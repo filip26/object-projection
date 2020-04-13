@@ -10,7 +10,7 @@ public interface SourceWriter  {
 
 	void write(ProjectionStack queue, ExtractionContext context, Object object) throws ProjectionError;
 
-	ObjectType getTargetType();
+	ObjectType getType();
 	
 	boolean isAnyTypeOf(SourceType...sourceTypes);
 

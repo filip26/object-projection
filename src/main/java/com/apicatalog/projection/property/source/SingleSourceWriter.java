@@ -92,7 +92,7 @@ public final class SingleSourceWriter implements SourceWriter {
 		this.targetType = targetType;
 	}
 	
-	public ObjectType getTargetType() {
+	public ObjectType getType() {
 		return targetType;
 	}
 		

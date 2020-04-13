@@ -16,7 +16,7 @@ public class TwoSourceCompositeTest {
 	ProjectionRegistry projections;
 
 	@Before
-	public void setup() {
+	public void setup() throws ProjectionError {
 		projections = ProjectionRegistry.newInstance()				
 						.register(CompositeTo.class)
 						;

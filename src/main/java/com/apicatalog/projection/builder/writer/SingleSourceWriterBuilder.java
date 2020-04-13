@@ -1,4 +1,4 @@
-package com.apicatalog.projection.builder;
+package com.apicatalog.projection.builder.writer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,8 +8,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.conversion.Conversion;
+import com.apicatalog.projection.conversion.UnknownConversion;
 import com.apicatalog.projection.conversion.explicit.BackwardExplicitConversion;
 import com.apicatalog.projection.conversion.implicit.TypeConversions;
 import com.apicatalog.projection.converter.ConverterMapping;
@@ -47,7 +49,7 @@ public class SingleSourceWriterBuilder {
 		return new SingleSourceWriterBuilder();
 	}
 	
-	public Optional<SingleSourceWriter> build(TypeConversions typeConverters) {
+	public Optional<SingleSourceWriter> build(TypeConversions typeConverters) throws ProjectionError {
 
 		// no setter ? 
 		if (sourceSetter == null || targetType == null) {
@@ -84,13 +86,18 @@ public class SingleSourceWriterBuilder {
 		// set default source type for an array of sources
 		source.setTargetType(targetType);
 
-		// set conversions to apply
-		buildChain(source, converters, typeConverters, targetType);
-		
-		// set optional 
-		source.setOptional(optional);
-
-		return Optional.of(source);
+		try {
+			// set conversions to apply
+			buildChain(source, converters, typeConverters, targetType);
+			
+			// set optional 
+			source.setOptional(optional);
+	
+			return Optional.of(source);
+			
+		} catch (UnknownConversion e) {
+			throw new ProjectionError(e);
+		}
 	}
 	
 	public SingleSourceWriterBuilder mode(AccessMode mode) {
@@ -128,7 +135,7 @@ public class SingleSourceWriterBuilder {
 		return this;
 	}	
 	
-	final void buildChain(SingleSourceWriter source, final Collection<ConverterMapping> converters, final TypeConversions typeConversions, ObjectType targetType) {
+	final void buildChain(SingleSourceWriter source, final Collection<ConverterMapping> converters, final TypeConversions typeConversions, ObjectType targetType) throws UnknownConversion {
 
 		final ArrayList<Conversion> conversions = new ArrayList<>((converters == null ? 0 : converters.size()) * 2 + 1);
 
@@ -138,10 +145,6 @@ public class SingleSourceWriterBuilder {
 					sourceSetter.getType())
 				.ifPresent(conversions::add);
 			source.setConversions(conversions.toArray(new Conversion[0]));
-			
-			if (logger.isTraceEnabled()) {
-				logger.trace("1 conversion attached");
-			}
 
 			return;
 		}

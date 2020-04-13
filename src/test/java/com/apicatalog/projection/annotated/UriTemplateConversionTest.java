@@ -16,7 +16,7 @@ public class UriTemplateConversionTest {
 	ProjectionRegistry projections;
 	
 	@Before
-	public void setup() {
+	public void setup() throws ProjectionError {
 		projections = ProjectionRegistry.newInstance()
 						.register(UriTemplateConversion.class)
 						;

@@ -15,7 +15,8 @@ import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.object.setter.Setter;
 
-public class ProvidedProjectionProperty implements ProjectionProperty {
+@Deprecated
+public class ProvidedProjectionProperty  {
 
 	final Logger logger = LoggerFactory.getLogger(ProvidedProjectionProperty.class);
 
@@ -34,7 +35,6 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 		this.factory = factory;
 	}
 	
-	@Override
 	public void forward(ProjectionStack queue, CompositionContext context) throws ProjectionError {
 
 		if (targetSetter == null) {
@@ -60,7 +60,6 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 		}
 	}
 
-	@Override
 	public void backward(ProjectionStack queue, ExtractionContext context) throws ProjectionError {
 
 		if (targetGetter == null) {
@@ -95,7 +94,6 @@ public class ProvidedProjectionProperty implements ProjectionProperty {
 		this.targetSetter = targetSetter;
 	}
 	
-	@Override
 	public boolean isVisible(int depth) {
 		return visibleLevels == null || visibleLevels.isEmpty() || visibleLevels.contains(depth);
 	}

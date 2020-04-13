@@ -17,7 +17,7 @@ public class ConstantTest {
 	ProjectionRegistry projections;
 	
 	@Before
-	public void setup() {
+	public void setup() throws ProjectionError {
 		projections = ProjectionRegistry.newInstance()
 						.register(ConstantTo.class);
 	}

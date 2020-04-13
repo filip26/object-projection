@@ -13,7 +13,8 @@ import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.object.ObjectType;
 
-public class SingleProjectionAdapter implements ProjectionAdapter {
+@Deprecated
+public class SingleProjectionAdapter {
 
 	final Logger logger = LoggerFactory.getLogger(SingleProjectionAdapter.class);
 
@@ -26,7 +27,7 @@ public class SingleProjectionAdapter implements ProjectionAdapter {
 		this.targetType = targetType;
 	}
 	
-	@Override
+	
 	public Object forward(ProjectionStack stack, Object object, CompositionContext context) throws ProjectionError {
 		
 		if (logger.isDebugEnabled()) {
@@ -45,7 +46,7 @@ public class SingleProjectionAdapter implements ProjectionAdapter {
 		return projection.compose(stack, clonedSources);
 	}
 
-	@Override
+	
 	public Object backward(ObjectType sourceType, Object object, ExtractionContext context) throws ProjectionError {
 		
 		logger.debug("Convert {} to {}, reference = true", targetType, sourceType);

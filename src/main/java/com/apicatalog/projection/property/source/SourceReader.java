@@ -11,6 +11,6 @@ public interface SourceReader  {
 
 	Optional<Object> read(ProjectionStack queue, CompositionContext context) throws ProjectionError;
 		
-	ObjectType getTargetType();
+	ObjectType getType();
 
 }

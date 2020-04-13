@@ -19,7 +19,7 @@ public class VisibilityTest {
 	ProjectionRegistry projections;
 	
 	@Before
-	public void setup() {
+	public void setup() throws ProjectionError {
 		projections = ProjectionRegistry.newInstance()
 						.register(Object1To.class)
 						.register(Object2To.class)

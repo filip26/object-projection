@@ -3,44 +3,21 @@ package com.apicatalog.projection.adapter.type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.object.ObjectType;
 
 @Deprecated
 public class TypeAdaptersLegacy {
 
 	final Logger logger = LoggerFactory.getLogger(TypeAdaptersLegacy.class);
 	
-	final Map<Class<?>, TypeAdapter<?>> adapters;
-	
 	public TypeAdaptersLegacy() {
-		this.adapters = new LinkedHashMap<>();
-	}
 
-	@SuppressWarnings("unchecked")
-	public <S> TypeAdapter<S> get(Class<? extends S> sourceClass) {
-		return (TypeAdapter<S>) adapters.get(sourceClass);
-	}
-
-	public TypeAdaptersLegacy add(TypeAdapter<?> adapter) {
-		adapters.put(adapter.consumes(), adapter);
-		return this;
-	}
-
-	public Object convert(ObjectType objectType, Object object) throws ProjectionError {
-		return convert(objectType.getType(), objectType.getComponentType(), object);
-	}
-	
-	public Object convert(Class<?> targetClass, Object object) throws ProjectionError {
-		return convert(targetClass, null, object);
 	}
 	
 	public Object convert(Class<?> targetClass, Class<?> componentClass, Object object) throws ProjectionError {
@@ -88,20 +65,21 @@ public class TypeAdaptersLegacy {
 				object = ((Object[])object)[0];	// reduce to single object
 			}
 		}
-
-		final TypeAdapter<Object> adapter = get(object.getClass());
 		
-		if (adapter == null) {
-			//TODO do implicit conversion to string via toString()
-			throw new ProjectionError("Can not convert " + object.getClass() + " to " + targetClass + ".");
-		}
-		
-		try {
-			return adapter.convert(targetClass, object);
-			
-		} catch (TypeAdapterError e) {
-			throw new ProjectionError(e);
-		}
+		return null;
+//		final TypeAdapter<Object> adapter = get(object.getClass());
+//		
+//		if (adapter == null) {
+//			//TODO do implicit conversion to string via toString()
+//			throw new ProjectionError("Can not convert " + object.getClass() + " to " + targetClass + ".");
+//		}
+//		
+//		try {
+//			return adapter.convert(targetClass, object);
+//			
+//		} catch (TypeAdapterError e) {
+//			throw new ProjectionError(e);
+//		}
 	}
 
 
@@ -122,7 +100,7 @@ public class TypeAdaptersLegacy {
 		}
 		
 		for (Object object : objects) {
-			converted.add(convert(componentClass, object));
+//			converted.add(convert(componentClass, object));
 		}
 
 		return converted;
@@ -145,7 +123,7 @@ public class TypeAdaptersLegacy {
 		}
 		
 		for (Object object : objects) {
-			converted.add(convert(componentClass, object));
+//			converted.add(convert(componentClass, object));
 		}
 
 		return converted;
@@ -162,7 +140,7 @@ public class TypeAdaptersLegacy {
 
 		int index = 0;
 		for (Object object : objects) {
-			converted[index++] = convert(targetClass, object);
+//			converted[index++] = convert(targetClass, object);
 		}
 		
 		return converted;
@@ -184,7 +162,7 @@ public class TypeAdaptersLegacy {
 		final Object[] converted = (Object[])java.lang.reflect.Array.newInstance(targetClass, objects.length);
 		
 		for (int i=0; i < objects.length; i++) {
-			converted[i] = convert(targetClass, objects[i]);
+//			converted[i] = convert(targetClass, objects[i]);
 		}
 		return converted;
 	}

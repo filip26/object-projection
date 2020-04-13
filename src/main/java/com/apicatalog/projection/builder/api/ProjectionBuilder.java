@@ -6,8 +6,8 @@ import java.util.List;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.conversion.implicit.TypeConversions;
-import com.apicatalog.projection.property.ProjectionProperty;
+import com.apicatalog.projection.property.PropertyReader;
+import com.apicatalog.projection.property.PropertyWriter;
 
 public class ProjectionBuilder<P> {
 	
@@ -29,26 +29,33 @@ public class ProjectionBuilder<P> {
 	}
 
 	public MappedPropertyBuilderApi<P> map(String propertyName, boolean reference) {
-		final MappedPropertyBuilderApi<P> propertyBuilder = new MappedPropertyBuilderApi<>(this, new TypeConversions(), propertyName, reference); 	//FIXME remove new Implici
+		
+		final MappedPropertyBuilderApi<P> propertyBuilder = 
+					new MappedPropertyBuilderApi<>(this, propertyName, reference);
 		propertyBuilders.add(propertyBuilder);
 		return propertyBuilder;
 	}
 	
 	public Projection<P> build(ProjectionRegistry factory) throws ProjectionError {
 
-		final List<ProjectionProperty> properties = new ArrayList<>(); 
+		final List<PropertyReader> readers = new ArrayList<>(); 
+		final List<PropertyWriter> writers = new ArrayList<>();
 		
 		for (final MappedPropertyBuilderApi<P> propertyBuilder : propertyBuilders) {
 			propertyBuilder
-					.buildProperty(factory)
-					.ifPresent(properties::add);
+					.buildPropertyReader(factory)
+					.ifPresent(readers::add);
+			
+			propertyBuilder
+					.buildPropertyWriter(factory)
+					.ifPresent(writers::add);
 		}
 		
-		if (properties.isEmpty()) {
+		if (readers.isEmpty()) {
 			return null;
 		}
 		
-		final Projection<P> projection = Projection.newInstance(projectionClass, properties.toArray(new ProjectionProperty[0]));
+		final Projection<P> projection = Projection.newInstance(projectionClass, readers.toArray(new PropertyReader[0]), writers.toArray(new PropertyWriter[0]));
 
 		factory.register(projection);
 		

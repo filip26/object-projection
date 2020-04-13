@@ -17,7 +17,7 @@ public class ProvidedRefTest {
 	ProjectionRegistry projections;
 	
 	@Before
-	public void setup() {
+	public void setup() throws ProjectionError {
 		projections = ProjectionRegistry.newInstance()
 						.register(ProvidedReferefenceTo.class)
 						.register(SimpleObjectTo.class)

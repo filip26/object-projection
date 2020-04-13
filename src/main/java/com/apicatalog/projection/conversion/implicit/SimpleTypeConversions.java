@@ -6,9 +6,9 @@ import java.util.Date;
 
 import com.apicatalog.projection.conversion.Conversion;
 
-public final class PrimitiveTypeConversions {
+public final class SimpleTypeConversions {
 
-	protected PrimitiveTypeConversions() {}
+	protected SimpleTypeConversions() {}
 	
 	public static final Conversion get(final Class<?> source, final Class<?> target) {
 		
@@ -74,6 +74,7 @@ public final class PrimitiveTypeConversions {
 		if (target == Integer.class) return o -> ((Float)o).intValue();
 		if (target == Long.class) return o -> ((Float)o).longValue();
 		if (target == Double.class) return o -> ((Float)o).doubleValue();
+		if (target == Boolean.class) return o -> ((Float)o) == 0 ? Boolean.FALSE : Boolean.TRUE;
 		
 		return null;
 	}

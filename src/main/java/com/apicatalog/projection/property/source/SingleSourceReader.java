@@ -20,9 +20,9 @@ public final class SingleSourceReader implements SourceReader {
 
 	Getter getter;
 
-	SourceType sourceType;
+	SourceType sourceObjectType;
 	
-	ObjectType targetType;
+	ObjectType type;
 	
 	Conversion[] conversions;
 	
@@ -32,16 +32,16 @@ public final class SingleSourceReader implements SourceReader {
 	public Optional<Object> read(ProjectionStack queue, CompositionContext context) throws ProjectionError {
 		
 		if (logger.isDebugEnabled()) {
-			logger.debug("Read {}.{}, optional = {}, depth = {}", sourceType, getter.getName(), optional, queue.length());
+			logger.debug("Read {}.{}, optional = {}, depth = {}", sourceObjectType, getter.getName(), optional, queue.length());
 		}
 
-		final Optional<Object> instance = context.get(sourceType);
+		final Optional<Object> instance = context.get(sourceObjectType);
 
 		if (instance.isEmpty()) {
 			if (optional) {
 				return Optional.empty();
 			}
-			throw new ProjectionError("Source instance of " + sourceType + ",  is not present.");
+			throw new ProjectionError("Source instance of " + sourceObjectType + ",  is not present.");
 		}
 
 		// get source value
@@ -51,9 +51,8 @@ public final class SingleSourceReader implements SourceReader {
 			return Optional.empty();
 		}
 
-		logger.trace("{}.{} = {}", sourceType, getter.getName(), object.get());
-		
-		
+		logger.trace("{}.{} = {}", sourceObjectType, getter.getName(), object.get());
+
 		// apply explicit conversions
 		if (conversions != null) {
 			try {
@@ -66,7 +65,6 @@ public final class SingleSourceReader implements SourceReader {
 			} catch (ConverterError e) {
 				throw new ProjectionError(e);
 			}
-
 		}
 
 		return object;
@@ -80,16 +78,16 @@ public final class SingleSourceReader implements SourceReader {
 		this.optional = optional;
 	}
 	
-	public void setTargetType(ObjectType targetType) {
-		this.targetType = targetType;
+	public void setType(ObjectType type) {
+		this.type = type;
 	}
 	
-	public ObjectType getTargetType() {
-		return targetType;
+	public ObjectType getType() {
+		return type;
 	}
 		
-	public void setSourceType(SourceType sourceType) {
-		this.sourceType = sourceType;
+	public void setSourceObjectType(SourceType sourceObjectType) {
+		this.sourceObjectType = sourceObjectType;
 	}
 	
 	public void setConversions(Conversion[] conversions) {

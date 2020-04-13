@@ -15,7 +15,8 @@ import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.object.ObjectType;
 
-public class CollectionProjectionAdapter implements ProjectionAdapter {
+@Deprecated
+public class CollectionProjectionAdapter   {
 
 	final Logger logger = LoggerFactory.getLogger(CollectionProjectionAdapter.class);
 
@@ -32,7 +33,7 @@ public class CollectionProjectionAdapter implements ProjectionAdapter {
 		this.targetType = targetType;
 	}
 	
-	@Override
+	
 	public Object forward(ProjectionStack queue, Object object, CompositionContext context) throws ProjectionError {
 		
 		logger.debug("Convert {} to {}, depth = {}, reference = true, collection = true", object.getClass().getSimpleName(), targetType, queue.length());
@@ -61,7 +62,7 @@ public class CollectionProjectionAdapter implements ProjectionAdapter {
 		return collection;
 	}
 
-	@Override
+	
 	public Object backward(ObjectType sourceType, Object object, ExtractionContext context) throws ProjectionError {
 		logger.debug("Convert {} to {}, reference = true, collection = true", targetType, sourceType);
 		

@@ -1,4 +1,4 @@
-package com.apicatalog.projection.builder;
+package com.apicatalog.projection.builder.reader;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,8 +9,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.conversion.Conversion;
+import com.apicatalog.projection.conversion.UnknownConversion;
 import com.apicatalog.projection.conversion.explicit.ForwardExplicitConversion;
 import com.apicatalog.projection.conversion.implicit.TypeConversions;
 import com.apicatalog.projection.converter.ConverterMapping;
@@ -48,7 +50,7 @@ public class SingleSourceReaderBuilder {
 		return new SingleSourceReaderBuilder();
 	}
 
-	public Optional<SingleSourceReader> build(TypeConversions typeConverters) {
+	public Optional<SingleSourceReader> build(TypeConversions typeConverters) throws ProjectionError {
 
 		// no getter ? 
 		if (sourceGetter == null || targetType == null) {
@@ -58,7 +60,7 @@ public class SingleSourceReaderBuilder {
 
 		final SingleSourceReader source = new SingleSourceReader();
 
-		source.setSourceType(SourceType.of(qualifier, sourceObjectClass));
+		source.setSourceObjectType(SourceType.of(qualifier, sourceObjectClass));
 		
 		// set source access
 		switch (mode) {
@@ -74,15 +76,20 @@ public class SingleSourceReaderBuilder {
 		}			
 
 		// set default source type for an array of sources
-		source.setTargetType(targetType);
+		source.setType(targetType);
 
-		// set conversions to apply
-		buildChain(source, converters, typeConverters);
-
-		// set optional 
-		source.setOptional(optional);
-
-		return Optional.of(source);
+		try {
+			// set conversions to apply
+			buildChain(source, converters, typeConverters);
+	
+			// set optional 
+			source.setOptional(optional);
+	
+			return Optional.of(source);
+			
+		} catch (UnknownConversion e) {
+			throw new ProjectionError(e);
+		}
 	}
 	
 	public SingleSourceReaderBuilder mode(AccessMode mode) {
@@ -120,7 +127,7 @@ public class SingleSourceReaderBuilder {
 		return this;
 	}	
 	
-	final void buildChain(final SingleSourceReader source, final Collection<ConverterMapping> converters, final TypeConversions typeConversions) {
+	final void buildChain(final SingleSourceReader source, final Collection<ConverterMapping> converters, final TypeConversions typeConversions) throws UnknownConversion {
 
 		final ArrayList<Conversion> conversions = new ArrayList<>((converters != null ? converters.size() : 0) * 2 + 1);
 

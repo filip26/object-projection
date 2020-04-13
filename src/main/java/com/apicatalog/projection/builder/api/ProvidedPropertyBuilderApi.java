@@ -5,50 +5,56 @@ import java.util.Optional;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.builder.ProvidedPropertyBuilder;
+import com.apicatalog.projection.builder.ProvidedPropertyReaderBuilder;
+import com.apicatalog.projection.builder.ProvidedPropertyWriterBuilder;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.object.setter.Setter;
-import com.apicatalog.projection.property.ProjectionProperty;
+import com.apicatalog.projection.property.PropertyReader;
+import com.apicatalog.projection.property.PropertyWriter;
 
 public class ProvidedPropertyBuilderApi<P> {
 	
 	ProjectionBuilder<P> projectionBuilder;
 
-	ProvidedPropertyBuilder providedPropertyBuilder;
+	ProvidedPropertyReaderBuilder providedPropertyReaderBuilder;
+	ProvidedPropertyWriterBuilder providedPropertyWriterBuilder;
 	
 	protected ProvidedPropertyBuilderApi(ProjectionBuilder<P> projection) {
 		this.projectionBuilder = projection;
-		this.providedPropertyBuilder = ProvidedPropertyBuilder.newInstance();
+		this.providedPropertyReaderBuilder = ProvidedPropertyReaderBuilder.newInstance();
+		this.providedPropertyWriterBuilder = ProvidedPropertyWriterBuilder.newInstance();
 	}
 	
 	public ProvidedPropertyBuilderApi<P> optional() {
-		providedPropertyBuilder.optional(true);
+		providedPropertyReaderBuilder.optional(true);
+		providedPropertyWriterBuilder.optional(true);
 		return this;
 	}
 
 	public ProvidedPropertyBuilderApi<P> required() {
-		providedPropertyBuilder.optional(false);
+		providedPropertyReaderBuilder.optional(false);
+		providedPropertyWriterBuilder.optional(false);
 		return this;
 	}
 
-
 	public ProvidedPropertyBuilderApi<P> qualifier(String qualifier) {
-		providedPropertyBuilder.qualifier(qualifier);
+		providedPropertyReaderBuilder.qualifier(qualifier);
+		providedPropertyWriterBuilder.qualifier(qualifier);
 		return this;
 	}
 	
 	protected ProvidedPropertyBuilderApi<P> targetGetter(Getter targetGetter) {
-		providedPropertyBuilder = providedPropertyBuilder.targetGetter(targetGetter);
+//		providedPropertyBuilder = providedPropertyBuilder.targetGetter(targetGetter);
 		return this;
 	}
 
 	protected ProvidedPropertyBuilderApi<P> targetSetter(Setter targetSetter) {
-		providedPropertyBuilder = providedPropertyBuilder.targetSetter(targetSetter);
+//		providedPropertyBuilder = providedPropertyBuilder.targetSetter(targetSetter);
 		return this;
 	}
 	
 	protected ProvidedPropertyBuilderApi<P> targetReference(boolean reference) {
-		providedPropertyBuilder = providedPropertyBuilder.targetReference(reference);
+//		providedPropertyBuilder = providedPropertyBuilder.targetReference(reference);
 		return this;
 	}
 
@@ -60,7 +66,17 @@ public class ProvidedPropertyBuilderApi<P> {
 		return projectionBuilder.build(factory);
 	}	
 	
-	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry factory) {
-		return providedPropertyBuilder.build(factory);
+//	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry factory) {
+//		return providedPropertyBuilder.build(factory);
+//	}
+
+	public Optional<PropertyReader> buildPropertyReader(ProjectionRegistry registry) {
+
+		return Optional.empty();	//FIXME
+	}
+
+	public Optional<PropertyWriter> buildPropertyWriter(ProjectionRegistry registry) {
+		// TODO Auto-generated method stub
+		return Optional.empty();	//FIXME
 	}
 }

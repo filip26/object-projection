@@ -8,35 +8,32 @@ import org.apache.commons.lang3.StringUtils;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.builder.ConstantPropertyBuilder;
-import com.apicatalog.projection.conversion.implicit.TypeConversions;
+import com.apicatalog.projection.builder.writer.ConstantPropertyWriterBuilder;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
 import com.apicatalog.projection.object.getter.FieldGetter;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.object.setter.FieldSetter;
 import com.apicatalog.projection.object.setter.Setter;
-import com.apicatalog.projection.property.ProjectionProperty;
+import com.apicatalog.projection.property.PropertyReader;
+import com.apicatalog.projection.property.PropertyWriter;
 
 public class MappedPropertyBuilderApi<P> {
 	
 	final ProjectionBuilder<P> projectionBuilder;
 	
-	final TypeConversions typeConversions;
-	
 	SourcePropertyBuilderApi<P> sourcePropertyBuilder;
 	ProvidedPropertyBuilderApi<P> providedPropertyBuilder;
 	SourcesPropertyBuilderApi<P> sourcesPropertyBuilder;
 
-	ConstantPropertyBuilder constantBuilder;
+	ConstantPropertyWriterBuilder constantBuilder;
 	
 	String targetPropertyName;
 	
 	boolean reference;
 	
-	protected MappedPropertyBuilderApi(ProjectionBuilder<P> projection, TypeConversions typeConversions, String propertyName, boolean reference) {
+	protected MappedPropertyBuilderApi(ProjectionBuilder<P> projection, String propertyName, boolean reference) {
 		this.projectionBuilder = projection;
-		this.typeConversions = typeConversions;
 		this.targetPropertyName = propertyName;
 		this.reference = reference;
 	}
@@ -51,15 +48,14 @@ public class MappedPropertyBuilderApi<P> {
 				projectionBuilder,
 				sourceClass,
 				// use the same name if source property name is not present
-				StringUtils.isNotBlank(sourceProperty) ? sourceProperty : targetPropertyName,
-				typeConversions
+				StringUtils.isNotBlank(sourceProperty) ? sourceProperty : targetPropertyName
 				);
 		this.sourcePropertyBuilder = builder;
 		return builder;
 	}
 
 	public SourcesPropertyBuilderApi<P> sources() {
-		SourcesPropertyBuilderApi<P> builder = new SourcesPropertyBuilderApi<>(projectionBuilder, targetPropertyName, typeConversions);
+		SourcesPropertyBuilderApi<P> builder = new SourcesPropertyBuilderApi<>(projectionBuilder, targetPropertyName);
 		this.sourcesPropertyBuilder = builder;
 		return builder;
 	}
@@ -79,30 +75,26 @@ public class MappedPropertyBuilderApi<P> {
 	}
 
 	public ProjectionBuilder<P> constant(String...values) {
-		this.constantBuilder = ConstantPropertyBuilder.newInstance().constants(values);
+		this.constantBuilder = ConstantPropertyWriterBuilder.newInstance().constants(values);
 		
 		return projectionBuilder;
 	}
 	
-	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry registry) throws ProjectionError {
+	protected Optional<PropertyReader> buildPropertyReader(ProjectionRegistry registry) throws ProjectionError {
 		
 		final Field field = ObjectUtils.getProperty(projectionBuilder.projectionClass(), targetPropertyName);
 		
 		ObjectType targetType = ObjectUtils.getTypeOf(field);
 
-		// extract setter
-		final Setter targetSetter = FieldSetter.from(field, targetType);
-		
 		if  (Optional.ofNullable(sourcePropertyBuilder).isPresent()) {
 
 			// extract getter
 			final Getter targetGetter = FieldGetter.from(field, targetType);
 
 			sourcePropertyBuilder.targetGetter(targetGetter);
-			sourcePropertyBuilder.targetSetter(targetSetter);
 			sourcePropertyBuilder.targetReference(reference);
 			
-			return sourcePropertyBuilder.buildProperty(registry);
+			return sourcePropertyBuilder.buildPropertyReader(registry);
 			
 		} else 	if (Optional.ofNullable(providedPropertyBuilder).isPresent()) {
 
@@ -110,29 +102,61 @@ public class MappedPropertyBuilderApi<P> {
 			final Getter targetGetter = FieldGetter.from(field, targetType);
 
 			providedPropertyBuilder.targetGetter(targetGetter);
-			providedPropertyBuilder.targetSetter(targetSetter);
 			providedPropertyBuilder.targetReference(reference);
 			
-			return providedPropertyBuilder.buildProperty(registry);
-			
-		} else 	if (Optional.ofNullable(constantBuilder).isPresent()) {
-			
-			constantBuilder.targetSetter(targetSetter, reference);
-			
-			return constantBuilder.build(registry);
-			
+			return providedPropertyBuilder.buildPropertyReader(registry);
+						
 		} else 	if  (Optional.ofNullable(sourcesPropertyBuilder).isPresent()) {
 
 			// extract getter
 			final Getter targetGetter = FieldGetter.from(field, targetType);
 
 			sourcesPropertyBuilder.targetGetter(targetGetter);
-			sourcesPropertyBuilder.targetSetter(targetSetter);
 			sourcesPropertyBuilder.targetReference(reference);
 			
-			return sourcesPropertyBuilder.buildProperty(registry);
+			return sourcesPropertyBuilder.buildPropertyReader(registry);
 
 		}
 		return Optional.empty();
-	}	
+	}
+	
+	protected Optional<PropertyWriter> buildPropertyWriter(ProjectionRegistry registry) throws ProjectionError {
+		
+		final Field field = ObjectUtils.getProperty(projectionBuilder.projectionClass(), targetPropertyName);
+		
+		final ObjectType targetType = ObjectUtils.getTypeOf(field);
+
+		// extract setter
+		final Setter targetSetter = FieldSetter.from(field, targetType);
+		
+		if  (Optional.ofNullable(sourcePropertyBuilder).isPresent()) {
+
+			sourcePropertyBuilder.targetSetter(targetSetter);
+			sourcePropertyBuilder.targetReference(reference);
+			
+			return sourcePropertyBuilder.buildPropertyWriter(registry);
+			
+		} else 	if (Optional.ofNullable(providedPropertyBuilder).isPresent()) {
+
+			providedPropertyBuilder.targetSetter(targetSetter);
+			providedPropertyBuilder.targetReference(reference);
+			
+			return providedPropertyBuilder.buildPropertyWriter(registry);
+			
+		} else 	if (Optional.ofNullable(constantBuilder).isPresent()) {
+			
+			constantBuilder.targetSetter(targetSetter, reference);
+			
+			return constantBuilder.build(registry).map(PropertyWriter.class::cast);
+			
+		} else 	if  (Optional.ofNullable(sourcesPropertyBuilder).isPresent()) {
+
+			sourcesPropertyBuilder.targetSetter(targetSetter);
+			sourcesPropertyBuilder.targetReference(reference);
+			
+			return sourcesPropertyBuilder.buildPropertyWriter(registry);
+
+		}
+		return Optional.empty();
+	}
 }
