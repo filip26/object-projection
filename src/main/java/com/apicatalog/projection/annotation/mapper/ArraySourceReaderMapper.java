@@ -25,7 +25,7 @@ import com.apicatalog.projection.property.source.ArraySourceWriter;
 import com.apicatalog.projection.property.source.SingleSourceWriter;
 import com.apicatalog.projection.property.target.TargetReader;
 
-class ArraySourceReaderMapper {
+final class ArraySourceReaderMapper {
 
 	final Logger logger = LoggerFactory.getLogger(ArraySourceReaderMapper.class);
 	
@@ -80,10 +80,9 @@ class ArraySourceReaderMapper {
 		final ObjectType sourceTargetType = 
 							(targetType.isCollection()) 
 								? ObjectType.of(targetType.getComponentType())
-								: ((targetType.isArray()) 
+								: ((targetType.isArray()
 										? ObjectType.of(targetType.getType().getComponentType()) 
-										: targetType);
-
+										: targetType));
 
 		final Collection<SingleSourceWriter> sources = new ArrayList<>(sourcesAnnotation.value().length);
 		
@@ -98,21 +97,16 @@ class ArraySourceReaderMapper {
 			return Optional.empty();
 		}
 
-		ArraySourceWriterBuilder builder = 
-				ArraySourceWriterBuilder.newInstance()
-					.optional(sourcesAnnotation.optional())
-					.sources(sources.toArray(new SingleSourceWriter[0]))
-					.targetType(targetType)
-					;
-
 		try {
-			return builder
+			return ArraySourceWriterBuilder.newInstance()
+						.optional(sourcesAnnotation.optional())
+						.sources(sources.toArray(new SingleSourceWriter[0]))
+						.targetType(targetType)
 						.converters(SingleSourceReaderMapper.getConverterMapping(sourcesAnnotation.map()))	// set conversions to apply
 						.build(registry.getTypeConversions());
 			
-		} catch (ConverterError | ProjectionError e) {
-			logger.error("Property " + fieldName + " is ignored.", e);
-			return Optional.empty();
+		} catch (ConverterError e) {
+			throw new ProjectionError(e);
 		}
 	}	
 }

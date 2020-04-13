@@ -136,7 +136,7 @@ public class PropertyWriterMapper {
 					.build(registry);		
 	}				
 
-	Optional<PropertyWriter> getConstantProperty(Field field) {
+	Optional<PropertyWriter> getConstantProperty(Field field) throws ProjectionError {
 		
 		final Constant constant = field.getAnnotation(Constant.class);
 		

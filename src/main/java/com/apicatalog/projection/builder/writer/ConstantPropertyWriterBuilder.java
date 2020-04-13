@@ -1,11 +1,17 @@
 package com.apicatalog.projection.builder.writer;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.conversion.Conversion;
+import com.apicatalog.projection.conversion.UnknownConversion;
+import com.apicatalog.projection.conversion.implicit.TypeConversions;
+import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.ConstantPropertyWriter;
 import com.apicatalog.projection.property.target.TargetWriter;
@@ -27,7 +33,7 @@ public final class ConstantPropertyWriterBuilder {
 		return new ConstantPropertyWriterBuilder();
 	}
 	
-	public Optional<ConstantPropertyWriter> build(final ProjectionRegistry registry) {
+	public Optional<ConstantPropertyWriter> build(final ProjectionRegistry registry) throws ProjectionError {
 		
 		final ConstantPropertyWriter property = new ConstantPropertyWriter();
 		
@@ -45,12 +51,37 @@ public final class ConstantPropertyWriterBuilder {
 		// set target writer
 		property.setTargetWriter(targetWriter.get());
 		
-		// set source conversion if needed
-		
-		// TODO
-		
-		return Optional.of(property);
+		try {
+			// set source conversion if needed
+			property.setConversions(buildChain(constants, registry.getTypeConversions(), targetWriter.get().getType()));
+			
+			return Optional.of(property);
+			
+		} catch (UnknownConversion e) {
+			throw new ProjectionError(e);
+		}
 	}	
+	
+	final Conversion[] buildChain(final String[] constants,final TypeConversions typeConversions, final ObjectType targetType) throws UnknownConversion {
+
+		ObjectType sourceType = ObjectType.of(String[].class);
+
+		final ArrayList<Conversion> conversions = new ArrayList<>(1);
+		
+		if (constants.length == 1 && !targetType.isArray() && !targetType.isCollection()) {
+			conversions.add(o -> ((String[])o)[0]);
+			sourceType = ObjectType.of(String.class);
+		}
+		
+
+		typeConversions.get(
+				sourceType,
+				targetType
+				)
+			.ifPresent(conversions::add);
+		
+		return conversions.toArray(new Conversion[0]);
+	}
 	
 	public ConstantPropertyWriterBuilder targetSetter(final Setter targetSetter, final boolean reference) {
 		this.setter = targetSetter;
