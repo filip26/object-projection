@@ -1,10 +1,8 @@
-package com.apicatalog.projection.conversion.implicit;
+package com.apicatalog.projection.conversion;
 
 import java.net.URI;
 import java.time.Instant;
 import java.util.Date;
-
-import com.apicatalog.projection.conversion.Conversion;
 
 public final class SimpleTypeConversions {
 

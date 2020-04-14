@@ -11,7 +11,7 @@ import com.apicatalog.projection.property.target.CollectionComposer;
 import com.apicatalog.projection.property.target.Composer;
 import com.apicatalog.projection.property.target.ObjectComposer;
 
-public class ComposerBuilder {
+public final class ComposerBuilder {
 
 	final Logger logger = LoggerFactory.getLogger(ComposerBuilder.class);
 	

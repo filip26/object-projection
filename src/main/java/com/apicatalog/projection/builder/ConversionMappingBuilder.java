@@ -14,11 +14,11 @@ import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
 
-public class ConversionMappingBuilder {
+public final class ConversionMappingBuilder {
 
 	final Logger logger = LoggerFactory.getLogger(ConversionMappingBuilder.class);
 	
-	Class<?> converterClass;
+	Class<? extends Converter<?, ?>> converterClass;
 	String[] parameters;
 	
 	protected ConversionMappingBuilder() {
@@ -72,7 +72,7 @@ public class ConversionMappingBuilder {
 		return converter;		
 	}
 	
-	public ConversionMappingBuilder converter(Class<?> converterClass) {
+	public ConversionMappingBuilder converter(Class<? extends Converter<?, ?>> converterClass) {
 		this.converterClass = converterClass;
 		return this;
 	}

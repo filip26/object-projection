@@ -11,7 +11,7 @@ import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.property.ProvidedObjectPropertyWriter;
 import com.apicatalog.projection.property.ProvidedProjectionPropertyWriter;
 
-public class ProvidedPropertyWriterBuilder {
+public final class ProvidedPropertyWriterBuilder {
 
 	final Logger logger = LoggerFactory.getLogger(ProvidedPropertyWriterBuilder.class);
 

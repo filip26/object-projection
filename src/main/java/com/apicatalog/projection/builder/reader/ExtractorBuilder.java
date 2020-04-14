@@ -11,7 +11,7 @@ import com.apicatalog.projection.property.target.CollectionExtractor;
 import com.apicatalog.projection.property.target.Extractor;
 import com.apicatalog.projection.property.target.ObjectExtractor;
 
-public class ExtractorBuilder {
+public final class ExtractorBuilder {
 
 	final Logger logger = LoggerFactory.getLogger(ExtractorBuilder.class);
 	

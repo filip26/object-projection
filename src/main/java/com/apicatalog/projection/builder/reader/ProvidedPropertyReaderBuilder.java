@@ -11,7 +11,7 @@ import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.ProvidedObjectPropertyReader;
 import com.apicatalog.projection.property.ProvidedProjectionPropertyReader;
 
-public class ProvidedPropertyReaderBuilder {
+public final class ProvidedPropertyReaderBuilder {
 
 	final Logger logger = LoggerFactory.getLogger(ProvidedPropertyReaderBuilder.class);
 

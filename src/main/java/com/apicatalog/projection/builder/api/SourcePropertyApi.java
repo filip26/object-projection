@@ -16,7 +16,7 @@ import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
 import com.apicatalog.projection.builder.reader.SourcePropertyReaderBuilder;
 import com.apicatalog.projection.builder.writer.SingleSourceWriterBuilder;
 import com.apicatalog.projection.builder.writer.SourcePropertyWriterBuilder;
-import com.apicatalog.projection.conversion.implicit.TypeConversions;
+import com.apicatalog.projection.conversion.TypeConversions;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;

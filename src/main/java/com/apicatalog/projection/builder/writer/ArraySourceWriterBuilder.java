@@ -9,15 +9,15 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.conversion.Conversion;
+import com.apicatalog.projection.conversion.TypeConversions;
 import com.apicatalog.projection.conversion.UnknownConversion;
-import com.apicatalog.projection.conversion.explicit.BackwardExplicitConversion;
-import com.apicatalog.projection.conversion.implicit.TypeConversions;
+import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.property.source.ArraySourceWriter;
 import com.apicatalog.projection.property.source.SourceWriter;
 
-public class ArraySourceWriterBuilder {
+public final class ArraySourceWriterBuilder {
 
 	final Logger logger = LoggerFactory.getLogger(ArraySourceWriterBuilder.class);
 	
@@ -118,8 +118,12 @@ public class ArraySourceWriterBuilder {
 		
 		for (int i = 1; i < mapping.length; i++) {
 
-			conversions.add(BackwardExplicitConversion.of(mapping[mapping.length - i].getConversion()));
+			// explicit conversion
+			final Converter<Object, Object> converter = mapping[mapping.length - i].getConversion();
 			
+			conversions.add(converter::backward);
+
+			// implicit conversion
 			typeConversions.get(
 					mapping[mapping.length - i].getSourceType(),
 					mapping[mapping.length - i - 1].getTargetType())
@@ -127,7 +131,12 @@ public class ArraySourceWriterBuilder {
 
 		}
 		
-		conversions.add(BackwardExplicitConversion.of(mapping[0].getConversion()));
+		// explicit conversion
+		final Converter<Object, Object> converter = mapping[0].getConversion();
+		
+		conversions.add(converter::backward);
+
+		// implicit conversion
 		typeConversions.get(mapping[0].getSourceType(), ObjectType.of(Object[].class)).ifPresent(conversions::add);
 			
 

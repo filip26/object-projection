@@ -10,15 +10,14 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.conversion.Conversion;
+import com.apicatalog.projection.conversion.TypeConversions;
 import com.apicatalog.projection.conversion.UnknownConversion;
-import com.apicatalog.projection.conversion.explicit.ForwardExplicitConversion;
-import com.apicatalog.projection.conversion.implicit.TypeConversions;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.property.source.ArraySourceReader;
 import com.apicatalog.projection.property.source.SourceReader;
 
-public class ArraySourceReaderBuilder {
+public final class ArraySourceReaderBuilder {
 
 	final Logger logger = LoggerFactory.getLogger(ArraySourceReaderBuilder.class);
 	
@@ -99,25 +98,31 @@ public class ArraySourceReaderBuilder {
 		final Iterator<ConverterMapping> it = converters.iterator();
 		
 		ConverterMapping mapping = it.next();
-		
+
+		// implicit conversion
 		typeConversions.get(ObjectType.of(Object[].class), mapping.getSourceType()).ifPresent(conversions::add);
-		conversions.add(ForwardExplicitConversion.of(mapping.getConversion()));
+		
+		// explicit conversion
+		conversions.add(mapping.getConversion()::forward);
 
 		while (it.hasNext()) {
 
 			ConverterMapping next = it.next();
 			
+			// implicit conversion
 			typeConversions.get(
 								mapping.getTargetType(),
 								next.getSourceType()
 								)
 							.ifPresent(conversions::add);
-			
-			conversions.add(ForwardExplicitConversion.of(next.getConversion()));
-			
+
+			// explicit conversion
+			conversions.add(next.getConversion()::forward);
+
 			mapping = next;
 		}
 		
+		// implicit conversion
 		typeConversions.get(
 				mapping.getTargetType(),
 				targetType)

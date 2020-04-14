@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.apicatalog.projection.annotation.mapper.ProjectionMapper;
-import com.apicatalog.projection.conversion.implicit.TypeConversions;
+import com.apicatalog.projection.conversion.TypeConversions;
 
-public class ProjectionRegistry {
+public final class ProjectionRegistry {
 
 	final ProjectionMapper mapper;
 	final TypeConversions typeConversions;

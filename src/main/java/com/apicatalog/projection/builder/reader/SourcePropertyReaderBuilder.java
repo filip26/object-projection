@@ -11,7 +11,7 @@ import com.apicatalog.projection.property.SourcePropertyReader;
 import com.apicatalog.projection.property.source.SourceWriter;
 import com.apicatalog.projection.property.target.Extractor;
 
-public class SourcePropertyReaderBuilder {
+public final class SourcePropertyReaderBuilder {
 
 	final Logger logger = LoggerFactory.getLogger(SourcePropertyReaderBuilder.class);
 	
