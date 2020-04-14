@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
@@ -18,8 +20,10 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
-public class MappedPropertyBuilderApi<P> {
+public class PropertyBuilderApi<P> {
 	
+	final Logger logger = LoggerFactory.getLogger(PropertyBuilderApi.class);
+
 	final ProjectionBuilder<P> projectionBuilder;
 	
 	SourcePropertyBuilderApi<P> sourcePropertyBuilder;
@@ -32,7 +36,7 @@ public class MappedPropertyBuilderApi<P> {
 	
 	boolean reference;
 	
-	protected MappedPropertyBuilderApi(ProjectionBuilder<P> projection, String propertyName, boolean reference) {
+	protected PropertyBuilderApi(ProjectionBuilder<P> projection, String propertyName, boolean reference) {
 		this.projectionBuilder = projection;
 		this.targetPropertyName = propertyName;
 		this.reference = reference;
@@ -44,6 +48,10 @@ public class MappedPropertyBuilderApi<P> {
 
 	public SourcePropertyBuilderApi<P> source(Class<?> sourceClass, String sourceProperty) {
 
+		if (logger.isTraceEnabled()) {
+			logger.trace("source({}, {})", sourceClass.getSimpleName(), sourceProperty);
+		}
+		
 		SourcePropertyBuilderApi<P> builder = new SourcePropertyBuilderApi<>(
 				projectionBuilder,
 				sourceClass,
@@ -55,6 +63,11 @@ public class MappedPropertyBuilderApi<P> {
 	}
 
 	public SourcesPropertyBuilderApi<P> sources() {
+		
+		if (logger.isTraceEnabled()) {
+			logger.trace("sources()");
+		}
+		
 		SourcesPropertyBuilderApi<P> builder = new SourcesPropertyBuilderApi<>(projectionBuilder, targetPropertyName);
 		this.sourcesPropertyBuilder = builder;
 		return builder;
@@ -81,7 +94,7 @@ public class MappedPropertyBuilderApi<P> {
 	}
 	
 	protected Optional<PropertyReader> buildPropertyReader(ProjectionRegistry registry) throws ProjectionError {
-		
+				
 		final Field field = ObjectUtils.getProperty(projectionBuilder.projectionClass(), targetPropertyName);
 		
 		final ObjectType targetType = ObjectUtils.getTypeOf(field);

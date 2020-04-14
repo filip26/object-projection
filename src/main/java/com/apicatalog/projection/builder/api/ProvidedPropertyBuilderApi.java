@@ -59,7 +59,7 @@ public class ProvidedPropertyBuilderApi<P> {
 		return this;
 	}
 
-	public MappedPropertyBuilderApi<P> map(String propertyName) {
+	public PropertyBuilderApi<P> map(String propertyName) {
 		return projectionBuilder.map(propertyName);
 	}
 

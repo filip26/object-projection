@@ -39,6 +39,14 @@ public class ArraySourceWriterBuilder {
 	
 	public Optional<ArraySourceWriter> build(TypeConversions typeConversions) throws ProjectionError {
 		
+		if (logger.isTraceEnabled()) {
+			logger.trace("Build {} sources, {} converters, target={}", 
+						sources != null ? sources.length : 0,
+						converters != null ? converters.size() : 0, 
+						targetType
+						);
+		}
+		
 		final ArraySourceWriter source = new ArraySourceWriter();
 		
 		if (sources == null || sources.length == 0 || targetType == null) {

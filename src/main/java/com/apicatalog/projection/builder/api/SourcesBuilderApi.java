@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
@@ -18,6 +20,7 @@ import com.apicatalog.projection.conversion.implicit.TypeConversions;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
+import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.object.setter.Setter;
@@ -25,6 +28,8 @@ import com.apicatalog.projection.property.source.SourceReader;
 import com.apicatalog.projection.property.source.SourceWriter;
 
 public class SourcesBuilderApi<P> {
+	
+	final Logger logger = LoggerFactory.getLogger(SourcesBuilderApi.class);
 	
 	ProjectionBuilder<P> projectionBuilder;
 
@@ -67,7 +72,7 @@ public class SourcesBuilderApi<P> {
 		return source(sourceClass, null);
 	}
 	
-	public MappedPropertyBuilderApi<P> map(String propertyName) {
+	public PropertyBuilderApi<P> map(String propertyName) {
 		return projectionBuilder.map(propertyName);
 	}
 	
@@ -82,6 +87,10 @@ public class SourcesBuilderApi<P> {
 
 	protected Optional<SourceReader> buildSourceReader(TypeConversions typeConversions, SourceHolder sourceHolder) throws ProjectionError {
 
+		if (logger.isDebugEnabled()) {
+			logger.debug("Build source reader for {}", sourceHolder.propertyName);
+		}
+		
 		List<ConverterMapping> converters = new ArrayList<>(sourceHolder.conversions.size());
 				
 		try {
@@ -101,12 +110,17 @@ public class SourcesBuilderApi<P> {
 							.objectClass(sourceHolder.objectClass)
 							.getter(sourceGetter)
 							.converters(converters)
+							.targetType(ObjectType.of(Object.class))
 							.build(typeConversions).map(SourceReader.class::cast)
 							;	
 	}
 
 	protected Optional<SourceWriter> buildSourceWriter(TypeConversions typeConversions, SourceHolder sourceHolder) throws ProjectionError {
 
+		if (logger.isDebugEnabled()) {
+			logger.debug("Build source writer for {}", sourceHolder.propertyName);
+		}
+		
 		List<ConverterMapping> converters = new ArrayList<>(sourceHolder.conversions.size());
 				
 		try {
@@ -126,6 +140,7 @@ public class SourcesBuilderApi<P> {
 							.objectClass(sourceHolder.objectClass)
 							.setter(sourceSetter)
 							.converters(converters)
+							.targetType(ObjectType.of(Object.class))
 							.build(typeConversions).map(SourceWriter.class::cast)
 							;	
 	}
@@ -140,11 +155,13 @@ public class SourcesBuilderApi<P> {
 	}
 
 	protected SourceWriter[] buildSourceWriters(TypeConversions typeConversions) throws ProjectionError {
+		
 		final ArrayList<SourceWriter> sources = new ArrayList<>(sourceHolders.size());
 		
 		for (SourceHolder holder : sourceHolders) {
 			buildSourceWriter(typeConversions, holder).ifPresent(sources::add);
 		}
+		
 		return sources.toArray(new SourceWriter[0]);
 	}
 

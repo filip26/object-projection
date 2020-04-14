@@ -51,19 +51,19 @@ public class SingleSourceWriterBuilder {
 	
 	public Optional<SingleSourceWriter> build(TypeConversions typeConverters) throws ProjectionError {
 
+		if (logger.isDebugEnabled()) {
+			logger.debug("Build single source writer from {} to {}.{} : {}",
+							targetType,
+							sourceObjectClass != null ? sourceObjectClass.getSimpleName() : "n/a",
+							sourceSetter != null ? sourceSetter.getName() : "n/a",
+							sourceSetter != null ? sourceSetter.getType() : "n/a"
+							);
+		}
+
 		// no setter ? 
 		if (sourceSetter == null || targetType == null) {
 			// nothing to do with this
 			return Optional.empty();
-		}
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Building single source writer from {} to {}.{} : {}",
-							targetType,
-							sourceObjectClass.getSimpleName(),
-							sourceSetter.getName(),
-							sourceSetter.getType()
-							);
 		}
 		
 		final SingleSourceWriter source = new SingleSourceWriter();

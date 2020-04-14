@@ -13,7 +13,7 @@ public class ProjectionBuilder<P> {
 	
 	final Class<P> projectionClass;
 	
-	final List<MappedPropertyBuilderApi<P>> propertyBuilders;
+	final List<PropertyBuilderApi<P>> propertyBuilders;
 	
 	protected ProjectionBuilder(Class<P> projectionClass) {
 		this.projectionClass = projectionClass;
@@ -24,14 +24,14 @@ public class ProjectionBuilder<P> {
 		return new ProjectionBuilder<>(projectionClass);
 	}
 
-	public MappedPropertyBuilderApi<P> map(String propertyName) {
+	public PropertyBuilderApi<P> map(String propertyName) {
 		return map(propertyName, false);
 	}
 
-	public MappedPropertyBuilderApi<P> map(String propertyName, boolean reference) {
+	public PropertyBuilderApi<P> map(String propertyName, boolean reference) {
 		
-		final MappedPropertyBuilderApi<P> propertyBuilder = 
-					new MappedPropertyBuilderApi<>(this, propertyName, reference);
+		final PropertyBuilderApi<P> propertyBuilder = 
+					new PropertyBuilderApi<>(this, propertyName, reference);
 		propertyBuilders.add(propertyBuilder);
 		return propertyBuilder;
 	}
@@ -41,7 +41,7 @@ public class ProjectionBuilder<P> {
 		final List<PropertyReader> readers = new ArrayList<>(); 
 		final List<PropertyWriter> writers = new ArrayList<>();
 		
-		for (final MappedPropertyBuilderApi<P> propertyBuilder : propertyBuilders) {
+		for (final PropertyBuilderApi<P> propertyBuilder : propertyBuilders) {
 			propertyBuilder
 					.buildPropertyReader(factory)
 					.ifPresent(readers::add);

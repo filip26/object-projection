@@ -5,6 +5,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
@@ -26,6 +29,8 @@ import com.apicatalog.projection.property.source.SourceReader;
 import com.apicatalog.projection.property.source.SourceWriter;
 
 public class SourcesPropertyBuilderApi<P> {
+	
+	final Logger logger = LoggerFactory.getLogger(SourcesPropertyBuilderApi.class);
 	
 	ProjectionBuilder<P> projectionBuilder;
 
@@ -76,7 +81,7 @@ public class SourcesPropertyBuilderApi<P> {
 		return source(sourceClass, null);
 	}
 	
-	public MappedPropertyBuilderApi<P> map(String propertyName) {
+	public PropertyBuilderApi<P> map(String propertyName) {
 		return projectionBuilder.map(propertyName);
 	}
 	
@@ -127,6 +132,9 @@ public class SourcesPropertyBuilderApi<P> {
 							.build(registry.getTypeConversions());
 
 		if (sourceWriter.isEmpty()) {
+			if (logger.isTraceEnabled()) {
+				logger.trace("Source writer does not exist. Property '{}' is ignored for extraction.", targetGetter.getName());
+			}
 			return Optional.empty();
 		}
 
@@ -159,6 +167,9 @@ public class SourcesPropertyBuilderApi<P> {
 							.build(registry.getTypeConversions());
 		
 		if (sourceReader.isEmpty()) {
+			if (logger.isTraceEnabled()) {
+				logger.trace("Source reader does not exist. Property '{}' is ignored for composition.", targetSetter.getName());
+			}
 			return Optional.empty();
 		}
 
