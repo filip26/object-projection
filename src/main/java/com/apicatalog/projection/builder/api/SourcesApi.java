@@ -27,71 +27,96 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.source.SourceReader;
 import com.apicatalog.projection.property.source.SourceWriter;
 
-public class SourcesBuilderApi<P> {
+public final class SourcesApi<P> {
 	
-	final Logger logger = LoggerFactory.getLogger(SourcesBuilderApi.class);
+	final Logger logger = LoggerFactory.getLogger(SourcesApi.class);
 	
-	ProjectionBuilder<P> projectionBuilder;
+	final ProjectionBuilder<P> projectionBuilder;
 
 	final LinkedList<SourceHolder> sourceHolders;
 	
 	final String targetPropertyName;
 	
-	protected SourcesBuilderApi(ProjectionBuilder<P> projection, String targetPropertyName) {
+	protected SourcesApi(final ProjectionBuilder<P> projection, final String targetPropertyName) {
 		this.projectionBuilder = projection;
 		this.sourceHolders = new LinkedList<>();
 		this.targetPropertyName = targetPropertyName;
 	}
 
-	public SourcesBuilderApi<P> optional() {
+	public SourcesApi<P> optional() {
 		sourceHolders.getLast().optional(true);		
 		return this;
 	}
 
-	public SourcesBuilderApi<P> required() {
+	public SourcesApi<P> required() {
 		sourceHolders.getLast().optional(false);
 		return this;
 	}
 	
-	public SourcesBuilderApi<P> readOnly() {
+	public SourcesApi<P> readOnly() {
 		sourceHolders.getLast().mode(AccessMode.READ_ONLY);
 		return this;
 	}
 
-	public SourcesBuilderApi<P> writeOnly() {
+	public SourcesApi<P> writeOnly() {
 		sourceHolders.getLast().mode(AccessMode.WRITE_ONLY);
 		return this;
 	}
 
-	public SourcesBuilderApi<P> source(Class<?> sourceClass, String sourceProperty) {
-		sourceHolders.add(new SourceHolder(sourceClass, StringUtils.isNotBlank(sourceProperty) ? sourceProperty : targetPropertyName));
+	public SourcesApi<P> source(final Class<?> sourceClass, final String sourceProperty) {
+		sourceHolders.add(
+				new SourceHolder(
+						sourceClass, 
+						StringUtils.isNotBlank(sourceProperty) ? sourceProperty : targetPropertyName)
+					);
+		
 		return this;
 	}
 
-	public SourcesBuilderApi<P> source(Class<?> sourceClass) {
-		return source(sourceClass, null);
+	public SourcesApi<P> source(final Class<?> sourceClass) {
+		return source(sourceClass, targetPropertyName);
 	}
 	
-	public PropertyBuilderApi<P> map(String propertyName) {
+	public PropertyApi<P> map(final String propertyName) {
 		return projectionBuilder.map(propertyName);
 	}
 	
-	public Projection<P> build(ProjectionRegistry factory) throws ProjectionError {
+	public Projection<P> build(final ProjectionRegistry factory) throws ProjectionError {
 		return projectionBuilder.build(factory);
 	}
 
-	public SourcesBuilderApi<P> conversion(Class<? extends Converter<?, ?>> converter, String...params) {
+	public SourcesApi<P> conversion(final Class<? extends Converter<?, ?>> converter, final String...params) {
 		sourceHolders.getLast().conversions.add(ConversionMappingBuilder.newInstance().converter(converter).parameters(params));
 		return this;
 	}
 
-	protected Optional<SourceReader> buildSourceReader(TypeConversions typeConversions, SourceHolder sourceHolder) throws ProjectionError {
+	protected SourceReader[] buildReaders(final TypeConversions typeConversions) throws ProjectionError {
+		final ArrayList<SourceReader> sources = new ArrayList<>(sourceHolders.size());
+		
+		for (SourceHolder holder : sourceHolders) {
+			buildReader(typeConversions, holder).ifPresent(sources::add);
+		}
+		return sources.toArray(new SourceReader[0]);
+	}
+
+	protected SourceWriter[] buildWriters(final TypeConversions typeConversions) throws ProjectionError {
+		
+		final ArrayList<SourceWriter> sources = new ArrayList<>(sourceHolders.size());
+		
+		for (SourceHolder holder : sourceHolders) {
+			buildWriter(typeConversions, holder).ifPresent(sources::add);
+		}
+		
+		return sources.toArray(new SourceWriter[0]);
+	}
+
+	Optional<SourceReader> buildReader(final TypeConversions typeConversions, final SourceHolder sourceHolder) throws ProjectionError {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Build source reader for {}", sourceHolder.propertyName);
 		}
 		
-		List<ConverterMapping> converters = new ArrayList<>(sourceHolder.conversions.size());
+		final List<ConverterMapping> converters = new ArrayList<>(sourceHolder.conversions.size());
 				
 		try {
 			
@@ -115,13 +140,13 @@ public class SourcesBuilderApi<P> {
 							;	
 	}
 
-	protected Optional<SourceWriter> buildSourceWriter(TypeConversions typeConversions, SourceHolder sourceHolder) throws ProjectionError {
+	Optional<SourceWriter> buildWriter(final TypeConversions typeConversions, final SourceHolder sourceHolder) throws ProjectionError {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Build source writer for {}", sourceHolder.propertyName);
 		}
 		
-		List<ConverterMapping> converters = new ArrayList<>(sourceHolder.conversions.size());
+		final List<ConverterMapping> converters = new ArrayList<>(sourceHolder.conversions.size());
 				
 		try {
 			
@@ -145,35 +170,15 @@ public class SourcesBuilderApi<P> {
 							;	
 	}
 
-	protected SourceReader[] buildSourceReaders(TypeConversions typeConversions) throws ProjectionError {
-		final ArrayList<SourceReader> sources = new ArrayList<>(sourceHolders.size());
+	final class SourceHolder {
 		
-		for (SourceHolder holder : sourceHolders) {
-			buildSourceReader(typeConversions, holder).ifPresent(sources::add);
-		}
-		return sources.toArray(new SourceReader[0]);
-	}
-
-	protected SourceWriter[] buildSourceWriters(TypeConversions typeConversions) throws ProjectionError {
+		final List<ConversionMappingBuilder> conversions;
+		final SingleSourceReaderBuilder readerBuilder;
+		final SingleSourceWriterBuilder writerBuilder;
+		final Class<?> objectClass;
+		final String propertyName;
 		
-		final ArrayList<SourceWriter> sources = new ArrayList<>(sourceHolders.size());
-		
-		for (SourceHolder holder : sourceHolders) {
-			buildSourceWriter(typeConversions, holder).ifPresent(sources::add);
-		}
-		
-		return sources.toArray(new SourceWriter[0]);
-	}
-
-	class SourceHolder {
-		
-		protected List<ConversionMappingBuilder> conversions;
-		SingleSourceReaderBuilder readerBuilder;
-		SingleSourceWriterBuilder writerBuilder;
-		Class<?> objectClass;
-		String propertyName;
-		
-		public SourceHolder(Class<?> objectClass, String propertyName) {
+		public SourceHolder(final Class<?> objectClass, final String propertyName) {
 			this.objectClass = objectClass;
 			this.propertyName = propertyName;
 			this.readerBuilder = SingleSourceReaderBuilder.newInstance();
@@ -181,12 +186,12 @@ public class SourcesBuilderApi<P> {
 			this.conversions = new ArrayList<>(5);
 		}
 
-		public void optional(boolean optional) {
+		public void optional(final boolean optional) {
 			readerBuilder.optional(optional);
 			writerBuilder.optional(optional);
 		}
 
-		public void mode(AccessMode mode) {
+		public void mode(final AccessMode mode) {
 			readerBuilder.mode(mode);
 			writerBuilder.mode(mode);
 		}

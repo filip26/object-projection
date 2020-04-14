@@ -18,7 +18,7 @@ import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.annotation.Visibility;
 import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
 import com.apicatalog.projection.builder.writer.ComposerBuilder;
-import com.apicatalog.projection.builder.writer.ConstantPropertyWriterBuilder;
+import com.apicatalog.projection.builder.writer.ConstantWriterBuilder;
 import com.apicatalog.projection.builder.writer.ProvidedPropertyWriterBuilder;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
@@ -151,7 +151,7 @@ final class PropertyWriterMapper {
 		
 		final Setter targetSetter = FieldSetter.from(field, ObjectUtils.getTypeOf(field));
 		
-		return ConstantPropertyWriterBuilder
+		return ConstantWriterBuilder
 					.newInstance()
 					.constants(constant.value())
 					.targetSetter(targetSetter, isReference(targetSetter.getType()))

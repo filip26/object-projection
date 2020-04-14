@@ -15,9 +15,9 @@ import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.ConstantPropertyWriter;
 
-public final class ConstantPropertyWriterBuilder {
+public final class ConstantWriterBuilder {
 
-	final Logger logger = LoggerFactory.getLogger(ConstantPropertyWriterBuilder.class);
+	final Logger logger = LoggerFactory.getLogger(ConstantWriterBuilder.class);
 
 	String[] constants;
 	
@@ -25,11 +25,11 @@ public final class ConstantPropertyWriterBuilder {
 	
 	boolean targetReference;
 	
-	protected ConstantPropertyWriterBuilder() {
+	protected ConstantWriterBuilder() {
 	}
 	
-	public static final ConstantPropertyWriterBuilder newInstance() {
-		return new ConstantPropertyWriterBuilder();
+	public static final ConstantWriterBuilder newInstance() {
+		return new ConstantWriterBuilder();
 	}
 	
 	public Optional<ConstantPropertyWriter> build(final ProjectionRegistry registry) throws ProjectionError {
@@ -85,13 +85,13 @@ public final class ConstantPropertyWriterBuilder {
 		return conversions.toArray(new Conversion[0]);
 	}
 	
-	public ConstantPropertyWriterBuilder targetSetter(final Setter targetSetter, final boolean reference) {
+	public ConstantWriterBuilder targetSetter(final Setter targetSetter, final boolean reference) {
 		this.targetSetter = targetSetter;
 		this.targetReference = reference;
 		return this;
 	}
 	
-	public ConstantPropertyWriterBuilder constants(final String[] constants) {
+	public ConstantWriterBuilder constants(final String[] constants) {
 		this.constants = constants;
 		return this;
 	}

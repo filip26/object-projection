@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
@@ -27,23 +29,24 @@ import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.property.source.SourceReader;
 import com.apicatalog.projection.property.source.SourceWriter;
 
-public class SourcePropertyBuilderApi<P> {
+public final class SourcePropertyApi<P> extends ValueProviderApi<P> {
 	
 	final ProjectionBuilder<P> projectionBuilder;
 	
 	final SingleSourceReaderBuilder sourceReaderBuilder;
 	final SingleSourceWriterBuilder sourceWriterBuilder;
 	
-	List<ConversionMappingBuilder> conversionBuilder;
+	final List<ConversionMappingBuilder> conversions;
 	
-	Class<?> sourceObjectClass;
-	String sourcePropertyName;
+	final Class<?> sourceObjectClass;
+	final String sourcePropertyName;
 	
 	Getter targetGetter;
 	Setter targetSetter;
+	
 	boolean targetReference;
 	
-	protected SourcePropertyBuilderApi(ProjectionBuilder<P> projectionBuilder, Class<?> sourceObjectClass, String sourcePropertyName) {
+	protected SourcePropertyApi(final ProjectionBuilder<P> projectionBuilder, final Class<?> sourceObjectClass, final String sourcePropertyName) {
 		this.projectionBuilder = projectionBuilder;
 		
 		this.sourceReaderBuilder = SingleSourceReaderBuilder.newInstance().objectClass(sourceObjectClass);
@@ -51,101 +54,62 @@ public class SourcePropertyBuilderApi<P> {
 		
 		this.sourceObjectClass = sourceObjectClass;
 		this.sourcePropertyName = sourcePropertyName;
-		this.conversionBuilder = new ArrayList<>();
+		this.conversions = new ArrayList<>();
 	}
 	
-	public SourcePropertyBuilderApi<P> optional() {
+	public SourcePropertyApi<P> optional() {
 		sourceReaderBuilder.optional(true);
 		sourceWriterBuilder.optional(true);
 		return this;
 	}
 
-	public SourcePropertyBuilderApi<P> required() {
+	public SourcePropertyApi<P> required() {
 		sourceReaderBuilder.optional(false);
 		sourceWriterBuilder.optional(false);
 		return this;
 	}
 	
-	public SourcePropertyBuilderApi<P> readOnly() {
+	public SourcePropertyApi<P> readOnly() {
 		sourceReaderBuilder.mode(AccessMode.READ_ONLY);
 		sourceWriterBuilder.mode(AccessMode.READ_ONLY);
 		return this;
 	}
 
-	public SourcePropertyBuilderApi<P> writeOnly() {
+	public SourcePropertyApi<P> writeOnly() {
 		sourceReaderBuilder.mode(AccessMode.WRITE_ONLY);
 		sourceWriterBuilder.mode(AccessMode.WRITE_ONLY);
 		return this;
 	}
 
-	public SourcePropertyBuilderApi<P> qualifier(String qualifier) {
-		sourceReaderBuilder.qualifier(qualifier);
-		sourceWriterBuilder.qualifier(qualifier);
+	public SourcePropertyApi<P> qualifier(final String qualifier) {
+		
+		final String name = StringUtils.isNotBlank(qualifier) ? qualifier : null;
+		
+		sourceReaderBuilder.qualifier(name);
+		sourceWriterBuilder.qualifier(name);
 		return this;
 	}
 	
-	protected SourcePropertyBuilderApi<P> targetGetter(Getter targetGetter) {
-		this.targetGetter = targetGetter; 
-		return this;
-	}
-
-	protected SourcePropertyBuilderApi<P> targetSetter(Setter targetSetter) {
-		this.targetSetter = targetSetter;
-		return this;
-	}
-	
-	protected SourcePropertyBuilderApi<P> targetReference(boolean targetReference) {
-		this.targetReference = targetReference;
-		return this;		
-	}
-	
-	public PropertyBuilderApi<P> map(String propertyName) {
+	public PropertyApi<P> map(final String propertyName) {
 		return projectionBuilder.map(propertyName);
 	}
 
-	public Projection<P> build(ProjectionRegistry factory) throws ProjectionError {
-		return projectionBuilder.build(factory);
-	}
-
-	public SourcePropertyBuilderApi<P> conversion(Class<? extends Converter<?, ?>> converter, String...params) {
-		conversionBuilder.add(ConversionMappingBuilder.newInstance().converter(converter).parameters(params));
+	public SourcePropertyApi<P> conversion(final Class<? extends Converter<?, ?>> converter, final String...params) {
+		conversions.add(ConversionMappingBuilder.newInstance().converter(converter).parameters(params));
 		return this;
 	}
 
-	protected Optional<SourceReader> buildSourceReader(TypeConversions typeConversions, SingleSourceReaderBuilder sourceBuilder) throws ProjectionError {
-		
-		// extract getter
-		final Getter sourceGetter = ObjectUtils.getGetter(sourceObjectClass, sourcePropertyName);
-		
-		return sourceBuilder.getter(sourceGetter).targetType(targetSetter.getType()).build(typeConversions).map(SourceReader.class::cast);
-	}	
+	public Projection<P> build(final ProjectionRegistry factory) throws ProjectionError {
+		return projectionBuilder.build(factory);
+	}
 
-	protected Optional<SourceWriter> buildSourceWriter(TypeConversions typeConversions, SingleSourceWriterBuilder sourceBuilder) throws ProjectionError {
-		
-		// extract setter
-		final Setter sourceSetter = ObjectUtils.getSetter(sourceObjectClass, sourcePropertyName);
-		
-		ObjectType sourceTargetType = targetGetter.getType();
-		
-		if (targetReference) {
-			if (targetGetter.getType().isCollection()) {
-				sourceTargetType = ObjectType.of(targetGetter.getType().getType(), Object.class);
-			} else if (targetGetter.getType().isArray()) {
-				sourceTargetType = ObjectType.of(Object[].class);
-			} else {
-				sourceTargetType = ObjectType.of(Object.class);
-			}
-		}
-
-		return sourceBuilder.setter(sourceSetter).targetType(sourceTargetType).build(typeConversions).map(SourceWriter.class::cast);		
-	}	
-
-	protected Optional<PropertyReader> buildPropertyReader(ProjectionRegistry registry) throws ProjectionError {
+	@Override
+	protected Optional<PropertyReader> buildyReader(final ProjectionRegistry registry) throws ProjectionError {
 			
-		Collection<ConverterMapping> converters = new ArrayList<>(conversionBuilder.size()*2);
+		final Collection<ConverterMapping> converters = new ArrayList<>(conversions.size()*2);
 		
 		try {
-			for (ConversionMappingBuilder cb : conversionBuilder) {
+			for (ConversionMappingBuilder cb : conversions) {
 				converters.add(cb.build());
 			}
 			
@@ -167,12 +131,13 @@ public class SourcePropertyBuilderApi<P> {
 					.build(registry).map(PropertyReader.class::cast);
 	}
 	
-	protected Optional<PropertyWriter> buildPropertyWriter(ProjectionRegistry registry) throws ProjectionError {
+	@Override
+	protected Optional<PropertyWriter> buildyWriter(final ProjectionRegistry registry) throws ProjectionError {
 
-		Collection<ConverterMapping> converters = new ArrayList<>(conversionBuilder.size()*2);
+		final Collection<ConverterMapping> converters = new ArrayList<>(conversions.size()*2);
 		
 		try {
-			for (ConversionMappingBuilder cb : conversionBuilder) {
+			for (ConversionMappingBuilder cb : conversions) {
 				converters.add(cb.build());
 			}
 			
@@ -192,5 +157,51 @@ public class SourcePropertyBuilderApi<P> {
 					.sourceReader(sourceReader.get())
 					.target(targetSetter, targetReference)
 					.build(registry).map(PropertyWriter.class::cast);
+	}
+	
+	@Override
+	protected SourcePropertyApi<P> targetGetter(final Getter targetGetter) {
+		this.targetGetter = targetGetter; 
+		return this;
+	}
+
+	@Override
+	protected SourcePropertyApi<P> targetSetter(final Setter targetSetter) {
+		this.targetSetter = targetSetter;
+		return this;
+	}
+	
+	@Override
+	protected SourcePropertyApi<P> targetReference(final boolean targetReference) {
+		this.targetReference = targetReference;
+		return this;		
+	}
+	
+	Optional<SourceReader> buildSourceReader(final TypeConversions typeConversions, final SingleSourceReaderBuilder sourceBuilder) throws ProjectionError {
+		
+		// extract getter
+		final Getter sourceGetter = ObjectUtils.getGetter(sourceObjectClass, sourcePropertyName);
+		
+		return sourceBuilder.getter(sourceGetter).targetType(targetSetter.getType()).build(typeConversions).map(SourceReader.class::cast);
+	}	
+
+	Optional<SourceWriter> buildSourceWriter(final TypeConversions typeConversions, final SingleSourceWriterBuilder sourceBuilder) throws ProjectionError {
+		
+		// extract setter
+		final Setter sourceSetter = ObjectUtils.getSetter(sourceObjectClass, sourcePropertyName);
+		
+		ObjectType sourceTargetType = targetGetter.getType();
+		
+		if (targetReference) {
+			if (targetGetter.getType().isCollection()) {
+				sourceTargetType = ObjectType.of(targetGetter.getType().getType(), Object.class);
+			} else if (targetGetter.getType().isArray()) {
+				sourceTargetType = ObjectType.of(Object[].class);
+			} else {
+				sourceTargetType = ObjectType.of(Object.class);
+			}
+		}
+
+		return sourceBuilder.setter(sourceSetter).targetType(sourceTargetType).build(typeConversions).map(SourceWriter.class::cast);		
 	}
 }

@@ -28,11 +28,11 @@ import com.apicatalog.projection.property.source.ArraySourceWriter;
 import com.apicatalog.projection.property.source.SourceReader;
 import com.apicatalog.projection.property.source.SourceWriter;
 
-public class SourcesPropertyBuilderApi<P> {
+public final class SourcesPropertyApi<P> extends ValueProviderApi<P> {
 	
-	final Logger logger = LoggerFactory.getLogger(SourcesPropertyBuilderApi.class);
+	final Logger logger = LoggerFactory.getLogger(SourcesPropertyApi.class);
 	
-	ProjectionBuilder<P> projectionBuilder;
+	final ProjectionBuilder<P> projectionBuilder;
 
 	final List<ConversionMappingBuilder> conversionBuilder;
 
@@ -41,14 +41,14 @@ public class SourcesPropertyBuilderApi<P> {
 	
 	final String projectionPropertyName;
 
-	SourcesBuilderApi<P> sourcesBuilderApi;
+	SourcesApi<P> sourcesBuilderApi;
 	
 	Getter targetGetter;
 	Setter targetSetter;
 	
 	boolean targetReference;
 	
-	protected SourcesPropertyBuilderApi(ProjectionBuilder<P> projection, String projectionPropertyName) {
+	protected SourcesPropertyApi(final ProjectionBuilder<P> projection, final String projectionPropertyName) {
 		this.projectionBuilder = projection;
 		this.conversionBuilder = new ArrayList<>();
 
@@ -58,59 +58,44 @@ public class SourcesPropertyBuilderApi<P> {
 		this.projectionPropertyName = projectionPropertyName;
 	}
 
-	public SourcesPropertyBuilderApi<P> optional() {
+	public SourcesPropertyApi<P> optional() {
 		arraySourceReaderBuilder.optional(true);
 		arraySourceWriterBuilder.optional(true);
 		return this;
 	}
 
-	public SourcesPropertyBuilderApi<P> required() {
+	public SourcesPropertyApi<P> required() {
 		arraySourceReaderBuilder.optional(false);
 		arraySourceWriterBuilder.optional(false);
 		return this;
 	}
 
-	public SourcesBuilderApi<P> source(Class<?> sourceClass, String sourceProperty) {
+	public SourcesApi<P> source(final Class<?> sourceClass, final String sourceProperty) {
 
-		sourcesBuilderApi = new SourcesBuilderApi<>(projectionBuilder, projectionPropertyName)
+		sourcesBuilderApi = new SourcesApi<>(projectionBuilder, projectionPropertyName)
 								.source(sourceClass, sourceProperty);
 		return sourcesBuilderApi;
 	}
 
-	public SourcesBuilderApi<P> source(Class<?> sourceClass) {
+	public SourcesApi<P> source(final Class<?> sourceClass) {
 		return source(sourceClass, null);
 	}
 	
-	public PropertyBuilderApi<P> map(String propertyName) {
+	public PropertyApi<P> map(final String propertyName) {
 		return projectionBuilder.map(propertyName);
 	}
 	
-	public Projection<P> build(ProjectionRegistry factory) throws ProjectionError {
+	public Projection<P> build(final ProjectionRegistry factory) throws ProjectionError {
 		return projectionBuilder.build(factory);
 	}
 
-	public SourcesPropertyBuilderApi<P> conversion(Class<? extends Converter<?, ?>> converter, String...params) {
+	public SourcesPropertyApi<P> conversion(final Class<? extends Converter<?, ?>> converter, final String...params) {
 		conversionBuilder.add(ConversionMappingBuilder.newInstance().converter(converter).parameters(params));
 		return this;
 	}
 
-	protected SourcesPropertyBuilderApi<P> targetGetter(Getter targetGetter) {
-		this.targetGetter = targetGetter; 
-		return this;
-	}
-
-	protected SourcesPropertyBuilderApi<P> targetSetter(Setter targetSetter) {
-		this.targetSetter = targetSetter;
-		return this;
-	}
-	
-	protected SourcesPropertyBuilderApi<P> targetReference(boolean reference) {
-		this.targetReference = reference;
-
-		return this;
-	}
-
-	public Optional<PropertyReader> buildPropertyReader(ProjectionRegistry registry) throws ProjectionError {
+	@Override
+	protected Optional<PropertyReader> buildyReader(final ProjectionRegistry registry) throws ProjectionError {
 
 		final Collection<ConverterMapping> converters = new ArrayList<>(conversionBuilder.size()*2);
 		
@@ -123,9 +108,9 @@ public class SourcesPropertyBuilderApi<P> {
 			throw new ProjectionError(e);
 		}
 
-		SourceWriter[] sourceWriters = sourcesBuilderApi.buildSourceWriters(registry.getTypeConversions());
+		final SourceWriter[] sourceWriters = sourcesBuilderApi.buildWriters(registry.getTypeConversions());
 
-		Optional<ArraySourceWriter> sourceWriter = arraySourceWriterBuilder
+		final Optional<ArraySourceWriter> sourceWriter = arraySourceWriterBuilder
 							.sources(sourceWriters)
 							.converters(converters)
 							.targetType(targetGetter.getType())
@@ -145,7 +130,8 @@ public class SourcesPropertyBuilderApi<P> {
 					;		
 	}
 
-	public Optional<PropertyWriter> buildPropertyWriter(ProjectionRegistry registry) throws ProjectionError {
+	@Override
+	protected Optional<PropertyWriter> buildyWriter(ProjectionRegistry registry) throws ProjectionError {
 		
 		final Collection<ConverterMapping> converters = new ArrayList<>(conversionBuilder.size()*2);
 		
@@ -158,9 +144,9 @@ public class SourcesPropertyBuilderApi<P> {
 			throw new ProjectionError(e);
 		}
 
-		SourceReader[] sourceReaders = sourcesBuilderApi.buildSourceReaders(registry.getTypeConversions());
+		final SourceReader[] sourceReaders = sourcesBuilderApi.buildReaders(registry.getTypeConversions());
 		
-		Optional<ArraySourceReader> sourceReader = arraySourceReaderBuilder
+		final Optional<ArraySourceReader> sourceReader = arraySourceReaderBuilder
 							.sources(sourceReaders)
 							.converters(converters)
 							.targetType(targetSetter.getType())
@@ -178,5 +164,23 @@ public class SourcesPropertyBuilderApi<P> {
 					.target(targetSetter, targetReference)
 					.build(registry).map(PropertyWriter.class::cast)
 					;
+	}
+	
+	@Override
+	protected SourcesPropertyApi<P> targetGetter(final Getter targetGetter) {
+		this.targetGetter = targetGetter; 
+		return this;
+	}
+
+	@Override
+	protected SourcesPropertyApi<P> targetSetter(final Setter targetSetter) {
+		this.targetSetter = targetSetter;
+		return this;
+	}
+	
+	@Override
+	protected SourcesPropertyApi<P> targetReference(final boolean reference) {
+		this.targetReference = reference;
+		return this;
 	}
 }
