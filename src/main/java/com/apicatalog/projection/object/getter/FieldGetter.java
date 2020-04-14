@@ -11,12 +11,12 @@ public final class FieldGetter implements Getter {
 	
 	final ObjectType type;
 		
-	protected FieldGetter(Field field, ObjectType type) {
+	protected FieldGetter(final Field field, final ObjectType type) {
 		this.field = field;
 		this.type = type;
 	}
 	
-	public static final FieldGetter from(Field field, ObjectType type) {
+	public static final FieldGetter from(final Field field, final ObjectType type) {
 		return new FieldGetter(field, type);
 	}
 	

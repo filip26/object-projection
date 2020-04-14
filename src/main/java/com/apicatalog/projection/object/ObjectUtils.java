@@ -22,7 +22,7 @@ public final class ObjectUtils {
 
 	ObjectUtils() {}
 	
-	public static <T> T newInstance(Class<? extends T> clazz) throws ProjectionError {
+	public static <T> T newInstance(final Class<? extends T> clazz) throws ProjectionError {
 		try {
 			return clazz.getDeclaredConstructor().newInstance();
 					
@@ -33,7 +33,7 @@ public final class ObjectUtils {
 		}
 	}
 	
-	public static Field getProperty(Class<?> clazz, String property) {
+	public static Field getProperty(final Class<?> clazz, final String property) {
 		
 		try {
 			Field field = clazz.getDeclaredField(property);
@@ -48,7 +48,7 @@ public final class ObjectUtils {
 		return null;
 	}
 	
-	public static Method getMethod(Class<?> clazz, String name) {
+	public static Method getMethod(final Class<?> clazz, final String name) {
 				
 		try {
 			
@@ -59,7 +59,7 @@ public final class ObjectUtils {
 		return null;
 	}
 	
-	public static final Getter getGetter(Class<?> objectClass, final String name) {
+	public static final Getter getGetter(final Class<?> objectClass, final String name) {
 
 		final Field sourceField = ObjectUtils.getProperty(objectClass, name);
 		
@@ -77,7 +77,7 @@ public final class ObjectUtils {
 		return null;
 	}
 	
-	public static final Setter getSetter(Class<?> objectClass, final String name) {
+	public static final Setter getSetter(final Class<?> objectClass, final String name) {
 
 		final Field sourceField = ObjectUtils.getProperty(objectClass, name);
 		
@@ -95,7 +95,7 @@ public final class ObjectUtils {
 		return null;
 	}
 
-	public static final ObjectType getTypeOf(Field field) {
+	public static final ObjectType getTypeOf(final Field field) {
 		
 		Class<?> objectClass = field.getType();
 		Class<?> componentClass = null;
@@ -107,7 +107,7 @@ public final class ObjectUtils {
 		return ObjectType.of(objectClass, componentClass);
 	}
 	
-	protected static final ObjectType getReturnTypeOf(Method method) {
+	protected static final ObjectType getReturnTypeOf(final Method method) {
 		
 		Class<?> objectClass = method.getReturnType();
 		Class<?> componentClass = null;
@@ -119,7 +119,7 @@ public final class ObjectUtils {
 		return ObjectType.of(objectClass, componentClass);
 	}
 	
-	protected static final ObjectType getParameterTypeOf(Method method) {
+	protected static final ObjectType getParameterTypeOf(final Method method) {
 		
 		Class<?> objectClass = method.getParameters()[0].getType();
 		Class<?> componentClass = null;

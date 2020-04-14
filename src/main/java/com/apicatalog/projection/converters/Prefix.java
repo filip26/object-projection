@@ -1,4 +1,4 @@
-package com.apicatalog.projection.converter.std;
+package com.apicatalog.projection.converters;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -9,7 +9,7 @@ import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterConfig;
 import com.apicatalog.projection.converter.ConverterError;
 
-public class Prefix implements Converter<String, String> {
+public final class Prefix implements Converter<String, String> {
 
 	String prefixString;
 	
@@ -19,28 +19,22 @@ public class Prefix implements Converter<String, String> {
 	}
 
 	@Override
-	public String forward(String object) throws ConverterError {
+	public String forward(final String object) throws ConverterError {
 		
 		if (StringUtils.isBlank(prefixString)) {
 			return object;
 		}
-		
-		StringBuilder builder = new StringBuilder();		
-		builder.append(prefixString);
-		builder.append(object);
-				
-		return builder.toString();
+
+		return prefixString.concat(object);
 	}
 
 	@Override
-	public String backward(String object) throws ConverterError {
+	public String backward(final String object) throws ConverterError {
 		
 		if (StringUtils.isBlank(prefixString)) {
 			return object;
 		}
 		
-		int lengthToCut = prefixString.length();
-		
-		return object.substring(lengthToCut);
+		return object.substring(prefixString.length());
 	}
 }

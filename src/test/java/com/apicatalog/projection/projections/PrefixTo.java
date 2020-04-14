@@ -3,7 +3,7 @@ package com.apicatalog.projection.projections;
 import com.apicatalog.projection.annotation.Conversion;
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Source;
-import com.apicatalog.projection.converter.std.Prefix;
+import com.apicatalog.projection.converters.Prefix;
 import com.apicatalog.projection.objects.Object1;
 
 @Projection(Object1.class)

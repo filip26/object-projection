@@ -11,12 +11,12 @@ public final class FieldSetter implements Setter {
 	
 	final ObjectType type; 
 
-	protected FieldSetter(Field field, ObjectType type) {
+	protected FieldSetter(final Field field, final ObjectType type) {
 		this.field = field;
 		this.type = type;
 	}
 	
-	public static final FieldSetter from(Field field, ObjectType type) {
+	public static final FieldSetter from(final Field field, final ObjectType type) {
 		return new FieldSetter(field, type);
 	}
 

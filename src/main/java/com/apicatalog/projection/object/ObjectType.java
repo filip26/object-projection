@@ -7,16 +7,16 @@ public final class ObjectType {
 	final Class<?> type;
 	final Class<?> componentType;
 	
-	protected ObjectType(Class<?> type, Class<?> componentType) { 
+	protected ObjectType(final Class<?> type, final Class<?> componentType) { 
 		this.type = type;
 		this.componentType = componentType;
 	}
 	
-	public static final ObjectType of(Class<?> type) {
+	public static final ObjectType of(final Class<?> type) {
 		return of(type, null);
 	}
 
-	public static final ObjectType of(Class<?> type, Class<?> componentTYpe) {
+	public static final ObjectType of(final Class<?> type, final Class<?> componentTYpe) {
 		return new ObjectType(type, componentTYpe);
 	}
 

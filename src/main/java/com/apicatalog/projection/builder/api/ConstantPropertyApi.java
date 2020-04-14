@@ -10,7 +10,7 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
-public class ConstantPropertyApi<P> extends ValueProviderApi<P> {
+public class ConstantPropertyApi<P> extends AbstractValueProviderApi<P> {
 	
 	final ProjectionBuilder<P> projectionBuilder;
 	
@@ -26,12 +26,12 @@ public class ConstantPropertyApi<P> extends ValueProviderApi<P> {
 	}
 	
 	@Override
-	public ValueProviderApi<P> targetGetter(Getter targetGetter) {
+	public AbstractValueProviderApi<P> targetGetter(Getter targetGetter) {
 		return this;
 	}
 
 	@Override
-	public ValueProviderApi<P> targetReference(boolean targetReference) {
+	public AbstractValueProviderApi<P> targetReference(boolean targetReference) {
 		this.targetReference = targetReference;
 		return this;
 	}
@@ -42,7 +42,7 @@ public class ConstantPropertyApi<P> extends ValueProviderApi<P> {
 	}
 
 	@Override
-	protected ValueProviderApi<P> targetSetter(Setter targetSetter) {
+	protected AbstractValueProviderApi<P> targetSetter(Setter targetSetter) {
 		this.targetSetter = targetSetter;
 		return this;
 	}

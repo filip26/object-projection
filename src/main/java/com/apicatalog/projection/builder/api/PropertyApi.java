@@ -30,7 +30,7 @@ public final class PropertyApi<P> {
 	
 	final boolean targetReference;
 
-	ValueProviderApi<P> valueProviderApi;
+	AbstractValueProviderApi<P> valueProviderApi;
 	
 	protected PropertyApi(final ProjectionBuilder<P> projectionBuilder, final String propertyName, final boolean reference) {
 		this.projectionBuilder = projectionBuilder;

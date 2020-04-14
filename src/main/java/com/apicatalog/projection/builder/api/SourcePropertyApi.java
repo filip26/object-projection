@@ -29,7 +29,7 @@ import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.property.source.SourceReader;
 import com.apicatalog.projection.property.source.SourceWriter;
 
-public final class SourcePropertyApi<P> extends ValueProviderApi<P> {
+public final class SourcePropertyApi<P> extends AbstractValueProviderApi<P> {
 	
 	final ProjectionBuilder<P> projectionBuilder;
 	

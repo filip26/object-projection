@@ -17,7 +17,6 @@ public final class SimpleTypeConversions {
 		if (source == Double.class) return fromDouble(target);
 		if (source == Boolean.class) return fromBoolean(target);
 		if (source == Instant.class) return fromInstant(target);
-		if (source == URI.class) return fromURI(target);
 		
 		if (target == String.class) return Object::toString;
 		
@@ -110,12 +109,4 @@ public final class SimpleTypeConversions {
 		
 		return null;
 	}
-
-	static final Conversion fromURI(final Class<?> target) {
-		
-		if (target == String.class) return Object::toString;
-		
-		return null;
-	}
-
 }

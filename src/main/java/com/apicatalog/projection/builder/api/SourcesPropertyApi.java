@@ -28,7 +28,7 @@ import com.apicatalog.projection.property.source.ArraySourceWriter;
 import com.apicatalog.projection.property.source.SourceReader;
 import com.apicatalog.projection.property.source.SourceWriter;
 
-public final class SourcesPropertyApi<P> extends ValueProviderApi<P> {
+public final class SourcesPropertyApi<P> extends AbstractValueProviderApi<P> {
 	
 	final Logger logger = LoggerFactory.getLogger(SourcesPropertyApi.class);
 	

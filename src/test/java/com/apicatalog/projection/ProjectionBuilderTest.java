@@ -6,9 +6,9 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.apicatalog.projection.builder.api.ProjectionBuilder;
-import com.apicatalog.projection.converter.std.Prefix;
-import com.apicatalog.projection.converter.std.Suffix;
-import com.apicatalog.projection.converter.std.UriTemplate;
+import com.apicatalog.projection.converters.Prefix;
+import com.apicatalog.projection.converters.Suffix;
+import com.apicatalog.projection.converters.UriTemplate;
 import com.apicatalog.projection.objects.Object1;
 import com.apicatalog.projection.objects.Object2;
 import com.apicatalog.projection.objects.SimpleObject;

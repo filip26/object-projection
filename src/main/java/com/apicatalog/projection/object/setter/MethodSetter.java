@@ -14,18 +14,18 @@ public final class MethodSetter implements Setter {
 	
 	final ObjectType type;
 	
-	protected MethodSetter(Method method, String name, ObjectType type) {
+	protected MethodSetter(final Method method, final String name, final ObjectType type) {
 		this.method = method;
 		this.name = name;
 		this.type = type;
 	}
 	
-	public static final MethodSetter from(Method method, String name, ObjectType type) {		
+	public static final MethodSetter from(final Method method, final String name, final ObjectType type) {		
 		return new MethodSetter(method, name, type);
 	}
 
 	@Override
-	public void set(Object object, Object value) throws ProjectionError {
+	public void set(final Object object, final Object value) throws ProjectionError {
 		
 		try {
 			method.invoke(object, value);
@@ -43,6 +43,5 @@ public final class MethodSetter implements Setter {
 	@Override
 	public ObjectType getType() {
 		return type;
-	}
-	
+	}	
 }

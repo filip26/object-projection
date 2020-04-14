@@ -14,7 +14,7 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
-public final class ProvidedPropertyApi<P> extends ValueProviderApi<P> {
+public final class ProvidedPropertyApi<P> extends AbstractValueProviderApi<P> {
 	
 	final ProjectionBuilder<P> projectionBuilder;
 

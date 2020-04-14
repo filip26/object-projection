@@ -14,13 +14,13 @@ public final class MethodGetter implements Getter {
 	
 	final ObjectType type;
 	
-	protected MethodGetter(Method method, String name, ObjectType type) {
+	protected MethodGetter(final Method method, final String name, final ObjectType type) {
 		this.method = method;
 		this.name = name;
 		this.type = type;
 	}
 	
-	public static final MethodGetter from(Method method, String name, ObjectType type) {
+	public static final MethodGetter from(final Method method, final String name, final ObjectType type) {
 		return new MethodGetter(method, name, type);
 	}
 
