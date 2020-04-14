@@ -6,14 +6,14 @@ import java.util.List;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.property.ProjectionProperty;
+import com.apicatalog.projection.property.PropertyReader;
+import com.apicatalog.projection.property.PropertyWriter;
 
 public class ProjectionBuilder<P> {
 	
 	final Class<P> projectionClass;
 	
-	final List<MappedPropertyBuilderApi<P>> propertyBuilders;
+	final List<PropertyBuilderApi<P>> propertyBuilders;
 	
 	protected ProjectionBuilder(Class<P> projectionClass) {
 		this.projectionClass = projectionClass;
@@ -24,31 +24,38 @@ public class ProjectionBuilder<P> {
 		return new ProjectionBuilder<>(projectionClass);
 	}
 
-	public MappedPropertyBuilderApi<P> map(String propertyName) {
+	public PropertyBuilderApi<P> map(String propertyName) {
 		return map(propertyName, false);
 	}
 
-	public MappedPropertyBuilderApi<P> map(String propertyName, boolean reference) {
-		final MappedPropertyBuilderApi<P> propertyBuilder = new MappedPropertyBuilderApi<>(this, propertyName, reference);
+	public PropertyBuilderApi<P> map(String propertyName, boolean reference) {
+		
+		final PropertyBuilderApi<P> propertyBuilder = 
+					new PropertyBuilderApi<>(this, propertyName, reference);
 		propertyBuilders.add(propertyBuilder);
 		return propertyBuilder;
 	}
 	
-	public Projection<P> build(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
+	public Projection<P> build(ProjectionRegistry factory) throws ProjectionError {
 
-		final List<ProjectionProperty> properties = new ArrayList<>(); 
+		final List<PropertyReader> readers = new ArrayList<>(); 
+		final List<PropertyWriter> writers = new ArrayList<>();
 		
-		for (final MappedPropertyBuilderApi<P> propertyBuilder : propertyBuilders) {
+		for (final PropertyBuilderApi<P> propertyBuilder : propertyBuilders) {
 			propertyBuilder
-					.buildProperty(factory, typeAdapters)
-					.ifPresent(properties::add);
+					.buildPropertyReader(factory)
+					.ifPresent(readers::add);
+			
+			propertyBuilder
+					.buildPropertyWriter(factory)
+					.ifPresent(writers::add);
 		}
 		
-		if (properties.isEmpty()) {
+		if (readers.isEmpty() && writers.isEmpty()) {
 			return null;
 		}
 		
-		final Projection<P> projection = Projection.newInstance(projectionClass, properties.toArray(new ProjectionProperty[0]));
+		final Projection<P> projection = Projection.newInstance(projectionClass, readers.toArray(new PropertyReader[0]), writers.toArray(new PropertyWriter[0]));
 
 		factory.register(projection);
 		

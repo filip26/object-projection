@@ -18,7 +18,7 @@ public class ArrayCollectorTest {
 	ProjectionRegistry projections;
 	
 	@Before
-	public void setup() {
+	public void setup() throws ProjectionError {
 		projections = ProjectionRegistry.newInstance()
 						.register(ArrayCollectorTo.class);
 	}

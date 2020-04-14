@@ -1,61 +1,72 @@
 package com.apicatalog.projection.builder.api;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.TypeAdapters;
-import com.apicatalog.projection.builder.ArraySourceBuilder;
-import com.apicatalog.projection.builder.ConversionBuilder;
-import com.apicatalog.projection.builder.ReductionBuilder;
-import com.apicatalog.projection.builder.SourcePropertyBuilder;
+import com.apicatalog.projection.builder.ConversionMappingBuilder;
+import com.apicatalog.projection.builder.reader.ArraySourceReaderBuilder;
+import com.apicatalog.projection.builder.reader.SourcePropertyReaderBuilder;
+import com.apicatalog.projection.builder.writer.ArraySourceWriterBuilder;
+import com.apicatalog.projection.builder.writer.SourcePropertyWriterBuilder;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
-import com.apicatalog.projection.objects.getter.Getter;
-import com.apicatalog.projection.objects.setter.Setter;
-import com.apicatalog.projection.property.ProjectionProperty;
-import com.apicatalog.projection.property.source.ArraySource;
-import com.apicatalog.projection.property.source.Source;
-import com.apicatalog.projection.reducer.Reducer;
-import com.apicatalog.projection.reducer.ReducerError;
-import com.apicatalog.projection.reducer.ReducerMapping;
+import com.apicatalog.projection.object.getter.Getter;
+import com.apicatalog.projection.object.setter.Setter;
+import com.apicatalog.projection.property.PropertyReader;
+import com.apicatalog.projection.property.PropertyWriter;
+import com.apicatalog.projection.property.source.ArraySourceReader;
+import com.apicatalog.projection.property.source.ArraySourceWriter;
+import com.apicatalog.projection.property.source.SourceReader;
+import com.apicatalog.projection.property.source.SourceWriter;
 
 public class SourcesPropertyBuilderApi<P> {
 	
+	final Logger logger = LoggerFactory.getLogger(SourcesPropertyBuilderApi.class);
+	
 	ProjectionBuilder<P> projectionBuilder;
 
-	final List<ConversionBuilder> conversionBuilder;
+	final List<ConversionMappingBuilder> conversionBuilder;
+
+	final ArraySourceReaderBuilder arraySourceReaderBuilder;
+	final ArraySourceWriterBuilder arraySourceWriterBuilder;
+	
+	final String projectionPropertyName;
 
 	SourcesBuilderApi<P> sourcesBuilderApi;
 	
-	SourcePropertyBuilder sourcePropertyBuilder;
+	Getter targetGetter;
+	Setter targetSetter;
 	
-	ArraySourceBuilder arraySourceBuilder;
-	
-	ReductionBuilder reductionBuilder;
-	
-	final String projectionPropertyName;
+	boolean targetReference;
 	
 	protected SourcesPropertyBuilderApi(ProjectionBuilder<P> projection, String projectionPropertyName) {
 		this.projectionBuilder = projection;
 		this.conversionBuilder = new ArrayList<>();
-		this.sourcePropertyBuilder = SourcePropertyBuilder.newInstance();
-		this.arraySourceBuilder = ArraySourceBuilder.newInstance();
-		this.reductionBuilder = ReductionBuilder.newInstance();
+
+		this.arraySourceReaderBuilder = ArraySourceReaderBuilder.newInstance();
+		this.arraySourceWriterBuilder = ArraySourceWriterBuilder.newInstance();
+		
 		this.projectionPropertyName = projectionPropertyName;
 	}
 
 	public SourcesPropertyBuilderApi<P> optional() {
-		arraySourceBuilder.optional(true);
+		arraySourceReaderBuilder.optional(true);
+		arraySourceWriterBuilder.optional(true);
 		return this;
 	}
 
 	public SourcesPropertyBuilderApi<P> required() {
-		arraySourceBuilder.optional(false);
+		arraySourceReaderBuilder.optional(false);
+		arraySourceWriterBuilder.optional(false);
 		return this;
 	}
 
@@ -70,75 +81,102 @@ public class SourcesPropertyBuilderApi<P> {
 		return source(sourceClass, null);
 	}
 	
-	public MappedPropertyBuilderApi<P> map(String propertyName) {
+	public PropertyBuilderApi<P> map(String propertyName) {
 		return projectionBuilder.map(propertyName);
 	}
 	
-	public Projection<P> build(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
-		return projectionBuilder.build(factory, typeAdapters);
+	public Projection<P> build(ProjectionRegistry factory) throws ProjectionError {
+		return projectionBuilder.build(factory);
 	}
 
 	public SourcesPropertyBuilderApi<P> conversion(Class<? extends Converter<?, ?>> converter, String...params) {
-		conversionBuilder.add(ConversionBuilder.newInstance().converter(converter).parameters(params));
-		return this;
-	}
-
-	public SourcesPropertyBuilderApi<P> reduce(Class<? extends Reducer<?, ?>> reducer, String...params) {
-		reductionBuilder.converter(reducer).parameters(params);
+		conversionBuilder.add(ConversionMappingBuilder.newInstance().converter(converter).parameters(params));
 		return this;
 	}
 
 	protected SourcesPropertyBuilderApi<P> targetGetter(Getter targetGetter) {
-		sourcePropertyBuilder = sourcePropertyBuilder.targetGetter(targetGetter); 
+		this.targetGetter = targetGetter; 
 		return this;
 	}
 
 	protected SourcesPropertyBuilderApi<P> targetSetter(Setter targetSetter) {
-		sourcePropertyBuilder = sourcePropertyBuilder.targetSetter(targetSetter);
+		this.targetSetter = targetSetter;
 		return this;
 	}
 	
 	protected SourcesPropertyBuilderApi<P> targetReference(boolean reference) {
-		sourcePropertyBuilder = sourcePropertyBuilder.targetReference(reference);
+		this.targetReference = reference;
+
 		return this;
 	}
 
-	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
+	public Optional<PropertyReader> buildPropertyReader(ProjectionRegistry registry) throws ProjectionError {
 
-		if (Optional.ofNullable(sourcesBuilderApi).isEmpty()) {
-			return Optional.empty();
-		}
-		
-		final ConverterMapping[] converters = new ConverterMapping[conversionBuilder.size()];
-		
-		ReducerMapping reducer;
+		final Collection<ConverterMapping> converters = new ArrayList<>(conversionBuilder.size()*2);
 		
 		try {
-			int i = 0;
-			for (ConversionBuilder cb : conversionBuilder) {
-				converters[i++] = cb.build();
+			for (ConversionMappingBuilder cb : conversionBuilder) {
+				converters.add(cb.build());
 			}
 			
-			reducer = reductionBuilder.build();
-			
-		} catch (ConverterError | ReducerError e) {
+		} catch (ConverterError e) {
 			throw new ProjectionError(e);
 		}
 
-		Source[] sources = sourcesBuilderApi.buildSources(typeAdapters);
+		SourceWriter[] sourceWriters = sourcesBuilderApi.buildSourceWriters(registry.getTypeConversions());
 
-		Optional<ArraySource> source = arraySourceBuilder
-								.sources(sources)
-								.converters(converters)
-								.reducer(reducer)
-								.build(typeAdapters);
-		
-		if (source.isEmpty()) {
+		Optional<ArraySourceWriter> sourceWriter = arraySourceWriterBuilder
+							.sources(sourceWriters)
+							.converters(converters)
+							.targetType(targetGetter.getType())
+							.build(registry.getTypeConversions());
+
+		if (sourceWriter.isEmpty()) {
+			if (logger.isTraceEnabled()) {
+				logger.trace("Source writer does not exist. Property '{}' is ignored for extraction.", targetGetter.getName());
+			}
 			return Optional.empty();
 		}
+
+		return SourcePropertyReaderBuilder.newInstance()
+					.sourceWriter(sourceWriter.get())
+					.target(targetGetter, targetReference)
+					.build(registry).map(PropertyReader.class::cast)
+					;		
+	}
+
+	public Optional<PropertyWriter> buildPropertyWriter(ProjectionRegistry registry) throws ProjectionError {
 		
-		return sourcePropertyBuilder
-				.source(source.get())
-				.build(factory, typeAdapters).map(ProjectionProperty.class::cast);
+		final Collection<ConverterMapping> converters = new ArrayList<>(conversionBuilder.size()*2);
+		
+		try {
+			for (ConversionMappingBuilder cb : conversionBuilder) {
+				converters.add(cb.build());
+			}
+			
+		} catch (ConverterError e) {
+			throw new ProjectionError(e);
+		}
+
+		SourceReader[] sourceReaders = sourcesBuilderApi.buildSourceReaders(registry.getTypeConversions());
+		
+		Optional<ArraySourceReader> sourceReader = arraySourceReaderBuilder
+							.sources(sourceReaders)
+							.converters(converters)
+							.targetType(targetSetter.getType())
+							.build(registry.getTypeConversions());
+		
+		if (sourceReader.isEmpty()) {
+			if (logger.isTraceEnabled()) {
+				logger.trace("Source reader does not exist. Property '{}' is ignored for composition.", targetSetter.getName());
+			}
+			return Optional.empty();
+		}
+
+		return SourcePropertyWriterBuilder.newInstance()
+					.sourceReader(sourceReader.get())
+					.target(targetSetter, targetReference)
+					.build(registry).map(PropertyWriter.class::cast)
+					;
 	}
 }

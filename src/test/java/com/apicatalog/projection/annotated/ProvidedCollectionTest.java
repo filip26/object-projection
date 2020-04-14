@@ -19,7 +19,7 @@ public class ProvidedCollectionTest {
 	ProjectionRegistry projections;
 	
 	@Before
-	public void setup() {
+	public void setup() throws ProjectionError {
 		projections = ProjectionRegistry.newInstance();
 		
 		projections.register(StringCollectionTo.class);
@@ -42,6 +42,7 @@ public class ProvidedCollectionTest {
     	Assert.assertEquals(href, projection.href);
     	
     	Assert.assertNotNull(projection.items);
+    	
     	Assert.assertArrayEquals(items.stream().map(l -> Long.toString(l)).collect(Collectors.toList()).toArray(new String[0]), projection.items.toArray(new String[0]));
     }
     

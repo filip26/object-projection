@@ -1,139 +1,196 @@
 package com.apicatalog.projection.builder.api;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.adapter.TypeAdapters;
 import com.apicatalog.projection.annotation.AccessMode;
-import com.apicatalog.projection.builder.ConversionBuilder;
-import com.apicatalog.projection.builder.SingleSourceBuilder;
-import com.apicatalog.projection.builder.SourcePropertyBuilder;
+import com.apicatalog.projection.builder.ConversionMappingBuilder;
+import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
+import com.apicatalog.projection.builder.reader.SourcePropertyReaderBuilder;
+import com.apicatalog.projection.builder.writer.SingleSourceWriterBuilder;
+import com.apicatalog.projection.builder.writer.SourcePropertyWriterBuilder;
+import com.apicatalog.projection.conversion.implicit.TypeConversions;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
-import com.apicatalog.projection.objects.ObjectUtils;
-import com.apicatalog.projection.objects.getter.Getter;
-import com.apicatalog.projection.objects.setter.Setter;
-import com.apicatalog.projection.property.ProjectionProperty;
-import com.apicatalog.projection.property.source.Source;
+import com.apicatalog.projection.object.ObjectType;
+import com.apicatalog.projection.object.ObjectUtils;
+import com.apicatalog.projection.object.getter.Getter;
+import com.apicatalog.projection.object.setter.Setter;
+import com.apicatalog.projection.property.PropertyReader;
+import com.apicatalog.projection.property.PropertyWriter;
+import com.apicatalog.projection.property.source.SourceReader;
+import com.apicatalog.projection.property.source.SourceWriter;
 
 public class SourcePropertyBuilderApi<P> {
 	
 	final ProjectionBuilder<P> projectionBuilder;
 	
-	SingleSourceBuilder sourceBuilder;
+	final SingleSourceReaderBuilder sourceReaderBuilder;
+	final SingleSourceWriterBuilder sourceWriterBuilder;
 	
-	SourcePropertyBuilder sourcePropertyBuilder;
-	
-	List<ConversionBuilder> conversionBuilder;
+	List<ConversionMappingBuilder> conversionBuilder;
 	
 	Class<?> sourceObjectClass;
 	String sourcePropertyName;
 	
+	Getter targetGetter;
+	Setter targetSetter;
+	boolean targetReference;
+	
 	protected SourcePropertyBuilderApi(ProjectionBuilder<P> projectionBuilder, Class<?> sourceObjectClass, String sourcePropertyName) {
 		this.projectionBuilder = projectionBuilder;
-		this.sourceBuilder = SingleSourceBuilder.newInstance().objectClass(sourceObjectClass);
-		this.sourcePropertyBuilder = SourcePropertyBuilder.newInstance();
+		
+		this.sourceReaderBuilder = SingleSourceReaderBuilder.newInstance().objectClass(sourceObjectClass);
+		this.sourceWriterBuilder = SingleSourceWriterBuilder.newInstance().objectClass(sourceObjectClass);
+		
 		this.sourceObjectClass = sourceObjectClass;
 		this.sourcePropertyName = sourcePropertyName;
 		this.conversionBuilder = new ArrayList<>();
 	}
 	
 	public SourcePropertyBuilderApi<P> optional() {
-		sourceBuilder = sourceBuilder.optional(true);
+		sourceReaderBuilder.optional(true);
+		sourceWriterBuilder.optional(true);
 		return this;
 	}
 
 	public SourcePropertyBuilderApi<P> required() {
-		sourceBuilder = sourceBuilder.optional(false);
+		sourceReaderBuilder.optional(false);
+		sourceWriterBuilder.optional(false);
 		return this;
 	}
 	
 	public SourcePropertyBuilderApi<P> readOnly() {
-		sourceBuilder = sourceBuilder.mode(AccessMode.READ_ONLY);
-		sourcePropertyBuilder = sourcePropertyBuilder.mode(AccessMode.READ_ONLY);
+		sourceReaderBuilder.mode(AccessMode.READ_ONLY);
+		sourceWriterBuilder.mode(AccessMode.READ_ONLY);
 		return this;
 	}
 
 	public SourcePropertyBuilderApi<P> writeOnly() {
-		sourceBuilder = sourceBuilder.mode(AccessMode.WRITE_ONLY);
-		sourcePropertyBuilder = sourcePropertyBuilder.mode(AccessMode.WRITE_ONLY);
+		sourceReaderBuilder.mode(AccessMode.WRITE_ONLY);
+		sourceWriterBuilder.mode(AccessMode.WRITE_ONLY);
 		return this;
 	}
 
 	public SourcePropertyBuilderApi<P> qualifier(String qualifier) {
-		sourceBuilder = sourceBuilder.qualifier(qualifier);
+		sourceReaderBuilder.qualifier(qualifier);
+		sourceWriterBuilder.qualifier(qualifier);
 		return this;
 	}
 	
 	protected SourcePropertyBuilderApi<P> targetGetter(Getter targetGetter) {
-		sourcePropertyBuilder = sourcePropertyBuilder.targetGetter(targetGetter); 
+		this.targetGetter = targetGetter; 
 		return this;
 	}
 
 	protected SourcePropertyBuilderApi<P> targetSetter(Setter targetSetter) {
-		sourcePropertyBuilder = sourcePropertyBuilder.targetSetter(targetSetter);
+		this.targetSetter = targetSetter;
 		return this;
 	}
 	
 	protected SourcePropertyBuilderApi<P> targetReference(boolean targetReference) {
-		sourcePropertyBuilder = sourcePropertyBuilder.targetReference(targetReference);
+		this.targetReference = targetReference;
 		return this;		
 	}
 	
-	public MappedPropertyBuilderApi<P> map(String propertyName) {
+	public PropertyBuilderApi<P> map(String propertyName) {
 		return projectionBuilder.map(propertyName);
 	}
 
-	public Projection<P> build(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
-		return projectionBuilder.build(factory, typeAdapters);
+	public Projection<P> build(ProjectionRegistry factory) throws ProjectionError {
+		return projectionBuilder.build(factory);
 	}
 
 	public SourcePropertyBuilderApi<P> conversion(Class<? extends Converter<?, ?>> converter, String...params) {
-		conversionBuilder.add(ConversionBuilder.newInstance().converter(converter).parameters(params));
+		conversionBuilder.add(ConversionMappingBuilder.newInstance().converter(converter).parameters(params));
 		return this;
 	}
 
-	protected Optional<Source> buildSource(TypeAdapters typeAdapters, SingleSourceBuilder sourceBuilder) throws ProjectionError {
+	protected Optional<SourceReader> buildSourceReader(TypeConversions typeConversions, SingleSourceReaderBuilder sourceBuilder) throws ProjectionError {
+		
+		// extract getter
+		final Getter sourceGetter = ObjectUtils.getGetter(sourceObjectClass, sourcePropertyName);
+		
+		return sourceBuilder.getter(sourceGetter).targetType(targetSetter.getType()).build(typeConversions).map(SourceReader.class::cast);
+	}	
 
-		ConverterMapping[] converters = new ConverterMapping[conversionBuilder.size()];
+	protected Optional<SourceWriter> buildSourceWriter(TypeConversions typeConversions, SingleSourceWriterBuilder sourceBuilder) throws ProjectionError {
+		
+		// extract setter
+		final Setter sourceSetter = ObjectUtils.getSetter(sourceObjectClass, sourcePropertyName);
+		
+		ObjectType sourceTargetType = targetGetter.getType();
+		
+		if (targetReference) {
+			if (targetGetter.getType().isCollection()) {
+				sourceTargetType = ObjectType.of(targetGetter.getType().getType(), Object.class);
+			} else if (targetGetter.getType().isArray()) {
+				sourceTargetType = ObjectType.of(Object[].class);
+			} else {
+				sourceTargetType = ObjectType.of(Object.class);
+			}
+		}
+
+		return sourceBuilder.setter(sourceSetter).targetType(sourceTargetType).build(typeConversions).map(SourceWriter.class::cast);		
+	}	
+
+	protected Optional<PropertyReader> buildPropertyReader(ProjectionRegistry registry) throws ProjectionError {
+			
+		Collection<ConverterMapping> converters = new ArrayList<>(conversionBuilder.size()*2);
 		
 		try {
-			int i=0;
-			for (ConversionBuilder cb : conversionBuilder) {
-				converters[i++] = cb.build();
+			for (ConversionMappingBuilder cb : conversionBuilder) {
+				converters.add(cb.build());
 			}
 			
 		} catch (ConverterError e) {
 			throw new ProjectionError(e);
 		}
 		
-		// extract setter/getter
-		final Getter sourceGetter = ObjectUtils.getGetter(sourceObjectClass, sourcePropertyName);
-		final Setter sourceSetter = ObjectUtils.getSetter(sourceObjectClass, sourcePropertyName);
-		
-		return sourceBuilder
-							.getter(sourceGetter)
-							.setter(sourceSetter)
-							.converters(converters)
-							.build(typeAdapters).map(Source.class::cast)
-							;		
-	}	
+		sourceWriterBuilder.converters(converters);
 
-	protected Optional<ProjectionProperty> buildProperty(ProjectionRegistry factory, TypeAdapters typeAdapters) throws ProjectionError {
+		final Optional<SourceWriter> sourceWriter = buildSourceWriter(registry.getTypeConversions(), sourceWriterBuilder);
 		
-		final Optional<Source> source = buildSource(typeAdapters, sourceBuilder);
-		
-		if (source.isEmpty()) {
+		if (sourceWriter.isEmpty()) {
 			return Optional.empty();
 		}
 
-		return sourcePropertyBuilder
-					.source(source.get())
-					.build(factory, typeAdapters).map(ProjectionProperty.class::cast);
+		return SourcePropertyReaderBuilder.newInstance()
+					.sourceWriter(sourceWriter.get())
+					.target(targetGetter, targetReference)
+					.build(registry).map(PropertyReader.class::cast);
+	}
+	
+	protected Optional<PropertyWriter> buildPropertyWriter(ProjectionRegistry registry) throws ProjectionError {
+
+		Collection<ConverterMapping> converters = new ArrayList<>(conversionBuilder.size()*2);
+		
+		try {
+			for (ConversionMappingBuilder cb : conversionBuilder) {
+				converters.add(cb.build());
+			}
+			
+		} catch (ConverterError e) {
+			throw new ProjectionError(e);
+		}
+		
+		sourceReaderBuilder.converters(converters);
+
+		final Optional<SourceReader> sourceReader = buildSourceReader(registry.getTypeConversions(), sourceReaderBuilder);
+		
+		if (sourceReader.isEmpty()) {
+			return Optional.empty();
+		}
+
+		return SourcePropertyWriterBuilder.newInstance()
+					.sourceReader(sourceReader.get())
+					.target(targetSetter, targetReference)
+					.build(registry).map(PropertyWriter.class::cast);
 	}
 }

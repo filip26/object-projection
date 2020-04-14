@@ -18,7 +18,7 @@ public class CycleCheckTest {
 	ProjectionRegistry projections;
 	
 	@Before
-	public void setup() {
+	public void setup() throws ProjectionError {
 		projections = ProjectionRegistry.newInstance()		
 						.register(InterwiredProjection1.class)
 						.register(InterwiredProjection2.class)

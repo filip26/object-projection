@@ -6,16 +6,19 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.apicatalog.projection.annotation.mapper.ProjectionMapper;
+import com.apicatalog.projection.conversion.implicit.TypeConversions;
 
 public class ProjectionRegistry {
 
 	final ProjectionMapper mapper;
+	final TypeConversions typeConversions;
 	
 	final Map<Class<?>, Projection<?>> index;
 	
 	protected ProjectionRegistry(final Map<Class<?>, Projection<?>> index) {
 		this.index = index;
 		this.mapper = new ProjectionMapper(this);
+		this.typeConversions = new TypeConversions();
 	}
 
 	public static final ProjectionRegistry newInstance() {
@@ -63,7 +66,7 @@ public class ProjectionRegistry {
 		return this;
 	}
 
-	public ProjectionRegistry register(Class<?> annotatedProjectionClass) {
+	public ProjectionRegistry register(Class<?> annotatedProjectionClass) throws ProjectionError {
 		if (annotatedProjectionClass == null) {
 			throw new IllegalArgumentException();
 		}
@@ -73,6 +76,10 @@ public class ProjectionRegistry {
 
 	public ProjectionMapper getMapper() {
 		return mapper;
+	}
+	
+	public TypeConversions getTypeConversions() {
+		return typeConversions;
 	}
 	
 	ProjectionError unknownProjection(Class<?> projectionClass) {

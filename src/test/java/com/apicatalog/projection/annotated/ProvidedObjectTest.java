@@ -16,7 +16,7 @@ public class ProvidedObjectTest {
 	ProjectionRegistry projections;
 	
 	@Before
-	public void setup() {
+	public void setup() throws ProjectionError {
 		projections = ProjectionRegistry.newInstance();
 		
 		projections.register(ProvidedObjectTo.class);

@@ -22,7 +22,7 @@ public class ImplicitConversionTest {
 	ProjectionRegistry projections;
 	
 	@Before
-	public void setup() {
+	public void setup() throws ProjectionError {
 		projections = ProjectionRegistry.newInstance()
 						.register(ImplicitConversionTo.class)
 						.register(UriTo.class)
@@ -80,6 +80,7 @@ public class ImplicitConversionTest {
     	projection.stringCollection = Arrays.asList("1 item", "2 item", "3 item");
 
     	BasicTypes object = projections.extract(projection, BasicTypes.class);
+    	Assert.assertNotNull(object);
     	
     	Assert.assertEquals("1.23", object.stringValue);
     	Assert.assertEquals(Instant.ofEpochMilli(projection.longValue), object.instantValue);
