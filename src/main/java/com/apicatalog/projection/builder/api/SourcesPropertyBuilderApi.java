@@ -11,10 +11,8 @@ import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
 import com.apicatalog.projection.builder.reader.ArraySourceReaderBuilder;
 import com.apicatalog.projection.builder.reader.SourcePropertyReaderBuilder;
-import com.apicatalog.projection.builder.reader.TargetReaderBuilder;
 import com.apicatalog.projection.builder.writer.ArraySourceWriterBuilder;
 import com.apicatalog.projection.builder.writer.SourcePropertyWriterBuilder;
-import com.apicatalog.projection.builder.writer.TargetWriterBuilder;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
@@ -26,8 +24,6 @@ import com.apicatalog.projection.property.source.ArraySourceReader;
 import com.apicatalog.projection.property.source.ArraySourceWriter;
 import com.apicatalog.projection.property.source.SourceReader;
 import com.apicatalog.projection.property.source.SourceWriter;
-import com.apicatalog.projection.property.target.TargetReader;
-import com.apicatalog.projection.property.target.TargetWriter;
 
 public class SourcesPropertyBuilderApi<P> {
 	
@@ -111,13 +107,7 @@ public class SourcesPropertyBuilderApi<P> {
 
 	public Optional<PropertyReader> buildPropertyReader(ProjectionRegistry registry) throws ProjectionError {
 
-		final TargetReader targetReader =  
-				TargetReaderBuilder.newInstance()
-					.getter(targetGetter, targetReference)
-					.build(registry)
-					.orElseThrow(() -> new ProjectionError("Target is not readable. Property " + projectionPropertyName +  " is ignored"));
-					
-		Collection<ConverterMapping> converters = new ArrayList<>(conversionBuilder.size()*2);
+		final Collection<ConverterMapping> converters = new ArrayList<>(conversionBuilder.size()*2);
 		
 		try {
 			for (ConversionMappingBuilder cb : conversionBuilder) {
@@ -142,21 +132,14 @@ public class SourcesPropertyBuilderApi<P> {
 
 		return SourcePropertyReaderBuilder.newInstance()
 					.sourceWriter(sourceWriter.get())
-					.targetReader(targetReader)
+					.target(targetGetter, targetReference)
 					.build(registry).map(PropertyReader.class::cast)
 					;		
 	}
 
 	public Optional<PropertyWriter> buildPropertyWriter(ProjectionRegistry registry) throws ProjectionError {
 		
-		final TargetWriter targetWriter =  
-				TargetWriterBuilder.newInstance()
-					.setter(targetSetter, targetReference)
-					.build(registry)
-					.orElseThrow(() -> new ProjectionError("Target is not readable. Property " + projectionPropertyName +  " is ignored"));
-			
-		
-		Collection<ConverterMapping> converters = new ArrayList<>(conversionBuilder.size()*2);
+		final Collection<ConverterMapping> converters = new ArrayList<>(conversionBuilder.size()*2);
 		
 		try {
 			for (ConversionMappingBuilder cb : conversionBuilder) {
@@ -181,7 +164,7 @@ public class SourcesPropertyBuilderApi<P> {
 
 		return SourcePropertyWriterBuilder.newInstance()
 					.sourceReader(sourceReader.get())
-					.targetWriter(targetWriter)
+					.target(targetSetter, targetReference)
 					.build(registry).map(PropertyWriter.class::cast)
 					;
 	}

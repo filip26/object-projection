@@ -18,8 +18,8 @@ import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.annotation.Visibility;
 import com.apicatalog.projection.builder.ProvidedPropertyWriterBuilder;
 import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
+import com.apicatalog.projection.builder.writer.ComposerBuilder;
 import com.apicatalog.projection.builder.writer.ConstantPropertyWriterBuilder;
-import com.apicatalog.projection.builder.writer.TargetWriterBuilder;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
 import com.apicatalog.projection.object.setter.FieldSetter;
@@ -27,7 +27,7 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.property.SourcePropertyWriter;
 import com.apicatalog.projection.property.source.SingleSourceReader;
-import com.apicatalog.projection.property.target.TargetWriter;
+import com.apicatalog.projection.property.target.Composer;
 
 final class PropertyWriterMapper {
 
@@ -94,14 +94,18 @@ final class PropertyWriterMapper {
 
 		final Setter targetSetter = FieldSetter.from(field, ObjectUtils.getTypeOf(field));
 
-		final Optional<TargetWriter> targetWriter =  
-					TargetWriterBuilder.newInstance()
-						.setter(targetSetter, PropertyWriterMapper.isReference(targetSetter.getType()))
-						.build(registry);
+		final boolean targetReference = PropertyReaderMapper.isReference(targetSetter.getType());
 		
-		if (targetWriter.isEmpty()) {
-			logger.warn("Target is not writable. Property {} is ignored.", field.getName());
-			return Optional.empty();
+		ObjectType sourceTargetType = targetSetter.getType();
+		
+		if (targetReference) {
+			if (targetSetter.getType().isCollection()) {
+				sourceTargetType = ObjectType.of(targetSetter.getType().getType(), Object.class);
+			} else if (targetSetter.getType().isArray()) {
+				sourceTargetType = ObjectType.of(Object[].class);
+			} else {
+				sourceTargetType = ObjectType.of(Object.class);
+			}
 		}
 		
 		final Optional<SingleSourceReader> sourceReader = 
@@ -111,15 +115,20 @@ final class PropertyWriterMapper {
 						SingleSourceReaderBuilder.newInstance()
 							.objectClass(defaultSourceClass)
 							.optional(true)
-							.targetType(targetWriter.get().getType())
+							.targetType(sourceTargetType)
 						);
 		
 		if (sourceReader.isEmpty()) {
 			logger.warn("Source is missing. Property {} is ignored.", field.getName());
 			return Optional.empty();
 		}
-
-		return Optional.of(new SourcePropertyWriter(sourceReader.get(), targetWriter.get()));
+		
+		final Optional<Composer> composer =  
+				ComposerBuilder.newInstance()
+					.setter(targetSetter, targetReference)
+					.build(registry);
+	
+		return Optional.of(new SourcePropertyWriter(sourceReader.get(), targetSetter, composer.orElse(null)));
 	}
 
 	Optional<PropertyWriter> getProvidedProperty(final Field field) throws ProjectionError {

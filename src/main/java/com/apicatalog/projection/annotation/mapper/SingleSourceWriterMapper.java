@@ -18,7 +18,6 @@ import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
 import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
 import com.apicatalog.projection.builder.writer.SourcePropertyWriterBuilder;
-import com.apicatalog.projection.builder.writer.TargetWriterBuilder;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.object.ObjectType;
@@ -28,7 +27,6 @@ import com.apicatalog.projection.object.setter.FieldSetter;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.property.source.SingleSourceReader;
-import com.apicatalog.projection.property.target.TargetWriter;
 
 final class SingleSourceWriterMapper {
 
@@ -48,21 +46,25 @@ final class SingleSourceWriterMapper {
 		
 		final Setter targetSetter = FieldSetter.from(field, ObjectUtils.getTypeOf(field));
 		
-		final Optional<TargetWriter> targetWriter =  
-				TargetWriterBuilder.newInstance()
-					.setter(targetSetter, PropertyReaderMapper.isReference(targetSetter.getType()))
-					.build(registry);
-	
-		if (targetWriter.isEmpty()) {
-			logger.warn("Target is not readable. Property {} is ignored.", field.getName());
-			return Optional.empty();
+		final boolean targetReference = PropertyReaderMapper.isReference(targetSetter.getType());
+		
+		ObjectType sourceTargetType = targetSetter.getType();
+		
+		if (targetReference) {
+			if (targetSetter.getType().isCollection()) {
+				sourceTargetType = ObjectType.of(targetSetter.getType().getType(), Object.class);
+			} else if (targetSetter.getType().isArray()) {
+				sourceTargetType = ObjectType.of(Object[].class);
+			} else {
+				sourceTargetType = ObjectType.of(Object.class);
+			}
 		}
 
 		final Optional<SingleSourceReader> sourceReader = 
 					getSingleSourceReader( 
 						sourceAnnotation,
 						field.getName(),
-						targetWriter.get().getType(),
+						sourceTargetType,
 						defaultSourceClass
 						); 
 
@@ -73,7 +75,7 @@ final class SingleSourceWriterMapper {
 
 		return SourcePropertyWriterBuilder.newInstance()
 					.sourceReader(sourceReader.get())
-					.targetWriter(targetWriter.get())
+					.target(targetSetter, targetReference)
 					.build(registry).map(PropertyWriter.class::cast);
 	}
 

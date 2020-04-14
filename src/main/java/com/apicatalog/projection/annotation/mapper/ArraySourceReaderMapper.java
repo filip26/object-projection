@@ -13,7 +13,6 @@ import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.builder.reader.SourcePropertyReaderBuilder;
-import com.apicatalog.projection.builder.reader.TargetReaderBuilder;
 import com.apicatalog.projection.builder.writer.ArraySourceWriterBuilder;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.object.ObjectType;
@@ -23,7 +22,6 @@ import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.source.ArraySourceWriter;
 import com.apicatalog.projection.property.source.SingleSourceWriter;
-import com.apicatalog.projection.property.target.TargetReader;
 
 final class ArraySourceReaderMapper {
 
@@ -46,21 +44,25 @@ final class ArraySourceReaderMapper {
 
 		final Getter targetGetter = FieldGetter.from(field, ObjectUtils.getTypeOf(field));
 		
-		final Optional<TargetReader> targetReader =  
-				TargetReaderBuilder.newInstance()
-					.getter(targetGetter, PropertyReaderMapper.isReference(targetGetter.getType()))
-					.build(registry);
-	
-		if (targetReader.isEmpty()) {
-			logger.warn("Target is not readable. Property {} is ignored.", field.getName());
-			return Optional.empty();
+		final boolean targetReference = PropertyReaderMapper.isReference(targetGetter.getType());
+
+		ObjectType sourceTargetType = targetGetter.getType();
+		
+		if (targetReference) {
+			if (targetGetter.getType().isCollection()) {
+				sourceTargetType = ObjectType.of(targetGetter.getType().getType(), Object.class);
+			} else if (targetGetter.getType().isArray()) {
+				sourceTargetType = ObjectType.of(Object[].class);
+			} else {
+				sourceTargetType = ObjectType.of(Object.class);
+			}
 		}
 
 		final Optional<ArraySourceWriter> arraySourceWriter = 
 					getArraySourceWriter(
 							sourcesAnnotation, 
 							field.getName(),
-							targetReader.get().getType(),
+							sourceTargetType,
 							defaultSourceClass
 							);
 
@@ -71,7 +73,7 @@ final class ArraySourceReaderMapper {
 		
 		return SourcePropertyReaderBuilder.newInstance()
 				.sourceWriter(arraySourceWriter.get())
-				.targetReader(targetReader.get())
+				.target(targetGetter, targetReference)
 				.build(registry).map(PropertyReader.class::cast);
 	}
 	

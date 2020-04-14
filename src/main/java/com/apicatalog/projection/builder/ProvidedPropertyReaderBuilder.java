@@ -7,12 +7,10 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.builder.reader.TargetReaderBuilder;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.ProvidedObjectPropertyReader;
 import com.apicatalog.projection.property.ProvidedProjectionPropertyReader;
-import com.apicatalog.projection.property.target.TargetReader;
 
 public class ProvidedPropertyReaderBuilder {
 
@@ -44,11 +42,11 @@ public class ProvidedPropertyReaderBuilder {
 			return buildReference(registry);
 		}
 		
-		TargetReader targetReader = TargetReaderBuilder.newInstance()
-										.getter(targetGetter, targetReference)
-										.build(registry)
-										.orElseThrow(() -> new ProjectionError("Target is not readable"))
-										;
+//		TargetReader targetReader = ExtractorBuilder.newInstance()
+//										.getter(targetGetter, targetReference)
+//										.build(registry)
+//										.orElseThrow(() -> new ProjectionError("Target is not readable"))
+//										;
 		
 		final ProvidedObjectPropertyReader property = new ProvidedObjectPropertyReader();
 
@@ -56,7 +54,7 @@ public class ProvidedPropertyReaderBuilder {
 		property.setObjectQualifier(qualifier);
 		
 		property.setOptional(optional);
-		property.setTargetReader(targetReader);
+		property.setTargetGetter(targetGetter);
 		
 		return Optional.of(property);
 	}

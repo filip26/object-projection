@@ -13,7 +13,7 @@ import com.apicatalog.projection.annotation.Provided;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.builder.ProvidedPropertyReaderBuilder;
-import com.apicatalog.projection.builder.reader.TargetReaderBuilder;
+import com.apicatalog.projection.builder.reader.ExtractorBuilder;
 import com.apicatalog.projection.builder.writer.SingleSourceWriterBuilder;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
@@ -22,7 +22,7 @@ import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.SourcePropertyReader;
 import com.apicatalog.projection.property.source.SingleSourceWriter;
-import com.apicatalog.projection.property.target.TargetReader;
+import com.apicatalog.projection.property.target.Extractor;
 
 final class PropertyReaderMapper {
 
@@ -69,19 +69,22 @@ final class PropertyReaderMapper {
 		if (defaultSourceClass == null) {
 			logger.warn("Source class is missing. Property {} is ignored.", field.getName());
 			return Optional.empty();				
-
 		}
 
 		final Getter targetGetter = FieldGetter.from(field, ObjectUtils.getTypeOf(field));
-
-		final Optional<TargetReader> targetReader =  
-					TargetReaderBuilder.newInstance()
-						.getter(targetGetter, PropertyReaderMapper.isReference(targetGetter.getType()))
-						.build(registry);
 		
-		if (targetReader.isEmpty()) {
-			logger.warn("Target is not readable. Property {} is ignored.", field.getName());
-			return Optional.empty();
+		final boolean targetReference = PropertyReaderMapper.isReference(targetGetter.getType());
+		
+		ObjectType sourceTargetType = targetGetter.getType();
+		
+		if (targetReference) {
+			if (targetGetter.getType().isCollection()) {
+				sourceTargetType = ObjectType.of(targetGetter.getType().getType(), Object.class);
+			} else if (targetGetter.getType().isArray()) {
+				sourceTargetType = ObjectType.of(Object[].class);
+			} else {
+				sourceTargetType = ObjectType.of(Object.class);
+			}
 		}
 
 		final Optional<SingleSourceWriter> sourceWriter = 
@@ -91,7 +94,7 @@ final class PropertyReaderMapper {
 						SingleSourceWriterBuilder.newInstance()
 							.objectClass(defaultSourceClass)
 							.optional(true)
-							.targetType(targetReader.get().getType())
+							.targetType(sourceTargetType)
 						);
 				
 		if (sourceWriter.isEmpty()) {
@@ -99,7 +102,12 @@ final class PropertyReaderMapper {
 			return Optional.empty();
 		}
 		
-		return Optional.of(new SourcePropertyReader(sourceWriter.get(), targetReader.get()));	
+		final Optional<Extractor> extractor =  
+				ExtractorBuilder.newInstance()
+					.getter(targetGetter, targetReference)
+					.build(registry);
+			
+		return Optional.of(new SourcePropertyReader(sourceWriter.get(), targetGetter, extractor.orElse(null)));	
 	}
 
 	Optional<PropertyReader> getProvided(final Field field) throws ProjectionError {

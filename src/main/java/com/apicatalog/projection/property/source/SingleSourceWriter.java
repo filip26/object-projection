@@ -76,7 +76,7 @@ public final class SingleSourceWriter implements SourceWriter {
 			instance = Optional.of(ObjectUtils.newInstance(instanceClass.get()));
 			context.set(sourceType.getName(), instance.get());
 		}
-
+		
 		setter.set(instance.get(), value.get());
 	}
 	

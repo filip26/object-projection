@@ -88,7 +88,7 @@ public class SingleSourceWriterBuilder {
 
 		try {
 			// set conversions to apply
-			buildChain(source, converters, typeConverters, targetType);
+			source.setTargetType(buildChain(source, converters, typeConverters, targetType));
 			
 			// set optional 
 			source.setOptional(optional);
@@ -135,18 +135,23 @@ public class SingleSourceWriterBuilder {
 		return this;
 	}	
 	
-	final void buildChain(SingleSourceWriter source, final Collection<ConverterMapping> converters, final TypeConversions typeConversions, ObjectType targetType) throws UnknownConversion {
+	final ObjectType buildChain(SingleSourceWriter source, final Collection<ConverterMapping> converters, final TypeConversions typeConversions, ObjectType targetType) throws UnknownConversion {
 
 		final ArrayList<Conversion> conversions = new ArrayList<>((converters == null ? 0 : converters.size()) * 2 + 1);
 
 		if (converters == null || converters.isEmpty()) {
+			
+			if (Object.class == targetType.getType()) {
+				return sourceSetter.getType();
+			}
+
 			typeConversions.get(
 					targetType,
 					sourceSetter.getType())
 				.ifPresent(conversions::add);
 			source.setConversions(conversions.toArray(new Conversion[0]));
 
-			return;
+			return targetType;
 		}
 		
 		final ConverterMapping[] mapping = converters.toArray(new ConverterMapping[0]); 
@@ -174,5 +179,6 @@ public class SingleSourceWriterBuilder {
 		}
 		
 		source.setConversions(conversions.toArray(new Conversion[0]));
+		return targetType;
 	}
 }

@@ -6,9 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.property.SourcePropertyReader;
 import com.apicatalog.projection.property.source.SourceWriter;
-import com.apicatalog.projection.property.target.TargetReader;
+import com.apicatalog.projection.property.target.Extractor;
 
 public class SourcePropertyReaderBuilder {
 
@@ -18,7 +19,9 @@ public class SourcePropertyReaderBuilder {
 	
 	SourceWriter sourceWriter;
 	
-	TargetReader targetReader;
+	Getter targetGetter;
+	
+	boolean targetReference;
 	
 	protected SourcePropertyReaderBuilder() {
 	}
@@ -29,12 +32,17 @@ public class SourcePropertyReaderBuilder {
 			
 	public Optional<SourcePropertyReader> build(final ProjectionRegistry registry) {
 
-		if (targetReader == null && sourceWriter == null) {
+		if (targetGetter == null && sourceWriter == null) {
 //TODO			logger.warn(SOURCE_IS_MISSING, targetSetter != null ? targetSetter.getName() : targetGetter.getName());
 			return Optional.empty();
 		}
 		
-		return Optional.of(new SourcePropertyReader(sourceWriter, targetReader));
+		final Optional<Extractor> extractor =  
+				ExtractorBuilder.newInstance()
+					.getter(targetGetter, targetReference)
+					.build(registry);
+		
+		return Optional.of(new SourcePropertyReader(sourceWriter, targetGetter, extractor.orElse(null)));
 	}
 
 	public SourcePropertyReaderBuilder sourceWriter(SourceWriter sourceWriter) {
@@ -42,8 +50,9 @@ public class SourcePropertyReaderBuilder {
 		return this;
 	}
 
-	public SourcePropertyReaderBuilder targetReader(TargetReader targetReader) {
-		this.targetReader = targetReader;
+	public SourcePropertyReaderBuilder target(Getter getter, boolean reference) {
+		this.targetGetter = getter;
+		this.targetReference = reference;
 		return this;
 	}
 }

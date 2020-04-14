@@ -6,9 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.SourcePropertyWriter;
 import com.apicatalog.projection.property.source.SourceReader;
-import com.apicatalog.projection.property.target.TargetWriter;
+import com.apicatalog.projection.property.target.Composer;
 
 public final class SourcePropertyWriterBuilder {
 
@@ -18,7 +19,9 @@ public final class SourcePropertyWriterBuilder {
 	
 	SourceReader sourceReader;
 	
-	TargetWriter targetWriter;
+	Setter targetSetter;
+	
+	boolean targetReference;
 
 	protected SourcePropertyWriterBuilder() {
 	}
@@ -27,14 +30,19 @@ public final class SourcePropertyWriterBuilder {
 		return new SourcePropertyWriterBuilder();
 	}
 			
-	public Optional<SourcePropertyWriter> build(final ProjectionRegistry factory) {
+	public Optional<SourcePropertyWriter> build(final ProjectionRegistry registry) {
 
-		if (targetWriter == null && sourceReader == null) {
+		if (targetSetter == null && sourceReader == null) {
 //TODO			logger.warn(SOURCE_IS_MISSING, targetSetter != null ? targetSetter.getName() : targetGetter.getName());
 			return Optional.empty();
 		}
+		
+		final Optional<Composer> composer =  
+				ComposerBuilder.newInstance()
+					.setter(targetSetter, targetReference)
+					.build(registry);
 
-		return Optional.of(new SourcePropertyWriter(sourceReader, targetWriter));		
+		return Optional.of(new SourcePropertyWriter(sourceReader, targetSetter, composer.orElse(null)));		
 	}
 
 	public SourcePropertyWriterBuilder sourceReader(SourceReader sourceReader) {
@@ -42,8 +50,9 @@ public final class SourcePropertyWriterBuilder {
 		return this;
 	}
 
-	public SourcePropertyWriterBuilder targetWriter(TargetWriter writer) {
-		this.targetWriter = writer;
+	public SourcePropertyWriterBuilder target(Setter setter, boolean reference) {
+		this.targetSetter = setter;
+		this.targetReference = reference;
 		return this;
 	}
 }

@@ -80,7 +80,7 @@ public class SingleSourceReaderBuilder {
 
 		try {
 			// set conversions to apply
-			buildChain(source, converters, typeConverters);
+			source.setType(buildChain(source, converters, typeConverters));
 	
 			// set optional 
 			source.setOptional(optional);
@@ -127,12 +127,16 @@ public class SingleSourceReaderBuilder {
 		return this;
 	}	
 	
-	final void buildChain(final SingleSourceReader source, final Collection<ConverterMapping> converters, final TypeConversions typeConversions) throws UnknownConversion {
+	final ObjectType buildChain(final SingleSourceReader source, final Collection<ConverterMapping> converters, final TypeConversions typeConversions) throws UnknownConversion {
 
 		final ArrayList<Conversion> conversions = new ArrayList<>((converters != null ? converters.size() : 0) * 2 + 1);
 
 		if (converters == null || converters.isEmpty()) {
 			
+			if (Object.class == targetType.getType()) {
+				return sourceGetter.getType();
+			}
+
 			typeConversions.get(
 					sourceGetter.getType(),
 					targetType)
@@ -140,7 +144,9 @@ public class SingleSourceReaderBuilder {
 
 
 			source.setConversions(conversions.toArray(new Conversion[0]));
-			return;
+			
+			
+			return targetType;
 		}
 		
 		final Iterator<ConverterMapping> it = converters.iterator();
@@ -171,5 +177,6 @@ public class SingleSourceReaderBuilder {
 
 
 		source.setConversions(conversions.toArray(new Conversion[0]));
+		return targetType;
 	}
 }

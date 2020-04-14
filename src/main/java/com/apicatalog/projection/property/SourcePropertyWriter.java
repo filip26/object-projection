@@ -9,8 +9,9 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ProjectionStack;
+import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.source.SourceReader;
-import com.apicatalog.projection.property.target.TargetWriter;
+import com.apicatalog.projection.property.target.Composer;
 
 public final class SourcePropertyWriter implements PropertyWriter {
 
@@ -18,13 +19,16 @@ public final class SourcePropertyWriter implements PropertyWriter {
 
 	final SourceReader sourceReader;
 	
-	final TargetWriter targetWriter;
+	final Setter targetSetter;
+	
+	final Composer composer;
 	
 	Set<Integer> visibleLevels;
 
-	public SourcePropertyWriter(final SourceReader sourceReader, final TargetWriter targetWriter) {
+	public SourcePropertyWriter(final SourceReader sourceReader, final Setter targetSetter, final Composer composer) {
 		this.sourceReader = sourceReader;
-		this.targetWriter = targetWriter;
+		this.targetSetter = targetSetter;
+		this.composer = composer;
 	}
 
 	@Override
@@ -35,31 +39,33 @@ public final class SourcePropertyWriter implements PropertyWriter {
 			return;
 		}
 
-		if (targetWriter == null) {
-			logger.warn("Target writer is missing. Property skipped.");
+		if (targetSetter == null) {
+			logger.warn("Target setter is missing. Property skipped.");
 			return;
 		}
 		
 		if (logger.isDebugEnabled()) {
-			logger.debug("Write {} to {}, depth = {}", sourceReader.getType(), targetWriter.getType(), queue.length());
+			logger.debug("Write {} to {}, depth = {}", sourceReader.getType(), targetSetter.getType(), queue.length());
 		}
 
 		// get source value
-		final Optional<Object> object = sourceReader.read(queue, context);
-		
-		if (object.isPresent()) {
-			targetWriter.write(queue, context, object.get());
+		Optional<Object> object = sourceReader.read(queue, context);
+
+		if (object.isEmpty()) {
+			return;
 		}
 
-//		object = Optional.ofNullable(targetAdapter.forward(queue, object.get(), context));
-//		
-//		if (object.isPresent()) {
-//			if (logger.isTraceEnabled()) {
-//				logger.trace("{} : {} = {}", targetSetter.getName(), targetSetter.getType(), object.get());	
-//			}
-//			
-//			targetSetter.set(queue.peek(), object.get());
-//		}
+		if (composer != null) {
+			object = composer.compose(queue, object.get(), context);
+		}
+		
+		if (object.isPresent()) {
+			if (logger.isTraceEnabled()) {
+				logger.trace("{} : {} = {}", targetSetter.getName(), targetSetter.getType(), object.get());	
+			}
+			
+			targetSetter.set(queue.peek(), object.get());
+		}		
 	}
 
 	@Override

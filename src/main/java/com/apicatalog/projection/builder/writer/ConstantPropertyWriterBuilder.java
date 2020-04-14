@@ -14,7 +14,6 @@ import com.apicatalog.projection.conversion.implicit.TypeConversions;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.ConstantPropertyWriter;
-import com.apicatalog.projection.property.target.TargetWriter;
 
 public final class ConstantPropertyWriterBuilder {
 
@@ -22,9 +21,9 @@ public final class ConstantPropertyWriterBuilder {
 
 	String[] constants;
 	
-	Setter setter;
+	Setter targetSetter;
 	
-	boolean reference;
+	boolean targetReference;
 	
 	protected ConstantPropertyWriterBuilder() {
 	}
@@ -37,23 +36,27 @@ public final class ConstantPropertyWriterBuilder {
 		
 		final ConstantPropertyWriter property = new ConstantPropertyWriter();
 		
-		final Optional<TargetWriter> targetWriter = TargetWriterBuilder.newInstance()
-										.setter(setter, reference)
-										.build(registry);
-
-		if (targetWriter.isEmpty()) {
-			return Optional.empty();
+		ObjectType sourceTargetType = targetSetter.getType();
+		
+		if (targetReference) {
+			if (targetSetter.getType().isCollection()) {
+				sourceTargetType = ObjectType.of(targetSetter.getType().getType(), Object.class);
+			} else if (targetSetter.getType().isArray()) {
+				sourceTargetType = ObjectType.of(Object[].class);
+			} else {
+				sourceTargetType = ObjectType.of(Object.class);
+			}
 		}
 
 		// set constant values
 		property.setConstants(constants);
 		
 		// set target writer
-		property.setTargetWriter(targetWriter.get());
+		property.setTargetSetter(targetSetter);
 		
 		try {
 			// set source conversion if needed
-			property.setConversions(buildChain(constants, registry.getTypeConversions(), targetWriter.get().getType()));
+			property.setConversions(buildChain(constants, registry.getTypeConversions(), sourceTargetType));
 			
 			return Optional.of(property);
 			
@@ -83,8 +86,8 @@ public final class ConstantPropertyWriterBuilder {
 	}
 	
 	public ConstantPropertyWriterBuilder targetSetter(final Setter targetSetter, final boolean reference) {
-		this.setter = targetSetter;
-		this.reference = reference;
+		this.targetSetter = targetSetter;
+		this.targetReference = reference;
 		return this;
 	}
 	

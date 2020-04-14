@@ -7,12 +7,10 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.builder.writer.TargetWriterBuilder;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.property.ProvidedObjectPropertyWriter;
 import com.apicatalog.projection.property.ProvidedProjectionPropertyWriter;
-import com.apicatalog.projection.property.target.TargetWriter;
 
 public class ProvidedPropertyWriterBuilder {
 
@@ -44,11 +42,11 @@ public class ProvidedPropertyWriterBuilder {
 			return buildReference(registry);
 		}
 		
-		TargetWriter targetWriter = TargetWriterBuilder.newInstance()
-				.setter(targetSetter, targetReference)
-				.build(registry)
-				.orElseThrow(() -> new ProjectionError("Target is not readable"))
-				;
+//		TargetWriter targetWriter = ComposerBuilder.newInstance()
+//				.setter(targetSetter, targetReference)
+//				.build(registry)
+//				.orElseThrow(() -> new ProjectionError("Target is not readable"))
+//				;
 
 		final ProvidedObjectPropertyWriter property = new ProvidedObjectPropertyWriter(registry);
 		
@@ -57,7 +55,7 @@ public class ProvidedPropertyWriterBuilder {
 		
 		property.setOptional(optional);
 		
-		property.setTargetWriter(targetWriter);
+		property.setTargetSetter(targetSetter);
 		
 		return Optional.of(property);
 	}

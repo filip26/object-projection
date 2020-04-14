@@ -11,9 +11,9 @@ import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.ConverterError;
-import com.apicatalog.projection.property.target.TargetWriter;
+import com.apicatalog.projection.object.setter.Setter;
 
-public class ConstantPropertyWriter implements PropertyWriter {
+public final class ConstantPropertyWriter implements PropertyWriter {
 
 	final Logger logger = LoggerFactory.getLogger(ConstantPropertyWriter.class);
 
@@ -21,22 +21,22 @@ public class ConstantPropertyWriter implements PropertyWriter {
 	
 	Conversion[] conversions;
 	
-	TargetWriter targetWriter;
+	Setter targetSetter;
 	
 	Set<Integer> visibleLevels;
 
 	@Override
-	public void write(ProjectionStack queue, CompositionContext context) throws ProjectionError {
+	public void write(final ProjectionStack stack, final CompositionContext context) throws ProjectionError {
 		
-		if (targetWriter == null) {
+		if (targetSetter == null) {
 			return;
 		}
 
-		logger.debug("Forward constant = {}, depth = {}", constants, queue.length());
+		logger.debug("Forward constant = {}, depth = {}", constants, stack.length());
 
 		Optional<Object> object = Optional.of(constants);
-		
-		// apply explicit conversions
+				
+		// apply conversions
 		if (conversions != null) {
 			try {
 				for (final Conversion conversion : conversions) {
@@ -51,7 +51,7 @@ public class ConstantPropertyWriter implements PropertyWriter {
 		}
 		
 		if (object.isPresent()) {
-			targetWriter.write(queue, context, object.get());
+			targetSetter.set(stack.peek(), object.get());
 		}
 	}
 
@@ -59,8 +59,8 @@ public class ConstantPropertyWriter implements PropertyWriter {
 		this.constants = constants;
 	}
 
-	public void setTargetWriter(TargetWriter targetWriter) {
-		this.targetWriter = targetWriter;
+	public void setTargetSetter(Setter targetSetter) {
+		this.targetSetter = targetSetter;
 	}
 	
 	public void setConversions(Conversion[] conversions) {

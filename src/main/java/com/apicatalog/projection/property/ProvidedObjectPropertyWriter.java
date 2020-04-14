@@ -1,5 +1,6 @@
 package com.apicatalog.projection.property;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
@@ -14,7 +15,7 @@ import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.conversion.UnknownConversion;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.object.ObjectType;
-import com.apicatalog.projection.property.target.TargetWriter;
+import com.apicatalog.projection.object.setter.Setter;
 
 
 public class ProvidedObjectPropertyWriter implements PropertyWriter {
@@ -23,7 +24,7 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 
 	final ProjectionRegistry registry;
 	
-	TargetWriter targetWriter;
+	Setter targetSetter;
 	
 	Set<Integer> visibleLevels;
 	
@@ -38,61 +39,44 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 	@Override
 	public void write(final ProjectionStack stack, final CompositionContext context) throws ProjectionError {		
 
-		if (targetWriter == null) {
+		if (targetSetter == null) {
 			return;
 		}
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Write {}", targetWriter.getType());
+		
+		logger.debug("Write {} : {}, qualifier = {}, optional = {}, depth = {}", targetSetter.getName(), targetSetter.getType(), objectQualifier, optional, stack.length());
+		
+		Optional<Object> object = context.get(objectQualifier, targetSetter.getType().getType());
+		
+		if (object.isEmpty()) {
+			return;
 		}
-
-		Optional<Object> object = context.get(objectQualifier, targetWriter.getType().getType());
-
-		if (object.isPresent()) {
+		
+		final Object value = object.get();
+		
+		final ObjectType sourceType = Collection.class.isInstance(value)
+									? ObjectType.of(value.getClass(), Object.class)
+									: ObjectType.of(value.getClass())
+									;
+		
+		try {
+			Optional<Conversion> conversion = registry.getTypeConversions().get(sourceType, targetSetter.getType());
 			
-			try {
-				Optional<Conversion> conversion = 
-						registry.getTypeConversions()
-								.get(	
-									ObjectType.of(object.get().getClass(), Object.class),
-									targetWriter.getType()
-									);
-				
-				if (conversion.isPresent()) {
-					object = Optional.ofNullable(conversion.get().convert(object.get()));
-				}
-				
-				if (object.isPresent()) {
-					targetWriter.write(stack, context, object.get());
-				}
-				
-			} catch (UnknownConversion | ConverterError e) {
-				throw new ProjectionError(e);
+			if (conversion.isPresent()) {
+				object = Optional.ofNullable(conversion.get().convert(value));
 			}
-		}
 
-		
-//		
-		
-//		logger.debug("Forward {} : {}, qualifier = {}, optional = {}, depth = {}", targetSetter.getName(), targetSetter.getType(), objectQualifier, optional, queue.length());
-//		
-//		Optional<Object> object = context.get(objectQualifier, targetSetter.getType().getType());
-//		
-//		if (object.isEmpty()) {
-//			return;
-//		}
-//		
-//		if (targetAdapter != null) {
-//			object = Optional.ofNullable(targetAdapter.forward(queue, object.get(), context));
-//		}
-//		
-//		if (object.isPresent()) {
-//			targetSetter.set(queue.peek(), object.get());
-//		}
+			if (object.isPresent()) {
+				targetSetter.set(stack.peek(), object.get());
+			}
+
+					
+		} catch (UnknownConversion | ConverterError e) {
+			throw new ProjectionError(e);
+		}		
 	}
 	
-	public void setTargetWriter(TargetWriter targetWriter) {
-		this.targetWriter = targetWriter;
+	public void setTargetSetter(Setter setter) {
+		this.targetSetter = setter;
 	}
 	
 	@Override

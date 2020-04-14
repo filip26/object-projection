@@ -14,7 +14,6 @@ import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.builder.reader.ArraySourceReaderBuilder;
 import com.apicatalog.projection.builder.writer.SourcePropertyWriterBuilder;
-import com.apicatalog.projection.builder.writer.TargetWriterBuilder;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
@@ -23,7 +22,6 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.property.source.ArraySourceReader;
 import com.apicatalog.projection.property.source.SingleSourceReader;
-import com.apicatalog.projection.property.target.TargetWriter;
 
 final class ArraySourceWriterMapper {
 
@@ -45,22 +43,26 @@ final class ArraySourceWriterMapper {
 		final Sources sourcesAnnotation = field.getAnnotation(Sources.class);
 
 		final Setter targetSetter = FieldSetter.from(field, ObjectUtils.getTypeOf(field));
+
+		final boolean targetReference = PropertyReaderMapper.isReference(targetSetter.getType());
 		
-		final Optional<TargetWriter> targetWriter =  
-				TargetWriterBuilder.newInstance()
-					.setter(targetSetter, PropertyReaderMapper.isReference(targetSetter.getType()))
-					.build(registry);
-			
-		if (targetWriter.isEmpty()) {
-			logger.warn("Target is not readable. Property {} is ignored.", field.getName());
-			return Optional.empty();
+		ObjectType sourceTargetType = targetSetter.getType();
+		
+		if (targetReference) {
+			if (targetSetter.getType().isCollection()) {
+				sourceTargetType = ObjectType.of(targetSetter.getType().getType(), Object.class);
+			} else if (targetSetter.getType().isArray()) {
+				sourceTargetType = ObjectType.of(Object[].class);
+			} else {
+				sourceTargetType = ObjectType.of(Object.class);
+			}
 		}
 
 		final Optional<ArraySourceReader> arraySourceReader = 
 					getArraySourceReader(
 							sourcesAnnotation, 
 							field.getName(), 
-							targetWriter.get().getType(),
+							sourceTargetType,
 							defaultSourceClass
 							);
 
@@ -71,7 +73,7 @@ final class ArraySourceWriterMapper {
 		
 		return SourcePropertyWriterBuilder.newInstance()
 					.sourceReader(arraySourceReader.get())
-					.targetWriter(targetWriter.get())
+					.target(targetSetter, targetReference)
 					.build(registry).map(PropertyWriter.class::cast);
 	}
 	
