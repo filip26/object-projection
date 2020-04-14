@@ -136,6 +136,9 @@ public class SingleSourceReaderBuilder {
 			if (Object.class == targetType.getType()) {
 				return sourceGetter.getType();
 			}
+			if (targetType.isCollection() && Object.class == targetType.getComponentType()) {
+				return sourceGetter.getType();
+			}
 
 			typeConversions.get(
 					sourceGetter.getType(),

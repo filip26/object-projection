@@ -138,10 +138,13 @@ public class SingleSourceWriterBuilder {
 	final ObjectType buildChain(SingleSourceWriter source, final Collection<ConverterMapping> converters, final TypeConversions typeConversions, ObjectType targetType) throws UnknownConversion {
 
 		final ArrayList<Conversion> conversions = new ArrayList<>((converters == null ? 0 : converters.size()) * 2 + 1);
-
+		
 		if (converters == null || converters.isEmpty()) {
 			
 			if (Object.class == targetType.getType()) {
+				return sourceSetter.getType();
+			}
+			if (targetType.isCollection() && Object.class == targetType.getComponentType()) {
 				return sourceSetter.getType();
 			}
 
