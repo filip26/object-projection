@@ -8,12 +8,12 @@ public final class SourceObject {
 	
 	final Object object;
 	
-	protected SourceObject(String name, Object object) {
+	protected SourceObject(final String name, final Object object) {
 		this.name = name;
 		this.object = object;
 	}
 	
-	public static SourceObject of(String name, Object object) {
+	public static SourceObject of(final String name, final Object object) {
 		return new SourceObject(name, object);
 	}
 	

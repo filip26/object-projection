@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.context.ExtractionContext;
-import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.object.ObjectType;
@@ -31,13 +30,15 @@ public final class SingleSourceWriter implements SourceWriter {
 	boolean optional;
 
 	@Override
-	public void write(ProjectionStack queue, ExtractionContext context, Object object) throws ProjectionError {
+	public void write(final ExtractionContext context, final Object object) throws ProjectionError {
 		
 		if (!context.isAccepted(sourceType)) {
 			return;
 		}
-		
-		logger.debug("Write {} to {}.{}, optional = {}, depth = {}", object, sourceType, setter.getName(), optional, queue.length());
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Write {} to {}.{}, optional = {}", object, sourceType, setter.getName(), optional);
+		}
 
 		Optional<Object> value = Optional.ofNullable(object);
 		
@@ -45,29 +46,27 @@ public final class SingleSourceWriter implements SourceWriter {
 			return;
 		}
 		
-		// apply explicit conversions
+		// apply conversions
 		if (conversions != null) {
 			try {
 				for (final Conversion conversion : conversions) {
-					if (value.isEmpty()) {
-						break;
-					}
+					
 					value = Optional.ofNullable(conversion.convert(value.get()));
+					
+					if (value.isEmpty()) {
+						return;
+					}
 				}
 			} catch (ConverterError e) {
 				throw new ProjectionError(e);
 			}
 		}
 		
-		if (value.isEmpty()) {
-			return;
-		}
-		
 		Optional<?> instance =  context.get(sourceType);
 
 		if (instance.isEmpty()) {
 			
-			Optional<Class<?>> instanceClass = context.getAssignableType(sourceType);
+			final Optional<Class<?>> instanceClass = context.getAssignableType(sourceType);
 			
 			if (instanceClass.isEmpty()) {
 				return;

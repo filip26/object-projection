@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.context.CompositionContext;
-import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.object.ObjectType;
@@ -29,10 +28,10 @@ public final class SingleSourceReader implements SourceReader {
 	boolean optional;
 
 	@Override
-	public Optional<Object> read(ProjectionStack queue, CompositionContext context) throws ProjectionError {
+	public Optional<Object> read(CompositionContext context) throws ProjectionError {
 		
 		if (logger.isDebugEnabled()) {
-			logger.debug("Read {}.{}, optional = {}, depth = {}", sourceObjectType, getter.getName(), optional, queue.length());
+			logger.debug("Read {}.{}, optional = {}", sourceObjectType, getter.getName(), optional);
 		}
 
 		final Optional<Object> instance = context.get(sourceObjectType);
@@ -51,16 +50,20 @@ public final class SingleSourceReader implements SourceReader {
 			return Optional.empty();
 		}
 
-		logger.trace("{}.{} = {}", sourceObjectType, getter.getName(), object.get());
+		if (logger.isTraceEnabled()) {
+			logger.trace("{}.{} = {}", sourceObjectType, getter.getName(), object.get());
+		}
 
-		// apply explicit conversions
+		// apply conversions
 		if (conversions != null) {
 			try {
 				for (final Conversion conversion : conversions) {
+					
+					object = Optional.ofNullable(conversion.convert(object.get()));
+					
 					if (object.isEmpty()) {
 						break;
 					}
-					object = Optional.ofNullable(conversion.convert(object.get()));
 				}
 			} catch (ConverterError e) {
 				throw new ProjectionError(e);

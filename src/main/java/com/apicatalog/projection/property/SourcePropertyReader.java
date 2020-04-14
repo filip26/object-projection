@@ -29,17 +29,17 @@ public final class SourcePropertyReader implements PropertyReader {
 	}
 
 	@Override
-	public void read(final ProjectionStack queue, final ExtractionContext context) throws ProjectionError {
+	public void read(final ProjectionStack stack, final ExtractionContext context) throws ProjectionError {
 
 		if (sourceWriter == null || targetGetter == null || !sourceWriter.isAnyTypeOf(context.getAcceptedTypes())) {
 			return;
 		}
 		
 		if (logger.isDebugEnabled()) {
-			logger.debug("Read {} from {}, depth = {}", sourceWriter.getType(), targetGetter.getType(), queue.length());
+			logger.debug("Read {} from {}, depth = {}", sourceWriter.getType(), targetGetter.getType(), stack.length());
 		}
 
-		Optional<Object> object = targetGetter.get(queue.peek());
+		Optional<Object> object = targetGetter.get(stack.peek());
 		
 		if (object.isEmpty()) {
 			return;
@@ -50,7 +50,7 @@ public final class SourcePropertyReader implements PropertyReader {
 		}
 		
 		if (object.isPresent()) {
-			sourceWriter.write(queue, context, object.get());
+			sourceWriter.write(context, object.get());
 		}
 	}		
 }

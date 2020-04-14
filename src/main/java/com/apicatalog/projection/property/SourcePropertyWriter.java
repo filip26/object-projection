@@ -49,7 +49,7 @@ public final class SourcePropertyWriter implements PropertyWriter {
 		}
 
 		// get source value
-		Optional<Object> object = sourceReader.read(queue, context);
+		Optional<Object> object = sourceReader.read(context);
 
 		if (object.isEmpty()) {
 			return;

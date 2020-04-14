@@ -1,6 +1,7 @@
 package com.apicatalog.projection.property.source;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -8,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.context.ExtractionContext;
-import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.object.ObjectType;
@@ -29,22 +29,41 @@ public final class ArraySourceWriter implements SourceWriter {
 	boolean optional;
 	
 	@Override
-	public void write(ProjectionStack queue, ExtractionContext context, Object object) throws ProjectionError {
-		
-		logger.debug("Write {}, {} sources(s), optional = {}, depth = {}", object, sources.length, optional, queue.length());
+	public void write(final ExtractionContext context, final Object object) throws ProjectionError {
 
+		if (logger.isDebugEnabled()) {
+			logger.debug("Write {}, {} sources(s), optional = {}", object, sources.length, optional);
+		}
+		
+		Optional<Object> value = Optional.ofNullable(object);
+		
+		if (value.isEmpty()) {
+			return;
+		}
+		
 		try {			
-			// apply explicit conversions
+			// apply conversions
 			if (conversions != null) {
+				
 				for (final Conversion conversion : conversions) {
-					object = conversion.convert(object);
+					
+					value = Optional.ofNullable(conversion.convert(value.get()));
+					
+					if (value.isEmpty()) {
+						return;
+					}
 				}
 			}
 
-			final Object[] sourceObjects = (Object[])object;
+			final Object[] sourceObjects = value.map(Object[].class::cast).get();
 			
 			for (int i = 0; i < sources.length; i++) {
-				sources[i].write(queue, context, sourceObjects[i]);
+				
+				if (sourceObjects[i] == null) {
+					continue;
+				}
+				
+				sources[i].write(context, sourceObjects[i]);
 			}				
 
 		} catch (ConverterError e) {

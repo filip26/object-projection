@@ -11,29 +11,29 @@ public final class SourceType {
 	final Class<?> componentType;
 	final String name;
 	
-	protected SourceType(String name, Class<?> type, Class<?> componentType) {
+	protected SourceType(final String name, final Class<?> type, final Class<?> componentType) {
 		this.type = type;
 		this.name = name;
 		this.componentType = componentType;
 	}
 
-	public static SourceType of(Class<?> type) {
+	public static SourceType of(final Class<?> type) {
 		return of(null, type, null);
 	}
 
-	public static SourceType of(String qualifier, Class<?> type) {
+	public static SourceType of(final String qualifier, final Class<?> type) {
 		return of(qualifier, type, null);
 	}
 
-	public static SourceType of(Class<?> type, Class<?> componentType) {
+	public static SourceType of(final Class<?> type, final Class<?> componentType) {
 		return new SourceType(null, type, componentType);
 	}
 
-	public static SourceType of(String qualifier, Class<?> type, Class<?> componentType) {
+	public static SourceType of(final String qualifier, final Class<?> type, final Class<?> componentType) {
 		return new SourceType(qualifier, type, componentType);
 	}
 	
-	public static SourceType of(Object object) {
+	public static SourceType of(final Object object) {
 		if (SourceObject.class.isInstance(object)) {
 			final SourceObject sourceObject = (SourceObject)object;
 			
@@ -55,11 +55,11 @@ public final class SourceType {
 		return "SourceType [type=" + Optional.ofNullable(type).map(Class::getSimpleName).orElse("n/a") + ", name=" + Optional.ofNullable(name).orElse("n/a") + "]";
 	}
 
-	public boolean isAssignableFrom(SourceType sourceType) {
+	public boolean isAssignableFrom(final SourceType sourceType) {
 		return isAssignableFrom(sourceType.getName(), sourceType.getType(), sourceType.getComponentType());
 	}
 
-	public boolean isAssignableFrom(String qualifier, Class<?> objectType, Class<?> objectComponentType) {
+	public boolean isAssignableFrom(final String qualifier, final Class<?> objectType, final Class<?> objectComponentType) {
 		return qualifierMatch(qualifier) 
 					&& objectType.isAssignableFrom(type)
 					&& ((objectComponentType == null)
@@ -67,7 +67,7 @@ public final class SourceType {
 							);
 	}
 
-	public boolean isInstance(String qualifier, Object object) {
+	public boolean isInstance(final String qualifier, final Object object) {
 		return qualifierMatch(qualifier) && type.isInstance(object); 
 	}
 	
@@ -81,7 +81,7 @@ public final class SourceType {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
