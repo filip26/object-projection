@@ -1,13 +1,11 @@
-package com.apicatalog.projection.builder;
+package com.apicatalog.projection.builder.writer;
 
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.builder.writer.ComposerBuilder;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.property.ProvidedObjectPropertyWriter;
@@ -33,7 +31,7 @@ public class ProvidedPropertyWriterBuilder {
 		return new ProvidedPropertyWriterBuilder();
 	}
 	
-	public Optional<PropertyWriter> build(ProjectionRegistry registry) throws ProjectionError {
+	public Optional<PropertyWriter> build(ProjectionRegistry registry) {
 
 		if (targetSetter == null) {
 			return Optional.empty();

@@ -5,8 +5,8 @@ import java.util.Optional;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.builder.ProvidedPropertyReaderBuilder;
-import com.apicatalog.projection.builder.ProvidedPropertyWriterBuilder;
+import com.apicatalog.projection.builder.reader.ProvidedPropertyReaderBuilder;
+import com.apicatalog.projection.builder.writer.ProvidedPropertyWriterBuilder;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyReader;
@@ -67,11 +67,11 @@ public class ProvidedPropertyBuilderApi<P> {
 		return projectionBuilder.build(factory);
 	}	
 	
-	public Optional<PropertyReader> buildPropertyReader(final ProjectionRegistry registry) throws ProjectionError {
+	public Optional<PropertyReader> buildPropertyReader(final ProjectionRegistry registry) {
 		return providedPropertyReaderBuilder.build(registry).map(PropertyReader.class::cast);
 	}
 
-	public Optional<PropertyWriter> buildPropertyWriter(final ProjectionRegistry registry) throws ProjectionError {
+	public Optional<PropertyWriter> buildPropertyWriter(final ProjectionRegistry registry) {
 		return providedPropertyWriterBuilder.build(registry).map(PropertyWriter.class::cast);
 	}
 }

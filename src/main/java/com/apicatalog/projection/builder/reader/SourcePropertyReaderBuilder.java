@@ -32,11 +32,16 @@ public class SourcePropertyReaderBuilder {
 			
 	public Optional<SourcePropertyReader> build(final ProjectionRegistry registry) {
 
-		if (targetGetter == null && sourceWriter == null) {
-//TODO			logger.warn(SOURCE_IS_MISSING, targetSetter != null ? targetSetter.getName() : targetGetter.getName());
+		if (targetGetter == null) {
+			logger.warn("Target getter is missing. Skipping source.");
 			return Optional.empty();
 		}
-		
+
+		if (sourceWriter == null) {
+			logger.warn(SOURCE_IS_MISSING, targetGetter.getName());
+			return Optional.empty();
+		}
+
 		final Optional<Extractor> extractor =  
 				ExtractorBuilder.newInstance()
 					.getter(targetGetter, targetReference)

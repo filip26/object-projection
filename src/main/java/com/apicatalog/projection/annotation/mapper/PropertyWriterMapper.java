@@ -16,10 +16,10 @@ import com.apicatalog.projection.annotation.Provided;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.annotation.Visibility;
-import com.apicatalog.projection.builder.ProvidedPropertyWriterBuilder;
 import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
 import com.apicatalog.projection.builder.writer.ComposerBuilder;
 import com.apicatalog.projection.builder.writer.ConstantPropertyWriterBuilder;
+import com.apicatalog.projection.builder.writer.ProvidedPropertyWriterBuilder;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
 import com.apicatalog.projection.object.setter.FieldSetter;
@@ -131,7 +131,7 @@ final class PropertyWriterMapper {
 		return Optional.of(new SourcePropertyWriter(sourceReader.get(), targetSetter, composer.orElse(null)));
 	}
 
-	Optional<PropertyWriter> getProvidedProperty(final Field field) throws ProjectionError {
+	Optional<PropertyWriter> getProvidedProperty(final Field field) {
 		
 		final Provided provided = field.getAnnotation(Provided.class);
 			

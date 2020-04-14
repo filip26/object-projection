@@ -32,10 +32,15 @@ public final class SourcePropertyWriterBuilder {
 			
 	public Optional<SourcePropertyWriter> build(final ProjectionRegistry registry) {
 
-		if (targetSetter == null && sourceReader == null) {
-//TODO			logger.warn(SOURCE_IS_MISSING, targetSetter != null ? targetSetter.getName() : targetGetter.getName());
+		if (targetSetter == null) {
+			logger.warn("Target setter is missing. Skipping source.");
 			return Optional.empty();
 		}
+
+		if (sourceReader == null) {
+			logger.warn(SOURCE_IS_MISSING, targetSetter.getName());
+			return Optional.empty();
+		}		
 		
 		final Optional<Composer> composer =  
 				ComposerBuilder.newInstance()

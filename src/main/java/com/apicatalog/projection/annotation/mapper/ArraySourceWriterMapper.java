@@ -79,10 +79,14 @@ final class ArraySourceWriterMapper {
 	
 	Optional<ArraySourceReader> getArraySourceReader(final Sources sourcesAnnotation, final String fieldName, final ObjectType targetType, final Class<?> defaultSourceObjectClass) throws ProjectionError {
 		
-		final ObjectType sourceTargetType = (targetType.isCollection()) ? ObjectType.of(targetType.getComponentType())
+		ObjectType sourceTargetType = targetType;
 		
-								: ((targetType.isArray()) ?
-			ObjectType.of(targetType.getType().getComponentType()) : targetType);
+		if (targetType.isCollection()) {
+			sourceTargetType = ObjectType.of(targetType.getComponentType());
+			
+		} else if (targetType.isArray()) {
+			sourceTargetType = ObjectType.of(targetType.getType().getComponentType());
+		}
 
 		final Collection<SingleSourceReader> sources = new ArrayList<>(sourcesAnnotation.value().length);
 		

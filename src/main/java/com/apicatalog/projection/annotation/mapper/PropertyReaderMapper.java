@@ -12,8 +12,8 @@ import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Provided;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
-import com.apicatalog.projection.builder.ProvidedPropertyReaderBuilder;
 import com.apicatalog.projection.builder.reader.ExtractorBuilder;
+import com.apicatalog.projection.builder.reader.ProvidedPropertyReaderBuilder;
 import com.apicatalog.projection.builder.writer.SingleSourceWriterBuilder;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
@@ -110,7 +110,7 @@ final class PropertyReaderMapper {
 		return Optional.of(new SourcePropertyReader(sourceWriter.get(), targetGetter, extractor.orElse(null)));	
 	}
 
-	Optional<PropertyReader> getProvided(final Field field) throws ProjectionError {
+	Optional<PropertyReader> getProvided(final Field field) {
 		
 		final Provided provided = field.getAnnotation(Provided.class);
 			

@@ -1,13 +1,11 @@
-package com.apicatalog.projection.builder;
+package com.apicatalog.projection.builder.reader;
 
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.builder.reader.ExtractorBuilder;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.ProvidedObjectPropertyReader;
@@ -33,7 +31,7 @@ public class ProvidedPropertyReaderBuilder {
 		return new ProvidedPropertyReaderBuilder();
 	}
 	
-	public Optional<PropertyReader> build(ProjectionRegistry registry) throws ProjectionError {
+	public Optional<PropertyReader> build(ProjectionRegistry registry) {
 
 		if (targetGetter == null) {
 			return Optional.empty();
