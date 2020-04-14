@@ -1,5 +1,6 @@
 package com.apicatalog.projection.property;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 
@@ -9,7 +10,9 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
+import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.getter.Getter;
+import com.apicatalog.projection.property.target.Extractor;
 
 public class ProvidedObjectPropertyReader implements PropertyReader {
 
@@ -23,6 +26,8 @@ public class ProvidedObjectPropertyReader implements PropertyReader {
 	
 	boolean optional;	
 	
+	Extractor extractor;
+	
 	@Override
 	public void read(ProjectionStack stack, ExtractionContext context) throws ProjectionError {
 		if (targetGetter == null) {
@@ -35,6 +40,21 @@ public class ProvidedObjectPropertyReader implements PropertyReader {
 		
 		if (object.isEmpty()) {
 			return;
+		}
+		
+		if (extractor != null) {
+			final Object value = object.get();
+			
+			Optional<ObjectType> sourceType = 
+							Arrays.stream(context.getAcceptedTypes())
+									.filter(type -> type.getType().isInstance(value))
+									.findFirst()
+									.map(type -> ObjectType.of(type.getType(), type.getComponentType()))
+									;
+			
+			if (sourceType.isPresent()) {
+				object = Optional.ofNullable(extractor.extract(sourceType.get(), value, context));
+			}
 		}
 		
 		if (object.isPresent() ) {
@@ -60,5 +80,9 @@ public class ProvidedObjectPropertyReader implements PropertyReader {
 	
 	public void setOptional(boolean optional) {
 		this.optional = optional;
+	}
+	
+	public void setExtractor(Extractor extractor) {
+		this.extractor = extractor;
 	}
 }

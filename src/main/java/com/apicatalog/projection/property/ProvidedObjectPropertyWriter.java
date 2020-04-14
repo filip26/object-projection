@@ -16,6 +16,7 @@ import com.apicatalog.projection.conversion.UnknownConversion;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.setter.Setter;
+import com.apicatalog.projection.property.target.Composer;
 
 
 public class ProvidedObjectPropertyWriter implements PropertyWriter {
@@ -29,6 +30,8 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 	Set<Integer> visibleLevels;
 	
 	String objectQualifier;
+	
+	Composer composer;
 	
 	boolean optional;	
 	
@@ -58,7 +61,18 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 									: ObjectType.of(value.getClass())
 									;
 		
+		if (composer != null) {
+			
+			object = composer.compose(stack, value, context);
+			
+			if (object.isPresent()) {
+				targetSetter.set(stack.peek(), object.get());
+			}
+			return;
+		}
+									
 		try {
+			
 			Optional<Conversion> conversion = registry.getTypeConversions().get(sourceType, targetSetter.getType());
 			
 			if (conversion.isPresent()) {
@@ -95,5 +109,9 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 	
 	public void setOptional(boolean optional) {
 		this.optional = optional;
+	}
+	
+	public void setComposer(Composer composer) {
+		this.composer = composer;
 	}
 }
