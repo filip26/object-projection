@@ -85,7 +85,7 @@ final class ArraySourceReaderMapper {
 								: ((targetType.isArray()
 										? ObjectType.of(targetType.getType().getComponentType()) 
 										: targetType));
-
+								
 		final Collection<SingleSourceWriter> sources = new ArrayList<>(sourcesAnnotation.value().length);
 		
 		for (final Source source : sourcesAnnotation.value()) {

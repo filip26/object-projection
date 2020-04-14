@@ -101,7 +101,7 @@ final class SingleSourceReaderMapper {
 			sourceFieldName = sourceAnnotation.value();
 		}
 		
-		SingleSourceWriterBuilder sourceBuilder = SingleSourceWriterBuilder.newInstance()
+		final SingleSourceWriterBuilder sourceBuilder = SingleSourceWriterBuilder.newInstance()
 				.objectClass(sourceObjectClass)
 				.optional(sourceAnnotation.optional())
 				.qualifier(sourceAnnotation.name())
@@ -112,7 +112,7 @@ final class SingleSourceReaderMapper {
 		// set conversions to apply
 		if (Optional.ofNullable(sourceAnnotation.map()).isPresent()) {
 			try {
-				sourceBuilder = sourceBuilder.converters(getConverterMapping(sourceAnnotation.map()));
+				sourceBuilder.converters(getConverterMapping(sourceAnnotation.map()));
 				
 			} catch (ConverterError | ProjectionError e) {
 				logger.error("Property " + sourceFieldName + " is ignored.", e);
