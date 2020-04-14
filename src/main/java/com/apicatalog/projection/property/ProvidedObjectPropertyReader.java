@@ -53,7 +53,7 @@ public class ProvidedObjectPropertyReader implements PropertyReader {
 									;
 			
 			if (sourceType.isPresent()) {
-				object = Optional.ofNullable(extractor.extract(sourceType.get(), value, context));
+				object = extractor.extract(sourceType.get(), value, context);
 			}
 		}
 		
