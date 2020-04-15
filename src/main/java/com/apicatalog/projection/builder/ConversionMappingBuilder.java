@@ -6,7 +6,6 @@ import java.lang.reflect.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterConfig;
@@ -36,7 +35,7 @@ public final class ConversionMappingBuilder {
 		return new ConversionMappingBuilder();
 	}
 		
-	public ConverterMapping build() throws ConverterError, ProjectionError {
+	public ConverterMapping build() throws ConverterError {
 		
 		final ConverterMapping converter = new ConverterMapping();
 		
@@ -50,7 +49,7 @@ public final class ConversionMappingBuilder {
 		
 		@SuppressWarnings("unchecked")
 		Converter<Object, Object> instance = (Converter<Object, Object>) ObjectUtils.newInstance(converterClass);
-		
+		//TODO check instance.ifPresent
 		instance.initConverter(new ConverterConfig(parameters));
 		
 		converter.setConverter(instance);

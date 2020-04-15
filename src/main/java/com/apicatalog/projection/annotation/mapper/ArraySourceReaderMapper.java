@@ -8,10 +8,10 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
+import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.builder.reader.SourcePropertyReaderBuilder;
 import com.apicatalog.projection.builder.writer.ArraySourceWriterBuilder;
 import com.apicatalog.projection.converter.ConverterError;
@@ -38,7 +38,7 @@ final class ArraySourceReaderMapper {
 		this.singleSourceMapper = new SingleSourceReaderMapper(registry);
 	}
 		
-	Optional<PropertyReader> getSourcesProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionError {
+	Optional<PropertyReader> getSourcesProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionBuilderError {
 		
 		final Sources sourcesAnnotation = field.getAnnotation(Sources.class);
 
@@ -66,7 +66,7 @@ final class ArraySourceReaderMapper {
 				.build(registry).map(PropertyReader.class::cast);
 	}
 	
-	Optional<ArraySourceWriter> getArraySourceWriter(final Sources sourcesAnnotation, final String fieldName, final ObjectType targetType, final boolean targetReference, final Class<?> defaultSourceObjectClass) throws ProjectionError {
+	Optional<ArraySourceWriter> getArraySourceWriter(final Sources sourcesAnnotation, final String fieldName, final ObjectType targetType, final boolean targetReference, final Class<?> defaultSourceObjectClass) throws ProjectionBuilderError {
 							 								
 		final Collection<SingleSourceWriter> sources = new ArrayList<>(sourcesAnnotation.value().length);
 		
@@ -99,7 +99,7 @@ final class ArraySourceReaderMapper {
 						.build(registry.getTypeConversions());
 			
 		} catch (ConverterError e) {
-			throw new ProjectionError(e);
+			throw new ProjectionBuilderError(e);
 		}
 	}	
 }

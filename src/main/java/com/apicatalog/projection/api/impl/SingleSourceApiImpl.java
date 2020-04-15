@@ -1,4 +1,4 @@
-package com.apicatalog.projection.builder.api;
+package com.apicatalog.projection.api.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,15 +8,17 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.annotation.AccessMode;
+import com.apicatalog.projection.api.LambdaConversionApi;
+import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.PropertyApi;
+import com.apicatalog.projection.api.SingleSourceApi;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
 import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
 import com.apicatalog.projection.builder.reader.SourcePropertyReaderBuilder;
 import com.apicatalog.projection.builder.writer.SingleSourceWriterBuilder;
 import com.apicatalog.projection.builder.writer.SourcePropertyWriterBuilder;
-import com.apicatalog.projection.conversion.TypeConversions;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
@@ -28,7 +30,7 @@ import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.property.source.SourceReader;
 import com.apicatalog.projection.property.source.SourceWriter;
 
-public final class SourcePropertyApi<P> extends AbstractValueProviderApi<P> {
+public final class SingleSourceApiImpl<P> extends AbstractValueProviderApi<P> implements SingleSourceApi<P> {
 	
 	final ProjectionBuilder<P> projectionBuilder;
 	
@@ -45,7 +47,7 @@ public final class SourcePropertyApi<P> extends AbstractValueProviderApi<P> {
 	
 	boolean targetReference;
 	
-	protected SourcePropertyApi(final ProjectionBuilder<P> projectionBuilder, final Class<?> sourceObjectClass, final String sourcePropertyName) {
+	protected SingleSourceApiImpl(final ProjectionBuilder<P> projectionBuilder, final Class<?> sourceObjectClass, final String sourcePropertyName) {
 		this.projectionBuilder = projectionBuilder;
 		
 		this.sourceReaderBuilder = SingleSourceReaderBuilder.newInstance().objectClass(sourceObjectClass);
@@ -56,31 +58,43 @@ public final class SourcePropertyApi<P> extends AbstractValueProviderApi<P> {
 		this.conversions = new ArrayList<>();
 	}
 	
-	public SourcePropertyApi<P> optional() {
+	@Override
+	public SingleSourceApi<P> optional() {
 		sourceReaderBuilder.optional(true);
 		sourceWriterBuilder.optional(true);
 		return this;
 	}
 
-	public SourcePropertyApi<P> required() {
+	@Override
+	public SingleSourceApi<P> required() {
 		sourceReaderBuilder.optional(false);
 		sourceWriterBuilder.optional(false);
 		return this;
 	}
 	
-	public SourcePropertyApi<P> readOnly() {
+	@Override
+	public SingleSourceApi<P> readOnly() {
 		sourceReaderBuilder.mode(AccessMode.READ_ONLY);
 		sourceWriterBuilder.mode(AccessMode.READ_ONLY);
 		return this;
 	}
 
-	public SourcePropertyApi<P> writeOnly() {
+	@Override
+	public SingleSourceApi<P> writeOnly() {
 		sourceReaderBuilder.mode(AccessMode.WRITE_ONLY);
 		sourceWriterBuilder.mode(AccessMode.WRITE_ONLY);
 		return this;
 	}
 
-	public SourcePropertyApi<P> qualifier(final String qualifier) {
+	@Override
+	public SingleSourceApi<P> readWrite() {
+		sourceReaderBuilder.mode(AccessMode.READ_WRITE);
+		sourceWriterBuilder.mode(AccessMode.READ_ONLY);
+		return this;
+	}
+
+	//TODO ?!
+	public SingleSourceApi<P> qualifier(final String qualifier) {
 		
 		final String name = StringUtils.isNotBlank(qualifier) ? qualifier : null;
 		
@@ -89,34 +103,39 @@ public final class SourcePropertyApi<P> extends AbstractValueProviderApi<P> {
 		return this;
 	}
 	
+	@Override
 	public PropertyApi<P> map(final String propertyName) {
 		return projectionBuilder.map(propertyName);
 	}
 
+	@Override
 	public PropertyApi<P> map(final String propertyName, final boolean reference) {
 		return projectionBuilder.map(propertyName, reference);
 	}
 
-	public SourcePropertyApi<P> conversion(final Class<? extends Converter<?, ?>> converter, final String...params) {
+	@Override
+	public SingleSourceApi<P> conversion(final Class<? extends Converter<?, ?>> converter, final String...params) {
 		conversions.add(ConversionMappingBuilder.newInstance().converter(converter).parameters(params));
 		return this;
 	}
 	
-	public <S, T> SourceConversionApi<P, S, T> conversion(final Class<? extends S> source, Class<? extends T> target) {
+	@Override
+	public <S, T> LambdaConversionApi<SingleSourceApi<P>, S, T> conversion(Class<? extends S> source, Class<? extends T> target) {
 		
 		final ConversionMappingBuilder builder = ConversionMappingBuilder.newInstance().types(source, target);
 		
 		conversions.add(builder);
 		
-		return new SourceConversionApi<>(builder, this);
+		return new LambdaConversionApiImpl<>(builder, this);
 	}
 	
-	public Projection<P> build(final ProjectionRegistry factory) throws ProjectionError {
+	@Override
+	public Projection<P> build(final ProjectionRegistry factory) throws ProjectionBuilderError {
 		return projectionBuilder.build(factory);
 	}
 
 	@Override
-	protected Optional<PropertyReader> buildyReader(final ProjectionRegistry registry) throws ProjectionError {
+	protected Optional<PropertyReader> buildyReader(final ProjectionRegistry registry) throws ProjectionBuilderError {
 			
 		final Collection<ConverterMapping> converters = new ArrayList<>(conversions.size()*2);
 		
@@ -126,13 +145,22 @@ public final class SourcePropertyApi<P> extends AbstractValueProviderApi<P> {
 			}
 			
 		} catch (ConverterError e) {
-			throw new ProjectionError(e);
+			throw new ProjectionBuilderError(e);
 		}
 		
 		sourceWriterBuilder.converters(converters);
 
-		final Optional<SourceWriter> sourceWriter = buildSourceWriter(registry.getTypeConversions(), sourceWriterBuilder);
-		
+		// extract setter
+		final Setter sourceSetter = ObjectUtils.getSetter(sourceObjectClass, sourcePropertyName);
+		//TODO null setter
+
+		final Optional<SourceWriter> sourceWriter = 
+					sourceWriterBuilder
+						.setter(sourceSetter)
+						.targetType(targetGetter.getType(), targetReference)
+						.build(registry.getTypeConversions())
+							.map(SourceWriter.class::cast);		
+
 		if (sourceWriter.isEmpty()) {
 			return Optional.empty();
 		}
@@ -144,7 +172,7 @@ public final class SourcePropertyApi<P> extends AbstractValueProviderApi<P> {
 	}
 	
 	@Override
-	protected Optional<PropertyWriter> buildyWriter(final ProjectionRegistry registry) throws ProjectionError {
+	protected Optional<PropertyWriter> buildyWriter(final ProjectionRegistry registry) throws ProjectionBuilderError {
 
 		final Collection<ConverterMapping> converters = new ArrayList<>(conversions.size()*2);
 		
@@ -154,13 +182,22 @@ public final class SourcePropertyApi<P> extends AbstractValueProviderApi<P> {
 			}
 			
 		} catch (ConverterError e) {
-			throw new ProjectionError(e);
+			throw new ProjectionBuilderError(e);
 		}
 		
 		sourceReaderBuilder.converters(converters);
 
-		final Optional<SourceReader> sourceReader = buildSourceReader(registry.getTypeConversions(), sourceReaderBuilder);
+		// extract getter
+		final Getter sourceGetter = ObjectUtils.getGetter(sourceObjectClass, sourcePropertyName);
+		//TODO null getter
 		
+		final Optional<SourceReader> sourceReader = 
+					sourceReaderBuilder
+						.getter(sourceGetter)
+						.targetType(targetSetter.getType(), targetReference)
+						.build(registry.getTypeConversions())
+							.map(SourceReader.class::cast);
+	
 		if (sourceReader.isEmpty()) {
 			return Optional.empty();
 		}
@@ -172,36 +209,20 @@ public final class SourcePropertyApi<P> extends AbstractValueProviderApi<P> {
 	}
 	
 	@Override
-	protected SourcePropertyApi<P> targetGetter(final Getter targetGetter) {
+	protected SingleSourceApiImpl<P> targetGetter(final Getter targetGetter) {
 		this.targetGetter = targetGetter; 
 		return this;
 	}
 
 	@Override
-	protected SourcePropertyApi<P> targetSetter(final Setter targetSetter) {
+	protected SingleSourceApiImpl<P> targetSetter(final Setter targetSetter) {
 		this.targetSetter = targetSetter;
 		return this;
 	}
 	
 	@Override
-	protected SourcePropertyApi<P> targetReference(final boolean targetReference) {
+	protected SingleSourceApiImpl<P> targetReference(final boolean targetReference) {
 		this.targetReference = targetReference;
 		return this;		
-	}
-	
-	Optional<SourceReader> buildSourceReader(final TypeConversions typeConversions, final SingleSourceReaderBuilder sourceBuilder) throws ProjectionError {
-		
-		// extract getter
-		final Getter sourceGetter = ObjectUtils.getGetter(sourceObjectClass, sourcePropertyName);
-		
-		return sourceBuilder.getter(sourceGetter).targetType(targetSetter.getType(), targetReference).build(typeConversions).map(SourceReader.class::cast);
 	}	
-
-	Optional<SourceWriter> buildSourceWriter(final TypeConversions typeConversions, final SingleSourceWriterBuilder sourceBuilder) throws ProjectionError {
-		
-		// extract setter
-		final Setter sourceSetter = ObjectUtils.getSetter(sourceObjectClass, sourcePropertyName);
-
-		return sourceBuilder.setter(sourceSetter).targetType(targetGetter.getType(), targetReference).build(typeConversions).map(SourceWriter.class::cast);		
-	}
 }

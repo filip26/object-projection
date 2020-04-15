@@ -11,10 +11,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.annotation.Conversion;
 import com.apicatalog.projection.annotation.Source;
+import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
 import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
 import com.apicatalog.projection.builder.writer.SourcePropertyWriterBuilder;
@@ -40,7 +40,7 @@ final class SingleSourceWriterMapper {
 		this.registry = registry;
 	}
 	
-	Optional<PropertyWriter> getSourceProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionError {
+	Optional<PropertyWriter> getSourceProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionBuilderError {
 
 		final Source sourceAnnotation = field.getAnnotation(Source.class);
 		
@@ -68,7 +68,7 @@ final class SingleSourceWriterMapper {
 					.build(registry).map(PropertyWriter.class::cast);
 	}
 
-	protected Optional<SingleSourceReader> getSingleSourceReader(final Source sourceAnnotation, final String fieldName, final ObjectType targetType, final boolean targetReference, final Class<?> defaultSourceClass) throws ProjectionError {
+	protected Optional<SingleSourceReader> getSingleSourceReader(final Source sourceAnnotation, final String fieldName, final ObjectType targetType, final boolean targetReference, final Class<?> defaultSourceClass) throws ProjectionBuilderError {
 				
 		Class<?> sourceObjectClass = defaultSourceClass;
 		
@@ -103,7 +103,7 @@ final class SingleSourceWriterMapper {
 			try {
 				sourceBuilder = sourceBuilder.converters(getConverterMapping(sourceAnnotation.map()));
 				
-			} catch (ConverterError | ProjectionError e) {
+			} catch (ConverterError | ProjectionBuilderError e) {
 				logger.error("Property " + sourceFieldName + " is ignored.", e);
 				return Optional.empty();
 			}
@@ -116,7 +116,7 @@ final class SingleSourceWriterMapper {
 					);
 	}
 	
-	Optional<SingleSourceReader> getSingleSourceReader(final Class<?> sourceObjectClass, final String sourceFieldName, final SingleSourceReaderBuilder sourceBuilder) throws ProjectionError {
+	Optional<SingleSourceReader> getSingleSourceReader(final Class<?> sourceObjectClass, final String sourceFieldName, final SingleSourceReaderBuilder sourceBuilder) throws ProjectionBuilderError {
 		
 		// extract getter
 		final Getter sourceGetter = ObjectUtils.getGetter(sourceObjectClass, sourceFieldName);
@@ -124,7 +124,7 @@ final class SingleSourceWriterMapper {
 		return sourceBuilder.getter(sourceGetter).build(registry.getTypeConversions());
 	}
 	
-	protected static final Collection<ConverterMapping> getConverterMapping(final Conversion[] conversions) throws ConverterError, ProjectionError {
+	protected static final Collection<ConverterMapping> getConverterMapping(final Conversion[] conversions) throws ConverterError, ProjectionBuilderError {
 
 		final List<ConverterMapping> converters = new ArrayList<>(conversions.length);
 		

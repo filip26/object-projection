@@ -10,7 +10,6 @@ import java.util.Collection;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.object.getter.FieldGetter;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.object.getter.MethodGetter;
@@ -22,15 +21,16 @@ public final class ObjectUtils {
 
 	ObjectUtils() {}
 	
-	public static <T> T newInstance(final Class<? extends T> clazz) throws ProjectionError {
+	public static <T> T newInstance(final Class<? extends T> clazz) {
 		try {
 			return clazz.getDeclaredConstructor().newInstance();
 					
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-			
-			throw new ProjectionError("Can not instantiate " + clazz + ".", e);
+			/* ignore */
 		}
+		
+		return null;
 	}
 	
 	public static Field getProperty(final Class<?> clazz, final String property) {

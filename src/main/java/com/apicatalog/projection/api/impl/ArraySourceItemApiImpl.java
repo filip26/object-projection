@@ -1,4 +1,4 @@
-package com.apicatalog.projection.builder.api;
+package com.apicatalog.projection.api.impl;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -10,9 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.annotation.AccessMode;
+import com.apicatalog.projection.api.ArraySourceItemApi;
+import com.apicatalog.projection.api.LambdaConversionApi;
+import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.PropertyApi;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
 import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
 import com.apicatalog.projection.builder.writer.SingleSourceWriterBuilder;
@@ -27,9 +30,9 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.source.SourceReader;
 import com.apicatalog.projection.property.source.SourceWriter;
 
-public final class SourcesApi<P> {
+public final class ArraySourceItemApiImpl<P> implements ArraySourceItemApi<P> {
 	
-	final Logger logger = LoggerFactory.getLogger(SourcesApi.class);
+	final Logger logger = LoggerFactory.getLogger(ArraySourceItemApiImpl.class);
 	
 	final ProjectionBuilder<P> projectionBuilder;
 
@@ -37,33 +40,34 @@ public final class SourcesApi<P> {
 	
 	final String targetPropertyName;
 	
-	protected SourcesApi(final ProjectionBuilder<P> projection, final String targetPropertyName) {
+	protected ArraySourceItemApiImpl(final ProjectionBuilder<P> projection, final String targetPropertyName) {
 		this.projectionBuilder = projection;
 		this.sourceHolders = new LinkedList<>();
 		this.targetPropertyName = targetPropertyName;
 	}
 
-	public SourcesApi<P> optional() {
+	public ArraySourceItemApi<P> optional() {
 		sourceHolders.getLast().optional(true);		
 		return this;
 	}
 
-	public SourcesApi<P> required() {
+	public ArraySourceItemApi<P> required() {
 		sourceHolders.getLast().optional(false);
 		return this;
 	}
 	
-	public SourcesApi<P> readOnly() {
+	public ArraySourceItemApi<P> readOnly() {
 		sourceHolders.getLast().mode(AccessMode.READ_ONLY);
 		return this;
 	}
 
-	public SourcesApi<P> writeOnly() {
+	public ArraySourceItemApi<P> writeOnly() {
 		sourceHolders.getLast().mode(AccessMode.WRITE_ONLY);
 		return this;
 	}
 
-	public SourcesApi<P> source(final Class<?> sourceClass, final String sourceProperty) {
+	@Override
+	public ArraySourceItemApi<P> source(final Class<?> sourceClass, final String sourceProperty) {
 		sourceHolders.add(
 				new SourceHolder(
 						sourceClass, 
@@ -73,38 +77,44 @@ public final class SourcesApi<P> {
 		return this;
 	}
 
-	public SourcesApi<P> source(final Class<?> sourceClass) {
+	@Override
+	public ArraySourceItemApi<P> source(final Class<?> sourceClass) {
 		return source(sourceClass, targetPropertyName);
 	}
 		
+	@Override
 	public PropertyApi<P> map(final String propertyName) {
 		return projectionBuilder.map(propertyName);
 	}
 
+	@Override
 	public PropertyApi<P> map(final String propertyName, final boolean reference) {
 		return projectionBuilder.map(propertyName, reference);
 	}
 	
-	public Projection<P> build(final ProjectionRegistry factory) throws ProjectionError {
+	@Override
+	public Projection<P> build(final ProjectionRegistry factory) throws ProjectionBuilderError {
 		return projectionBuilder.build(factory);
 	}
 
-	public SourcesApi<P> conversion(final Class<? extends Converter<?, ?>> converter, final String...params) {
+	@Override
+	public ArraySourceItemApi<P> conversion(final Class<? extends Converter<?, ?>> converter, final String...params) {
 		sourceHolders.getLast().conversions.add(ConversionMappingBuilder.newInstance().converter(converter).parameters(params));
 		return this;
 	}
 	
-	public <S, T> SourcesSourceConversionApi<P, S, T> conversion(final Class<? extends S> source, Class<? extends T> target) {
+	@Override
+	public <S, T> LambdaConversionApi<ArraySourceItemApi<P>, S, T> conversion(Class<? extends S> source, Class<? extends T> target) {
 		
 		final ConversionMappingBuilder builder = ConversionMappingBuilder.newInstance().types(source, target);
 		
 		sourceHolders.getLast().conversions.add(builder);
 		
-		return new SourcesSourceConversionApi<>(builder, this);
+		return new LambdaConversionApiImpl<>(builder, this);
 	}
 
 
-	protected SourceReader[] buildReaders(final TypeConversions typeConversions) throws ProjectionError {
+	protected SourceReader[] buildReaders(final TypeConversions typeConversions) throws ProjectionBuilderError {
 		final ArrayList<SourceReader> sources = new ArrayList<>(sourceHolders.size());
 		
 		for (SourceHolder holder : sourceHolders) {
@@ -113,7 +123,7 @@ public final class SourcesApi<P> {
 		return sources.toArray(new SourceReader[0]);
 	}
 
-	protected SourceWriter[] buildWriters(final TypeConversions typeConversions) throws ProjectionError {
+	protected SourceWriter[] buildWriters(final TypeConversions typeConversions) throws ProjectionBuilderError {
 		
 		final ArrayList<SourceWriter> sources = new ArrayList<>(sourceHolders.size());
 		
@@ -124,7 +134,7 @@ public final class SourcesApi<P> {
 		return sources.toArray(new SourceWriter[0]);
 	}
 
-	Optional<SourceReader> buildReader(final TypeConversions typeConversions, final SourceHolder sourceHolder) throws ProjectionError {
+	Optional<SourceReader> buildReader(final TypeConversions typeConversions, final SourceHolder sourceHolder) throws ProjectionBuilderError {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Build source reader for {}", sourceHolder.propertyName);
@@ -139,7 +149,7 @@ public final class SourcesApi<P> {
 			}
 			
 		} catch (ConverterError e) {
-			throw new ProjectionError(e);
+			throw new ProjectionBuilderError(e);
 		}
 		
 		// extract getter
@@ -154,7 +164,7 @@ public final class SourcesApi<P> {
 							;	
 	}
 
-	Optional<SourceWriter> buildWriter(final TypeConversions typeConversions, final SourceHolder sourceHolder) throws ProjectionError {
+	Optional<SourceWriter> buildWriter(final TypeConversions typeConversions, final SourceHolder sourceHolder) throws ProjectionBuilderError {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Build source writer for {}", sourceHolder.propertyName);
@@ -169,7 +179,7 @@ public final class SourcesApi<P> {
 			}
 			
 		} catch (ConverterError e) {
-			throw new ProjectionError(e);
+			throw new ProjectionBuilderError(e);
 		}
 		
 		// extract setter

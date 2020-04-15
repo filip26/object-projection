@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.conversion.TypeConversions;
 import com.apicatalog.projection.conversion.UnknownConversion;
@@ -39,7 +39,7 @@ public final class ArraySourceWriterBuilder {
 		return new ArraySourceWriterBuilder();
 	}
 	
-	public Optional<ArraySourceWriter> build(TypeConversions typeConversions) throws ProjectionError {
+	public Optional<ArraySourceWriter> build(TypeConversions typeConversions) throws ProjectionBuilderError {
 		
 		if (logger.isTraceEnabled()) {
 			logger.trace("Build {} sources, {} converters, target={}", 
@@ -67,7 +67,7 @@ public final class ArraySourceWriterBuilder {
 			return Optional.of(source);
 			
 		} catch (UnknownConversion e) {
-			throw new ProjectionError(e);
+			throw new ProjectionBuilderError(e);
 		}
 	}	
 

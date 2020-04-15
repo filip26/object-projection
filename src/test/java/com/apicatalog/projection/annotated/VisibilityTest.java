@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.Object1;
 import com.apicatalog.projection.objects.Object2;
@@ -19,7 +20,7 @@ public class VisibilityTest {
 	ProjectionRegistry projections;
 	
 	@Before
-	public void setup() throws ProjectionError {
+	public void setup() throws ProjectionError, ProjectionBuilderError {
 		projections = ProjectionRegistry.newInstance()
 						.register(Object1To.class)
 						.register(Object2To.class)

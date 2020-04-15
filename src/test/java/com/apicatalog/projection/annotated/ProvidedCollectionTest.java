@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.projections.StringCollectionTo;
 import com.apicatalog.projection.source.SourceObject;
@@ -19,7 +20,7 @@ public class ProvidedCollectionTest {
 	ProjectionRegistry projections;
 	
 	@Before
-	public void setup() throws ProjectionError {
+	public void setup() throws ProjectionError, ProjectionBuilderError {
 		projections = ProjectionRegistry.newInstance();
 		
 		projections.register(StringCollectionTo.class);

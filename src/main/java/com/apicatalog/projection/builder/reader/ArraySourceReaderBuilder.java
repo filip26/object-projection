@@ -8,7 +8,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.conversion.TypeConversions;
 import com.apicatalog.projection.conversion.UnknownConversion;
@@ -39,7 +39,7 @@ public final class ArraySourceReaderBuilder {
 		return new ArraySourceReaderBuilder();
 	}
 	
-	public Optional<ArraySourceReader> build(TypeConversions typeConversions) throws ProjectionError {
+	public Optional<ArraySourceReader> build(TypeConversions typeConversions) throws ProjectionBuilderError {
 		
 		final ArraySourceReader source = new ArraySourceReader();
 		
@@ -60,7 +60,7 @@ public final class ArraySourceReaderBuilder {
 			return Optional.of(source);
 			
 		} catch (UnknownConversion e) {
-			throw new ProjectionError(e);
+			throw new ProjectionBuilderError(e);
 		}
 	}	
 

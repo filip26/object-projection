@@ -8,6 +8,7 @@ import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.annotation.mapper.ProjectionMapper;
+import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.objects.SimpleObject;
 
 public class ProjectionMapperTest {
@@ -22,7 +23,7 @@ public class ProjectionMapperTest {
 	}
 
 	@Test
-	public void testUnmapped() throws ProjectionError {
+	public void testUnmapped() throws ProjectionError, ProjectionBuilderError {
 		Projection<SimpleObject> projection = mapper.getProjectionOf(SimpleObject.class);
 		Assert.assertNull(projection);
 	}

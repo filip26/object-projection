@@ -8,8 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
@@ -32,7 +32,7 @@ public final class ProjectionMapper {
 		this.propertyWriterMapper = propertyWriterMapper;
 	}
 
-	public <P> Projection<P> getProjectionOf(final Class<P> targetProjectionClass) throws ProjectionError {
+	public <P> Projection<P> getProjectionOf(final Class<P> targetProjectionClass) throws ProjectionBuilderError {
 
 		if (targetProjectionClass == null) {
 			throw new IllegalArgumentException();

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.apicatalog.projection.annotation.mapper.ProjectionMapper;
+import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.conversion.TypeConversions;
 
 public final class ProjectionRegistry {
@@ -66,7 +67,7 @@ public final class ProjectionRegistry {
 		return this;
 	}
 
-	public ProjectionRegistry register(Class<?> annotatedProjectionClass) throws ProjectionError {
+	public ProjectionRegistry register(Class<?> annotatedProjectionClass) throws ProjectionBuilderError {
 		if (annotatedProjectionClass == null) {
 			throw new IllegalArgumentException();
 		}

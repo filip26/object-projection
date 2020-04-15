@@ -1,4 +1,4 @@
-package com.apicatalog.projection.builder.api;
+package com.apicatalog.projection.api.impl;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -9,8 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.api.ArraySourceApi;
+import com.apicatalog.projection.api.ProjectionApi;
+import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.PropertyApi;
+import com.apicatalog.projection.api.ProvidedApi;
+import com.apicatalog.projection.api.SingleSourceApi;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
 import com.apicatalog.projection.object.getter.FieldGetter;
@@ -20,9 +25,9 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
-public final class PropertyApi<P> {
+public final class PropertyApiImpl<P> implements PropertyApi<P> {
 	
-	final Logger logger = LoggerFactory.getLogger(PropertyApi.class);
+	final Logger logger = LoggerFactory.getLogger(PropertyApiImpl.class);
 
 	final ProjectionBuilder<P> projectionBuilder;
 
@@ -30,26 +35,28 @@ public final class PropertyApi<P> {
 	
 	final boolean targetReference;
 
-	AbstractValueProviderApi<P> valueProviderApi;
+	AbstractValueProviderApi<P> valueProvider;
 	
-	protected PropertyApi(final ProjectionBuilder<P> projectionBuilder, final String propertyName, final boolean reference) {
+	protected PropertyApiImpl(final ProjectionBuilder<P> projectionBuilder, final String propertyName, final boolean reference) {
 		this.projectionBuilder = projectionBuilder;
 		this.targetPropertyName = propertyName;
 		this.targetReference = reference;
 	}
 	
-	public SourcePropertyApi<P> source(final Class<?> sourceClass) {
+	@Override
+	public SingleSourceApi<P> source(final Class<?> sourceClass) {
 		return source(sourceClass, targetPropertyName);
 	}
 
-	public SourcePropertyApi<P> source(final Class<?> sourceClass, final String sourceProperty) {
+	@Override
+	public SingleSourceApi<P> source(final Class<?> sourceClass, final String sourceProperty) {
 
 		if (logger.isTraceEnabled()) {
 			logger.trace("source({}, {})", sourceClass.getSimpleName(), sourceProperty);
 		}
 		
-		final SourcePropertyApi<P> sourcePropertyApi = 
-				new SourcePropertyApi<>(
+		final SingleSourceApiImpl<P> sourcePropertyApi = 
+				new SingleSourceApiImpl<>(
 					projectionBuilder,
 					sourceClass,
 					// use the same name if source property name is not present
@@ -57,66 +64,80 @@ public final class PropertyApi<P> {
 					)
 				.targetReference(targetReference);
 		
-		this.valueProviderApi = sourcePropertyApi;
+		this.valueProvider = sourcePropertyApi;
 		
 		return sourcePropertyApi;
 	}
 
-	public SourcesPropertyApi<P> sources() {
+	@Override
+	public ArraySourceApi<P> sources() {
 		
 		if (logger.isTraceEnabled()) {
 			logger.trace("sources()");
 		}
 		
-		final SourcesPropertyApi<P> sourcesPropertyApi = 
-				new SourcesPropertyApi<>(projectionBuilder, targetPropertyName)
+		final ArraySourceApiImpl<P> sourcesPropertyApi = 
+				new ArraySourceApiImpl<>(projectionBuilder, targetPropertyName)
 						.targetReference(targetReference);
 		
-		this.valueProviderApi = sourcesPropertyApi;
+		this.valueProvider = sourcesPropertyApi;
 		
 		return sourcesPropertyApi;
 	}
 
-	public ProvidedPropertyApi<P> provided() {
+	@Override
+	public ProvidedApi<P> provided() {
 		return provided(null);
 	}
 	
-	public ProvidedPropertyApi<P> provided(final String qualifier) {
+	@Override
+	public ProvidedApi<P> provided(final String qualifier) {
 		
 		if (logger.isTraceEnabled()) {
 			logger.trace("provided({})", qualifier);
 		}
 		
-		final ProvidedPropertyApi<P> providedPropertyApi = 
-				new ProvidedPropertyApi<>(projectionBuilder)
-						.qualifier(StringUtils.isNotBlank(qualifier) ? qualifier : null)
+		final ProvidedApiImpl<P> providedPropertyApi = 
+				new ProvidedApiImpl<>(projectionBuilder, StringUtils.isNotBlank(qualifier) ? qualifier : null)
 						.targetReference(targetReference);
 		
-		this.valueProviderApi = providedPropertyApi;
+		this.valueProvider = providedPropertyApi;
 		
 		return providedPropertyApi;
 	}
 
-	public ProjectionBuilder<P> constant(final String...values) {
+	@Override
+	public ProjectionApi<P> constant(final String...values) {
 
 		if (logger.isTraceEnabled()) {
 			logger.trace("constant({})", Arrays.toString(values));
 		}
 		
-		this.valueProviderApi = 
+		this.valueProvider = 
 				new ConstantPropertyApi<>(projectionBuilder, values)
 						.targetReference(targetReference);
 		
 		return projectionBuilder;
 	}
 	
-	public Projection<P> build(final ProjectionRegistry registry) throws ProjectionError {
+	@Override
+	public PropertyApi<P> map(String propertyName) {
+		return projectionBuilder.map(propertyName, false);
+	}
+
+	@Override
+	public PropertyApi<P> map(String propertyName, boolean reference) {
+		return projectionBuilder.map(propertyName, reference);
+	}
+	
+	@Override
+	public Projection<P> build(final ProjectionRegistry registry) throws ProjectionBuilderError {
 		return projectionBuilder.build(registry);
 	}
 	
-	protected Optional<PropertyReader> buildReader(final ProjectionRegistry registry) throws ProjectionError {
+	protected Optional<PropertyReader> buildReader(final ProjectionRegistry registry) throws ProjectionBuilderError {
 
-		if (valueProviderApi == null) {
+		if (valueProvider == null) {
 			return Optional.empty();
 		}
 		
@@ -127,15 +148,15 @@ public final class PropertyApi<P> {
 		// extract getter
 		final Getter targetGetter = FieldGetter.from(field, targetType);
 
-		return valueProviderApi
+		return valueProvider
 					.targetGetter(targetGetter)
 					.buildyReader(registry)
 					;
 	}
 	
-	protected Optional<PropertyWriter> buildWriter(final ProjectionRegistry registry) throws ProjectionError {
+	protected Optional<PropertyWriter> buildWriter(final ProjectionRegistry registry) throws ProjectionBuilderError {
 
-		if (valueProviderApi == null) {
+		if (valueProvider == null) {
 			return Optional.empty();
 		}
 
@@ -146,7 +167,7 @@ public final class PropertyApi<P> {
 		// extract setter
 		final Setter targetSetter = FieldSetter.from(field, targetType);
 
-		return valueProviderApi
+		return valueProvider
 					.targetSetter(targetSetter)
 					.buildyWriter(registry)
 					;		

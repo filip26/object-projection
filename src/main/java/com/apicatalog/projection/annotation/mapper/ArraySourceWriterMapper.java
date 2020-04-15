@@ -8,10 +8,10 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
+import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.builder.reader.ArraySourceReaderBuilder;
 import com.apicatalog.projection.builder.writer.SourcePropertyWriterBuilder;
 import com.apicatalog.projection.converter.ConverterError;
@@ -38,7 +38,7 @@ final class ArraySourceWriterMapper {
 		this.singleSourceMapper = new SingleSourceWriterMapper(registry);
 	}
 		
-	Optional<PropertyWriter> getSourcesPropertyMapping(final Field field, final Class<?> defaultSourceClass) throws ProjectionError {
+	Optional<PropertyWriter> getSourcesPropertyMapping(final Field field, final Class<?> defaultSourceClass) throws ProjectionBuilderError {
 		
 		final Sources sourcesAnnotation = field.getAnnotation(Sources.class);
 
@@ -66,7 +66,7 @@ final class ArraySourceWriterMapper {
 					.build(registry).map(PropertyWriter.class::cast);
 	}
 	
-	Optional<ArraySourceReader> getArraySourceReader(final Sources sourcesAnnotation, final String fieldName, final ObjectType targetType, final boolean targetReference, final Class<?> defaultSourceObjectClass) throws ProjectionError {
+	Optional<ArraySourceReader> getArraySourceReader(final Sources sourcesAnnotation, final String fieldName, final ObjectType targetType, final boolean targetReference, final Class<?> defaultSourceObjectClass) throws ProjectionBuilderError {
 		
 		final Collection<SingleSourceReader> sources = new ArrayList<>(sourcesAnnotation.value().length);
 		
@@ -90,7 +90,7 @@ final class ArraySourceWriterMapper {
 					.converters(SingleSourceReaderMapper.getConverterMapping(sourcesAnnotation.map()))	// set conversions to apply
 					.build(registry.getTypeConversions());
 			
-		} catch (ConverterError | ProjectionError e) {
+		} catch (ConverterError | ProjectionBuilderError e) {
 			logger.error("Property " + fieldName + " is ignored.", e);
 			return Optional.empty();
 		}

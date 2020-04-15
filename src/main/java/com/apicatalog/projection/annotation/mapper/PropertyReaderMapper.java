@@ -6,12 +6,12 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Provided;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
+import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.builder.reader.ExtractorBuilder;
 import com.apicatalog.projection.builder.reader.ProvidedPropertyReaderBuilder;
 import com.apicatalog.projection.builder.writer.SingleSourceWriterBuilder;
@@ -40,7 +40,7 @@ final class PropertyReaderMapper {
 		this.arraySourceMapper = new ArraySourceReaderMapper(registry);
 	}
 	
-	Optional<PropertyReader> getProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionError {
+	Optional<PropertyReader> getProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionBuilderError {
 
 		final Optional<? extends PropertyReader> mapping;
 		
@@ -64,7 +64,7 @@ final class PropertyReaderMapper {
 		return mapping.map(PropertyReader.class::cast);
 	}
 
-	Optional<PropertyReader> getDefaultProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionError {
+	Optional<PropertyReader> getDefaultProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionBuilderError {
 
 		if (defaultSourceClass == null) {
 			logger.warn("Source class is missing. Property {} is ignored.", field.getName());

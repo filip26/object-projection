@@ -5,7 +5,8 @@ import java.net.URI;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.apicatalog.projection.builder.api.ProjectionBuilder;
+import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.impl.ProjectionBuilder;
 import com.apicatalog.projection.converters.Prefix;
 import com.apicatalog.projection.converters.Suffix;
 import com.apicatalog.projection.converters.UriTemplate;
@@ -23,7 +24,7 @@ public class ProjectionBuilderTest {
 
 
 	@Test
-	public void test1c() throws ProjectionError {
+	public void test1c() throws ProjectionBuilderError, ProjectionError {
 		final Projection<SimpleObjectTo> projection = 
 				ProjectionBuilder
 					.bind(SimpleObjectTo.class)
@@ -47,7 +48,7 @@ public class ProjectionBuilderTest {
 	}
 
 	@Test
-	public void test1e() throws ProjectionError {
+	public void test1e() throws ProjectionBuilderError, ProjectionError {
 		final Projection<SimpleObjectTo> projection = 
 				ProjectionBuilder
 					.bind(SimpleObjectTo.class)
@@ -70,7 +71,7 @@ public class ProjectionBuilderTest {
 		Assert.assertEquals(to.s1, object1.s1);
 	}
 	@Test
-	public void test2c() throws ProjectionError {
+	public void test2c() throws ProjectionBuilderError, ProjectionError {
 		final Projection<SimpleObjectTo> projection = 
 				ProjectionBuilder
 					.bind(SimpleObjectTo.class)
@@ -94,7 +95,7 @@ public class ProjectionBuilderTest {
 	}
 
 	@Test
-	public void test2e() throws ProjectionError {
+	public void test2e() throws ProjectionBuilderError, ProjectionError {
 		final Projection<SimpleObjectTo> projection = 
 				ProjectionBuilder
 					.bind(SimpleObjectTo.class)
@@ -118,7 +119,7 @@ public class ProjectionBuilderTest {
 	}
 
 	@Test
-	public void test3() throws ProjectionError {
+	public void test3() throws ProjectionBuilderError, ProjectionError {
 		final Projection<SimpleObjectTo> projection = 
 				ProjectionBuilder
 					.bind(SimpleObjectTo.class)
@@ -146,14 +147,12 @@ public class ProjectionBuilderTest {
 	}
 
 	@Test
-	public void test4() throws ProjectionError {
+	public void test4() throws ProjectionBuilderError, ProjectionError {
 		final Projection<SimpleObjectTo> projection = 
 				ProjectionBuilder
 					.bind(SimpleObjectTo.class)
 					
-					.map("s1").provided()
-								.optional()
-								.qualifier("string1")
+					.map("s1").provided("string1").optional()
 								
 					.map("i1").source(SimpleObject.class)
 					
@@ -172,7 +171,7 @@ public class ProjectionBuilderTest {
 	}
 
 	@Test
-	public void test5c1() throws ProjectionError {
+	public void test5c1() throws ProjectionBuilderError, ProjectionError {
 		
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		
@@ -214,7 +213,7 @@ public class ProjectionBuilderTest {
 	}
 
 	@Test
-	public void test5e1() throws ProjectionError {
+	public void test5e1() throws ProjectionBuilderError, ProjectionError {
 		
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		
@@ -255,7 +254,7 @@ public class ProjectionBuilderTest {
 		Assert.assertEquals(to2.id, object1.object2.id);		
 	}
 	@Test
-	public void test5c2() throws ProjectionError {
+	public void test5c2() throws ProjectionBuilderError, ProjectionError {
 		
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 
@@ -291,7 +290,7 @@ public class ProjectionBuilderTest {
 		Assert.assertNull(to.object2);
 	}
 	@Test
-	public void test6() throws ProjectionError {
+	public void test6() throws ProjectionBuilderError, ProjectionError {
 		final Projection<Object1To> projection = 
 				ProjectionBuilder
 					.bind(Object1To.class)
@@ -308,7 +307,7 @@ public class ProjectionBuilderTest {
 	}
 
 	@Test
-	public void test7() throws ProjectionError {
+	public void test7() throws ProjectionBuilderError, ProjectionError {
 		final Projection<Object1To> projection = 
 				ProjectionBuilder
 					.bind(Object1To.class)
@@ -339,7 +338,7 @@ public class ProjectionBuilderTest {
 	}
 
 	@Test
-	public void test8() throws ProjectionError {
+	public void test8() throws ProjectionBuilderError {
 		final Projection<SimpleObjectTo> projection = 
 				ProjectionBuilder
 					.bind(SimpleObjectTo.class)					
@@ -349,7 +348,7 @@ public class ProjectionBuilderTest {
 	}
 
 	@Test
-	public void test9() throws ProjectionError {
+	public void test9() throws ProjectionBuilderError, ProjectionError {
 		
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		
@@ -389,7 +388,7 @@ public class ProjectionBuilderTest {
 	}
 
 	@Test
-	public void test10() throws ProjectionError {
+	public void test10() throws ProjectionBuilderError, ProjectionError {
 		
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		
@@ -429,7 +428,7 @@ public class ProjectionBuilderTest {
 	}
 	
 	@Test
-	public void test11() throws ProjectionError {
+	public void test11() throws ProjectionBuilderError, ProjectionError {
 		
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		
@@ -473,7 +472,7 @@ public class ProjectionBuilderTest {
 	}
 	
 	@Test
-	public void test12() throws ProjectionError {
+	public void test12() throws ProjectionBuilderError, ProjectionError {
 		
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		
@@ -502,7 +501,7 @@ public class ProjectionBuilderTest {
 	}
 	
 	@Test
-	public void test13() throws ProjectionError {
+	public void test13() throws ProjectionBuilderError, ProjectionError {
 		
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		
@@ -541,7 +540,7 @@ public class ProjectionBuilderTest {
 	}
 	
 	@Test
-	public void test14() throws ProjectionError {
+	public void test14() throws ProjectionBuilderError, ProjectionError {
 		final Projection<SimpleObjectTo> projection = 
 				ProjectionBuilder
 					.bind(SimpleObjectTo.class)

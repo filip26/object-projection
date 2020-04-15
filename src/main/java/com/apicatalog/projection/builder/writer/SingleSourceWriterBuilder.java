@@ -8,8 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.annotation.AccessMode;
+import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.conversion.TypeConversions;
 import com.apicatalog.projection.conversion.UnknownConversion;
@@ -51,7 +51,7 @@ public final class SingleSourceWriterBuilder {
 		return new SingleSourceWriterBuilder();
 	}
 	
-	public Optional<SingleSourceWriter> build(TypeConversions typeConverters) throws ProjectionError {
+	public Optional<SingleSourceWriter> build(TypeConversions typeConverters) throws ProjectionBuilderError {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Build single source writer from {} to {}.{} : {}",
@@ -95,7 +95,7 @@ public final class SingleSourceWriterBuilder {
 			return Optional.of(source);
 			
 		} catch (UnknownConversion e) {
-			throw new ProjectionError(e);
+			throw new ProjectionBuilderError(e);
 		}
 	}
 	

@@ -8,7 +8,6 @@ import java.util.stream.IntStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.annotation.Constant;
 import com.apicatalog.projection.annotation.Projection;
@@ -16,6 +15,7 @@ import com.apicatalog.projection.annotation.Provided;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.annotation.Visibility;
+import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
 import com.apicatalog.projection.builder.writer.ComposerBuilder;
 import com.apicatalog.projection.builder.writer.ConstantWriterBuilder;
@@ -45,7 +45,7 @@ final class PropertyWriterMapper {
 		this.arraySourceMapper = new ArraySourceWriterMapper(registry);
 	}
 	
-	public Optional<PropertyWriter> getProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionError {
+	public Optional<PropertyWriter> getProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionBuilderError {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Get property {} : {}, object={}", field.getName(), field.getType().getSimpleName(), defaultSourceClass != null ? defaultSourceClass.getSimpleName() : "n/a");
@@ -85,7 +85,7 @@ final class PropertyWriterMapper {
 		return mapping.map(PropertyWriter.class::cast);
 	}
 
-	Optional<PropertyWriter> getDefaultProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionError {
+	Optional<PropertyWriter> getDefaultProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionBuilderError {
 
 		if (defaultSourceClass == null) {
 			logger.warn("Source class is missing. Property {} is ignored.", field.getName());
@@ -133,7 +133,7 @@ final class PropertyWriterMapper {
 					.build(registry);		
 	}				
 
-	Optional<PropertyWriter> getConstantProperty(final Field field) throws ProjectionError {
+	Optional<PropertyWriter> getConstantProperty(final Field field) throws ProjectionBuilderError {
 		
 		final Constant constant = field.getAnnotation(Constant.class);
 		

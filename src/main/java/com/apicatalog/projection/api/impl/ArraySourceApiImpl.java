@@ -1,4 +1,4 @@
-package com.apicatalog.projection.builder.api;
+package com.apicatalog.projection.api.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,9 +8,11 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.api.ArraySourceApi;
+import com.apicatalog.projection.api.ArraySourceItemApi;
+import com.apicatalog.projection.api.LambdaConversionApi;
+import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
 import com.apicatalog.projection.builder.reader.ArraySourceReaderBuilder;
 import com.apicatalog.projection.builder.reader.SourcePropertyReaderBuilder;
@@ -28,9 +30,9 @@ import com.apicatalog.projection.property.source.ArraySourceWriter;
 import com.apicatalog.projection.property.source.SourceReader;
 import com.apicatalog.projection.property.source.SourceWriter;
 
-public final class SourcesPropertyApi<P> extends AbstractValueProviderApi<P> {
+public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> implements ArraySourceApi<P> {
 	
-	final Logger logger = LoggerFactory.getLogger(SourcesPropertyApi.class);
+	final Logger logger = LoggerFactory.getLogger(ArraySourceApiImpl.class);
 	
 	final ProjectionBuilder<P> projectionBuilder;
 
@@ -41,14 +43,14 @@ public final class SourcesPropertyApi<P> extends AbstractValueProviderApi<P> {
 	
 	final String projectionPropertyName;
 
-	SourcesApi<P> sourcesBuilderApi;
+	ArraySourceItemApiImpl<P> arraySourceItem;
 	
 	Getter targetGetter;
 	Setter targetSetter;
 	
 	boolean targetReference;
 	
-	protected SourcesPropertyApi(final ProjectionBuilder<P> projection, final String projectionPropertyName) {
+	protected ArraySourceApiImpl(final ProjectionBuilder<P> projection, final String projectionPropertyName) {
 		this.projectionBuilder = projection;
 		this.conversionBuilder = new ArrayList<>();
 
@@ -57,58 +59,52 @@ public final class SourcesPropertyApi<P> extends AbstractValueProviderApi<P> {
 		
 		this.projectionPropertyName = projectionPropertyName;
 	}
-
-	public SourcesPropertyApi<P> optional() {
+	
+	public ArraySourceApi<P> optional() {
 		arraySourceReaderBuilder.optional(true);
 		arraySourceWriterBuilder.optional(true);
 		return this;
 	}
 
-	public SourcesPropertyApi<P> required() {
+	public ArraySourceApi<P> required() {
 		arraySourceReaderBuilder.optional(false);
 		arraySourceWriterBuilder.optional(false);
 		return this;
 	}
 
-	public SourcesApi<P> source(final Class<?> sourceClass, final String sourceProperty) {
+	@Override
+	public ArraySourceItemApi<P> source(final Class<?> sourceClass, final String sourceProperty) {
 
-		sourcesBuilderApi = new SourcesApi<>(projectionBuilder, projectionPropertyName)
-								.source(sourceClass, sourceProperty);
-		return sourcesBuilderApi;
+		arraySourceItem = new ArraySourceItemApiImpl<>(projectionBuilder, projectionPropertyName);
+		
+		arraySourceItem.source(sourceClass, sourceProperty);
+								
+		return arraySourceItem;
 	}
 
-	public SourcesApi<P> source(final Class<?> sourceClass) {
+	@Override
+	public ArraySourceItemApi<P> source(final Class<?> sourceClass) {
 		return source(sourceClass, null);
 	}
-		
-	public PropertyApi<P> map(final String propertyName) {
-		return projectionBuilder.map(propertyName);
-	}
 
-	public PropertyApi<P> map(final String propertyName, final boolean reference) {
-		return projectionBuilder.map(propertyName, reference);
-	}
-	
-	public Projection<P> build(final ProjectionRegistry factory) throws ProjectionError {
-		return projectionBuilder.build(factory);
-	}
-
-	public SourcesPropertyApi<P> conversion(final Class<? extends Converter<?, ?>> converter, final String...params) {
+	@Override
+	public ArraySourceApi<P> conversion(final Class<? extends Converter<?, ?>> converter, final String...params) {
 		conversionBuilder.add(ConversionMappingBuilder.newInstance().converter(converter).parameters(params));
 		return this;
 	}
-	
-	public <S, T> SourcesConversionApi<P, S, T> conversion(final Class<? extends S> source, Class<? extends T> target) {
+
+	@Override
+	public <S, T> LambdaConversionApi<ArraySourceApi<P>, S, T> conversion(Class<? extends S> source, Class<? extends T> target) {
 		
 		final ConversionMappingBuilder builder = ConversionMappingBuilder.newInstance().types(source, target);
 		
 		conversionBuilder.add(builder);
 		
-		return new SourcesConversionApi<>(builder, this);
+		return new LambdaConversionApiImpl<>(builder, this);
 	}
 
 	@Override
-	protected Optional<PropertyReader> buildyReader(final ProjectionRegistry registry) throws ProjectionError {
+	protected Optional<PropertyReader> buildyReader(final ProjectionRegistry registry) throws ProjectionBuilderError {
 
 		final Collection<ConverterMapping> converters = new ArrayList<>(conversionBuilder.size()*2);
 		
@@ -118,10 +114,10 @@ public final class SourcesPropertyApi<P> extends AbstractValueProviderApi<P> {
 			}
 			
 		} catch (ConverterError e) {
-			throw new ProjectionError(e);
+			throw new ProjectionBuilderError(e);
 		}
 
-		final SourceWriter[] sourceWriters = sourcesBuilderApi.buildWriters(registry.getTypeConversions());
+		final SourceWriter[] sourceWriters = arraySourceItem.buildWriters(registry.getTypeConversions());
 
 		final Optional<ArraySourceWriter> sourceWriter = arraySourceWriterBuilder
 							.sources(sourceWriters)
@@ -144,7 +140,7 @@ public final class SourcesPropertyApi<P> extends AbstractValueProviderApi<P> {
 	}
 
 	@Override
-	protected Optional<PropertyWriter> buildyWriter(ProjectionRegistry registry) throws ProjectionError {
+	protected Optional<PropertyWriter> buildyWriter(ProjectionRegistry registry) throws ProjectionBuilderError {
 		
 		final Collection<ConverterMapping> converters = new ArrayList<>(conversionBuilder.size()*2);
 		
@@ -154,10 +150,10 @@ public final class SourcesPropertyApi<P> extends AbstractValueProviderApi<P> {
 			}
 			
 		} catch (ConverterError e) {
-			throw new ProjectionError(e);
+			throw new ProjectionBuilderError(e);
 		}
 
-		final SourceReader[] sourceReaders = sourcesBuilderApi.buildReaders(registry.getTypeConversions());
+		final SourceReader[] sourceReaders = arraySourceItem.buildReaders(registry.getTypeConversions());
 		
 		final Optional<ArraySourceReader> sourceReader = arraySourceReaderBuilder
 							.sources(sourceReaders)
@@ -180,19 +176,19 @@ public final class SourcesPropertyApi<P> extends AbstractValueProviderApi<P> {
 	}
 	
 	@Override
-	protected SourcesPropertyApi<P> targetGetter(final Getter targetGetter) {
+	protected ArraySourceApiImpl<P> targetGetter(final Getter targetGetter) {
 		this.targetGetter = targetGetter; 
 		return this;
 	}
 
 	@Override
-	protected SourcesPropertyApi<P> targetSetter(final Setter targetSetter) {
+	protected ArraySourceApiImpl<P> targetSetter(final Setter targetSetter) {
 		this.targetSetter = targetSetter;
 		return this;
 	}
 	
 	@Override
-	protected SourcesPropertyApi<P> targetReference(final boolean reference) {
+	protected ArraySourceApiImpl<P> targetReference(final boolean reference) {
 		this.targetReference = reference;
 		return this;
 	}
