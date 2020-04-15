@@ -18,26 +18,29 @@ public final class ProvidedApiImpl<P> extends AbstractValueProviderApi<P> implem
 	
 	final ProjectionBuilder<P> projectionBuilder;
 
-	final ProvidedPropertyReaderBuilder providedPropertyReaderBuilder;
-	final ProvidedPropertyWriterBuilder providedPropertyWriterBuilder;
+	final String qualifier;
+	
+	Getter targetGetter;
+	Setter targetSetter;
+	
+	boolean targetReference;
+	
+	boolean optional;
 	
 	protected ProvidedApiImpl(final ProjectionBuilder<P> projection, final String name) {
 		this.projectionBuilder = projection;
-		this.providedPropertyReaderBuilder = ProvidedPropertyReaderBuilder.newInstance().qualifier(name);
-		this.providedPropertyWriterBuilder = ProvidedPropertyWriterBuilder.newInstance().qualifier(name);
+		this.qualifier = name;
 	}
 	
 	@Override
 	public ProvidedApi<P> optional() {
-		providedPropertyReaderBuilder.optional(true);
-		providedPropertyWriterBuilder.optional(true);
+		this.optional = true;
 		return this;
 	}
 
 	@Override
 	public ProvidedApi<P> required() {
-		providedPropertyReaderBuilder.optional(false);
-		providedPropertyWriterBuilder.optional(false);
+		this.optional = false;
 		return this;
 	}
 	
@@ -57,30 +60,43 @@ public final class ProvidedApiImpl<P> extends AbstractValueProviderApi<P> implem
 	
 	@Override
 	protected Optional<PropertyReader> buildyReader(final ProjectionRegistry registry) throws ProjectionBuilderError {
-		return providedPropertyReaderBuilder.build(registry).map(PropertyReader.class::cast);
+		return ProvidedPropertyReaderBuilder
+						.newInstance()
+							.qualifier(qualifier)
+							.optional(optional)
+							.targetGetter(targetGetter)
+							.targetReference(targetReference)
+							.build(registry)
+								.map(PropertyReader.class::cast);
 	}
 
 	@Override
 	protected Optional<PropertyWriter> buildyWriter(final ProjectionRegistry registry) throws ProjectionBuilderError {
-		return providedPropertyWriterBuilder.build(registry).map(PropertyWriter.class::cast);
+		return ProvidedPropertyWriterBuilder
+						.newInstance()
+							.qualifier(qualifier)
+							.optional(optional)
+							.targetSetter(targetSetter)
+							.targetReference(targetReference)
+							.build(registry)
+								.map(PropertyWriter.class::cast);
 	}
 	
 	@Override
 	protected ProvidedApiImpl<P> targetGetter(final Getter targetGetter) {
-		providedPropertyReaderBuilder.targetGetter(targetGetter);
+		this.targetGetter = targetGetter;
 		return this;
 	}
 
 	@Override
 	protected ProvidedApiImpl<P> targetSetter(final Setter targetSetter) {
-		providedPropertyWriterBuilder.targetSetter(targetSetter);
+		this.targetSetter = targetSetter;
 		return this;
 	}
 	
 	@Override
 	protected ProvidedApiImpl<P> targetReference(final boolean reference) {
-		providedPropertyReaderBuilder.targetReference(reference);
-		providedPropertyWriterBuilder.targetReference(reference);
+		this.targetReference = reference;
 		return this;
 	}
 }

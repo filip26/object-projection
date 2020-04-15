@@ -38,9 +38,6 @@ public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> imp
 
 	final List<ConversionMappingBuilder> conversionBuilder;
 
-	final ArraySourceReaderBuilder arraySourceReaderBuilder;
-	final ArraySourceWriterBuilder arraySourceWriterBuilder;
-	
 	final String projectionPropertyName;
 
 	ArraySourceItemApiImpl<P> arraySourceItem;
@@ -50,25 +47,22 @@ public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> imp
 	
 	boolean targetReference;
 	
+	boolean optional;
+	
 	protected ArraySourceApiImpl(final ProjectionBuilder<P> projection, final String projectionPropertyName) {
 		this.projectionBuilder = projection;
 		this.conversionBuilder = new ArrayList<>();
-
-		this.arraySourceReaderBuilder = ArraySourceReaderBuilder.newInstance();
-		this.arraySourceWriterBuilder = ArraySourceWriterBuilder.newInstance();
 		
 		this.projectionPropertyName = projectionPropertyName;
 	}
 	
 	public ArraySourceApi<P> optional() {
-		arraySourceReaderBuilder.optional(true);
-		arraySourceWriterBuilder.optional(true);
+		this.optional = true;
 		return this;
 	}
 
 	public ArraySourceApi<P> required() {
-		arraySourceReaderBuilder.optional(false);
-		arraySourceWriterBuilder.optional(false);
+		this.optional = false;
 		return this;
 	}
 
@@ -119,8 +113,11 @@ public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> imp
 
 		final SourceWriter[] sourceWriters = arraySourceItem.buildWriters(registry.getTypeConversions());
 
-		final Optional<ArraySourceWriter> sourceWriter = arraySourceWriterBuilder
+		final Optional<ArraySourceWriter> sourceWriter = 
+					ArraySourceWriterBuilder
+							.newInstance()
 							.sources(sourceWriters)
+							.optional(optional)
 							.converters(converters)
 							.targetType(targetGetter.getType())
 							.build(registry.getTypeConversions());
@@ -154,9 +151,11 @@ public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> imp
 		}
 
 		final SourceReader[] sourceReaders = arraySourceItem.buildReaders(registry.getTypeConversions());
-		
-		final Optional<ArraySourceReader> sourceReader = arraySourceReaderBuilder
+
+		final Optional<ArraySourceReader> sourceReader =
+				ArraySourceReaderBuilder.newInstance()
 							.sources(sourceReaders)
+							.optional(optional)
 							.converters(converters)
 							.targetType(targetSetter.getType(), targetReference)
 							.build(registry.getTypeConversions());
