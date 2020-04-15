@@ -46,23 +46,12 @@ final class ArraySourceReaderMapper {
 		
 		final boolean targetReference = PropertyReaderMapper.isReference(targetGetter.getType());
 
-		ObjectType sourceTargetType = targetGetter.getType();
-		
-		if (targetReference) {
-			if (targetGetter.getType().isCollection()) {
-				sourceTargetType = ObjectType.of(targetGetter.getType().getType(), Object.class);
-			} else if (targetGetter.getType().isArray()) {
-				sourceTargetType = ObjectType.of(Object[].class);
-			} else {
-				sourceTargetType = ObjectType.of(Object.class);
-			}
-		}
-
 		final Optional<ArraySourceWriter> arraySourceWriter = 
 					getArraySourceWriter(
 							sourcesAnnotation, 
 							field.getName(),
-							sourceTargetType,
+							targetGetter.getType(),
+							targetReference,
 							defaultSourceClass
 							);
 
@@ -77,22 +66,22 @@ final class ArraySourceReaderMapper {
 				.build(registry).map(PropertyReader.class::cast);
 	}
 	
-	Optional<ArraySourceWriter> getArraySourceWriter(final Sources sourcesAnnotation, final String fieldName, final ObjectType targetType, final Class<?> defaultSourceObjectClass) throws ProjectionError {
-
-		ObjectType sourceTargetType = targetType;
-		
-		if (targetType.isCollection()) {
-			sourceTargetType = ObjectType.of(targetType.getComponentType());
-			
-		} else if (targetType.isArray()) {
-			sourceTargetType = ObjectType.of(targetType.getType().getComponentType());
-		}
+	Optional<ArraySourceWriter> getArraySourceWriter(final Sources sourcesAnnotation, final String fieldName, final ObjectType targetType, final boolean targetReference, final Class<?> defaultSourceObjectClass) throws ProjectionError {
 							 								
 		final Collection<SingleSourceWriter> sources = new ArrayList<>(sourcesAnnotation.value().length);
 		
+		ObjectType itemType = targetType;
+		
+		if (targetType.isCollection()) {
+			itemType = ObjectType.of(targetType.getComponentType());
+			
+		} else if (targetType.isArray()) {
+			itemType = ObjectType.of(targetType.getType().getComponentType());			
+		}
+
 		for (final Source source : sourcesAnnotation.value()) {
 			singleSourceMapper
-				.getSingleSourceWriter(source, fieldName, sourceTargetType, defaultSourceObjectClass)
+				.getSingleSourceWriter(source, fieldName, itemType, targetReference, defaultSourceObjectClass)
 				.ifPresent(sources::add);
 		}
 		

@@ -74,18 +74,6 @@ final class PropertyReaderMapper {
 		final Getter targetGetter = FieldGetter.from(field, ObjectUtils.getTypeOf(field));
 		
 		final boolean targetReference = PropertyReaderMapper.isReference(targetGetter.getType());
-		
-		ObjectType sourceTargetType = targetGetter.getType();
-		
-		if (targetReference) {
-			if (targetGetter.getType().isCollection()) {
-				sourceTargetType = ObjectType.of(targetGetter.getType().getType(), Object.class);
-			} else if (targetGetter.getType().isArray()) {
-				sourceTargetType = ObjectType.of(Object[].class);
-			} else {
-				sourceTargetType = ObjectType.of(Object.class);
-			}
-		}
 
 		final Optional<SingleSourceWriter> sourceWriter = 
 				singleSourceMapper.getSingleSourceWriter(
@@ -94,7 +82,7 @@ final class PropertyReaderMapper {
 						SingleSourceWriterBuilder.newInstance()
 							.objectClass(defaultSourceClass)
 							.optional(true)
-							.targetType(sourceTargetType)
+							.targetType(targetGetter.getType(), targetReference)
 						);
 				
 		if (sourceWriter.isEmpty()) {

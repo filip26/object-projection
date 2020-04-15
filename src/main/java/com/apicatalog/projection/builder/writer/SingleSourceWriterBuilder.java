@@ -39,6 +39,8 @@ public final class SingleSourceWriterBuilder {
 	Setter sourceSetter;
 	
 	ObjectType targetType;
+	
+	boolean targetReference;
 
 	protected SingleSourceWriterBuilder() {
 		this.mode = AccessMode.WRITE_ONLY;
@@ -83,12 +85,9 @@ public final class SingleSourceWriterBuilder {
 			return Optional.empty(); 
 		}			
 
-		// set default source type for an array of sources
-		source.setTargetType(targetType);
-
 		try {
 			// set conversions to apply
-			source.setTargetType(buildChain(source, converters, typeConverters, targetType));
+			buildChain(source, typeConverters);
 			
 			// set optional 
 			source.setOptional(optional);
@@ -130,67 +129,99 @@ public final class SingleSourceWriterBuilder {
 		return this;
 	}
 	
-	public SingleSourceWriterBuilder targetType(ObjectType targetType) {
+	public SingleSourceWriterBuilder targetType(ObjectType targetType, boolean targetReference) {
 		this.targetType= targetType;
+		this.targetReference = targetReference;
 		return this;
 	}	
 	
-	final ObjectType buildChain(SingleSourceWriter source, final Collection<ConverterMapping> converters, final TypeConversions typeConversions, ObjectType targetType) throws UnknownConversion {
+	final void buildChain(final SingleSourceWriter source, final TypeConversions typeConversions) throws UnknownConversion {
 
 		final ArrayList<Conversion> conversions = new ArrayList<>((converters == null ? 0 : converters.size()) * 2 + 1);
 		
-		if (converters == null || converters.isEmpty()) {
+		if (converters != null && !converters.isEmpty()) {
+		
+			final ConverterMapping[] mapping = converters.toArray(new ConverterMapping[0]); 
+	
+			targetType = getSourceTargetType(targetType, targetReference, mapping[mapping.length - 1].getTargetType());
 			
-			if (Object.class == targetType.getType()) {
-				return sourceSetter.getType();
-			}
-			if (targetType.isCollection() && Object.class == targetType.getComponentType()) {
-				return sourceSetter.getType();
-			}
-
 			typeConversions.get(
 					targetType,
-					sourceSetter.getType())
+					mapping[mapping.length - 1].getTargetType())
 				.ifPresent(conversions::add);
-			source.setConversions(conversions.toArray(new Conversion[0]));
-
-			return targetType;
-		}
-		
-		final ConverterMapping[] mapping = converters.toArray(new ConverterMapping[0]); 
-
-		typeConversions.get(
-				targetType,
-				mapping[mapping.length - 1].getTargetType())
-			.ifPresent(conversions::add);
-		
-		for (int i = 1; i < mapping.length; i++) {
+			
+			for (int i = 1; i < mapping.length; i++) {
+				
+				// explicit conversion
+				final Converter<Object, Object> converter = mapping[mapping.length - i].getConversion();
+				
+				conversions.add(converter::backward);
+	
+				// implicit conversion
+				typeConversions.get(
+						mapping[mapping.length - i].getSourceType(),
+						mapping[mapping.length - i - 1].getTargetType())
+					.ifPresent(conversions::add);
+			}
 			
 			// explicit conversion
-			final Converter<Object, Object> converter = mapping[mapping.length - i].getConversion();
+			final Converter<Object, Object> converter = mapping[0].getConversion();
 			
 			conversions.add(converter::backward);
 
-			// implicit conversion
-			typeConversions.get(
-					mapping[mapping.length - i].getSourceType(),
-					mapping[mapping.length - i - 1].getTargetType())
-				.ifPresent(conversions::add);
+			targetType = mapping[0].getSourceType();
+			
+		} else {
+			
+			targetType = getSourceTargetType(targetType, targetReference, sourceSetter.getType());			
 		}
 		
-		// explicit conversion
-		final Converter<Object, Object> converter = mapping[0].getConversion();
-		
-		conversions.add(converter::backward);
-
 		// implicit conversion
-		typeConversions.get(mapping[0].getSourceType(), sourceSetter.getType()).ifPresent(conversions::add);
+		typeConversions.get(targetType, sourceSetter.getType()).ifPresent(conversions::add);
 			
 		if (logger.isTraceEnabled()) {
 			logger.trace("{} conversions attached", conversions.size());
 		}
 		
 		source.setConversions(conversions.toArray(new Conversion[0]));
-		return targetType;
+		
+		// set default source type for an array of sources
+		source.setTargetType(targetType);
+
+	}
+	
+	public static final ObjectType getSourceTargetType(final ObjectType sourceType, final boolean sourceReference, final ObjectType targetType) {
+		
+		if (sourceReference) {
+			if (sourceType.isCollection()) {
+				
+				if (targetType.isCollection()) {
+					return ObjectType.of(sourceType.getType(), targetType.getComponentType());
+					
+				} else if (targetType.isArray()) {
+					return ObjectType.of(sourceType.getType(), targetType.getType().getComponentType());
+					
+				} else {
+					return ObjectType.of(sourceType.getType(), targetType.getType());
+				}
+				
+			} else if (sourceType.isArray()) {
+					//TODO
+					
+			} else {
+
+				if (targetType.isCollection()) {
+					return ObjectType.of(targetType.getComponentType());
+					
+				} else if (targetType.isArray()) {
+					return ObjectType.of(targetType.getType().getComponentType());
+					
+				} else {
+					return targetType;
+				}
+				
+			}
+		}
+		return sourceType;
 	}
 }

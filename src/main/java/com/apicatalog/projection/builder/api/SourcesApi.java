@@ -165,7 +165,7 @@ public final class SourcesApi<P> {
 							.objectClass(sourceHolder.objectClass)
 							.setter(sourceSetter)
 							.converters(converters)
-							.targetType(ObjectType.of(Object.class))
+							.targetType(ObjectType.of(Object.class), false)
 							.build(typeConversions).map(SourceWriter.class::cast)
 							;	
 	}

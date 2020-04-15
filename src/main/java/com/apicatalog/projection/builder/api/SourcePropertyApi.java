@@ -20,7 +20,6 @@ import com.apicatalog.projection.conversion.TypeConversions;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
-import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.object.setter.Setter;
@@ -189,19 +188,7 @@ public final class SourcePropertyApi<P> extends AbstractValueProviderApi<P> {
 		
 		// extract setter
 		final Setter sourceSetter = ObjectUtils.getSetter(sourceObjectClass, sourcePropertyName);
-		
-		ObjectType sourceTargetType = targetGetter.getType();
-		
-		if (targetReference) {
-			if (targetGetter.getType().isCollection()) {
-				sourceTargetType = ObjectType.of(targetGetter.getType().getType(), Object.class);
-			} else if (targetGetter.getType().isArray()) {
-				sourceTargetType = ObjectType.of(Object[].class);
-			} else {
-				sourceTargetType = ObjectType.of(Object.class);
-			}
-		}
 
-		return sourceBuilder.setter(sourceSetter).targetType(sourceTargetType).build(typeConversions).map(SourceWriter.class::cast);		
+		return sourceBuilder.setter(sourceSetter).targetType(targetGetter.getType(), targetReference).build(typeConversions).map(SourceWriter.class::cast);		
 	}
 }

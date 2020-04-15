@@ -29,6 +29,8 @@ public final class ArraySourceWriterBuilder {
 	
 	ObjectType targetType;
 	
+	boolean targetReference;
+	
 	protected ArraySourceWriterBuilder() {
 		this.optional = false;
 	}
@@ -57,11 +59,8 @@ public final class ArraySourceWriterBuilder {
 
 		try {
 			// set conversions to apply
-			buildChain(source, converters, typeConversions);
-	
-			// set default target type
-			source.setTargetType(targetType);
-			
+			buildChain(source, typeConversions);
+
 			// set optional 
 			source.setOptional(optional);
 			
@@ -92,55 +91,54 @@ public final class ArraySourceWriterBuilder {
 		return this;
 	}
 
-	final void buildChain(ArraySourceWriter source, Collection<ConverterMapping> converters, TypeConversions typeConversions) throws UnknownConversion {
+	final void buildChain(ArraySourceWriter source, TypeConversions typeConversions) throws UnknownConversion {
 
 		final ArrayList<Conversion> conversions = new ArrayList<>((converters == null ? 0 : converters.size()) * 2 + 1);
 		
-		// no conversions to set
-		if (converters == null || converters.isEmpty()) {
+		if (converters != null && !converters.isEmpty()) {
 
+			final ConverterMapping[] mapping = converters.toArray(new ConverterMapping[0]);
+
+			targetType = SingleSourceWriterBuilder.getSourceTargetType(targetType, targetReference, mapping[mapping.length - 1].getTargetType());
+	
 			typeConversions.get(
 					targetType,
-					ObjectType.of(Object[].class))
+					mapping[mapping.length - 1].getTargetType())
 				.ifPresent(conversions::add);
-			source.setConversions(conversions.toArray(new Conversion[0]));
-
-			return;
-		}
-
-		final ConverterMapping[] mapping = converters.toArray(new ConverterMapping[0]);
-
-		typeConversions.get(
-				targetType,
-				mapping[mapping.length - 1].getTargetType())
-			.ifPresent(conversions::add);
-
-		
-		for (int i = 1; i < mapping.length; i++) {
-
+	
+			
+			for (int i = 1; i < mapping.length; i++) {
+	
+				// explicit conversion
+				final Converter<Object, Object> converter = mapping[mapping.length - i].getConversion();
+				
+				conversions.add(converter::backward);
+	
+				// implicit conversion
+				typeConversions.get(
+						mapping[mapping.length - i].getSourceType(),
+						mapping[mapping.length - i - 1].getTargetType())
+					.ifPresent(conversions::add);
+	
+			}
+			
 			// explicit conversion
-			final Converter<Object, Object> converter = mapping[mapping.length - i].getConversion();
+			final Converter<Object, Object> converter = mapping[0].getConversion();
 			
 			conversions.add(converter::backward);
-
-			// implicit conversion
-			typeConversions.get(
-					mapping[mapping.length - i].getSourceType(),
-					mapping[mapping.length - i - 1].getTargetType())
-				.ifPresent(conversions::add);
-
+			
+			targetType = mapping[0].getSourceType();
+			
+		} else {
+			targetType = SingleSourceWriterBuilder.getSourceTargetType(targetType, targetReference, ObjectType.of(Object[].class));						
 		}
-		
-		// explicit conversion
-		final Converter<Object, Object> converter = mapping[0].getConversion();
-		
-		conversions.add(converter::backward);
 
 		// implicit conversion
-		typeConversions.get(mapping[0].getSourceType(), ObjectType.of(Object[].class)).ifPresent(conversions::add);
-			
+		typeConversions.get(targetType, ObjectType.of(Object[].class)).ifPresent(conversions::add);
 
-	
 		source.setConversions(conversions.toArray(new Conversion[0]));
+		
+		// set default target type
+		source.setTargetType(targetType);
 	}
 }
