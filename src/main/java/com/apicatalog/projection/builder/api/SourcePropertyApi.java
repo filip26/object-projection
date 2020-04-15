@@ -182,7 +182,7 @@ public final class SourcePropertyApi<P> extends AbstractValueProviderApi<P> {
 		// extract getter
 		final Getter sourceGetter = ObjectUtils.getGetter(sourceObjectClass, sourcePropertyName);
 		
-		return sourceBuilder.getter(sourceGetter).targetType(targetSetter.getType()).build(typeConversions).map(SourceReader.class::cast);
+		return sourceBuilder.getter(sourceGetter).targetType(targetSetter.getType(), targetReference).build(typeConversions).map(SourceReader.class::cast);
 	}	
 
 	Optional<SourceWriter> buildSourceWriter(final TypeConversions typeConversions, final SingleSourceWriterBuilder sourceBuilder) throws ProjectionError {

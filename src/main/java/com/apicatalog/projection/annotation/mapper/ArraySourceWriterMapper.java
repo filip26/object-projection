@@ -46,23 +46,12 @@ final class ArraySourceWriterMapper {
 
 		final boolean targetReference = PropertyReaderMapper.isReference(targetSetter.getType());
 		
-		ObjectType sourceTargetType = targetSetter.getType();
-		
-		if (targetReference) {
-			if (targetSetter.getType().isCollection()) {
-				sourceTargetType = ObjectType.of(targetSetter.getType().getType(), Object.class);
-			} else if (targetSetter.getType().isArray()) {
-				sourceTargetType = ObjectType.of(Object[].class);
-			} else {
-				sourceTargetType = ObjectType.of(Object.class);
-			}
-		}
-
 		final Optional<ArraySourceReader> arraySourceReader = 
 					getArraySourceReader(
 							sourcesAnnotation, 
 							field.getName(), 
-							sourceTargetType,
+							targetSetter.getType(),
+							targetReference,
 							defaultSourceClass
 							);
 
@@ -77,22 +66,13 @@ final class ArraySourceWriterMapper {
 					.build(registry).map(PropertyWriter.class::cast);
 	}
 	
-	Optional<ArraySourceReader> getArraySourceReader(final Sources sourcesAnnotation, final String fieldName, final ObjectType targetType, final Class<?> defaultSourceObjectClass) throws ProjectionError {
+	Optional<ArraySourceReader> getArraySourceReader(final Sources sourcesAnnotation, final String fieldName, final ObjectType targetType, final boolean targetReference, final Class<?> defaultSourceObjectClass) throws ProjectionError {
 		
-		ObjectType sourceTargetType = targetType;
-		
-		if (targetType.isCollection()) {
-			sourceTargetType = ObjectType.of(targetType.getComponentType());
-			
-		} else if (targetType.isArray()) {
-			sourceTargetType = ObjectType.of(targetType.getType().getComponentType());
-		}
-
 		final Collection<SingleSourceReader> sources = new ArrayList<>(sourcesAnnotation.value().length);
 		
 		for (final Source source : sourcesAnnotation.value()) {
 			singleSourceMapper
-				.getSingleSourceReader(source, fieldName, sourceTargetType, defaultSourceObjectClass)
+				.getSingleSourceReader(source, fieldName, targetType, targetReference, defaultSourceObjectClass)
 				.ifPresent(sources::add);
 		}
 		
@@ -106,7 +86,7 @@ final class ArraySourceWriterMapper {
 				ArraySourceReaderBuilder.newInstance()
 					.optional(sourcesAnnotation.optional())
 					.sources(sources.toArray(new SingleSourceReader[0]))
-					.targetType(targetType)
+					.targetType(targetType, targetReference)
 					.converters(SingleSourceReaderMapper.getConverterMapping(sourcesAnnotation.map()))	// set conversions to apply
 					.build(registry.getTypeConversions());
 			

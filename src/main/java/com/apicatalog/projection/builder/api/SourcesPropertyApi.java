@@ -149,7 +149,7 @@ public final class SourcesPropertyApi<P> extends AbstractValueProviderApi<P> {
 		final Optional<ArraySourceReader> sourceReader = arraySourceReaderBuilder
 							.sources(sourceReaders)
 							.converters(converters)
-							.targetType(targetSetter.getType())
+							.targetType(targetSetter.getType(), targetReference)
 							.build(registry.getTypeConversions());
 		
 		if (sourceReader.isEmpty()) {

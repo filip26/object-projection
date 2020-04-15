@@ -47,24 +47,13 @@ final class SingleSourceWriterMapper {
 		final Setter targetSetter = FieldSetter.from(field, ObjectUtils.getTypeOf(field));
 		
 		final boolean targetReference = PropertyReaderMapper.isReference(targetSetter.getType());
-		
-		ObjectType sourceTargetType = targetSetter.getType();
-		
-		if (targetReference) {
-			if (targetSetter.getType().isCollection()) {
-				sourceTargetType = ObjectType.of(targetSetter.getType().getType(), Object.class);
-			} else if (targetSetter.getType().isArray()) {
-				sourceTargetType = ObjectType.of(Object[].class);
-			} else {
-				sourceTargetType = ObjectType.of(Object.class);
-			}
-		}
 
 		final Optional<SingleSourceReader> sourceReader = 
 					getSingleSourceReader( 
 						sourceAnnotation,
 						field.getName(),
-						sourceTargetType,
+						targetSetter.getType(),
+						targetReference,
 						defaultSourceClass
 						); 
 
@@ -79,7 +68,7 @@ final class SingleSourceWriterMapper {
 					.build(registry).map(PropertyWriter.class::cast);
 	}
 
-	protected Optional<SingleSourceReader> getSingleSourceReader(final Source sourceAnnotation, final String fieldName, final ObjectType targetType, final Class<?> defaultSourceClass) throws ProjectionError {
+	protected Optional<SingleSourceReader> getSingleSourceReader(final Source sourceAnnotation, final String fieldName, final ObjectType targetType, final boolean targetReference, final Class<?> defaultSourceClass) throws ProjectionError {
 				
 		Class<?> sourceObjectClass = defaultSourceClass;
 		
@@ -106,7 +95,7 @@ final class SingleSourceWriterMapper {
 				.optional(sourceAnnotation.optional())
 				.qualifier(sourceAnnotation.name())
 				.mode(sourceAnnotation.mode())
-				.targetType(targetType)				
+				.targetType(targetType, targetReference)				
 				;
 
 		// set conversions to apply

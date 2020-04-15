@@ -39,6 +39,7 @@ public final class SingleSourceReaderBuilder {
 	Getter sourceGetter;
 	
 	ObjectType targetType;
+	boolean targetReference;
 
 	protected SingleSourceReaderBuilder() {
 		this.mode = AccessMode.READ_ONLY;
@@ -74,12 +75,9 @@ public final class SingleSourceReaderBuilder {
 			return Optional.empty(); 
 		}			
 
-		// set default source type for an array of sources
-		source.setType(targetType);
-
 		try {
 			// set conversions to apply
-			source.setType(buildChain(source, converters, typeConverters));
+			buildChain(source, typeConverters);
 	
 			// set optional 
 			source.setOptional(optional);
@@ -106,84 +104,112 @@ public final class SingleSourceReaderBuilder {
 		return this;
 	}
 	
-	public SingleSourceReaderBuilder converters(Collection<ConverterMapping> converters) {
+	public SingleSourceReaderBuilder converters(final Collection<ConverterMapping> converters) {
 		this.converters = converters;
 		return this;
 	}
 	
-	public SingleSourceReaderBuilder objectClass(Class<?> sourceObjectClass) {
+	public SingleSourceReaderBuilder objectClass(final Class<?> sourceObjectClass) {
 		this.sourceObjectClass = sourceObjectClass;
 		return this;
 	}
 	
-	public SingleSourceReaderBuilder getter(Getter getter) {
+	public SingleSourceReaderBuilder getter(final Getter getter) {
 		this.sourceGetter = getter;
 		return this;
 	}
 	
-	public SingleSourceReaderBuilder targetType(ObjectType targetType) {
+	public SingleSourceReaderBuilder targetType(final ObjectType targetType, final boolean targetReference) {
 		this.targetType= targetType;
+		this.targetReference = targetReference;
 		return this;
 	}	
 	
-	final ObjectType buildChain(final SingleSourceReader source, final Collection<ConverterMapping> converters, final TypeConversions typeConversions) throws UnknownConversion {
+	final void buildChain(final SingleSourceReader source, final TypeConversions typeConversions) throws UnknownConversion {
 
 		final ArrayList<Conversion> conversions = new ArrayList<>((converters != null ? converters.size() : 0) * 2 + 1);
-
-		if (converters == null || converters.isEmpty()) {
-			
-			if (Object.class == targetType.getType()) {
-				return sourceGetter.getType();
-			}
-			if (targetType.isCollection() && Object.class == targetType.getComponentType()) {
-				return sourceGetter.getType();
-			}
-
-			typeConversions.get(
-					sourceGetter.getType(),
-					targetType)
-				.ifPresent(conversions::add);
-
-
-			source.setConversions(conversions.toArray(new Conversion[0]));
-			
-			
-			return targetType;
-		}
 		
-		final Iterator<ConverterMapping> it = converters.iterator();
-		
-		ConverterMapping mapping = it.next();
+		ObjectType sourceType = sourceGetter.getType();
 
-		// implicit conversion
-		typeConversions.get(sourceGetter.getType(), mapping.getSourceType()).ifPresent(conversions::add);
-		
-		// explicit conversion
-		conversions.add(mapping.getConversion()::forward);
-
-		while (it.hasNext()) {
-			ConverterMapping next = it.next();
-
+		if (converters != null && !converters.isEmpty()) {
+			
+			final Iterator<ConverterMapping> it = converters.iterator();
+			
+			ConverterMapping mapping = it.next();
+	
 			// implicit conversion
-			typeConversions.get(
-					mapping.getTargetType(),
-					next.getSourceType())
-				.ifPresent(conversions::add);
+			typeConversions.get(sourceType, mapping.getSourceType()).ifPresent(conversions::add);
+			
+			sourceType = mapping.getTargetType();
 			
 			// explicit conversion
-			conversions.add(next.getConversion()::forward);			
-
-			mapping = next;
+			conversions.add(mapping.getConversion()::forward);
+	
+			while (it.hasNext()) {
+				
+				mapping = it.next();
+	
+				// implicit conversion
+				typeConversions.get(
+						sourceType,
+						mapping.getSourceType())
+					.ifPresent(conversions::add);
+				
+				// explicit conversion
+				conversions.add(mapping.getConversion()::forward);			
+	
+				sourceType = mapping.getTargetType();
+			}
 		}
+		
+		targetType = getSourceTargetType(sourceType, targetType, targetReference);
 		
 		// implicit conversion
 		typeConversions.get(
-				mapping.getTargetType(),
-				targetType)
+							sourceType,
+							targetType
+							)
 			.ifPresent(conversions::add);
 
-
 		source.setConversions(conversions.toArray(new Conversion[0]));
+		
+		// set default source type for an array of sources
+		source.setType(targetType);
+	}
+	
+	public static final ObjectType getSourceTargetType(final ObjectType sourceType, final ObjectType targetType, final boolean targetReference) {
+		
+		if (targetReference) {
+			if (targetType.isCollection()) {
+				
+				if (sourceType.isCollection()) {
+					return ObjectType.of(targetType.getType(), sourceType.getComponentType());
+					
+				} else if (sourceType.isArray()) {
+					return ObjectType.of(targetType.getType(), sourceType.getType().getComponentType());
+					
+				} else {
+					return ObjectType.of(targetType.getType(), sourceType.getType());
+				}
+				
+			} else if (targetType.isArray()) {
+
+				//TODO
+
+			} else {
+
+				if (sourceType.isCollection()) {
+					return ObjectType.of(sourceType.getComponentType());
+					
+				} else if (sourceType.isArray()) {
+					return ObjectType.of(sourceType.getType().getComponentType());
+					
+				} else {
+					return sourceType;
+				}
+				
+			}
+		}
 		return targetType;
 	}
 }
