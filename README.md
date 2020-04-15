@@ -4,7 +4,7 @@
 ProjectionBuilder
           .bind(EmployeeTo.class)
 
-          .map("name")        // DOE, John
+          .map("name")    // DOE, John   - alt .map(EmployeeTo::getName, EmployeeTo::setName)
                 .sources()
                     .conversion(String[].class, String.class)
                         .forward(sources -> sources[1] + ", " + sources[0])    // DOE, John
