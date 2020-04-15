@@ -8,7 +8,7 @@ public final class SimpleTypeConversions {
 
 	protected SimpleTypeConversions() {}
 	
-	public static final Conversion get(final Class<?> source, final Class<?> target) {
+	public static final Conversion<Object, Object> get(final Class<?> source, final Class<?> target) {
 		
 		if (source == String.class) return fromString(target);
 		if (source == Integer.class) return fromInteger(target);
@@ -23,7 +23,7 @@ public final class SimpleTypeConversions {
 		return null;
 	}
 	
-	static final Conversion fromString(final Class<?> target) {
+	static final Conversion<Object, Object> fromString(final Class<?> target) {
 		if (target == Byte.class) return o -> Byte.valueOf((String)o);
 		if (target == Short.class) return o -> Short.valueOf((String)o);
 		if (target == Long.class) return o -> Long.valueOf((String)o);
@@ -36,7 +36,7 @@ public final class SimpleTypeConversions {
 		return null;
 	}
 
-	static final Conversion fromInteger(final Class<?> target) {
+	static final Conversion<Object, Object> fromInteger(final Class<?> target) {
 		
 		if (target == String.class) return Object::toString; 
 		if (target == Byte.class) return o -> ((Integer)o).byteValue();
@@ -49,7 +49,7 @@ public final class SimpleTypeConversions {
 		return null;
 	}
 
-	static final Conversion fromLong(final Class<?> target) {
+	static final Conversion<Object, Object> fromLong(final Class<?> target) {
 		
 		if (target == String.class) return Object::toString; 
 		if (target == Byte.class) return o -> ((Long)o).byteValue();
@@ -63,7 +63,7 @@ public final class SimpleTypeConversions {
 		return null;
 	}
 
-	static final Conversion fromFloat(final Class<?> target) {
+	static final Conversion<Object, Object> fromFloat(final Class<?> target) {
 		
 		if (target == String.class) return Object::toString; 
 		if (target == Byte.class) return o -> ((Float)o).byteValue();
@@ -76,7 +76,7 @@ public final class SimpleTypeConversions {
 		return null;
 	}
 
-	static final Conversion fromDouble(final Class<?> target) {
+	static final Conversion<Object, Object> fromDouble(final Class<?> target) {
 		
 		if (target == String.class) return Object::toString; 
 		if (target == Byte.class) return o -> ((Double)o).byteValue();
@@ -88,7 +88,7 @@ public final class SimpleTypeConversions {
 		return null;
 	}
 
-	static final Conversion fromInstant(final Class<?> target) {
+	static final Conversion<Object, Object> fromInstant(final Class<?> target) {
 
 		if (target == String.class) return Object::toString; 
 		if (target == Long.class) return o -> ((Instant)o).toEpochMilli();
@@ -97,7 +97,7 @@ public final class SimpleTypeConversions {
 		return null;
 	}
 
-	static final Conversion fromBoolean(final Class<?> target) {
+	static final Conversion<Object, Object> fromBoolean(final Class<?> target) {
 		
 		if (target == String.class) return Object::toString; 
 		if (target == Byte.class) return o -> ((boolean)o) ? 1 : 0;

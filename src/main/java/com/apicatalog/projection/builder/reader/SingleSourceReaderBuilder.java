@@ -127,7 +127,7 @@ public final class SingleSourceReaderBuilder {
 	
 	final void buildChain(final SingleSourceReader source, final TypeConversions typeConversions) throws UnknownConversion {
 
-		final ArrayList<Conversion> conversions = new ArrayList<>((converters != null ? converters.size() : 0) * 2 + 1);
+		final ArrayList<Conversion<Object, Object>> conversions = new ArrayList<>((converters != null ? converters.size() : 0) * 2 + 1);
 		
 		ObjectType sourceType = sourceGetter.getType();
 
@@ -143,7 +143,7 @@ public final class SingleSourceReaderBuilder {
 			sourceType = mapping.getTargetType();
 			
 			// explicit conversion
-			conversions.add(mapping.getConversion()::forward);
+			conversions.add(mapping.getConverter()::forward);
 	
 			while (it.hasNext()) {
 				
@@ -156,7 +156,7 @@ public final class SingleSourceReaderBuilder {
 					.ifPresent(conversions::add);
 				
 				// explicit conversion
-				conversions.add(mapping.getConversion()::forward);			
+				conversions.add(mapping.getConverter()::forward);			
 	
 				sourceType = mapping.getTargetType();
 			}
@@ -171,7 +171,7 @@ public final class SingleSourceReaderBuilder {
 							)
 			.ifPresent(conversions::add);
 
-		source.setConversions(conversions.toArray(new Conversion[0]));
+		source.setConversions(conversions);
 		
 		// set default source type for an array of sources
 		source.setType(targetType);

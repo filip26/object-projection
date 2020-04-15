@@ -5,12 +5,12 @@ import com.apicatalog.projection.object.ObjectType;
 public final class ConverterMapping {
 
 	Converter<Object, Object> converter;
-	
+		
 	ObjectType sourceType;
 	
 	ObjectType targetType;
 	
-	public Converter<Object, Object> getConversion() {
+	public Converter<Object, Object> getConverter() {
 		return converter;
 	}
 	
@@ -34,5 +34,4 @@ public final class ConverterMapping {
 	public void setTargetType(ObjectType targetType) {
 		this.targetType = targetType;
 	}
-
 }

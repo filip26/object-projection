@@ -7,10 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterConfig;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
+import com.apicatalog.projection.converter.LambdaConverter;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
 
@@ -21,6 +23,12 @@ public final class ConversionMappingBuilder {
 	Class<? extends Converter<?, ?>> converterClass;
 	String[] parameters;
 	
+	Class<?> sourceType;
+	Class<?> targetType;
+	
+	Conversion<Object, Object> forward;
+	Conversion<Object, Object> backward;
+	
 	protected ConversionMappingBuilder() {
 	}
 	
@@ -30,7 +38,15 @@ public final class ConversionMappingBuilder {
 		
 	public ConverterMapping build() throws ConverterError, ProjectionError {
 		
-		ConverterMapping converter = new ConverterMapping();
+		final ConverterMapping converter = new ConverterMapping();
+		
+		if (forward != null || backward != null) {
+			converter.setSourceType(ObjectType.of(sourceType));
+			converter.setTargetType(ObjectType.of(targetType));
+			converter.setConverter(new LambdaConverter<>(forward, backward));
+			
+			return converter;
+		}
 		
 		@SuppressWarnings("unchecked")
 		Converter<Object, Object> instance = (Converter<Object, Object>) ObjectUtils.newInstance(converterClass);
@@ -39,32 +55,32 @@ public final class ConversionMappingBuilder {
 		
 		converter.setConverter(instance);
 
-		Type sourceType = ((ParameterizedType) converterClass.getGenericInterfaces()[0]).getActualTypeArguments()[0];
+		Type sourceNativeType = ((ParameterizedType) converterClass.getGenericInterfaces()[0]).getActualTypeArguments()[0];
 		
 		Class<?> sourceClass = null;
 		Class<?> sourceComponentClass = null;
 		
-		if (ParameterizedType.class.isInstance(sourceType)) {
-			sourceClass = (Class<?>)((ParameterizedType)sourceType).getRawType();
-			sourceComponentClass = (Class<?>)((ParameterizedType)sourceType).getActualTypeArguments()[0];
+		if (ParameterizedType.class.isInstance(sourceNativeType)) {
+			sourceClass = (Class<?>)((ParameterizedType)sourceNativeType).getRawType();
+			sourceComponentClass = (Class<?>)((ParameterizedType)sourceNativeType).getActualTypeArguments()[0];
 			
 		} else {
-			sourceClass = (Class<?>) sourceType;
+			sourceClass = (Class<?>) sourceNativeType;
 		}
 		
 		converter.setSourceType(ObjectType.of(sourceClass, sourceComponentClass));
 
-		Type targetType = ((ParameterizedType) converterClass.getGenericInterfaces()[0]).getActualTypeArguments()[1];
+		Type targetNativeType = ((ParameterizedType) converterClass.getGenericInterfaces()[0]).getActualTypeArguments()[1];
 		
 		Class<?> targetClass = null;
 		Class<?> targetComponentClass = null;
 		
-		if (ParameterizedType.class.isInstance(targetType)) {
-			targetClass = (Class<?>)((ParameterizedType)targetType).getRawType();
-			targetComponentClass = (Class<?>)((ParameterizedType)targetType).getActualTypeArguments()[0];
+		if (ParameterizedType.class.isInstance(targetNativeType)) {
+			targetClass = (Class<?>)((ParameterizedType)targetNativeType).getRawType();
+			targetComponentClass = (Class<?>)((ParameterizedType)targetNativeType).getActualTypeArguments()[0];
 			
 		} else {
-			targetClass = (Class<?>) targetType;
+			targetClass = (Class<?>) targetNativeType;
 		}
 
 		converter.setTargetType(ObjectType.of(targetClass, targetComponentClass));
@@ -81,4 +97,21 @@ public final class ConversionMappingBuilder {
 		this.parameters = parameters;
 		return this;
 	}
+	
+	public ConversionMappingBuilder types(Class<?> source, Class<?> target) {
+		this.sourceType = source;
+		this.targetType = target;
+		return this;
+	}
+
+	public ConversionMappingBuilder forward(Conversion<Object, Object> conversion) {
+		this.forward = conversion;
+		return this;
+	}
+
+	public ConversionMappingBuilder backward(Conversion<Object, Object> conversion) {
+		this.backward = conversion;
+		return this;
+	}
+
 }

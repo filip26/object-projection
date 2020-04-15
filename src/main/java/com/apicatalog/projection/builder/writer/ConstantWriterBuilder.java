@@ -1,6 +1,7 @@
 package com.apicatalog.projection.builder.writer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -65,11 +66,11 @@ public final class ConstantWriterBuilder {
 		}
 	}	
 	
-	final Conversion[] buildChain(final String[] constants,final TypeConversions typeConversions, final ObjectType targetType) throws UnknownConversion {
+	final Collection<Conversion<Object, Object>> buildChain(final String[] constants,final TypeConversions typeConversions, final ObjectType targetType) throws UnknownConversion {
 
 		ObjectType sourceType = ObjectType.of(String[].class);
 
-		final ArrayList<Conversion> conversions = new ArrayList<>(1);
+		final ArrayList<Conversion<Object, Object>> conversions = new ArrayList<>(1);
 		
 		if (constants.length == 1 && !targetType.isArray() && !targetType.isCollection()) {
 			conversions.add(c -> ((String[])c)[0]);		// reduce to one string constant
@@ -82,7 +83,7 @@ public final class ConstantWriterBuilder {
 				)
 			.ifPresent(conversions::add);
 		
-		return conversions.toArray(new Conversion[0]);
+		return conversions;
 	}
 	
 	public ConstantWriterBuilder targetSetter(final Setter targetSetter, final boolean reference) {

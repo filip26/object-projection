@@ -47,9 +47,13 @@ public final class ProvidedPropertyApi<P> extends AbstractValueProviderApi<P> {
 		providedPropertyWriterBuilder.qualifier(name);
 		return this;
 	}
-
+	
 	public PropertyApi<P> map(final String propertyName) {
 		return projectionBuilder.map(propertyName);
+	}
+
+	public PropertyApi<P> map(final String propertyName, final boolean reference) {
+		return projectionBuilder.map(propertyName, reference);
 	}
 
 	public Projection<P> build(final ProjectionRegistry registry) throws ProjectionError {

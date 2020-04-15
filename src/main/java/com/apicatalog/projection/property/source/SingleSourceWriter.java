@@ -1,6 +1,7 @@
 package com.apicatalog.projection.property.source;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -25,7 +26,7 @@ public final class SingleSourceWriter implements SourceWriter {
 	
 	ObjectType targetType;
 	
-	Conversion[] conversions;
+	Collection<Conversion<Object, Object>> conversions;
 	
 	boolean optional;
 
@@ -49,7 +50,7 @@ public final class SingleSourceWriter implements SourceWriter {
 		// apply conversions
 		if (conversions != null) {
 			try {
-				for (final Conversion conversion : conversions) {
+				for (final Conversion<Object, Object> conversion : conversions) {
 					
 					value = Optional.ofNullable(conversion.convert(value.get()));
 					
@@ -104,7 +105,7 @@ public final class SingleSourceWriter implements SourceWriter {
 		return Arrays.stream(sourceTypes).anyMatch(type -> type.isAssignableFrom(sourceType));
 	}
 	
-	public void setConversions(Conversion[] conversions) {
+	public void setConversions(Collection<Conversion<Object, Object>> conversions) {
 		this.conversions = conversions;
 	}	
 }

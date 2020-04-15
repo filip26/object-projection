@@ -3,8 +3,8 @@ package com.apicatalog.projection.conversion;
 import com.apicatalog.projection.converter.ConverterError;
 
 @FunctionalInterface
-public interface Conversion {
+public interface Conversion<S, T> {
 
-	Object convert(Object object) throws ConverterError;
+	T convert(S object) throws ConverterError;
 
 }

@@ -76,9 +76,13 @@ public final class SourcesApi<P> {
 	public SourcesApi<P> source(final Class<?> sourceClass) {
 		return source(sourceClass, targetPropertyName);
 	}
-	
+		
 	public PropertyApi<P> map(final String propertyName) {
 		return projectionBuilder.map(propertyName);
+	}
+
+	public PropertyApi<P> map(final String propertyName, final boolean reference) {
+		return projectionBuilder.map(propertyName, reference);
 	}
 	
 	public Projection<P> build(final ProjectionRegistry factory) throws ProjectionError {
@@ -89,6 +93,16 @@ public final class SourcesApi<P> {
 		sourceHolders.getLast().conversions.add(ConversionMappingBuilder.newInstance().converter(converter).parameters(params));
 		return this;
 	}
+	
+	public <S, T> SourcesSourceConversionApi<P, S, T> conversion(final Class<? extends S> source, Class<? extends T> target) {
+		
+		final ConversionMappingBuilder builder = ConversionMappingBuilder.newInstance().types(source, target);
+		
+		sourceHolders.getLast().conversions.add(builder);
+		
+		return new SourcesSourceConversionApi<>(builder, this);
+	}
+
 
 	protected SourceReader[] buildReaders(final TypeConversions typeConversions) throws ProjectionError {
 		final ArrayList<SourceReader> sources = new ArrayList<>(sourceHolders.size());

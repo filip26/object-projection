@@ -1,6 +1,7 @@
 package com.apicatalog.projection.property.source;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
@@ -20,7 +21,7 @@ public final class ArraySourceWriter implements SourceWriter {
 
 	SourceWriter[] sources;
 	
-	Conversion[] conversions;
+	Collection<Conversion<Object, Object>> conversions;
 	
 	ObjectType targetType;
 	
@@ -45,7 +46,7 @@ public final class ArraySourceWriter implements SourceWriter {
 			// apply conversions
 			if (conversions != null) {
 				
-				for (final Conversion conversion : conversions) {
+				for (final Conversion<Object, Object> conversion : conversions) {
 					
 					value = Optional.ofNullable(conversion.convert(value.get()));
 					
@@ -97,7 +98,7 @@ public final class ArraySourceWriter implements SourceWriter {
 		return Arrays.stream(sources).anyMatch(s -> s.isAnyTypeOf(sourceTypes));
 	}
 	
-	public void setConversions(Conversion[] conversions) {
+	public void setConversions(Collection<Conversion<Object, Object>> conversions) {
 		this.conversions = conversions;
 	}
 }

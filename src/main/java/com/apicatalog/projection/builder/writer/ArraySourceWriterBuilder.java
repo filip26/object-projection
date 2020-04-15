@@ -93,7 +93,7 @@ public final class ArraySourceWriterBuilder {
 
 	final void buildChain(ArraySourceWriter source, TypeConversions typeConversions) throws UnknownConversion {
 
-		final ArrayList<Conversion> conversions = new ArrayList<>((converters == null ? 0 : converters.size()) * 2 + 1);
+		final ArrayList<Conversion<Object, Object>> conversions = new ArrayList<>((converters == null ? 0 : converters.size()) * 2 + 1);
 		
 		if (converters != null && !converters.isEmpty()) {
 
@@ -110,7 +110,7 @@ public final class ArraySourceWriterBuilder {
 			for (int i = 1; i < mapping.length; i++) {
 	
 				// explicit conversion
-				final Converter<Object, Object> converter = mapping[mapping.length - i].getConversion();
+				final Converter<Object, Object> converter = mapping[mapping.length - i].getConverter();
 				
 				conversions.add(converter::backward);
 	
@@ -123,7 +123,7 @@ public final class ArraySourceWriterBuilder {
 			}
 			
 			// explicit conversion
-			final Converter<Object, Object> converter = mapping[0].getConversion();
+			final Converter<Object, Object> converter = mapping[0].getConverter();
 			
 			conversions.add(converter::backward);
 			
@@ -136,7 +136,7 @@ public final class ArraySourceWriterBuilder {
 		// implicit conversion
 		typeConversions.get(targetType, ObjectType.of(Object[].class)).ifPresent(conversions::add);
 
-		source.setConversions(conversions.toArray(new Conversion[0]));
+		source.setConversions(conversions);
 		
 		// set default target type
 		source.setTargetType(targetType);

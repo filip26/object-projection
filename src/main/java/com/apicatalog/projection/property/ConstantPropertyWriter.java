@@ -1,5 +1,6 @@
 package com.apicatalog.projection.property;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
@@ -19,7 +20,7 @@ public final class ConstantPropertyWriter implements PropertyWriter {
 
 	String[] constants;
 	
-	Conversion[] conversions;
+	Collection<Conversion<Object, Object>> conversions;
 	
 	Setter targetSetter;
 	
@@ -39,7 +40,7 @@ public final class ConstantPropertyWriter implements PropertyWriter {
 		// apply conversions
 		if (conversions != null) {
 			try {
-				for (final Conversion conversion : conversions) {
+				for (final Conversion<Object, Object> conversion : conversions) {
 					if (object.isEmpty()) {
 						break;
 					}
@@ -63,7 +64,7 @@ public final class ConstantPropertyWriter implements PropertyWriter {
 		this.targetSetter = targetSetter;
 	}
 	
-	public void setConversions(Conversion[] conversions) {
+	public void setConversions(Collection<Conversion<Object, Object>> conversions) {
 		this.conversions = conversions;
 	}
 	

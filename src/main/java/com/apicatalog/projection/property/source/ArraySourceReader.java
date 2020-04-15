@@ -1,5 +1,6 @@
 package com.apicatalog.projection.property.source;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
@@ -18,7 +19,7 @@ public final class ArraySourceReader implements SourceReader {
 
 	SourceReader[] sources;
 	
-	Conversion[] conversions;
+	Collection<Conversion<Object, Object>> conversions;
 	
 	ObjectType targetType;
 	
@@ -45,7 +46,7 @@ public final class ArraySourceReader implements SourceReader {
 						
 			// apply conversions
 			if (conversions != null) {
-				for (final Conversion conversion : conversions) {
+				for (final Conversion<Object, Object> conversion : conversions) {
 					
 					object = Optional.ofNullable(conversion.convert(object.get()));
 					
@@ -83,7 +84,7 @@ public final class ArraySourceReader implements SourceReader {
 		return targetType;
 	}
 
-	public void setConversions(Conversion[] conversions) {
+	public void setConversions(Collection<Conversion<Object, Object>> conversions) {
 		this.conversions = conversions;
 	}
 }

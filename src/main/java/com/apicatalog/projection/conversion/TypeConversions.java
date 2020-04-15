@@ -20,7 +20,7 @@ public class TypeConversions {
 	static final String MSG_CONVERTER_FROM_TO = "Get converter from {} to {}";
 
 
-	public Optional<Conversion> get(ObjectType sourceType, ObjectType targetType) throws UnknownConversion {
+	public Optional<Conversion<Object, Object>> get(ObjectType sourceType, ObjectType targetType) throws UnknownConversion {
 
 		if (sourceType == null || targetType == null) {
 			throw new IllegalArgumentException();
@@ -50,7 +50,7 @@ public class TypeConversions {
 		return get(sourceType.getType(), targetType.getType());
 	}
 	
-	Optional<Conversion> get(Class<?> source, Class<?> target) {
+	Optional<Conversion<Object, Object>> get(Class<?> source, Class<?> target) {
 
 		if (source == null || target == null) {
 			throw new IllegalArgumentException();
@@ -61,7 +61,7 @@ public class TypeConversions {
 //		}
 		
 
-		final Optional<Conversion> conversion = Optional.ofNullable(SimpleTypeConversions.get(source, target));
+		final Optional<Conversion<Object, Object>> conversion = Optional.ofNullable(SimpleTypeConversions.get(source, target));
 		
 //		if (logger.isTraceEnabled() && conversion.isEmpty()) {
 //			logger.trace("No conversion from {} to {} does exist", source.getSimpleName(), target.getSimpleName());
@@ -74,9 +74,9 @@ public class TypeConversions {
 		return conversion;
 	}
 
-	Optional<Conversion> collectionToCollection(final ObjectType sourceType, final ObjectType targetType) throws UnknownConversion {
+	Optional<Conversion<Object, Object>> collectionToCollection(final ObjectType sourceType, final ObjectType targetType) throws UnknownConversion {
 		
-		final Conversion componentConversion = 
+		final Conversion<Object, Object> componentConversion = 
 				!targetType.getComponentType().isAssignableFrom(sourceType.getComponentType())
 						? get(sourceType.getComponentType(), targetType.getComponentType())
 								.orElseThrow(UnknownConversion::new)
@@ -87,7 +87,7 @@ public class TypeConversions {
 			return Optional.empty();
 		}		
 		
-		final Conversion conversion = o -> {
+		final Conversion<Object, Object> conversion = o -> {
 			
 			final Collection<?> collection = (Collection<?>)o;
 			
@@ -114,9 +114,9 @@ public class TypeConversions {
 		return Optional.of(conversion);
 	}
 	
-	Optional<Conversion> collectionToArray(ObjectType sourceType, ObjectType targetType) throws UnknownConversion {
+	Optional<Conversion<Object, Object>> collectionToArray(ObjectType sourceType, ObjectType targetType) throws UnknownConversion {
 
-		final Conversion componentConversion = 
+		final Conversion<Object, Object> componentConversion = 
 							!targetType.getType().getComponentType().isAssignableFrom(sourceType.getComponentType())
 									? get(sourceType.getComponentType(), targetType.getType().getComponentType())
 											.orElseThrow(UnknownConversion::new)
@@ -155,9 +155,9 @@ public class TypeConversions {
 		});
 	}
 	
-	Optional<Conversion> arrayToCollection(ObjectType sourceType, ObjectType targetType) throws UnknownConversion {
+	Optional<Conversion<Object, Object>> arrayToCollection(ObjectType sourceType, ObjectType targetType) throws UnknownConversion {
 		
-		final Conversion componentConversion = 
+		final Conversion<Object, Object> componentConversion = 
 								!targetType.getComponentType().isAssignableFrom(sourceType.getType().getComponentType())
 									? get(sourceType.getType().getComponentType(), targetType.getComponentType())
 											.orElseThrow(UnknownConversion::new)
@@ -180,9 +180,9 @@ public class TypeConversions {
 		});		
 	}
 	
-	Optional<Conversion> arrayToArray(ObjectType sourceType, ObjectType targetType) throws UnknownConversion {
+	Optional<Conversion<Object, Object>> arrayToArray(ObjectType sourceType, ObjectType targetType) throws UnknownConversion {
 		
-		final Conversion componentConversion = 
+		final Conversion<Object, Object> componentConversion = 
 							!targetType.getType().getComponentType().isAssignableFrom(sourceType.getType().getComponentType())
 									? get(sourceType.getType().getComponentType(), targetType.getType().getComponentType())
 											.orElseThrow(UnknownConversion::new)

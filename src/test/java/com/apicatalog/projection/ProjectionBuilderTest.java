@@ -539,4 +539,36 @@ public class ProjectionBuilderTest {
 		String id2 = registry.extract(to, "obj2.id", String.class);
 		Assert.assertEquals(to2.id, id2);	
 	}
+	
+	@Test
+	public void test14() throws ProjectionError {
+		final Projection<SimpleObjectTo> projection = 
+				ProjectionBuilder
+					.bind(SimpleObjectTo.class)
+					
+					.map("s1")
+						.sources()
+							.conversion(String[].class, String.class)
+								.forward(sources -> sources[1] + sources[0])
+
+							.source(SimpleObject.class)
+								.conversion(String.class, String.class)
+									.forward(String::toUpperCase)
+									
+							.source(SimpleObject.class, "i1")
+					
+					.build(ProjectionRegistry.newInstance());
+		
+		Assert.assertNotNull(projection);
+
+		SimpleObject object1 = new SimpleObject();
+		object1.i1 = 443546356;
+		object1.s1 = "string-1";
+		
+		SimpleObjectTo to = projection.compose(object1);
+		
+		Assert.assertNotNull(to);;
+		Assert.assertEquals(object1.i1 + object1.s1.toUpperCase(), to.s1);
+	}
+
 }

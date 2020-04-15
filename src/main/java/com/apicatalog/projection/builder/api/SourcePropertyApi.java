@@ -93,11 +93,24 @@ public final class SourcePropertyApi<P> extends AbstractValueProviderApi<P> {
 		return projectionBuilder.map(propertyName);
 	}
 
+	public PropertyApi<P> map(final String propertyName, final boolean reference) {
+		return projectionBuilder.map(propertyName, reference);
+	}
+
 	public SourcePropertyApi<P> conversion(final Class<? extends Converter<?, ?>> converter, final String...params) {
 		conversions.add(ConversionMappingBuilder.newInstance().converter(converter).parameters(params));
 		return this;
 	}
-
+	
+	public <S, T> SourceConversionApi<P, S, T> conversion(final Class<? extends S> source, Class<? extends T> target) {
+		
+		final ConversionMappingBuilder builder = ConversionMappingBuilder.newInstance().types(source, target);
+		
+		conversions.add(builder);
+		
+		return new SourceConversionApi<>(builder, this);
+	}
+	
 	public Projection<P> build(final ProjectionRegistry factory) throws ProjectionError {
 		return projectionBuilder.build(factory);
 	}

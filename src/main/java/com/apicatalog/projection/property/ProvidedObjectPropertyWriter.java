@@ -73,7 +73,7 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 									
 		try {
 			
-			Optional<Conversion> conversion = registry.getTypeConversions().get(sourceType, targetSetter.getType());
+			Optional<Conversion<Object, Object>> conversion = registry.getTypeConversions().get(sourceType, targetSetter.getType());
 			
 			if (conversion.isPresent()) {
 				object = Optional.ofNullable(conversion.get().convert(value));
