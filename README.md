@@ -4,13 +4,21 @@
 ProjectionBuilder
           .bind(EmployeeTo.class)
 
-          .map("name")
-                .source(Person.class)
+          .map("name")        // DOE, John
+                .sources()
+                    .conversion(String[].class, String.class)
+                        .forward(sources -> sources[1] + ", " + sources[0])    // DOE, John
+                    
+                    .source(Person.class, "firstName")                // John
+                    
+                    .source(Person.class, "lastName")                 // Doe
+                        .conversion(String.class, String.class)
+                            .forward(String::toUpperCase)             // DOE
           
           .map("employer")
                 .source(Employer.class, "name")
                 .optional()
-          
+                
           .build();
 ```
 
