@@ -19,11 +19,6 @@ public class TypeConversions {
 
 	static final String MSG_CONVERTER_FROM_TO = "Get converter from {} to {}";
 
-	public boolean isAssignable(ObjectType sourceType, ObjectType targetType) {
-		
-		return false;
-	}
-	
 	/**
 	 * 
 	 * @param sourceType
@@ -46,31 +41,29 @@ public class TypeConversions {
 			return Optional.empty();
 		}
 
-		Optional<Conversion<Object, Object>> conversion = Optional.empty(); 
-				
 		if (sourceType.isCollection()) {
 			if (targetType.isCollection()) {
-				conversion = collectionToCollection(sourceType, targetType);
+				return collectionToCollection(sourceType, targetType);
 				
 			} else if (targetType.isArray()) {
-				conversion = collectionToArray(sourceType, targetType);
+				return collectionToArray(sourceType, targetType);
 			}
 			
 		} else if (sourceType.isArray()) {
 			if (targetType.isCollection()) {
-				conversion = arrayToCollection(sourceType, targetType);
+				return arrayToCollection(sourceType, targetType);
 				
 			} else if (targetType.isArray()) {
-				conversion = arrayToArray(sourceType, targetType);
+				return arrayToArray(sourceType, targetType);
 			}
 			
-		} else {
-			conversion = get(sourceType.getType(), targetType.getType());
 		}
 
+		Optional<Conversion<Object, Object>> conversion = get(sourceType.getType(), targetType.getType());
 		if (conversion.isEmpty()) {
 			throw new ConversionNotFound(sourceType, targetType);
 		}
+		
 		return conversion;
 	}
 	
@@ -79,7 +72,7 @@ public class TypeConversions {
 		if (source == null || target == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		return Optional.ofNullable(SimpleTypeConversions.get(source, target));		
 	}
 
@@ -191,11 +184,11 @@ public class TypeConversions {
 	
 	Optional<Conversion<Object, Object>> arrayToArray(ObjectType sourceType, ObjectType targetType) throws ConversionNotFound {
 		
-		final Conversion<Object, Object> componentConversion = 
-							!targetType.getType().getComponentType().isAssignableFrom(sourceType.getType().getComponentType())
-									? get(sourceType.getType().getComponentType(), targetType.getType().getComponentType())
-											.orElseThrow(() -> new ConversionNotFound(sourceType, targetType))
-									: null;
+		final Conversion<Object, Object> componentConversion =
+											!targetType.getType().getComponentType().isAssignableFrom(sourceType.getType().getComponentType())
+											? get(sourceType.getType().getComponentType(), targetType.getType().getComponentType())
+													.orElseThrow(() -> new ConversionNotFound(sourceType, targetType))
+											: null;	
 
 		// no conversion needed?
 		if (componentConversion == null) {

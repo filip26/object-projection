@@ -1,8 +1,6 @@
 package com.apicatalog.projection.api;
 
-public interface ProvidedApi<P> extends ProjectionApi<P> {
+public interface ProvidedApi<P> extends ProjectionApi<P>, OptionalApi<ProjectionApi<P>> {
 
-	ProjectionApi<P> optional();
-	ProjectionApi<P> required();
 
 }
