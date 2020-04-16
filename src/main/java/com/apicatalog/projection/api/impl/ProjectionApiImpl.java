@@ -8,22 +8,23 @@ import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionApi;
 import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.api.PropertyApi;
+import com.apicatalog.projection.impl.CompiledProjection;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
-public final class ProjectionBuilderImpl<P> implements ProjectionApi<P> {
+public final class ProjectionApiImpl<P> implements ProjectionApi<P> {
 	
 	final Class<P> projectionClass;
 	
 	final List<PropertyApiImpl<P>> properties;
 	
-	protected ProjectionBuilderImpl(final Class<P> projectionClass) {
+	protected ProjectionApiImpl(final Class<P> projectionClass) {
 		this.projectionClass = projectionClass;
 		this.properties = new ArrayList<>();
 	}
 	
 	public static final <T> ProjectionApi<T> bind(final Class<T> projectionClass) {
-		return new ProjectionBuilderImpl<>(projectionClass);
+		return new ProjectionApiImpl<>(projectionClass);
 	}
 
 	@Override
@@ -61,7 +62,7 @@ public final class ProjectionBuilderImpl<P> implements ProjectionApi<P> {
 		}
 		
 		final Projection<P> projection = 
-					Projection.newInstance(
+					CompiledProjection.newInstance(
 									projectionClass, 
 									readers.toArray(new PropertyReader[0]), 
 									writers.toArray(new PropertyWriter[0])

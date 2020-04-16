@@ -32,7 +32,7 @@ import com.apicatalog.projection.property.source.SourceWriter;
 
 public final class SingleSourceApiImpl<P> extends AbstractValueProviderApi<P> implements SingleSourceApi<P> {
 	
-	final ProjectionBuilderImpl<P> projectionBuilder;
+	final ProjectionApiImpl<P> projectionBuilder;
 	
 	final SingleSourceReaderBuilder sourceReaderBuilder;
 	final SingleSourceWriterBuilder sourceWriterBuilder;
@@ -47,7 +47,7 @@ public final class SingleSourceApiImpl<P> extends AbstractValueProviderApi<P> im
 	
 	boolean targetReference;
 	
-	protected SingleSourceApiImpl(final ProjectionBuilderImpl<P> projectionBuilder, final Class<?> sourceObjectClass, final String sourcePropertyName) {
+	protected SingleSourceApiImpl(final ProjectionApiImpl<P> projectionBuilder, final Class<?> sourceObjectClass, final String sourcePropertyName) {
 		this.projectionBuilder = projectionBuilder;
 		
 		this.sourceReaderBuilder = SingleSourceReaderBuilder.newInstance().objectClass(sourceObjectClass);

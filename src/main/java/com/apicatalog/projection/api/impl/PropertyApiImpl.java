@@ -29,7 +29,7 @@ public final class PropertyApiImpl<P> implements PropertyApi<P> {
 	
 	final Logger logger = LoggerFactory.getLogger(PropertyApiImpl.class);
 
-	final ProjectionBuilderImpl<P> projectionBuilder;
+	final ProjectionApiImpl<P> projectionBuilder;
 
 	final String targetPropertyName;
 	
@@ -37,7 +37,7 @@ public final class PropertyApiImpl<P> implements PropertyApi<P> {
 
 	AbstractValueProviderApi<P> valueProvider;
 	
-	protected PropertyApiImpl(final ProjectionBuilderImpl<P> projectionBuilder, final String propertyName, final boolean reference) {
+	protected PropertyApiImpl(final ProjectionApiImpl<P> projectionBuilder, final String propertyName, final boolean reference) {
 		this.projectionBuilder = projectionBuilder;
 		this.targetPropertyName = propertyName;
 		this.targetReference = reference;

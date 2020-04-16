@@ -34,7 +34,7 @@ public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> imp
 	
 	final Logger logger = LoggerFactory.getLogger(ArraySourceApiImpl.class);
 	
-	final ProjectionBuilderImpl<P> projectionBuilder;
+	final ProjectionApiImpl<P> projectionBuilder;
 
 	final List<ConversionMappingBuilder> conversionBuilder;
 
@@ -49,7 +49,7 @@ public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> imp
 	
 	boolean optional;
 	
-	protected ArraySourceApiImpl(final ProjectionBuilderImpl<P> projection, final String projectionPropertyName) {
+	protected ArraySourceApiImpl(final ProjectionApiImpl<P> projection, final String projectionPropertyName) {
 		this.projectionBuilder = projection;
 		this.conversionBuilder = new ArrayList<>();
 		

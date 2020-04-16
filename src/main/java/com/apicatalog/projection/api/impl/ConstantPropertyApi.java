@@ -12,7 +12,7 @@ import com.apicatalog.projection.property.PropertyWriter;
 
 public class ConstantPropertyApi<P> extends AbstractValueProviderApi<P> {
 	
-	final ProjectionBuilderImpl<P> projectionBuilder;
+	final ProjectionApiImpl<P> projectionBuilder;
 	
 	final String[] constants; 
 	
@@ -20,7 +20,7 @@ public class ConstantPropertyApi<P> extends AbstractValueProviderApi<P> {
 	
 	boolean targetReference;
 
-	protected ConstantPropertyApi(final ProjectionBuilderImpl<P> projectionBuilder, String[] constants) {
+	protected ConstantPropertyApi(final ProjectionApiImpl<P> projectionBuilder, String[] constants) {
 		this.projectionBuilder = projectionBuilder;
 		this.constants = constants;
 	}

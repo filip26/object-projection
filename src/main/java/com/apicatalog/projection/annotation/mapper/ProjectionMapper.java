@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.impl.CompiledProjection;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
@@ -88,7 +89,7 @@ public final class ProjectionMapper {
 			return null;
 		}
 		
-		return Projection.newInstance(
+		return CompiledProjection.newInstance(
 							targetProjectionClass, 
 							readers.toArray(new PropertyReader[0]), 
 							writers.toArray(new PropertyWriter[0])

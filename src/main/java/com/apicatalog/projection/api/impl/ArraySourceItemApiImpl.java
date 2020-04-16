@@ -30,13 +30,13 @@ public final class ArraySourceItemApiImpl<P> implements ArraySourceItemApi<P> {
 	
 	final Logger logger = LoggerFactory.getLogger(ArraySourceItemApiImpl.class);
 	
-	final ProjectionBuilderImpl<P> projectionBuilder;
+	final ProjectionApiImpl<P> projectionBuilder;
 
 	final LinkedList<SourceHolder> sourceHolders;
 	
 	final String targetPropertyName;
 	
-	protected ArraySourceItemApiImpl(final ProjectionBuilderImpl<P> projection, final String targetPropertyName) {
+	protected ArraySourceItemApiImpl(final ProjectionApiImpl<P> projection, final String targetPropertyName) {
 		this.projectionBuilder = projection;
 		this.sourceHolders = new LinkedList<>();
 		this.targetPropertyName = targetPropertyName;
