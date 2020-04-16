@@ -24,7 +24,7 @@ Projection
 
 ```java
 @Projection
-public class TestProjection {
+public class RecordTo {
 
   @Sources(
       value = {
@@ -40,6 +40,8 @@ public class TestProjection {
 
   ...
 }
+
+Projection.of(RecordTo.class).build();
 ```
 
 ```java
