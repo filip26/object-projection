@@ -1,25 +1,25 @@
 # Object Projection
 
 ```javascript
-ProjectionBuilder
-          .bind(EmployeeTo.class)
+Projection
+      .bind(EmployeeTo.class)
 
-          .map("name")    // DOE, John   - alt .map(EmployeeTo::getName, EmployeeTo::setName)
-                .sources()
-                    .conversion(String[].class, String.class)
-                        .forward(sources -> sources[1] + ", " + sources[0])    // DOE, John
+      .map("name")    // DOE, John   - alt .map(EmployeeTo::getName, EmployeeTo::setName)
+            .sources()
+                .conversion(String[].class, String.class)
+                    .forward(sources -> sources[1] + ", " + sources[0])    // DOE, John
                     
-                    .source(Person.class, "firstName")                // John
+                .source(Person.class, "firstName")                // John
                     
-                    .source(Person.class, "lastName")                 // Doe
-                        .conversion(String.class, String.class)
-                            .forward(String::toUpperCase)             // DOE
+                .source(Person.class, "lastName")                 // Doe
+                    .conversion(String.class, String.class)
+                        .forward(String::toUpperCase)             // DOE
           
-          .map("employer")
-                .source(Employer.class, "name")
-                .optional()
+      .map("employer")
+            .source(Employer.class, "name")
+            .optional()
                 
-          .build();
+      .build();
 ```
 
 ```java
