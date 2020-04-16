@@ -38,7 +38,7 @@ public class CycleCheckTest {
     	o1.object2 = o2;
     	o2.object1 = o1;
     	
-    	InterwiredProjection1 projection = projections.compose(InterwiredProjection1.class, o1, o2);
+    	InterwiredProjection1 projection = projections.get(InterwiredProjection1.class).compose(o1, o2);
     	
     	Assert.assertNotNull(projection);
     	
@@ -63,7 +63,7 @@ public class CycleCheckTest {
     	o1.object2 = o2;
     	o2.object1 = o1;
     	
-    	InterwiredProjection2 projection = projections.compose(InterwiredProjection2.class, o2, o1);
+    	InterwiredProjection2 projection = projections.get(InterwiredProjection2.class).compose(o2, o1);
     	
     	Assert.assertNotNull(projection);
     	

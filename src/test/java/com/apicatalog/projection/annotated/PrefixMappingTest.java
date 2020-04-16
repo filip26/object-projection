@@ -29,7 +29,7 @@ public class PrefixMappingTest {
     	Object1 o1 = new Object1();
     	o1.id = "of the New World";
     	
-    	PrefixTo projection = projections.compose(PrefixTo.class, o1);
+    	PrefixTo projection = projections.get(PrefixTo.class).compose(o1);
     	
     	Assert.assertNotNull(projection);
     	
@@ -42,7 +42,7 @@ public class PrefixMappingTest {
     	PrefixTo projection = new PrefixTo();
     	projection.id = "At the beginning of the New World";
     	
-    	Object1 object = projections.extract(projection, Object1.class);
+    	Object1 object = projections.get(PrefixTo.class).extract(projection, Object1.class);
     	
     	Assert.assertNotNull(object);
     	

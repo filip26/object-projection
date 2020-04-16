@@ -2,7 +2,9 @@ package com.apicatalog.projection;
 
 import java.util.Collection;
 
+import com.apicatalog.projection.api.BuilderApi;
 import com.apicatalog.projection.api.ProjectionApi;
+import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.api.impl.ProjectionApiImpl;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
@@ -40,7 +42,21 @@ public interface Projection<P> {
 	Class<P> getProjectionClass();
 
 	
-	static <P> ProjectionApi<P> bind(Class<P> projection) {
-		return ProjectionApiImpl.bind(projection);
+	static <P> ProjectionApi<P> bind(Class<P> projectionType) {
+		return ProjectionApiImpl.bind(projectionType);
 	}
+	
+	static <P> BuilderApi<P> of(final Class<P> projectionType) {
+		return new BuilderApi<P>() {
+			@Override
+			public Projection<P> build(ProjectionRegistry registry) throws ProjectionBuilderError {
+
+				Projection<P> projection = registry.getMapper().getProjectionOf(projectionType);
+				
+				registry.register(projection);
+				
+				return projection;
+			}
+		};
+	}	
 }

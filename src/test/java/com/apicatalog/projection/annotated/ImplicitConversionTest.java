@@ -42,7 +42,7 @@ public class ImplicitConversionTest {
     	object.stringArray = new String[] { "item 1", "item 2", "item 3" };
     	object.stringCollection = Arrays.asList("10", "20");
     	
-    	ImplicitConversionTo projection = projections.compose(ImplicitConversionTo.class, object);
+    	ImplicitConversionTo projection = projections.get(ImplicitConversionTo.class).compose(object);
     	
     	Assert.assertNotNull(projection);
     	
@@ -80,7 +80,7 @@ public class ImplicitConversionTest {
     	projection.doubleValue = 1.23d;
     	projection.stringCollection = Arrays.asList("1 item", "2 item", "3 item");
 
-    	BasicTypes object = projections.extract(projection, BasicTypes.class);
+    	BasicTypes object = projections.get(ImplicitConversionTo.class).extract(projection, BasicTypes.class);
     	Assert.assertNotNull(object);
     	
     	Assert.assertEquals("1.23", object.stringValue);
@@ -103,7 +103,7 @@ public class ImplicitConversionTest {
     	UriObject object = new UriObject();
 		object.uri = URI.create("https://example.org/a/b/c");
     	
-    	UriTo projection = projections.compose(UriTo.class, object);
+    	UriTo projection = projections.get(UriTo.class).compose(object);
     	
     	Assert.assertNotNull(projection);
 		Assert.assertEquals(object.uri.toString(), projection.uri);
@@ -115,7 +115,7 @@ public class ImplicitConversionTest {
     	UriTo to = new UriTo();
 		to.uri = "https://example.org/a/b/c";
     	
-    	UriObject object = projections.extract(to, UriObject.class);
+    	UriObject object = projections.get(UriTo.class).extract(to, UriObject.class);
     	
     	Assert.assertNotNull(object);
     	Assert.assertEquals(UriObject.class, object.getClass());

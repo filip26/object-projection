@@ -35,10 +35,7 @@ public class ProvidedRefCollectionTest {
     	
     	Collection<SimpleObject> items = new ArrayList<>();
     	
-    	ProvidedRefCollectionTo projection = projections.compose(
-    									ProvidedRefCollectionTo.class, 
-    									SourceObject.of("items", items)
-    									);
+    	ProvidedRefCollectionTo projection = projections.get(ProvidedRefCollectionTo.class).compose(SourceObject.of("items", items));
     	
     	Assert.assertNotNull(projection);
     	
@@ -62,10 +59,7 @@ public class ProvidedRefCollectionTest {
     	items.add(o1);
     	items.add(o2);
     	
-    	ProvidedRefCollectionTo projection = projections.compose(
-    									ProvidedRefCollectionTo.class, 
-    									SourceObject.of("items", items)
-    									);
+    	ProvidedRefCollectionTo projection = projections.get(ProvidedRefCollectionTo.class).compose(SourceObject.of("items", items));
     	
     	Assert.assertNotNull(projection);
     	
@@ -97,7 +91,7 @@ public class ProvidedRefCollectionTest {
     	
     	to.items.add(to1);
 
-    	Collection<SimpleObject> c1 = projections.extractCollection(to, "items", SimpleObject.class);
+    	Collection<SimpleObject> c1 = projections.get(ProvidedRefCollectionTo.class).extractCollection(to, "items", SimpleObject.class);
 
     	Assert.assertNotNull(c1);
     	Assert.assertEquals(1, c1.size());

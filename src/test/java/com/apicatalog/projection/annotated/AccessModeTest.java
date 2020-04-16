@@ -29,7 +29,7 @@ public class AccessModeTest {
     	o1.longValue = 951l;
     	o1.booleanValue = true;
     	
-    	AccessModeTo projection = projections.compose(
+    	AccessModeTo projection = projections.get(AccessModeTo.class).compose(
     									AccessModeTo.class,
     									o1
     									);
@@ -48,7 +48,7 @@ public class AccessModeTest {
     	to.longValue = 951l;
     	to.booleanValue = true;
 
-    	BasicTypes object = projections.extract(to, BasicTypes.class);
+    	BasicTypes object = projections.get(AccessModeTo.class).extract(to, BasicTypes.class);
     	
     	Assert.assertNotNull(object);
     	Assert.assertNull(object.stringValue);

@@ -33,8 +33,7 @@ public class ProvidedCollectionTest {
 
     	Collection<Long> items = Arrays.asList(123l, 234l);
     	
-    	StringCollectionTo projection = projections.compose(
-    									StringCollectionTo.class, 
+    	StringCollectionTo projection = projections.get(StringCollectionTo.class).compose(
     									SourceObject.of("items", items), 
     									SourceObject.of("href",  href)
     									);
@@ -54,11 +53,11 @@ public class ProvidedCollectionTest {
     	to.href = "https://example.org/provided";
     	to.items = Arrays.asList("10", "20", "30"); 
     	
-    	String href = projections.extract(to, "href", String.class);
+    	String href = projections.get(StringCollectionTo.class).extract(to, "href", String.class);
     	Assert.assertNotNull(href);
     	Assert.assertEquals(to.href, href);
     	
-    	Collection<String> items = projections.extractCollection(to, "items", String.class);
+    	Collection<String> items = projections.get(StringCollectionTo.class).extractCollection(to, "items", String.class);
     	Assert.assertNotNull(items);
     	Assert.assertArrayEquals(new String[] {"10", "20", "30"}, items.toArray(new String[0]));
     }    

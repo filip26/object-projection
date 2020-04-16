@@ -32,7 +32,7 @@ public class UriTemplateConversionTest {
     	Reference oaa = new Reference();
     	oaa.stringValue = "ABC"; 
 
-    	UriTemplateConversion pa = projections.compose(UriTemplateConversion.class, oa, oaa);
+    	UriTemplateConversion pa = projections.get(UriTemplateConversion.class).compose(oa, oaa);
     	
     	Assert.assertNotNull(pa);
     	Assert.assertEquals("https://www.example.org/" + oa.longValue + "/" + oaa.stringValue, pa.href);    	
@@ -40,13 +40,13 @@ public class UriTemplateConversionTest {
 
     @Test
     public void testExtract() throws ProjectionError, ConverterError {
-    	UriTemplateConversion projection = new UriTemplateConversion();
-    	projection.href = "https://www.example.org/123456/ABC";
+    	UriTemplateConversion to = new UriTemplateConversion();
+    	to.href = "https://www.example.org/123456/ABC";
     	
-    	BasicTypes object1 = projections.extract(projection, BasicTypes.class);
+    	BasicTypes object1 = projections.get(UriTemplateConversion.class).extract(to, BasicTypes.class);
 		checkBasic(object1, 123456l);
 		
-    	Reference object2 = projections.extract(projection, Reference.class);    	
+    	Reference object2 = projections.get(UriTemplateConversion.class).extract(to, Reference.class);    	
 		checkReference(object2, "ABC");
     }
     

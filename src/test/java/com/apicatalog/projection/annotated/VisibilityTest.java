@@ -39,7 +39,7 @@ public class VisibilityTest {
 
     	o1.object2 = o2;
     	
-    	Object1To projection = projections.compose(Object1To.class, o1);
+    	Object1To projection = projections.get(Object1To.class).compose(o1);
     	
     	Assert.assertNotNull(projection);
     	
@@ -56,7 +56,7 @@ public class VisibilityTest {
     	Object2 o2 =new Object2();
     	o2.id = "Object 2";
 
-    	Object2To projection = projections.compose(Object2To.class, o2);
+    	Object2To projection = projections.get(Object2To.class).compose(o2);
     	
     	Assert.assertNotNull(projection);
     	

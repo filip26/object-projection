@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionBuilderError;
@@ -15,12 +16,11 @@ import com.apicatalog.projection.projections.ConstantTo;
 
 public class ConstantTest {
 
-	ProjectionRegistry projections;
+	Projection<ConstantTo> projection;
 	
 	@Before
 	public void setup() throws ProjectionError, ProjectionBuilderError {
-		projections = ProjectionRegistry.newInstance()
-						.register(ConstantTo.class);
+		projection = Projection.of(ConstantTo.class).build(ProjectionRegistry.newInstance());
 	}
 	
     @Test
@@ -29,21 +29,18 @@ public class ConstantTest {
     	Object1 o1 = new Object1();
     	o1.id = "ABC123";
     	
-    	ConstantTo projection = projections.compose(
-    									ConstantTo.class,
-    									o1
-    									);
+    	ConstantTo to = projection.compose(o1);
     	
-    	Assert.assertNotNull(projection);
-    	Assert.assertEquals(o1.id, projection.id);
+    	Assert.assertNotNull(to);
+    	Assert.assertEquals(o1.id, to.id);
     	
-    	Assert.assertEquals(Long.valueOf(1234567890l), projection.longValue);
+    	Assert.assertEquals(Long.valueOf(1234567890l), to.longValue);
     	
-    	Assert.assertNotNull(projection.stringArray);
-    	Assert.assertArrayEquals(new String[] { "s1", "s2", "s3" }, projection.stringArray);
+    	Assert.assertNotNull(to.stringArray);
+    	Assert.assertArrayEquals(new String[] { "s1", "s2", "s3" }, to.stringArray);
     	
-    	Assert.assertNotNull(projection.booleanCollection);
-    	Assert.assertArrayEquals(new Boolean[] { true, false, true, true }, projection.booleanCollection.toArray(new Boolean[0]));
+    	Assert.assertNotNull(to.booleanCollection);
+    	Assert.assertArrayEquals(new Boolean[] { true, false, true, true }, to.booleanCollection.toArray(new Boolean[0]));
 
     }
     
@@ -55,7 +52,7 @@ public class ConstantTest {
     	to.stringArray = new String[] {"10", "20", "30"};
     	to.booleanCollection = Arrays.asList(false, true);
     	
-    	Object1 object = projections.extract(to, Object1.class);
+    	Object1 object = projection.extract(to, Object1.class);
     	
     	Assert.assertNotNull(object);
     	
@@ -71,7 +68,7 @@ public class ConstantTest {
     	to.stringArray = new String[] {"10", "20", "30"};
     	to.booleanCollection = Arrays.asList(false, true);
     	
-    	Object1 object = projections.extract(to, Object1.class);
+    	Object1 object = projection.extract(to, Object1.class);
 
     	Assert.assertNull(object);
     }

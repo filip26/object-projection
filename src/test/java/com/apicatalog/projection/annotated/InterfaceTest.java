@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionBuilderError;
@@ -14,13 +15,11 @@ import com.apicatalog.projection.projections.Interface1To;
 
 public class InterfaceTest {
 
-	ProjectionRegistry projections;
+	Projection<Interface1To> projection;
 	
 	@Before
 	public void setup() throws ProjectionError, ProjectionBuilderError {
-		projections = ProjectionRegistry.newInstance();
-		
-		projections.register(Interface1To.class);
+		projection = Projection.of(Interface1To.class).build(ProjectionRegistry.newInstance());
 	}
 	
     @Test
@@ -29,13 +28,10 @@ public class InterfaceTest {
     	Interface1Impl i1 = new Interface1Impl();
     	i1.setId("987654321");
     	
-    	Interface1To projection = projections.compose(
-    									Interface1To.class,
-    									i1
-    									);
+    	Interface1To to = projection.compose(i1);
     	
-    	Assert.assertNotNull(projection);
-    	Assert.assertEquals(Long.valueOf(i1.getId()), projection.id);
+    	Assert.assertNotNull(to);
+    	Assert.assertEquals(Long.valueOf(i1.getId()), to.id);
     }
 
 
@@ -45,7 +41,7 @@ public class InterfaceTest {
     	Interface1To to = new Interface1To();
     	to.id = 951846237l;
     	
-    	Interface1 object  = projections.extract(to, Interface1Impl.class);
+    	Interface1 object  = projection.extract(to, Interface1Impl.class);
     	
     	Assert.assertNotNull(object);
     	Assert.assertEquals(Long.toString(to.id), object.getId());

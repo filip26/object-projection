@@ -175,7 +175,7 @@ public class ProjectionBuilderTest {
 		
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		
-		Assert.assertNotNull( 
+		Projection<Object1To> projection1 =
 				Projection
 					.bind(Object1To.class)
 					
@@ -184,8 +184,10 @@ public class ProjectionBuilderTest {
 					.map("id").source(Object1.class)
 					
 					.build(registry)
-					);
+					;
 
+		Assert.assertNotNull(projection1);
+		
 		Assert.assertNotNull(
 				Projection
 					.bind(Object2To.class)
@@ -194,7 +196,7 @@ public class ProjectionBuilderTest {
 					
 					.build(registry)
 					);
-		
+
 		Object1 object1 = new Object1();
 		object1.id = "AREW2324E";
 		
@@ -203,7 +205,7 @@ public class ProjectionBuilderTest {
 		
 		object1.object2 = object2;
 		
-		Object1To to = registry.compose(Object1To.class, object1);
+		Object1To to = projection1.compose(object1);
 		
 		Assert.assertNotNull(to);;
 		Assert.assertEquals(object1.id, to.id);
@@ -217,7 +219,7 @@ public class ProjectionBuilderTest {
 		
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		
-		Assert.assertNotNull( 
+		Projection<Object1To> projection1 =
 				Projection
 					.bind(Object1To.class)
 					
@@ -226,7 +228,9 @@ public class ProjectionBuilderTest {
 					.map("id").source(Object1.class)
 					
 					.build(registry)
-					);
+					;
+				
+		Assert.assertNotNull(projection1);
 
 		Assert.assertNotNull(
 				Projection
@@ -245,7 +249,7 @@ public class ProjectionBuilderTest {
 		
 		to1.object2 = to2;
 		
-		Object1 object1 = registry.extract(to1, Object1.class);
+		Object1 object1 = projection1.extract(to1, Object1.class);
 		
 		Assert.assertNotNull(object1);;
 		Assert.assertEquals(to1.id, object1.id);
@@ -258,7 +262,7 @@ public class ProjectionBuilderTest {
 		
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 
-		Assert.assertNotNull( 
+		Projection<Object1To> projection1 =
 				Projection
 					.bind(Object1To.class)
 					
@@ -267,8 +271,10 @@ public class ProjectionBuilderTest {
 					.map("id").source(Object1.class)
 					
 					.build(registry)
-					);
+					;
 
+		Assert.assertNotNull(projection1);
+		
 		Assert.assertNotNull(
 				Projection
 					.bind(Object2To.class)
@@ -282,7 +288,7 @@ public class ProjectionBuilderTest {
 		object1.id = "AREW2324E";	
 		object1.object2 = null;
 		
-		Object1To to = registry.compose(Object1To.class, object1);
+		Object1To to = projection1.compose(object1);
 		
 		Assert.assertNotNull(to);;
 		Assert.assertEquals(object1.id, to.id);
@@ -352,7 +358,7 @@ public class ProjectionBuilderTest {
 		
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		
-		Assert.assertNotNull( 
+		Projection<Object1To> projection1 =
 				ProjectionApiImpl
 					.bind(Object1To.class)
 					
@@ -361,7 +367,9 @@ public class ProjectionBuilderTest {
 					.map("id").provided()
 					
 					.build(registry)
-					);
+					;
+		
+		Assert.assertNotNull(projection1);
 
 		Assert.assertNotNull(
 				Projection
@@ -378,7 +386,7 @@ public class ProjectionBuilderTest {
 		
 		object1.object2 = object2;
 		
-		Object1To to = registry.compose(Object1To.class, object1, "AREW2324E");
+		Object1To to = projection1.compose(object1, "AREW2324E");
 		
 		Assert.assertNotNull(to);;
 		Assert.assertEquals("AREW2324E", to.id);
@@ -392,7 +400,7 @@ public class ProjectionBuilderTest {
 		
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		
-		Assert.assertNotNull( 
+		Projection<Object1To> projection1 =
 				Projection
 					.bind(Object1To.class)
 					
@@ -401,8 +409,10 @@ public class ProjectionBuilderTest {
 					.map("id").provided("id")
 					
 					.build(registry)
-					);
+					;
 
+		Assert.assertNotNull(projection1);
+		
 		Assert.assertNotNull(
 				Projection
 					.bind(Object2To.class)
@@ -418,7 +428,7 @@ public class ProjectionBuilderTest {
 		
 		object1.object2 = object2;
 		
-		Object1To to = registry.compose(Object1To.class, object1,  SourceObject.of("id", "AREW2324E"));
+		Object1To to = projection1.compose(object1,  SourceObject.of("id", "AREW2324E"));
 		
 		Assert.assertNotNull(to);;
 		Assert.assertEquals("AREW2324E", to.id);
@@ -432,7 +442,7 @@ public class ProjectionBuilderTest {
 		
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		
-		Assert.assertNotNull( 
+		Projection<Object1To> projection1 =
 				Projection
 					.bind(Object1To.class)
 					
@@ -441,8 +451,10 @@ public class ProjectionBuilderTest {
 					.map("id").provided("id")
 					
 					.build(registry)
-					);
+					;
 
+		Assert.assertNotNull(projection1);
+		
 		Assert.assertNotNull(
 				ProjectionApiImpl
 					.bind(Object2To.class)
@@ -456,8 +468,7 @@ public class ProjectionBuilderTest {
 		
 		Object2 object2 = new Object2();
 				
-		Object1To to = registry.compose(
-							Object1To.class, 
+		Object1To to = projection1.compose( 
 							object1,
 							SourceObject.of("obj2", object2),
 							SourceObject.of("id", "AREW2324E"),
@@ -476,7 +487,7 @@ public class ProjectionBuilderTest {
 		
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		
-		Assert.assertNotNull( 
+		Projection<UriTo> projection =
 				Projection
 					.bind(UriTo.class)
 					
@@ -485,16 +496,14 @@ public class ProjectionBuilderTest {
 						.conversion(Suffix.class, "/d/e/f")
 					
 					.build(registry)
-					);
+					;
+		
+		Assert.assertNotNull(projection);
 
 		UriObject object1 = new UriObject();
 		object1.uri = URI.create("https://example.org/a/b/c");
 		
-		UriTo to = registry.compose(
-							UriTo.class, 
-							object1
-							);
-		
+		UriTo to = projection.compose(object1);
 		
 		Assert.assertNotNull(to);;
 		Assert.assertEquals(object1.uri.toString() + "/d/e/f", to.uri);		
@@ -532,10 +541,10 @@ public class ProjectionBuilderTest {
 		to2.id = "3GFD42EE7";
 		to.object2  = to2;
 		
-		String id = registry.extract(to, "id", String.class);
+		String id = registry.get(Object1To.class).extract(to, "id", String.class);
 		Assert.assertEquals(to.id, id);
 
-		String id2 = registry.extract(to, "obj2.id", String.class);
+		String id2 = registry.get(Object1To.class).extract(to, "obj2.id", String.class);
 		Assert.assertEquals(to2.id, id2);	
 	}
 	

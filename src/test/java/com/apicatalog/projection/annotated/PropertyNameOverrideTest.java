@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionBuilderError;
@@ -16,13 +17,11 @@ import com.apicatalog.projection.projections.NameOverrideTo;
 
 public class PropertyNameOverrideTest {
 
-	ProjectionRegistry projections;
+	Projection<NameOverrideTo> projection;
 	
 	@Before
 	public void setup() throws ProjectionError, ProjectionBuilderError {
-		projections = ProjectionRegistry.newInstance();
-		
-		projections.register(NameOverrideTo.class);
+		projection = Projection.of(NameOverrideTo.class).build(ProjectionRegistry.newInstance());
 	}
 	
     @Test
@@ -35,15 +34,15 @@ public class PropertyNameOverrideTest {
     	object.longValue = 123456l;
     	object.stringValue = "ABCDEF";
     	
-    	NameOverrideTo projection = projections.compose(NameOverrideTo.class, object);
+    	NameOverrideTo to = projection.compose(object);
     	
-    	Assert.assertNotNull(projection);
+    	Assert.assertNotNull(to);
     	
-    	Assert.assertEquals(object.stringValue, projection.projectedString);
-    	Assert.assertEquals(object.booleanValue, projection.projectedBoolean);
-    	Assert.assertEquals(object.doubleValue, projection.projectedDouble);
-    	Assert.assertEquals(object.instantValue, projection.projectedInstant);
-    	Assert.assertEquals(object.longValue, projection.projectedLong);
+    	Assert.assertEquals(object.stringValue, to.projectedString);
+    	Assert.assertEquals(object.booleanValue, to.projectedBoolean);
+    	Assert.assertEquals(object.doubleValue, to.projectedDouble);
+    	Assert.assertEquals(object.instantValue, to.projectedInstant);
+    	Assert.assertEquals(object.longValue, to.projectedLong);
     }
     
     @Test
@@ -56,7 +55,7 @@ public class PropertyNameOverrideTest {
     	to.projectedLong = 123456l;
     	to.projectedString = "ABCDEF";
     	
-    	BasicTypes object = projections.extract(to, BasicTypes.class);
+    	BasicTypes object = projection.extract(to, BasicTypes.class);
     	
     	Assert.assertNotNull(object);
     	Assert.assertEquals(to.projectedString, object.stringValue);

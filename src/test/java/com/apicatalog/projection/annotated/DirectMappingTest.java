@@ -34,36 +34,36 @@ public class DirectMappingTest {
     	object.longValue = 123456l;
     	object.stringValue = "ABCDEF";
 
-    	TypeObjectTo projection = projections.compose(TypeObjectTo.class, object);
+    	TypeObjectTo to = projections.get(TypeObjectTo.class).compose(object);
     	
-    	Assert.assertNotNull(projection);
+    	Assert.assertNotNull(to);
     	
-    	Assert.assertEquals(object.stringValue, projection.stringValue);
-    	Assert.assertEquals(object.booleanValue, projection.booleanValue);
-    	Assert.assertEquals(object.doubleValue, projection.doubleValue);
-    	Assert.assertEquals(object.instantValue, projection.instantValue);
-    	Assert.assertEquals(object.longValue, projection.longValue);
+    	Assert.assertEquals(object.stringValue, to.stringValue);
+    	Assert.assertEquals(object.booleanValue, to.booleanValue);
+    	Assert.assertEquals(object.doubleValue, to.doubleValue);
+    	Assert.assertEquals(object.instantValue, to.instantValue);
+    	Assert.assertEquals(object.longValue, to.longValue);
     }
     
     @Test
     public void testExtract() throws ProjectionError, ConverterError {
     	
-    	TypeObjectTo projection = new TypeObjectTo();
-    	projection.booleanValue = true;
-    	projection.doubleValue= 123.456d;
-    	projection.instantValue = Instant.now();
-    	projection.longValue = 123456l;
-    	projection.stringValue = "ABCDEF";
+    	TypeObjectTo to = new TypeObjectTo();
+    	to.booleanValue = true;
+    	to.doubleValue= 123.456d;
+    	to.instantValue = Instant.now();
+    	to.longValue = 123456l;
+    	to.stringValue = "ABCDEF";
     	
-    	BasicTypes object = projections.extract(projection, BasicTypes.class);
+    	BasicTypes object = projections.get(TypeObjectTo.class).extract(to, BasicTypes.class);
     	
     	Assert.assertNotNull(object);
     	
-    	Assert.assertEquals(projection.stringValue, object.stringValue);
-    	Assert.assertEquals(projection.booleanValue, object.booleanValue);
-    	Assert.assertEquals(projection.doubleValue, object.doubleValue);
-    	Assert.assertEquals(projection.instantValue, object.instantValue);
-    	Assert.assertEquals(projection.longValue, object.longValue);
+    	Assert.assertEquals(to.stringValue, object.stringValue);
+    	Assert.assertEquals(to.booleanValue, object.booleanValue);
+    	Assert.assertEquals(to.doubleValue, object.doubleValue);
+    	Assert.assertEquals(to.instantValue, object.instantValue);
+    	Assert.assertEquals(to.longValue, object.longValue);
     }
 
 }

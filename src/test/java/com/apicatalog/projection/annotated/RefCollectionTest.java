@@ -39,7 +39,7 @@ public class RefCollectionTest {
     	oc.items = new ArrayList<>();
     	oc.items.add(oa);
     	
-    	RefCollectionTo ca = projections.compose(RefCollectionTo.class, oc);
+    	RefCollectionTo ca = projections.get(RefCollectionTo.class).compose(oc);
     	
     	Assert.assertNotNull(ca);
     	Assert.assertNotNull(ca.items);    	
@@ -66,7 +66,7 @@ public class RefCollectionTest {
     	to.items.add(to2);
     	to.items.add(to3);
 
-    	ObjectsCollection object = projections.extract(to, ObjectsCollection.class);
+    	ObjectsCollection object = projections.get(RefCollectionTo.class).extract(to, ObjectsCollection.class);
 
     	Assert.assertNotNull(object);
     	Assert.assertNotNull(object.items);

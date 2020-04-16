@@ -40,7 +40,7 @@ public class ReferenceCompositeTest {
     	object3.stringValue = "inherit me";
     	object3.objectA = object1;
 
-    	ReferenceTo projection = projections.compose(ReferenceTo.class, object3, object2);
+    	ReferenceTo projection = projections.get(ReferenceTo.class).compose(object3, object2);
     	
     	Assert.assertNotNull(projection);
     	Assert.assertNotNull(projection.ref);
@@ -59,7 +59,7 @@ public class ReferenceCompositeTest {
     	ReferenceTo projection2 = new ReferenceTo();
     	projection2.ref = projection1;
 
-    	Reference object = projections.extract(projection2, Reference.class);
+    	Reference object = projections.get(ReferenceTo.class).extract(projection2, Reference.class);
     	
     	Assert.assertNotNull(object);
 

@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionBuilderError;
@@ -14,13 +15,11 @@ import com.apicatalog.projection.projections.CompositeTo;
 
 public class TwoSourceCompositeTest {
 
-	ProjectionRegistry projections;
+	Projection<CompositeTo> projection;
 
 	@Before
 	public void setup() throws ProjectionError, ProjectionBuilderError {
-		projections = ProjectionRegistry.newInstance()				
-						.register(CompositeTo.class)
-						;
+		projection = Projection.of(CompositeTo.class).build(ProjectionRegistry.newInstance());
 	}	
 	
     @Test
@@ -32,26 +31,26 @@ public class TwoSourceCompositeTest {
     	Reference source2 = new Reference();
     	source2.stringValue = "s2value";
 
-    	CompositeTo projection = projections.compose(CompositeTo.class, source1, source2);
+    	CompositeTo to = projection.compose(source1, source2);
     	
-    	Assert.assertNotNull(projection);
+    	Assert.assertNotNull(to);
     	
-    	Assert.assertEquals(source1.longValue, projection.source1);
-    	Assert.assertEquals(source2.stringValue, projection.source2);    	
+    	Assert.assertEquals(source1.longValue, to.source1);
+    	Assert.assertEquals(source2.stringValue, to.source2);    	
     }
     
     @Test
     public void testExtract() throws ProjectionError, ConverterError {
     	
-    	CompositeTo projection = new CompositeTo();
-    	projection.source1 = 123456l;
-    	projection.source2 = "source 2 value";
+    	CompositeTo to = new CompositeTo();
+    	to.source1 = 123456l;
+    	to.source2 = "source 2 value";
 
-    	BasicTypes object1 = projections.extract(projection, BasicTypes.class);
-		checkBasic(object1, projection.source1);
+    	BasicTypes object1 = projection.extract(to, BasicTypes.class);
+		checkBasic(object1, to.source1);
 		
-    	Reference object2 = projections.extract(projection, Reference.class);
-		checkReference(object2, projection.source2);
+    	Reference object2 = projection.extract(to, Reference.class);
+		checkReference(object2, to.source2);
     }
     
     static void checkReference(Object object, String ref) {

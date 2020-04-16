@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionBuilderError;
@@ -16,12 +17,11 @@ import com.apicatalog.projection.projections.ArrayCollectorTo;
 
 public class ArrayCollectorTest {
 
-	ProjectionRegistry projections;
+	Projection<ArrayCollectorTo> projection;
 	
 	@Before
 	public void setup() throws ProjectionError, ProjectionBuilderError {
-		projections = ProjectionRegistry.newInstance()
-						.register(ArrayCollectorTo.class);
+		projection = Projection.of(ArrayCollectorTo.class).build(ProjectionRegistry.newInstance());		
 	}
 	
     @Test
@@ -34,24 +34,21 @@ public class ArrayCollectorTest {
     	o1.doubleValue = 12.34d;
     	o1.stringArray = new String[] { "s1", "s2" };
     	
-    	ArrayCollectorTo projection = projections.compose(
-    									ArrayCollectorTo.class,
-    									o1
-    									);
+    	ArrayCollectorTo to = projection.compose(o1);
     	
-    	Assert.assertNotNull(projection);
+    	Assert.assertNotNull(to);
     	
-    	Assert.assertNotNull(projection.stringCollection);
+    	Assert.assertNotNull(to.stringCollection);
     	
     	Assert.assertArrayEquals(
     			new String[] {o1.integerValue.toString(), o1.booleanValue.toString() },
-    			projection.stringCollection.toArray(new String[0]));
+    			to.stringCollection.toArray(new String[0]));
     	
-    	Assert.assertNotNull(projection.objectArray);
+    	Assert.assertNotNull(to.objectArray);
     	
     	Assert.assertArrayEquals(
     			new Object[] {o1.doubleValue, o1.booleanValue, o1.instantValue, o1.stringArray },
-    			projection.objectArray);
+    			to.objectArray);
     }
     
     @Test
@@ -61,7 +58,7 @@ public class ArrayCollectorTest {
     	to.objectArray = new Object[] { 1.234d, false, Instant.now(), new String[] { "s1", "s2", "s3" }};
     	to.stringCollection = Arrays.asList(new String[] { "951", "false" });
 
-    	BasicTypes object = projections.extract(to, BasicTypes.class);
+    	BasicTypes object = projection.extract(to, BasicTypes.class);
 
     	Assert.assertNotNull(object);
     	

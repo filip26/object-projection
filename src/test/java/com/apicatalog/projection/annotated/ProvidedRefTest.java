@@ -35,7 +35,7 @@ public class ProvidedRefTest {
     	object2.i1 = 13;
     	object2.s1 = "! @ #";
     	
-    	ProvidedReferefenceTo projection = projections.compose(ProvidedReferefenceTo.class, object1, object2);
+    	ProvidedReferefenceTo projection = projections.get(ProvidedReferefenceTo.class).compose(object1, object2);
     	
     	Assert.assertNotNull(projection);
     	
@@ -60,11 +60,11 @@ public class ProvidedRefTest {
 
     	projection1.projection = projection2;
     	
-    	BasicTypes object1ref = projections.extract(projection1, BasicTypes.class);
+    	BasicTypes object1ref = projections.get(ProvidedReferefenceTo.class).extract(projection1, BasicTypes.class);
     	Assert.assertNotNull(object1ref);
     	Assert.assertEquals(projection1.title, object1ref.stringValue);
     	
-    	SimpleObject object2ref = projections.extract(projection1, SimpleObject.class);
+    	SimpleObject object2ref = projections.get(ProvidedReferefenceTo.class).extract(projection1, SimpleObject.class);
     	Assert.assertNotNull(object1ref);
     	Assert.assertEquals(projection2.i1, object2ref.i1);
     	Assert.assertEquals(projection2.s1, object2ref.s1);

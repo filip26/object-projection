@@ -28,7 +28,7 @@ public class OneToOneWithFncTest {
     	BasicTypes oa = new BasicTypes();
     	oa.stringValue = "ABCDEF";
     	
-    	TestProjectionAF pa = projections.compose(TestProjectionAF.class, oa);
+    	TestProjectionAF pa = projections.get(TestProjectionAF.class).compose(oa);
     	
     	Assert.assertNotNull(pa);
     	
@@ -45,7 +45,7 @@ public class OneToOneWithFncTest {
     	pa.modifiedString = "ABCDEFGHIJKL";
     	pa.modified2xString = "ABCDEFGHIJKLMNOPQR";
     	
-    	BasicTypes object = projections.extract(pa, BasicTypes.class);
+    	BasicTypes object = projections.get(TestProjectionAF.class).extract(pa, BasicTypes.class);
     	
     	Assert.assertNotNull(object);
     	Assert.assertEquals("ABCDEF", object.stringValue);

@@ -40,10 +40,7 @@ public class MixedObjectsTest {
     	
     	o3.object4 = o4;
     	
-    	Object3To projection = projections.compose(
-    									Object3To.class,
-    									o3
-    									);
+    	Object3To projection = projections.get(Object3To.class).compose(o3);
     	
     	Assert.assertNotNull(projection);
     	Assert.assertEquals(o3.id, projection.id);
@@ -68,7 +65,7 @@ public class MixedObjectsTest {
     	
     	to3.object4 = to4;
 
-    	Object3 object3 = projections.extract(to3, Object3.class);
+    	Object3 object3 = projections.get(Object3To.class).extract(to3, Object3.class);
     	    	
     	Assert.assertNotNull(object3);
     	Assert.assertEquals(to3.id, object3.id);
@@ -90,7 +87,7 @@ public class MixedObjectsTest {
     	
     	to3.object4 = to4;
 
-    	Object3 object3 = projections.extract(to3, Object3.class);
+    	Object3 object3 = projections.get(Object3To.class).extract(to3, Object3.class);
     	    	
     	Assert.assertNotNull(object3);
     	Assert.assertEquals(to3.id, object3.id);
@@ -112,7 +109,7 @@ public class MixedObjectsTest {
     	
     	to3.object4 = to4;
 
-    	Object3 object3 = projections.extract(to3, Object3.class);
+    	Object3 object3 = projections.get(Object3To.class).extract(to3, Object3.class);
     	
     	Assert.assertNotNull(object3);
     	Assert.assertEquals(to3.id, object3.id);

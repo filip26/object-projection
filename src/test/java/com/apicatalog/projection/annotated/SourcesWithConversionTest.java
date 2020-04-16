@@ -32,7 +32,7 @@ public class SourcesWithConversionTest {
     	Reference oaa = new Reference();
     	oaa.stringValue = "ABC"; 
 
-    	SourcesReduceMapTo pa = projections.compose(SourcesReduceMapTo.class, oa, oaa);
+    	SourcesReduceMapTo pa = projections.get(SourcesReduceMapTo.class).compose(oa, oaa);
     	
     	Assert.assertNotNull(pa);
     	Assert.assertEquals(oa.longValue + oaa.stringValue + "!@#", pa.longstring);
