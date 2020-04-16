@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.builder.ExtractorBuilder;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.property.SourcePropertyReader;
 import com.apicatalog.projection.property.source.SourceWriter;

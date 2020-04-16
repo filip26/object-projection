@@ -90,7 +90,7 @@ public final class SimpleTypeConversions {
 
 	static final Conversion<Object, Object> fromInstant(final Class<?> target) {
 
-		if (target == String.class) return Object::toString; 
+		if (target == String.class) return Object::toString;  
 		if (target == Long.class) return o -> ((Instant)o).toEpochMilli();
 		if (target == Date.class) return o -> Date.from((Instant)o);
 

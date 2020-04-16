@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.conversion.Conversion;
+import com.apicatalog.projection.conversion.ConversionNotFound;
 import com.apicatalog.projection.conversion.TypeConversions;
-import com.apicatalog.projection.conversion.UnknownConversion;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.getter.Getter;
@@ -39,6 +39,7 @@ public final class SingleSourceReaderBuilder {
 	Getter sourceGetter;
 	
 	ObjectType targetType;
+	
 	boolean targetReference;
 
 	protected SingleSourceReaderBuilder() {
@@ -84,7 +85,7 @@ public final class SingleSourceReaderBuilder {
 	
 			return Optional.of(source);
 			
-		} catch (UnknownConversion e) {
+		} catch (ConversionNotFound e) {
 			throw new ProjectionBuilderError(e);
 		}
 	}
@@ -125,7 +126,7 @@ public final class SingleSourceReaderBuilder {
 		return this;
 	}	
 	
-	final void buildChain(final SingleSourceReader source, final TypeConversions typeConversions) throws UnknownConversion {
+	final void buildChain(final SingleSourceReader source, final TypeConversions typeConversions) throws ConversionNotFound {
 
 		final ArrayList<Conversion<Object, Object>> conversions = new ArrayList<>((converters != null ? converters.size() : 0) * 2 + 1);
 		
@@ -210,6 +211,10 @@ public final class SingleSourceReaderBuilder {
 				
 			}
 		}
+		return targetType;
+	}
+
+	public ObjectType targetType() {
 		return targetType;
 	}
 }

@@ -11,19 +11,19 @@ import com.apicatalog.projection.api.PropertyApi;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
-public final class ProjectionBuilder<P> implements ProjectionApi<P> {
+public final class ProjectionBuilderImpl<P> implements ProjectionApi<P> {
 	
 	final Class<P> projectionClass;
 	
 	final List<PropertyApiImpl<P>> properties;
 	
-	protected ProjectionBuilder(final Class<P> projectionClass) {
+	protected ProjectionBuilderImpl(final Class<P> projectionClass) {
 		this.projectionClass = projectionClass;
 		this.properties = new ArrayList<>();
 	}
 	
 	public static final <T> ProjectionApi<T> bind(final Class<T> projectionClass) {
-		return new ProjectionBuilder<>(projectionClass);
+		return new ProjectionBuilderImpl<>(projectionClass);
 	}
 
 	@Override

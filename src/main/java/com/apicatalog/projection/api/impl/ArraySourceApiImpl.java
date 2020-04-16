@@ -15,8 +15,10 @@ import com.apicatalog.projection.api.LambdaConversionApi;
 import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
 import com.apicatalog.projection.builder.reader.ArraySourceReaderBuilder;
+import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
 import com.apicatalog.projection.builder.reader.SourcePropertyReaderBuilder;
 import com.apicatalog.projection.builder.writer.ArraySourceWriterBuilder;
+import com.apicatalog.projection.builder.writer.SingleSourceWriterBuilder;
 import com.apicatalog.projection.builder.writer.SourcePropertyWriterBuilder;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterError;
@@ -27,14 +29,12 @@ import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.property.source.ArraySourceReader;
 import com.apicatalog.projection.property.source.ArraySourceWriter;
-import com.apicatalog.projection.property.source.SourceReader;
-import com.apicatalog.projection.property.source.SourceWriter;
 
 public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> implements ArraySourceApi<P> {
 	
 	final Logger logger = LoggerFactory.getLogger(ArraySourceApiImpl.class);
 	
-	final ProjectionBuilder<P> projectionBuilder;
+	final ProjectionBuilderImpl<P> projectionBuilder;
 
 	final List<ConversionMappingBuilder> conversionBuilder;
 
@@ -49,7 +49,7 @@ public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> imp
 	
 	boolean optional;
 	
-	protected ArraySourceApiImpl(final ProjectionBuilder<P> projection, final String projectionPropertyName) {
+	protected ArraySourceApiImpl(final ProjectionBuilderImpl<P> projection, final String projectionPropertyName) {
 		this.projectionBuilder = projection;
 		this.conversionBuilder = new ArrayList<>();
 		
@@ -111,7 +111,7 @@ public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> imp
 			throw new ProjectionBuilderError(e);
 		}
 
-		final SourceWriter[] sourceWriters = arraySourceItem.buildWriters(registry.getTypeConversions());
+		final Collection<SingleSourceWriterBuilder> sourceWriters = arraySourceItem.getWriters();
 
 		final Optional<ArraySourceWriter> sourceWriter = 
 					ArraySourceWriterBuilder
@@ -119,7 +119,7 @@ public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> imp
 							.sources(sourceWriters)
 							.optional(optional)
 							.converters(converters)
-							.targetType(targetGetter.getType())
+							.targetType(targetGetter.getType(), targetReference)
 							.build(registry.getTypeConversions());
 
 		if (sourceWriter.isEmpty()) {
@@ -150,7 +150,7 @@ public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> imp
 			throw new ProjectionBuilderError(e);
 		}
 
-		final SourceReader[] sourceReaders = arraySourceItem.buildReaders(registry.getTypeConversions());
+		final Collection<SingleSourceReaderBuilder> sourceReaders = arraySourceItem.getReaders(); 
 
 		final Optional<ArraySourceReader> sourceReader =
 				ArraySourceReaderBuilder.newInstance()

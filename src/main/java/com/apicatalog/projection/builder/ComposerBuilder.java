@@ -1,4 +1,4 @@
-package com.apicatalog.projection.builder.writer;
+package com.apicatalog.projection.builder;
 
 import java.util.Optional;
 

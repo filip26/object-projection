@@ -14,6 +14,7 @@ import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.builder.reader.SourcePropertyReaderBuilder;
 import com.apicatalog.projection.builder.writer.ArraySourceWriterBuilder;
+import com.apicatalog.projection.builder.writer.SingleSourceWriterBuilder;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
@@ -21,7 +22,6 @@ import com.apicatalog.projection.object.getter.FieldGetter;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.source.ArraySourceWriter;
-import com.apicatalog.projection.property.source.SingleSourceWriter;
 
 final class ArraySourceReaderMapper {
 
@@ -68,20 +68,11 @@ final class ArraySourceReaderMapper {
 	
 	Optional<ArraySourceWriter> getArraySourceWriter(final Sources sourcesAnnotation, final String fieldName, final ObjectType targetType, final boolean targetReference, final Class<?> defaultSourceObjectClass) throws ProjectionBuilderError {
 							 								
-		final Collection<SingleSourceWriter> sources = new ArrayList<>(sourcesAnnotation.value().length);
-		
-		ObjectType itemType = targetType;
-		
-		if (targetType.isCollection()) {
-			itemType = ObjectType.of(targetType.getComponentType());
-			
-		} else if (targetType.isArray()) {
-			itemType = ObjectType.of(targetType.getType().getComponentType());			
-		}
+		final Collection<SingleSourceWriterBuilder> sources = new ArrayList<>(sourcesAnnotation.value().length);
 
 		for (final Source source : sourcesAnnotation.value()) {
 			singleSourceMapper
-				.getSingleSourceWriter(source, fieldName, itemType, targetReference, defaultSourceObjectClass)
+				.getSingleSourceWriter(source, fieldName, defaultSourceObjectClass)
 				.ifPresent(sources::add);
 		}
 		
@@ -93,8 +84,8 @@ final class ArraySourceReaderMapper {
 		try {
 			return ArraySourceWriterBuilder.newInstance()
 						.optional(sourcesAnnotation.optional())
-						.sources(sources.toArray(new SingleSourceWriter[0]))
-						.targetType(targetType)
+						.sources(sources)
+						.targetType(targetType, targetReference)
 						.converters(SingleSourceReaderMapper.getConverterMapping(sourcesAnnotation.map()))	// set conversions to apply
 						.build(registry.getTypeConversions());
 			

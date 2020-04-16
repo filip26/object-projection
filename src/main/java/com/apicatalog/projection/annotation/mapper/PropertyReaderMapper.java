@@ -12,7 +12,7 @@ import com.apicatalog.projection.annotation.Provided;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.api.ProjectionBuilderError;
-import com.apicatalog.projection.builder.reader.ExtractorBuilder;
+import com.apicatalog.projection.builder.ExtractorBuilder;
 import com.apicatalog.projection.builder.reader.ProvidedPropertyReaderBuilder;
 import com.apicatalog.projection.builder.writer.SingleSourceWriterBuilder;
 import com.apicatalog.projection.object.ObjectType;
@@ -75,7 +75,7 @@ final class PropertyReaderMapper {
 		
 		final boolean targetReference = PropertyReaderMapper.isReference(targetGetter.getType());
 
-		final Optional<SingleSourceWriter> sourceWriter = 
+		final Optional<SingleSourceWriterBuilder> sourceWriterBuilder = 
 				singleSourceMapper.getSingleSourceWriter(
 						defaultSourceClass, 
 						field.getName(),
@@ -84,6 +84,12 @@ final class PropertyReaderMapper {
 							.optional(true)
 							.targetType(targetGetter.getType(), targetReference)
 						);
+				
+		if (sourceWriterBuilder.isEmpty()) {
+			return Optional.empty();
+		}
+
+		final Optional<SingleSourceWriter> sourceWriter =  sourceWriterBuilder.get().build(registry.getTypeConversions());
 				
 		if (sourceWriter.isEmpty()) {
 			logger.warn("Source is missing. Property {} is ignored.", field.getName());

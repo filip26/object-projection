@@ -13,6 +13,7 @@ import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.builder.reader.ArraySourceReaderBuilder;
+import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
 import com.apicatalog.projection.builder.writer.SourcePropertyWriterBuilder;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.object.ObjectType;
@@ -21,7 +22,6 @@ import com.apicatalog.projection.object.setter.FieldSetter;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.property.source.ArraySourceReader;
-import com.apicatalog.projection.property.source.SingleSourceReader;
 
 final class ArraySourceWriterMapper {
 
@@ -68,11 +68,11 @@ final class ArraySourceWriterMapper {
 	
 	Optional<ArraySourceReader> getArraySourceReader(final Sources sourcesAnnotation, final String fieldName, final ObjectType targetType, final boolean targetReference, final Class<?> defaultSourceObjectClass) throws ProjectionBuilderError {
 		
-		final Collection<SingleSourceReader> sources = new ArrayList<>(sourcesAnnotation.value().length);
+		final Collection<SingleSourceReaderBuilder> sources = new ArrayList<>(sourcesAnnotation.value().length);
 		
 		for (final Source source : sourcesAnnotation.value()) {
 			singleSourceMapper
-				.getSingleSourceReader(source, fieldName, targetType, targetReference, defaultSourceObjectClass)
+				.getSingleSourceReader(source, fieldName, defaultSourceObjectClass)
 				.ifPresent(sources::add);
 		}
 		
@@ -85,7 +85,7 @@ final class ArraySourceWriterMapper {
 			return 
 				ArraySourceReaderBuilder.newInstance()
 					.optional(sourcesAnnotation.optional())
-					.sources(sources.toArray(new SingleSourceReader[0]))
+					.sources(sources)
 					.targetType(targetType, targetReference)
 					.converters(SingleSourceReaderMapper.getConverterMapping(sourcesAnnotation.map()))	// set conversions to apply
 					.build(registry.getTypeConversions());

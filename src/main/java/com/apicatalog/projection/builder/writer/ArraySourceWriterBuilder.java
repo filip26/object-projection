@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.conversion.Conversion;
+import com.apicatalog.projection.conversion.ConversionNotFound;
 import com.apicatalog.projection.conversion.TypeConversions;
-import com.apicatalog.projection.conversion.UnknownConversion;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.object.ObjectType;
@@ -21,7 +21,7 @@ public final class ArraySourceWriterBuilder {
 
 	final Logger logger = LoggerFactory.getLogger(ArraySourceWriterBuilder.class);
 	
-	SourceWriter[] sources;
+	Collection<SingleSourceWriterBuilder> sourceWriters;
 	
 	boolean optional;
 	
@@ -43,7 +43,7 @@ public final class ArraySourceWriterBuilder {
 		
 		if (logger.isTraceEnabled()) {
 			logger.trace("Build {} sources, {} converters, target={}", 
-						sources != null ? sources.length : 0,
+						sourceWriters != null ? sourceWriters.size() : 0,
 						converters != null ? converters.size() : 0, 
 						targetType
 						);
@@ -51,22 +51,40 @@ public final class ArraySourceWriterBuilder {
 		
 		final ArraySourceWriter source = new ArraySourceWriter();
 		
-		if (sources == null || sources.length == 0 || targetType == null) {
+		if (sourceWriters == null || sourceWriters.isEmpty() || targetType == null) {
 			return Optional.empty();
 		}
-
-		source.setSources(sources);
-
+	
 		try {
+
 			// set conversions to apply
 			buildChain(source, typeConversions);
+			
+			
+			final Collection<SourceWriter> sources = new ArrayList<>(sourceWriters.size());
 
+			ObjectType sourceTargetType = targetType;
+			
+			if (targetType.isCollection()) {
+				sourceTargetType = ObjectType.of(targetType.getComponentType());
+				
+			} else if (targetType.isArray()) {
+				sourceTargetType = ObjectType.of(targetType.getType().getComponentType());				
+			}
+
+			for (final SingleSourceWriterBuilder sourceWriterBuilder : sourceWriters) {
+				sourceWriterBuilder.targetType(sourceTargetType, targetReference).build(typeConversions).ifPresent(sources::add);				
+			}
+			
+			// set sources
+			source.setSources(sources.toArray(new SourceWriter[0]));
+			
 			// set optional 
 			source.setOptional(optional);
 			
 			return Optional.of(source);
 			
-		} catch (UnknownConversion e) {
+		} catch (ConversionNotFound e) {
 			throw new ProjectionBuilderError(e);
 		}
 	}	
@@ -76,22 +94,23 @@ public final class ArraySourceWriterBuilder {
 		return this;
 	}
 	
-	public ArraySourceWriterBuilder sources(SourceWriter[] sources) {
-		this.sources = sources;
+	public ArraySourceWriterBuilder sources(final Collection<SingleSourceWriterBuilder> sourceWriters) {
+		this.sourceWriters = sourceWriters;
 		return this;
 	}
 
-	public ArraySourceWriterBuilder converters(Collection<ConverterMapping> converters) {
+	public ArraySourceWriterBuilder converters(final Collection<ConverterMapping> converters) {
 		this.converters = converters;
 		return this;
 	}
 
-	public ArraySourceWriterBuilder targetType(ObjectType targetTYpe) {
-		this.targetType = targetTYpe;
+	public ArraySourceWriterBuilder targetType(ObjectType targetType, boolean targetReference) {
+		this.targetType = targetType;
+		this.targetReference = targetReference;
 		return this;
 	}
 
-	final void buildChain(ArraySourceWriter source, TypeConversions typeConversions) throws UnknownConversion {
+	final void buildChain(ArraySourceWriter source, TypeConversions typeConversions) throws ConversionNotFound {
 
 		final ArrayList<Conversion<Object, Object>> conversions = new ArrayList<>((converters == null ? 0 : converters.size()) * 2 + 1);
 		

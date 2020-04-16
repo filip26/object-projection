@@ -19,8 +19,19 @@ public class TypeConversions {
 
 	static final String MSG_CONVERTER_FROM_TO = "Get converter from {} to {}";
 
-
-	public Optional<Conversion<Object, Object>> get(ObjectType sourceType, ObjectType targetType) throws UnknownConversion {
+	public boolean isAssignable(ObjectType sourceType, ObjectType targetType) {
+		
+		return false;
+	}
+	
+	/**
+	 * 
+	 * @param sourceType
+	 * @param targetType
+	 * @return <code>Optional.empty()</code> if no conversion is needed or a conversion
+	 * @throws ConversionNotFound if a conversion is needed but does not exist
+	 */
+	public Optional<Conversion<Object, Object>> get(ObjectType sourceType, ObjectType targetType) throws ConversionNotFound {
 
 		if (sourceType == null || targetType == null) {
 			throw new IllegalArgumentException();
@@ -29,25 +40,38 @@ public class TypeConversions {
 		if (logger.isDebugEnabled()) {
 			logger.debug(MSG_CONVERTER_FROM_TO, sourceType, targetType);
 		}
+		
+		// no conversion needed?
+		if (targetType.isAssignableFrom(sourceType) || sourceType.getType() == Object.class) {
+			return Optional.empty();
+		}
 
+		Optional<Conversion<Object, Object>> conversion = Optional.empty(); 
+				
 		if (sourceType.isCollection()) {
 			if (targetType.isCollection()) {
-				return collectionToCollection(sourceType, targetType);
+				conversion = collectionToCollection(sourceType, targetType);
+				
+			} else if (targetType.isArray()) {
+				conversion = collectionToArray(sourceType, targetType);
 			}
-			if (targetType.isArray()) {
-				return collectionToArray(sourceType, targetType);
-			}
-		}
-		if (sourceType.isArray()) {
+			
+		} else if (sourceType.isArray()) {
 			if (targetType.isCollection()) {
-				return arrayToCollection(sourceType, targetType);
+				conversion = arrayToCollection(sourceType, targetType);
+				
+			} else if (targetType.isArray()) {
+				conversion = arrayToArray(sourceType, targetType);
 			}
-			if (targetType.isArray()) {
-				return arrayToArray(sourceType, targetType);
-			}			
+			
+		} else {
+			conversion = get(sourceType.getType(), targetType.getType());
 		}
 
-		return get(sourceType.getType(), targetType.getType());
+		if (conversion.isEmpty()) {
+			throw new ConversionNotFound(sourceType, targetType);
+		}
+		return conversion;
 	}
 	
 	Optional<Conversion<Object, Object>> get(Class<?> source, Class<?> target) {
@@ -56,30 +80,15 @@ public class TypeConversions {
 			throw new IllegalArgumentException();
 		}
 		
-//		if (logger.isDebugEnabled()) {
-//			logger.debug(MSG_CONVERTER_FROM_TO, source.getCanonicalName(), target.getCanonicalName());
-//		}
-		
-
-		final Optional<Conversion<Object, Object>> conversion = Optional.ofNullable(SimpleTypeConversions.get(source, target));
-		
-//		if (logger.isTraceEnabled() && conversion.isEmpty()) {
-//			logger.trace("No conversion from {} to {} does exist", source.getSimpleName(), target.getSimpleName());
-//		}
-//
-//		if (logger.isTraceEnabled() && conversion.isPresent()) {
-//			logger.trace("Found conversion {} from {} to {}.",  conversion.get(), source.getSimpleName(), target.getSimpleName());
-//		}
-
-		return conversion;
+		return Optional.ofNullable(SimpleTypeConversions.get(source, target));		
 	}
 
-	Optional<Conversion<Object, Object>> collectionToCollection(final ObjectType sourceType, final ObjectType targetType) throws UnknownConversion {
+	Optional<Conversion<Object, Object>> collectionToCollection(final ObjectType sourceType, final ObjectType targetType) throws ConversionNotFound {
 		
 		final Conversion<Object, Object> componentConversion = 
 				!targetType.getComponentType().isAssignableFrom(sourceType.getComponentType())
 						? get(sourceType.getComponentType(), targetType.getComponentType())
-								.orElseThrow(UnknownConversion::new)
+								.orElseThrow(() -> new ConversionNotFound(sourceType, targetType))
 						: null;
 
 		// no conversion needed?
@@ -114,12 +123,12 @@ public class TypeConversions {
 		return Optional.of(conversion);
 	}
 	
-	Optional<Conversion<Object, Object>> collectionToArray(ObjectType sourceType, ObjectType targetType) throws UnknownConversion {
+	Optional<Conversion<Object, Object>> collectionToArray(ObjectType sourceType, ObjectType targetType) throws ConversionNotFound {
 
 		final Conversion<Object, Object> componentConversion = 
 							!targetType.getType().getComponentType().isAssignableFrom(sourceType.getComponentType())
 									? get(sourceType.getComponentType(), targetType.getType().getComponentType())
-											.orElseThrow(UnknownConversion::new)
+											.orElseThrow(() -> new ConversionNotFound(sourceType, targetType))
 									: null;
 
 		// no conversion needed?
@@ -155,12 +164,12 @@ public class TypeConversions {
 		});
 	}
 	
-	Optional<Conversion<Object, Object>> arrayToCollection(ObjectType sourceType, ObjectType targetType) throws UnknownConversion {
+	Optional<Conversion<Object, Object>> arrayToCollection(ObjectType sourceType, ObjectType targetType) throws ConversionNotFound {
 		
 		final Conversion<Object, Object> componentConversion = 
 								!targetType.getComponentType().isAssignableFrom(sourceType.getType().getComponentType())
 									? get(sourceType.getType().getComponentType(), targetType.getComponentType())
-											.orElseThrow(UnknownConversion::new)
+											.orElseThrow(() -> new ConversionNotFound(sourceType, targetType))
 									: null;	
 
 		// no conversion needed?
@@ -180,12 +189,12 @@ public class TypeConversions {
 		});		
 	}
 	
-	Optional<Conversion<Object, Object>> arrayToArray(ObjectType sourceType, ObjectType targetType) throws UnknownConversion {
+	Optional<Conversion<Object, Object>> arrayToArray(ObjectType sourceType, ObjectType targetType) throws ConversionNotFound {
 		
 		final Conversion<Object, Object> componentConversion = 
 							!targetType.getType().getComponentType().isAssignableFrom(sourceType.getType().getComponentType())
 									? get(sourceType.getType().getComponentType(), targetType.getType().getComponentType())
-											.orElseThrow(UnknownConversion::new)
+											.orElseThrow(() -> new ConversionNotFound(sourceType, targetType))
 									: null;
 
 		// no conversion needed?

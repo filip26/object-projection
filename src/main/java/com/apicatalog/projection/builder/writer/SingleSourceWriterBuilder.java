@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.conversion.Conversion;
+import com.apicatalog.projection.conversion.ConversionNotFound;
 import com.apicatalog.projection.conversion.TypeConversions;
-import com.apicatalog.projection.conversion.UnknownConversion;
 import com.apicatalog.projection.converter.Converter;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.object.ObjectType;
@@ -94,7 +94,7 @@ public final class SingleSourceWriterBuilder {
 	
 			return Optional.of(source);
 			
-		} catch (UnknownConversion e) {
+		} catch (ConversionNotFound e) {
 			throw new ProjectionBuilderError(e);
 		}
 	}
@@ -135,7 +135,7 @@ public final class SingleSourceWriterBuilder {
 		return this;
 	}	
 	
-	final void buildChain(final SingleSourceWriter source, final TypeConversions typeConversions) throws UnknownConversion {
+	final void buildChain(final SingleSourceWriter source, final TypeConversions typeConversions) throws ConversionNotFound {
 
 		final ArrayList<Conversion<Object, Object>> conversions = new ArrayList<>((converters == null ? 0 : converters.size()) * 2 + 1);
 		

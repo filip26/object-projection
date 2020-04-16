@@ -20,7 +20,6 @@ import com.apicatalog.projection.builder.reader.SourcePropertyReaderBuilder;
 import com.apicatalog.projection.builder.writer.SingleSourceWriterBuilder;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
-import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
 import com.apicatalog.projection.object.getter.FieldGetter;
 import com.apicatalog.projection.object.getter.Getter;
@@ -48,14 +47,21 @@ final class SingleSourceReaderMapper {
 		
 		final boolean targetReference = PropertyReaderMapper.isReference(targetGetter.getType());
 
-		final Optional<SingleSourceWriter> sourceWriter = 
+		final Optional<SingleSourceWriterBuilder> sourceWriterBuilder = 
 					getSingleSourceWriter( 
 						sourceAnnotation,
 						field.getName(),
-						targetGetter.getType(),
-						targetReference,
 						defaultSourceClass
-						); 
+						);
+		
+		if (sourceWriterBuilder.isEmpty()) {
+			return Optional.empty();			
+		}
+		
+		final Optional<SingleSourceWriter> sourceWriter = 
+					sourceWriterBuilder.get()
+						.targetType(targetGetter.getType(), targetReference)
+						.build(registry.getTypeConversions()); 
 		
 		if (sourceWriter.isEmpty()) {
 			logger.warn(SOURCE_IS_MISSING, field.getName());
@@ -68,7 +74,7 @@ final class SingleSourceReaderMapper {
 					.build(registry);
 	}
 
-	Optional<SingleSourceWriter> getSingleSourceWriter(final Source sourceAnnotation, final String fieldName, final ObjectType targetType, final boolean targetReference, final Class<?> defaultSourceClass) throws ProjectionBuilderError {
+	Optional<SingleSourceWriterBuilder> getSingleSourceWriter(final Source sourceAnnotation, final String fieldName, final Class<?> defaultSourceClass) {
 		
 		Class<?> sourceObjectClass = defaultSourceClass;
 		
@@ -95,7 +101,6 @@ final class SingleSourceReaderMapper {
 				.optional(sourceAnnotation.optional())
 				.qualifier(sourceAnnotation.name())
 				.mode(sourceAnnotation.mode())
-				.targetType(targetType, targetReference)
 				;
 
 		// set conversions to apply
@@ -103,7 +108,7 @@ final class SingleSourceReaderMapper {
 			try {
 				sourceBuilder.converters(getConverterMapping(sourceAnnotation.map()));
 				
-			} catch (ConverterError | ProjectionBuilderError e) {
+			} catch (ConverterError e) {
 				logger.error("Property " + sourceFieldName + " is ignored.", e);
 				return Optional.empty();
 			}
@@ -116,15 +121,15 @@ final class SingleSourceReaderMapper {
 					);
 	}
 
-	Optional<SingleSourceWriter> getSingleSourceWriter(final Class<?> sourceObjectClass, final String sourceFieldName, final SingleSourceWriterBuilder sourceBuilder) throws ProjectionBuilderError {
+	Optional<SingleSourceWriterBuilder> getSingleSourceWriter(final Class<?> sourceObjectClass, final String sourceFieldName, final SingleSourceWriterBuilder sourceBuilder) {
 		
 		// extract setter
 		final Setter sourceSetter = ObjectUtils.getSetter(sourceObjectClass, sourceFieldName);
 
-		return sourceBuilder.setter(sourceSetter).build(registry.getTypeConversions());
+		return Optional.of(sourceBuilder.setter(sourceSetter));
 	}
 	
-	protected static final Collection<ConverterMapping> getConverterMapping(final Conversion[] conversions) throws ConverterError, ProjectionBuilderError {
+	protected static final Collection<ConverterMapping> getConverterMapping(final Conversion[] conversions) throws ConverterError {
 
 		final List<ConverterMapping> converters = new ArrayList<>(conversions.length);
 		

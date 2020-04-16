@@ -12,7 +12,7 @@ import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.conversion.Conversion;
-import com.apicatalog.projection.conversion.UnknownConversion;
+import com.apicatalog.projection.conversion.ConversionNotFound;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.setter.Setter;
@@ -84,7 +84,7 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 			}
 
 					
-		} catch (UnknownConversion | ConverterError e) {
+		} catch (ConversionNotFound | ConverterError e) {
 			throw new ProjectionError(e);
 		}		
 	}

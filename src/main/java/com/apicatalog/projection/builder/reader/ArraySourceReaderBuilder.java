@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.conversion.Conversion;
+import com.apicatalog.projection.conversion.ConversionNotFound;
 import com.apicatalog.projection.conversion.TypeConversions;
-import com.apicatalog.projection.conversion.UnknownConversion;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.property.source.ArraySourceReader;
@@ -21,7 +21,7 @@ public final class ArraySourceReaderBuilder {
 
 	final Logger logger = LoggerFactory.getLogger(ArraySourceReaderBuilder.class);
 	
-	SourceReader[] sources;
+	Collection<SingleSourceReaderBuilder> sourceReaders;
 	
 	boolean optional;
 	
@@ -43,23 +43,38 @@ public final class ArraySourceReaderBuilder {
 		
 		final ArraySourceReader source = new ArraySourceReader();
 		
-		if (sources == null || sources.length == 0 || targetType == null) {
+		if (sourceReaders == null || sourceReaders.isEmpty() || targetType == null) {
 			return Optional.empty();
 		}
 
-		// set sources
-		source.setSources(sources);
-		
 		try {
+			final Collection<SourceReader> sources = new ArrayList<>(sourceReaders.size());
+
+			ObjectType sourceTargetType  = targetType;
+			
+			if (targetType.isCollection()) {
+				sourceTargetType = ObjectType.of(targetType.getComponentType());
+				
+			} else if (targetType.isArray()) {
+				sourceTargetType = ObjectType.of(targetType.getType().getComponentType());				
+			}
+
+			for (final SingleSourceReaderBuilder sourceReaderBuilder : sourceReaders) {
+				sourceReaderBuilder.targetType(sourceTargetType, targetReference).build(typeConversions).ifPresent(sources::add);				
+			}
+			
+			// set sources
+			source.setSources(sources.toArray(new SourceReader[0]));
+			
 			// set conversions to apply
 			buildChain(source, typeConversions);
-	
+
 			// set optional 
 			source.setOptional(optional);
 			
 			return Optional.of(source);
 			
-		} catch (UnknownConversion e) {
+		} catch (ConversionNotFound e) {
 			throw new ProjectionBuilderError(e);
 		}
 	}	
@@ -69,8 +84,8 @@ public final class ArraySourceReaderBuilder {
 		return this;
 	}
 	
-	public ArraySourceReaderBuilder sources(SourceReader[] sources) {
-		this.sources = sources;
+	public ArraySourceReaderBuilder sources(final Collection<SingleSourceReaderBuilder> sourceReaders) {
+		this.sourceReaders = sourceReaders;
 		return this;
 	}
 
@@ -85,7 +100,7 @@ public final class ArraySourceReaderBuilder {
 		return this;
 	}
 
-	final void buildChain(final ArraySourceReader source, final TypeConversions typeConversions) throws UnknownConversion {
+	final void buildChain(final ArraySourceReader source, final TypeConversions typeConversions) throws ConversionNotFound {
 
 		final ArrayList<Conversion<Object, Object>> conversions = new ArrayList<>((converters != null ? converters.size() : 0) * 2 + 1);
 

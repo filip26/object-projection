@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.conversion.Conversion;
+import com.apicatalog.projection.conversion.ConversionNotFound;
 import com.apicatalog.projection.conversion.TypeConversions;
-import com.apicatalog.projection.conversion.UnknownConversion;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.ConstantPropertyWriter;
@@ -61,12 +61,12 @@ public final class ConstantWriterBuilder {
 			
 			return Optional.of(property);
 			
-		} catch (UnknownConversion e) {
+		} catch (ConversionNotFound e) {
 			throw new ProjectionBuilderError(e);
 		}
 	}	
 	
-	final Collection<Conversion<Object, Object>> buildChain(final String[] constants,final TypeConversions typeConversions, final ObjectType targetType) throws UnknownConversion {
+	final Collection<Conversion<Object, Object>> buildChain(final String[] constants,final TypeConversions typeConversions, final ObjectType targetType) throws ConversionNotFound {
 
 		ObjectType sourceType = ObjectType.of(String[].class);
 

@@ -64,8 +64,9 @@ public final class ExtractionContext {
 				return;
 			}
 		}
-		
-		logger.trace("Rejected to set {}, qualifier = {}", object.getClass().getSimpleName(), qualifiedName);
+		if (logger.isTraceEnabled()) {
+			logger.trace("Rejected to set {}, qualifier = {}", object.getClass().getSimpleName(), qualifiedName);
+		}
 	}
 	
 	public Optional<Object> get(final SourceType sourceType) {

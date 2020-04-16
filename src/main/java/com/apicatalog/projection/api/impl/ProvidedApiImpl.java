@@ -16,7 +16,7 @@ import com.apicatalog.projection.property.PropertyWriter;
 
 public final class ProvidedApiImpl<P> extends AbstractValueProviderApi<P> implements ProvidedApi<P> {
 	
-	final ProjectionBuilder<P> projectionBuilder;
+	final ProjectionBuilderImpl<P> projectionBuilder;
 
 	final String qualifier;
 	
@@ -27,7 +27,7 @@ public final class ProvidedApiImpl<P> extends AbstractValueProviderApi<P> implem
 	
 	boolean optional;
 	
-	protected ProvidedApiImpl(final ProjectionBuilder<P> projection, final String name) {
+	protected ProvidedApiImpl(final ProjectionBuilderImpl<P> projection, final String name) {
 		this.projectionBuilder = projection;
 		this.qualifier = name;
 	}

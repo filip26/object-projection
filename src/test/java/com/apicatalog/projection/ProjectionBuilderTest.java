@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.apicatalog.projection.api.ProjectionBuilderError;
-import com.apicatalog.projection.api.impl.ProjectionBuilder;
+import com.apicatalog.projection.api.impl.ProjectionBuilderImpl;
 import com.apicatalog.projection.converters.Prefix;
 import com.apicatalog.projection.converters.Suffix;
 import com.apicatalog.projection.converters.UriTemplate;
@@ -26,7 +26,7 @@ public class ProjectionBuilderTest {
 	@Test
 	public void test1c() throws ProjectionBuilderError, ProjectionError {
 		final Projection<SimpleObjectTo> projection = 
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(SimpleObjectTo.class)
 					
 					.map("i1").source(SimpleObject.class)
@@ -50,7 +50,7 @@ public class ProjectionBuilderTest {
 	@Test
 	public void test1e() throws ProjectionBuilderError, ProjectionError {
 		final Projection<SimpleObjectTo> projection = 
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(SimpleObjectTo.class)
 					
 					.map("i1").source(SimpleObject.class)
@@ -73,7 +73,7 @@ public class ProjectionBuilderTest {
 	@Test
 	public void test2c() throws ProjectionBuilderError, ProjectionError {
 		final Projection<SimpleObjectTo> projection = 
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(SimpleObjectTo.class)
 					
 					.map("i1").source(SimpleObject.class, "s1")
@@ -97,7 +97,7 @@ public class ProjectionBuilderTest {
 	@Test
 	public void test2e() throws ProjectionBuilderError, ProjectionError {
 		final Projection<SimpleObjectTo> projection = 
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(SimpleObjectTo.class)
 					
 					.map("i1").source(SimpleObject.class, "s1")
@@ -121,7 +121,7 @@ public class ProjectionBuilderTest {
 	@Test
 	public void test3() throws ProjectionBuilderError, ProjectionError {
 		final Projection<SimpleObjectTo> projection = 
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(SimpleObjectTo.class)
 					
 					.map("s1").source(SimpleObject.class)
@@ -149,7 +149,7 @@ public class ProjectionBuilderTest {
 	@Test
 	public void test4() throws ProjectionBuilderError, ProjectionError {
 		final Projection<SimpleObjectTo> projection = 
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(SimpleObjectTo.class)
 					
 					.map("s1").provided("string1").optional()
@@ -176,7 +176,7 @@ public class ProjectionBuilderTest {
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		
 		Assert.assertNotNull( 
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(Object1To.class)
 					
 					.map("object2", true).source(Object1.class).optional()
@@ -187,7 +187,7 @@ public class ProjectionBuilderTest {
 					);
 
 		Assert.assertNotNull(
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(Object2To.class)
 					
 					.map("id").source(Object2.class)
@@ -218,7 +218,7 @@ public class ProjectionBuilderTest {
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		
 		Assert.assertNotNull( 
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(Object1To.class)
 					
 					.map("object2", true).source(Object1.class).optional()
@@ -229,7 +229,7 @@ public class ProjectionBuilderTest {
 					);
 
 		Assert.assertNotNull(
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(Object2To.class)
 					
 					.map("id").source(Object2.class)
@@ -259,7 +259,7 @@ public class ProjectionBuilderTest {
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 
 		Assert.assertNotNull( 
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(Object1To.class)
 					
 					.map("object2", true).source(Object1.class).optional()
@@ -270,7 +270,7 @@ public class ProjectionBuilderTest {
 					);
 
 		Assert.assertNotNull(
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(Object2To.class)
 					
 					.map("id").source(Object2.class)
@@ -292,7 +292,7 @@ public class ProjectionBuilderTest {
 	@Test
 	public void test6() throws ProjectionBuilderError, ProjectionError {
 		final Projection<Object1To> projection = 
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(Object1To.class)
 					
 					.map("id").constant("StringContant")
@@ -309,7 +309,7 @@ public class ProjectionBuilderTest {
 	@Test
 	public void test7() throws ProjectionBuilderError, ProjectionError {
 		final Projection<Object1To> projection = 
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(Object1To.class)
 					
 					.map("id")
@@ -340,7 +340,7 @@ public class ProjectionBuilderTest {
 	@Test
 	public void test8() throws ProjectionBuilderError {
 		final Projection<SimpleObjectTo> projection = 
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(SimpleObjectTo.class)					
 					.build(ProjectionRegistry.newInstance());
 		
@@ -353,7 +353,7 @@ public class ProjectionBuilderTest {
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		
 		Assert.assertNotNull( 
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(Object1To.class)
 					
 					.map("object2", true).source(Object1.class).optional()
@@ -364,7 +364,7 @@ public class ProjectionBuilderTest {
 					);
 
 		Assert.assertNotNull(
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(Object2To.class)
 					
 					.map("id").provided()
@@ -393,7 +393,7 @@ public class ProjectionBuilderTest {
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		
 		Assert.assertNotNull( 
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(Object1To.class)
 					
 					.map("object2", true).source(Object1.class).optional()
@@ -404,7 +404,7 @@ public class ProjectionBuilderTest {
 					);
 
 		Assert.assertNotNull(
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(Object2To.class)
 					
 					.map("id").provided("id")
@@ -433,7 +433,7 @@ public class ProjectionBuilderTest {
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		
 		Assert.assertNotNull( 
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(Object1To.class)
 					
 					.map("object2", true).provided("obj2")
@@ -444,7 +444,7 @@ public class ProjectionBuilderTest {
 					);
 
 		Assert.assertNotNull(
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(Object2To.class)
 					
 					.map("id").provided("id")
@@ -477,7 +477,7 @@ public class ProjectionBuilderTest {
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		
 		Assert.assertNotNull( 
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(UriTo.class)
 					
 					.map("uri")
@@ -506,7 +506,7 @@ public class ProjectionBuilderTest {
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		
 		Assert.assertNotNull( 
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(Object1To.class)
 					
 					.map("object2", true).provided("obj2")
@@ -517,7 +517,7 @@ public class ProjectionBuilderTest {
 					);
 
 		Assert.assertNotNull(
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(Object2To.class)
 					
 					.map("id").provided("id")
@@ -542,9 +542,8 @@ public class ProjectionBuilderTest {
 	@Test
 	public void test14() throws ProjectionBuilderError, ProjectionError {
 		final Projection<SimpleObjectTo> projection = 
-				ProjectionBuilder
+				ProjectionBuilderImpl
 					.bind(SimpleObjectTo.class)
-					
 					.map("s1")
 						.sources()
 							.conversion(String[].class, String.class)

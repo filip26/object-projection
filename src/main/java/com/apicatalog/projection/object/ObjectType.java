@@ -1,8 +1,11 @@
 package com.apicatalog.projection.object;
 
+import java.io.Serializable;
 import java.util.Optional;
 
-public final class ObjectType {
+public final class ObjectType implements Serializable {
+
+	private static final long serialVersionUID = -4456253218795281471L;
 
 	final Class<?> type;
 	final Class<?> componentType;
@@ -22,6 +25,14 @@ public final class ObjectType {
 
 	public boolean isCollection() {
 		return componentType != null;
+	}
+	
+	public boolean isAssignableFrom(final ObjectType object) {
+		return Object.class == type || (type.isAssignableFrom(object.type) 
+				&& ((componentType == null)
+					? (object.componentType == null)
+					: (object.componentType != null) && componentType.isAssignableFrom(object.componentType)))
+					;
 	}
 	
 	public Class<?> getType() {

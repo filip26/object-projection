@@ -54,7 +54,7 @@ public final class ConversionMappingBuilder {
 		
 		converter.setConverter(instance);
 
-		Type sourceNativeType = ((ParameterizedType) converterClass.getGenericInterfaces()[0]).getActualTypeArguments()[0];
+		final Type sourceNativeType = ((ParameterizedType) converterClass.getGenericInterfaces()[0]).getActualTypeArguments()[0];
 		
 		Class<?> sourceClass = null;
 		Class<?> sourceComponentClass = null;
@@ -69,7 +69,7 @@ public final class ConversionMappingBuilder {
 		
 		converter.setSourceType(ObjectType.of(sourceClass, sourceComponentClass));
 
-		Type targetNativeType = ((ParameterizedType) converterClass.getGenericInterfaces()[0]).getActualTypeArguments()[1];
+		final Type targetNativeType = ((ParameterizedType) converterClass.getGenericInterfaces()[0]).getActualTypeArguments()[1];
 		
 		Class<?> targetClass = null;
 		Class<?> targetComponentClass = null;
@@ -87,28 +87,28 @@ public final class ConversionMappingBuilder {
 		return converter;		
 	}
 	
-	public ConversionMappingBuilder converter(Class<? extends Converter<?, ?>> converterClass) {
+	public ConversionMappingBuilder converter(final Class<? extends Converter<?, ?>> converterClass) {
 		this.converterClass = converterClass;
 		return this;
 	}
 	
-	public ConversionMappingBuilder parameters(String[] parameters) {
+	public ConversionMappingBuilder parameters(final String[] parameters) {
 		this.parameters = parameters;
 		return this;
 	}
 	
-	public ConversionMappingBuilder types(Class<?> source, Class<?> target) {
-		this.sourceType = source;
-		this.targetType = target;
+	public ConversionMappingBuilder types(final Class<?> sourceType, final Class<?> targetType) {
+		this.sourceType = sourceType;
+		this.targetType = targetType;
 		return this;
 	}
 
-	public ConversionMappingBuilder forward(Conversion<Object, Object> conversion) {
+	public ConversionMappingBuilder forward(final Conversion<Object, Object> conversion) {
 		this.forward = conversion;
 		return this;
 	}
 
-	public ConversionMappingBuilder backward(Conversion<Object, Object> conversion) {
+	public ConversionMappingBuilder backward(final Conversion<Object, Object> conversion) {
 		this.backward = conversion;
 		return this;
 	}
