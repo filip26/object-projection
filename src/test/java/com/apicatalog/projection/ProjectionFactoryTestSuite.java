@@ -17,6 +17,7 @@ import com.apicatalog.projection.annotated.PrefixMappingTest;
 import com.apicatalog.projection.annotated.PropertyNameOverrideTest;
 import com.apicatalog.projection.annotated.ProvidedCollectionTest;
 import com.apicatalog.projection.annotated.ProvidedObjectTest;
+import com.apicatalog.projection.annotated.ProvidedRefArrayTest;
 import com.apicatalog.projection.annotated.ProvidedRefCollectionTest;
 import com.apicatalog.projection.annotated.ProvidedRefTest;
 import com.apicatalog.projection.annotated.RefCollectionTest;
@@ -41,6 +42,7 @@ import com.apicatalog.projection.annotated.VisibilityTest;
 	PropertyNameOverrideTest.class,
 	ProvidedCollectionTest.class,
 	ProvidedObjectTest.class,
+	ProvidedRefArrayTest.class,
 	ProvidedRefCollectionTest.class,
 	ProvidedRefTest.class,
 	RefCollectionTest.class,

@@ -41,7 +41,7 @@ public class ProvidedObjectPropertyReader implements PropertyReader {
 		if (object.isEmpty()) {
 			return;
 		}
-		
+
 		if (extractor != null) {
 			final Object value = object.get();
 			

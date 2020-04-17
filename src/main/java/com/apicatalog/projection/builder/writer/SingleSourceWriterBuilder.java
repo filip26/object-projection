@@ -19,9 +19,10 @@ import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.source.SingleSourceWriter;
+import com.apicatalog.projection.property.source.SourceWriter;
 import com.apicatalog.projection.source.SourceType;
 
-public final class SingleSourceWriterBuilder implements Builder<SingleSourceWriter> {
+public final class SingleSourceWriterBuilder implements Builder<SourceWriter> {
 
 	final Logger logger = LoggerFactory.getLogger(SingleSourceWriterBuilder.class);
 	
@@ -53,7 +54,7 @@ public final class SingleSourceWriterBuilder implements Builder<SingleSourceWrit
 	}
 	
 	@Override
-	public Optional<SingleSourceWriter> build(TypeConversions typeConverters) throws ProjectionBuilderError {
+	public Optional<SourceWriter> build(TypeConversions typeConverters) throws ProjectionBuilderError {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Build single source writer from {} to {}.{} : {}",

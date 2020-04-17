@@ -33,7 +33,7 @@ public final class ExtractorBuilder {
 		if (getter == null) {
 			return Optional.empty();
 		}
-		
+
 		if (reference) {
 			if (getter.getType().isCollection()) {
 				return Optional.of(new CollectionExtractor(registry, getter.getType(), getter.getType().getComponentType()));

@@ -18,7 +18,7 @@ import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.property.source.ArraySourceWriter;
 import com.apicatalog.projection.property.source.SourceWriter;
 
-public final class ArraySourceWriterBuilder implements Builder<ArraySourceWriter> {
+public final class ArraySourceWriterBuilder implements Builder<SourceWriter> {
 
 	final Logger logger = LoggerFactory.getLogger(ArraySourceWriterBuilder.class);
 	
@@ -41,7 +41,7 @@ public final class ArraySourceWriterBuilder implements Builder<ArraySourceWriter
 	}
 	
 	@Override
-	public Optional<ArraySourceWriter> build(TypeConversions typeConversions) throws ProjectionBuilderError {
+	public Optional<SourceWriter> build(TypeConversions typeConversions) throws ProjectionBuilderError {
 		
 		if (logger.isTraceEnabled()) {
 			logger.trace("Build {} sources, {} converters, target={}", 

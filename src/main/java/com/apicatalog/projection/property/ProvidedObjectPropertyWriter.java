@@ -58,11 +58,6 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 		
 		final Object value = object.get();
 		
-		final ObjectType sourceType = Collection.class.isInstance(value)
-									? ObjectType.of(value.getClass(), Object.class)
-									: ObjectType.of(value.getClass())
-									;
-
 		if (composer != null) {
 			
 			object = composer.compose(stack, value, context);
@@ -76,7 +71,12 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 			}
 			return;
 		}
-									
+		
+		final ObjectType sourceType = Collection.class.isInstance(value)
+				? ObjectType.of(value.getClass(), Object.class)
+				: ObjectType.of(value.getClass())
+				;
+		
 		try {
 			
 			Optional<Conversion<Object, Object>> conversion = registry.getTypeConversions().get(sourceType, targetSetter.getType());

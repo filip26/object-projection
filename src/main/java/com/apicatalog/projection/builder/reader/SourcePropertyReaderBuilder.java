@@ -20,7 +20,7 @@ public final class SourcePropertyReaderBuilder {
 	
 	static final String SOURCE_IS_MISSING = "Source is missing. Property {} is ignored."; 
 	
-	Builder sourceWriterBuilder;
+	Builder<SourceWriter> sourceWriterBuilder;
 	
 	Getter targetGetter;
 	
@@ -66,7 +66,7 @@ public final class SourcePropertyReaderBuilder {
 		return Optional.of(new SourcePropertyReader(sourceWriter.get(), targetGetter, extractor.orElse(null)));
 	}
 
-	public SourcePropertyReaderBuilder sourceWriter(Builder sourceWriterBuilder) {
+	public SourcePropertyReaderBuilder sourceWriter(Builder<SourceWriter> sourceWriterBuilder) {
 		this.sourceWriterBuilder = sourceWriterBuilder;
 		return this;
 	}

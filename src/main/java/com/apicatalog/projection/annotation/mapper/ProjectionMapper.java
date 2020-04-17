@@ -3,6 +3,7 @@ package com.apicatalog.projection.annotation.mapper;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +45,9 @@ public final class ProjectionMapper {
 			return null;
 		}
 		
-		logger.debug("Scan {}", targetProjectionClass.getCanonicalName());
+		if (logger.isDebugEnabled()) {
+			logger.debug("Scan {}", targetProjectionClass.getCanonicalName());
+		}
 		
 		final com.apicatalog.projection.annotation.Projection projectionAnnotation = targetProjectionClass.getAnnotation(com.apicatalog.projection.annotation.Projection.class);
 		
@@ -54,38 +57,23 @@ public final class ProjectionMapper {
 		final ArrayList<PropertyWriter> writers = new ArrayList<>();
 		
 		// check all declared fields
-		for (Field field : targetProjectionClass.getDeclaredFields()) {
+		for (final Field field : targetProjectionClass.getDeclaredFields()) {
 			
 			// skip static and transient fields
-			if (Modifier.isStatic(field.getModifiers())
-					|| Modifier.isTransient(field.getModifiers())
-					) {
-					logger.trace("Skipped {}.{} because is transient or static", targetProjectionClass.getSimpleName(), field.getName());
+			if (isIgnored(field)) {
+					if (logger.isTraceEnabled()) {
+						logger.trace("Skipped {}.{} because is transient or static", targetProjectionClass.getSimpleName(), field.getName());
+					}
 					continue;
 			}
-
-			propertyWriterMapper
-					.getProperty(field, defaultSourceClass)
-					.ifPresent(
-							projectionProperty -> {
-									logger.trace("Writer {}.{} : {}", targetProjectionClass.getSimpleName(), field.getName(), field.getType().getSimpleName());
-									writers.add(projectionProperty);
-								}
-							);
-			
-			propertyReaderMapper
-					.getProperty(field, defaultSourceClass)
-					.ifPresent(
-							projectionProperty -> {
-									logger.trace("Reader {}.{} : {}", targetProjectionClass.getSimpleName(), field.getName(), field.getType().getSimpleName());
-									readers.add(projectionProperty);
-								}
-							);				
-
+			getWriter(field, defaultSourceClass, targetProjectionClass, writers);
+			getReader(field, defaultSourceClass, targetProjectionClass, readers);
 		}
 		
 		if (writers.isEmpty() && readers.isEmpty()) {
-			logger.debug("Ignored {} because has no projected properties", targetProjectionClass.getSimpleName());
+			if (logger.isDebugEnabled()) {
+				logger.debug("Ignored {} because has no projected properties", targetProjectionClass.getSimpleName());
+			}
 			return null;
 		}
 		
@@ -94,5 +82,37 @@ public final class ProjectionMapper {
 							readers.toArray(new PropertyReader[0]), 
 							writers.toArray(new PropertyWriter[0])
 							);
+	}
+	
+	protected void getWriter(final Field field, final Class<?> defaultSourceClass, final Class<?> targetProjectionClass, final List<PropertyWriter> writers) throws ProjectionBuilderError {
+		propertyWriterMapper
+			.getProperty(field, defaultSourceClass)
+			.ifPresent(
+				projectionProperty -> {
+						if (logger.isTraceEnabled()) {
+							logger.trace("Writer {}.{} : {}", targetProjectionClass.getSimpleName(), field.getName(), field.getType().getSimpleName());
+						}
+						writers.add(projectionProperty);
+					}
+				);
+	}
+
+	protected void getReader(final Field field, final Class<?> defaultSourceClass, final Class<?> targetProjectionClass, final List<PropertyReader> readers) throws ProjectionBuilderError {
+		propertyReaderMapper
+			.getProperty(field, defaultSourceClass)
+			.ifPresent(
+				projectionProperty -> {
+						if (logger.isTraceEnabled()) {
+							logger.trace("Reader {}.{} : {}", targetProjectionClass.getSimpleName(), field.getName(), field.getType().getSimpleName());
+						}
+						readers.add(projectionProperty);
+					}
+				);		
+	}
+	
+	protected static final boolean isIgnored(final Field field) {
+		return Modifier.isStatic(field.getModifiers()) 
+					|| Modifier.isTransient(field.getModifiers())
+					;		
 	}
 }
