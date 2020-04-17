@@ -21,7 +21,7 @@ public class PropertyNameOverrideTest {
 	
 	@Before
 	public void setup() throws ProjectionError, ProjectionBuilderError {
-		projection = Projection.of(NameOverrideTo.class).build(ProjectionRegistry.newInstance());
+		projection = Projection.scan(NameOverrideTo.class).build(ProjectionRegistry.newInstance());
 	}
 	
     @Test

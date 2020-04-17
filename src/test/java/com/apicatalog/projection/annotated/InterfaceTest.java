@@ -19,7 +19,7 @@ public class InterfaceTest {
 	
 	@Before
 	public void setup() throws ProjectionError, ProjectionBuilderError {
-		projection = Projection.of(Interface1To.class).build(ProjectionRegistry.newInstance());
+		projection = Projection.scan(Interface1To.class).build(ProjectionRegistry.newInstance());
 	}
 	
     @Test

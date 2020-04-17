@@ -20,7 +20,7 @@ public class ConstantTest {
 	
 	@Before
 	public void setup() throws ProjectionError, ProjectionBuilderError {
-		projection = Projection.of(ConstantTo.class).build(ProjectionRegistry.newInstance());
+		projection = Projection.scan(ConstantTo.class).build(ProjectionRegistry.newInstance());
 	}
 	
     @Test

@@ -1,4 +1,4 @@
-package com.apicatalog.projection.api.impl;
+package com.apicatalog.projection.api.object.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,7 @@ public final class LambdaConversionApiImpl<P, S, T> implements LambdaConversionA
 
 	final P parent;
 	
-	protected LambdaConversionApiImpl(ConversionMappingBuilder builder, P parent) {
+	public LambdaConversionApiImpl(ConversionMappingBuilder builder, P parent) {
 		this.builder = builder;
 		this.parent = parent;
 	}

@@ -1,18 +1,18 @@
-package com.apicatalog.projection.api.impl;
+package com.apicatalog.projection.api.object.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionApi;
 import com.apicatalog.projection.api.ProjectionBuilderError;
-import com.apicatalog.projection.api.PropertyApi;
-import com.apicatalog.projection.impl.CompiledProjection;
+import com.apicatalog.projection.api.object.ObjectProjectionApi;
+import com.apicatalog.projection.api.object.ObjectPropertyApi;
+import com.apicatalog.projection.impl.ObjectProjection;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
-public final class ProjectionApiImpl<P> implements ProjectionApi<P> {
+public final class ProjectionApiImpl<P> implements ObjectProjectionApi<P> {
 	
 	final Class<P> projectionClass;
 	
@@ -23,17 +23,17 @@ public final class ProjectionApiImpl<P> implements ProjectionApi<P> {
 		this.properties = new ArrayList<>();
 	}
 	
-	public static final <T> ProjectionApi<T> bind(final Class<T> projectionClass) {
+	public static final <T> ObjectProjectionApi<T> bind(final Class<T> projectionClass) {
 		return new ProjectionApiImpl<>(projectionClass);
 	}
 
 	@Override
-	public PropertyApi<P> map(final String propertyName) {
+	public ObjectPropertyApi<P> map(final String propertyName) {
 		return map(propertyName, false);
 	}
 
 	@Override
-	public PropertyApi<P> map(final String propertyName, final boolean reference) {
+	public ObjectPropertyApi<P> map(final String propertyName, final boolean reference) {
 		
 		final PropertyApiImpl<P> propertyBuilder = new PropertyApiImpl<>(this, propertyName, reference);
 		properties.add(propertyBuilder);
@@ -62,7 +62,7 @@ public final class ProjectionApiImpl<P> implements ProjectionApi<P> {
 		}
 		
 		final Projection<P> projection = 
-					CompiledProjection.newInstance(
+					ObjectProjection.newInstance(
 									projectionClass, 
 									readers.toArray(new PropertyReader[0]), 
 									writers.toArray(new PropertyWriter[0])

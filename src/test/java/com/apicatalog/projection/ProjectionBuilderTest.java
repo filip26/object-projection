@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.apicatalog.projection.api.ProjectionBuilderError;
-import com.apicatalog.projection.api.impl.ProjectionApiImpl;
+import com.apicatalog.projection.api.object.impl.ProjectionApiImpl;
 import com.apicatalog.projection.converters.Prefix;
 import com.apicatalog.projection.converters.Suffix;
 import com.apicatalog.projection.converters.UriTemplate;

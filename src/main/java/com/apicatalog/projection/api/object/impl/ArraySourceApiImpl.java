@@ -1,4 +1,4 @@
-package com.apicatalog.projection.api.impl;
+package com.apicatalog.projection.api.object.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,10 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ArraySourceApi;
-import com.apicatalog.projection.api.ArraySourceItemApi;
 import com.apicatalog.projection.api.LambdaConversionApi;
 import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.object.ObjectArraySourceApi;
+import com.apicatalog.projection.api.object.ObjectArraySourceItemApi;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
 import com.apicatalog.projection.builder.reader.ArraySourceReaderBuilder;
 import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
@@ -29,7 +29,7 @@ import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.property.source.ArraySourceReader;
 
-public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> implements ArraySourceApi<P> {
+public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> implements ObjectArraySourceApi<P> {
 	
 	final Logger logger = LoggerFactory.getLogger(ArraySourceApiImpl.class);
 	
@@ -55,18 +55,18 @@ public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> imp
 		this.projectionPropertyName = projectionPropertyName;
 	}
 	
-	public ArraySourceApi<P> optional() {
+	public ObjectArraySourceApi<P> optional() {
 		this.optional = true;
 		return this;
 	}
 
-	public ArraySourceApi<P> required() {
+	public ObjectArraySourceApi<P> required() {
 		this.optional = false;
 		return this;
 	}
 
 	@Override
-	public ArraySourceItemApi<P> source(final Class<?> sourceClass, final String sourceProperty) {
+	public ObjectArraySourceItemApi<P> source(final Class<?> sourceClass, final String sourceProperty) {
 
 		arraySourceItem = new ArraySourceItemApiImpl<>(projectionBuilder, projectionPropertyName);
 		
@@ -76,18 +76,18 @@ public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> imp
 	}
 
 	@Override
-	public ArraySourceItemApi<P> source(final Class<?> sourceClass) {
+	public ObjectArraySourceItemApi<P> source(final Class<?> sourceClass) {
 		return source(sourceClass, null);
 	}
 
 	@Override
-	public ArraySourceApi<P> conversion(final Class<? extends Converter<?, ?>> converter, final String...params) {
+	public ObjectArraySourceApi<P> conversion(final Class<? extends Converter<?, ?>> converter, final String...params) {
 		conversionBuilder.add(ConversionMappingBuilder.newInstance().converter(converter).parameters(params));
 		return this;
 	}
 
 	@Override
-	public <S, T> LambdaConversionApi<ArraySourceApi<P>, S, T> conversion(Class<? extends S> source, Class<? extends T> target) {
+	public <S, T> LambdaConversionApi<ObjectArraySourceApi<P>, S, T> conversion(Class<? extends S> source, Class<? extends T> target) {
 		
 		final ConversionMappingBuilder builder = ConversionMappingBuilder.newInstance().types(source, target);
 		

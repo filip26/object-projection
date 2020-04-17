@@ -1,4 +1,4 @@
-package com.apicatalog.projection.api.impl;
+package com.apicatalog.projection.api.object.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,8 +12,8 @@ import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.api.LambdaConversionApi;
 import com.apicatalog.projection.api.ProjectionBuilderError;
-import com.apicatalog.projection.api.PropertyApi;
-import com.apicatalog.projection.api.SingleSourceApi;
+import com.apicatalog.projection.api.object.ObjectPropertyApi;
+import com.apicatalog.projection.api.object.ObjectSingleSourceApi;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
 import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
 import com.apicatalog.projection.builder.reader.SourcePropertyReaderBuilder;
@@ -29,7 +29,7 @@ import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.property.source.SourceReader;
 
-public final class SingleSourceApiImpl<P> extends AbstractValueProviderApi<P> implements SingleSourceApi<P> {
+public final class SingleSourceApiImpl<P> extends AbstractValueProviderApi<P> implements ObjectSingleSourceApi<P> {
 	
 	final ProjectionApiImpl<P> projectionBuilder;
 	
@@ -58,42 +58,42 @@ public final class SingleSourceApiImpl<P> extends AbstractValueProviderApi<P> im
 	}
 	
 	@Override
-	public SingleSourceApi<P> optional() {
+	public ObjectSingleSourceApi<P> optional() {
 		sourceReaderBuilder.optional(true);
 		sourceWriterBuilder.optional(true);
 		return this;
 	}
 
 	@Override
-	public SingleSourceApi<P> required() {
+	public ObjectSingleSourceApi<P> required() {
 		sourceReaderBuilder.optional(false);
 		sourceWriterBuilder.optional(false);
 		return this;
 	}
 	
 	@Override
-	public SingleSourceApi<P> readOnly() {
+	public ObjectSingleSourceApi<P> readOnly() {
 		sourceReaderBuilder.mode(AccessMode.READ_ONLY);
 		sourceWriterBuilder.mode(AccessMode.READ_ONLY);
 		return this;
 	}
 
 	@Override
-	public SingleSourceApi<P> writeOnly() {
+	public ObjectSingleSourceApi<P> writeOnly() {
 		sourceReaderBuilder.mode(AccessMode.WRITE_ONLY);
 		sourceWriterBuilder.mode(AccessMode.WRITE_ONLY);
 		return this;
 	}
 
 	@Override
-	public SingleSourceApi<P> readWrite() {
+	public ObjectSingleSourceApi<P> readWrite() {
 		sourceReaderBuilder.mode(AccessMode.READ_WRITE);
 		sourceWriterBuilder.mode(AccessMode.READ_ONLY);
 		return this;
 	}
 
 	//TODO ?!
-	public SingleSourceApi<P> qualifier(final String qualifier) {
+	public ObjectSingleSourceApi<P> qualifier(final String qualifier) {
 		
 		final String name = StringUtils.isNotBlank(qualifier) ? qualifier : null;
 		
@@ -103,23 +103,23 @@ public final class SingleSourceApiImpl<P> extends AbstractValueProviderApi<P> im
 	}
 	
 	@Override
-	public PropertyApi<P> map(final String propertyName) {
+	public ObjectPropertyApi<P> map(final String propertyName) {
 		return projectionBuilder.map(propertyName);
 	}
 
 	@Override
-	public PropertyApi<P> map(final String propertyName, final boolean reference) {
+	public ObjectPropertyApi<P> map(final String propertyName, final boolean reference) {
 		return projectionBuilder.map(propertyName, reference);
 	}
 
 	@Override
-	public SingleSourceApi<P> conversion(final Class<? extends Converter<?, ?>> converter, final String...params) {
+	public ObjectSingleSourceApi<P> conversion(final Class<? extends Converter<?, ?>> converter, final String...params) {
 		conversions.add(ConversionMappingBuilder.newInstance().converter(converter).parameters(params));
 		return this;
 	}
 	
 	@Override
-	public <S, T> LambdaConversionApi<SingleSourceApi<P>, S, T> conversion(Class<? extends S> source, Class<? extends T> target) {
+	public <S, T> LambdaConversionApi<ObjectSingleSourceApi<P>, S, T> conversion(Class<? extends S> source, Class<? extends T> target) {
 		
 		final ConversionMappingBuilder builder = ConversionMappingBuilder.newInstance().types(source, target);
 		

@@ -1,4 +1,4 @@
-package com.apicatalog.projection.api.impl;
+package com.apicatalog.projection.api.object.impl;
 
 import java.util.Optional;
 

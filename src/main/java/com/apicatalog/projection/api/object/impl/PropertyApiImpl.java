@@ -1,4 +1,4 @@
-package com.apicatalog.projection.api.impl;
+package com.apicatalog.projection.api.object.impl;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -10,12 +10,12 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ArraySourceApi;
-import com.apicatalog.projection.api.ProjectionApi;
 import com.apicatalog.projection.api.ProjectionBuilderError;
-import com.apicatalog.projection.api.PropertyApi;
-import com.apicatalog.projection.api.ProvidedApi;
-import com.apicatalog.projection.api.SingleSourceApi;
+import com.apicatalog.projection.api.object.ObjectArraySourceApi;
+import com.apicatalog.projection.api.object.ObjectProjectionApi;
+import com.apicatalog.projection.api.object.ObjectPropertyApi;
+import com.apicatalog.projection.api.object.ObjectProvidedApi;
+import com.apicatalog.projection.api.object.ObjectSingleSourceApi;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
 import com.apicatalog.projection.object.getter.FieldGetter;
@@ -25,7 +25,7 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
-public final class PropertyApiImpl<P> implements PropertyApi<P> {
+public final class PropertyApiImpl<P> implements ObjectPropertyApi<P> {
 	
 	final Logger logger = LoggerFactory.getLogger(PropertyApiImpl.class);
 
@@ -44,12 +44,12 @@ public final class PropertyApiImpl<P> implements PropertyApi<P> {
 	}
 	
 	@Override
-	public SingleSourceApi<P> source(final Class<?> sourceClass) {
+	public ObjectSingleSourceApi<P> source(final Class<?> sourceClass) {
 		return source(sourceClass, targetPropertyName);
 	}
 
 	@Override
-	public SingleSourceApi<P> source(final Class<?> sourceClass, final String sourceProperty) {
+	public ObjectSingleSourceApi<P> source(final Class<?> sourceClass, final String sourceProperty) {
 
 		if (logger.isTraceEnabled()) {
 			logger.trace("source({}, {})", sourceClass.getSimpleName(), sourceProperty);
@@ -70,7 +70,7 @@ public final class PropertyApiImpl<P> implements PropertyApi<P> {
 	}
 
 	@Override
-	public ArraySourceApi<P> sources() {
+	public ObjectArraySourceApi<P> sources() {
 		
 		if (logger.isTraceEnabled()) {
 			logger.trace("sources()");
@@ -86,12 +86,12 @@ public final class PropertyApiImpl<P> implements PropertyApi<P> {
 	}
 
 	@Override
-	public ProvidedApi<P> provided() {
+	public ObjectProvidedApi<P> provided() {
 		return provided(null);
 	}
 	
 	@Override
-	public ProvidedApi<P> provided(final String qualifier) {
+	public ObjectProvidedApi<P> provided(final String qualifier) {
 		
 		if (logger.isTraceEnabled()) {
 			logger.trace("provided({})", qualifier);
@@ -107,7 +107,7 @@ public final class PropertyApiImpl<P> implements PropertyApi<P> {
 	}
 
 	@Override
-	public ProjectionApi<P> constant(final String...values) {
+	public ObjectProjectionApi<P> constant(final String...values) {
 
 		if (logger.isTraceEnabled()) {
 			logger.trace("constant({})", Arrays.toString(values));
@@ -121,12 +121,12 @@ public final class PropertyApiImpl<P> implements PropertyApi<P> {
 	}
 	
 	@Override
-	public PropertyApi<P> map(String propertyName) {
+	public ObjectPropertyApi<P> map(String propertyName) {
 		return projectionBuilder.map(propertyName, false);
 	}
 
 	@Override
-	public PropertyApi<P> map(String propertyName, boolean reference) {
+	public ObjectPropertyApi<P> map(String propertyName, boolean reference) {
 		return projectionBuilder.map(propertyName, reference);
 	}
 	

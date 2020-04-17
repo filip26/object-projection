@@ -1,12 +1,12 @@
-package com.apicatalog.projection.api.impl;
+package com.apicatalog.projection.api.object.impl;
 
 import java.util.Optional;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionBuilderError;
-import com.apicatalog.projection.api.PropertyApi;
-import com.apicatalog.projection.api.ProvidedApi;
+import com.apicatalog.projection.api.object.ObjectPropertyApi;
+import com.apicatalog.projection.api.object.ObjectProvidedApi;
 import com.apicatalog.projection.builder.reader.ProvidedPropertyReaderBuilder;
 import com.apicatalog.projection.builder.writer.ProvidedPropertyWriterBuilder;
 import com.apicatalog.projection.object.getter.Getter;
@@ -14,7 +14,7 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
-public final class ProvidedApiImpl<P> extends AbstractValueProviderApi<P> implements ProvidedApi<P> {
+public final class ProvidedApiImpl<P> extends AbstractValueProviderApi<P> implements ObjectProvidedApi<P> {
 	
 	final ProjectionApiImpl<P> projectionBuilder;
 
@@ -33,24 +33,24 @@ public final class ProvidedApiImpl<P> extends AbstractValueProviderApi<P> implem
 	}
 	
 	@Override
-	public ProvidedApi<P> optional() {
+	public ObjectProvidedApi<P> optional() {
 		this.optional = true;
 		return this;
 	}
 
 	@Override
-	public ProvidedApi<P> required() {
+	public ObjectProvidedApi<P> required() {
 		this.optional = false;
 		return this;
 	}
 	
 	@Override
-	public PropertyApi<P> map(final String propertyName) {
+	public ObjectPropertyApi<P> map(final String propertyName) {
 		return projectionBuilder.map(propertyName);
 	}
 
 	@Override
-	public PropertyApi<P> map(final String propertyName, final boolean reference) {
+	public ObjectPropertyApi<P> map(final String propertyName, final boolean reference) {
 		return projectionBuilder.map(propertyName, reference);
 	}
 

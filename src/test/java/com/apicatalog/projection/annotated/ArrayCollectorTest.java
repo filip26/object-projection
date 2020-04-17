@@ -21,7 +21,7 @@ public class ArrayCollectorTest {
 	
 	@Before
 	public void setup() throws ProjectionError, ProjectionBuilderError {
-		projection = Projection.of(ArrayCollectorTo.class).build(ProjectionRegistry.newInstance());		
+		projection = Projection.scan(ArrayCollectorTo.class).build(ProjectionRegistry.newInstance());		
 	}
 	
     @Test

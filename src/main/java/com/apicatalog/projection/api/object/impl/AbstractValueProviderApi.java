@@ -1,4 +1,4 @@
-package com.apicatalog.projection.api.impl;
+package com.apicatalog.projection.api.object.impl;
 
 import java.util.Optional;
 
@@ -9,7 +9,7 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
-abstract class AbstractValueProviderApi<P> {
+public abstract class AbstractValueProviderApi<P> {
 
 	protected abstract AbstractValueProviderApi<P> targetGetter(Getter targetGetter);
 	

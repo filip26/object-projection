@@ -19,8 +19,8 @@ public final class ObjectType implements Serializable {
 		return of(type, null);
 	}
 
-	public static final ObjectType of(final Class<?> type, final Class<?> componentTYpe) {
-		return new ObjectType(type, componentTYpe);
+	public static final ObjectType of(final Class<?> type, final Class<?> componentType) {
+		return new ObjectType(type, componentType);
 	}
 
 	public boolean isCollection() {

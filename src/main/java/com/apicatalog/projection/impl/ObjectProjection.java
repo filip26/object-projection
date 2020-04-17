@@ -14,25 +14,25 @@ import com.apicatalog.projection.object.ObjectUtils;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
-public final class CompiledProjection<P> implements Projection<P> {
+public final class ObjectProjection<P> implements Projection<P> {
 	
-	final Logger logger = LoggerFactory.getLogger(CompiledProjection.class);
+	final Logger logger = LoggerFactory.getLogger(ObjectProjection.class);
 
 	final Class<P> projectionClass;
 	
 	final PropertyReader[] readers;
 	final PropertyWriter[] writers;
 	
-	protected CompiledProjection(final Class<P> projectionClass, final PropertyReader[] readers, final PropertyWriter[] writers) {
+	protected ObjectProjection(final Class<P> projectionClass, final PropertyReader[] readers, final PropertyWriter[] writers) {
 		this.projectionClass = projectionClass;
 		this.readers = readers;
 		this.writers = writers;
 	}
 	
-	public static final <A> CompiledProjection<A> newInstance(final Class<A> projectionClass, final PropertyReader[] readers, final PropertyWriter[] writers) {
-		return new CompiledProjection<>(projectionClass, readers, writers);
+	public static final <A> ObjectProjection<A> newInstance(final Class<A> projectionClass, final PropertyReader[] readers, final PropertyWriter[] writers) {
+		return new ObjectProjection<>(projectionClass, readers, writers);
 	}
-	
+
 	/**
 	 * Compose a projection from the given source values
 	 * 

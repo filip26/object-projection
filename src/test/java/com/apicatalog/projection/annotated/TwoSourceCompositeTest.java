@@ -19,7 +19,7 @@ public class TwoSourceCompositeTest {
 
 	@Before
 	public void setup() throws ProjectionError, ProjectionBuilderError {
-		projection = Projection.of(CompositeTo.class).build(ProjectionRegistry.newInstance());
+		projection = Projection.scan(CompositeTo.class).build(ProjectionRegistry.newInstance());
 	}	
 	
     @Test

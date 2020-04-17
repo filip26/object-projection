@@ -1,4 +1,4 @@
-package com.apicatalog.projection.api.impl;
+package com.apicatalog.projection.api.object.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,10 +12,10 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.annotation.AccessMode;
-import com.apicatalog.projection.api.ArraySourceItemApi;
 import com.apicatalog.projection.api.LambdaConversionApi;
 import com.apicatalog.projection.api.ProjectionBuilderError;
-import com.apicatalog.projection.api.PropertyApi;
+import com.apicatalog.projection.api.object.ObjectArraySourceItemApi;
+import com.apicatalog.projection.api.object.ObjectPropertyApi;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
 import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
 import com.apicatalog.projection.builder.writer.SingleSourceWriterBuilder;
@@ -26,7 +26,7 @@ import com.apicatalog.projection.object.ObjectUtils;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.object.setter.Setter;
 
-public final class ArraySourceItemApiImpl<P> implements ArraySourceItemApi<P> {
+public final class ArraySourceItemApiImpl<P> implements ObjectArraySourceItemApi<P> {
 	
 	final Logger logger = LoggerFactory.getLogger(ArraySourceItemApiImpl.class);
 	
@@ -42,28 +42,28 @@ public final class ArraySourceItemApiImpl<P> implements ArraySourceItemApi<P> {
 		this.targetPropertyName = targetPropertyName;
 	}
 
-	public ArraySourceItemApi<P> optional() {
+	public ObjectArraySourceItemApi<P> optional() {
 		sourceHolders.getLast().optional(true);		
 		return this;
 	}
 
-	public ArraySourceItemApi<P> required() {
+	public ObjectArraySourceItemApi<P> required() {
 		sourceHolders.getLast().optional(false);
 		return this;
 	}
 	
-	public ArraySourceItemApi<P> readOnly() {
+	public ObjectArraySourceItemApi<P> readOnly() {
 		sourceHolders.getLast().mode(AccessMode.READ_ONLY);
 		return this;
 	}
 
-	public ArraySourceItemApi<P> writeOnly() {
+	public ObjectArraySourceItemApi<P> writeOnly() {
 		sourceHolders.getLast().mode(AccessMode.WRITE_ONLY);
 		return this;
 	}
 
 	@Override
-	public ArraySourceItemApi<P> source(final Class<?> sourceClass, final String sourceProperty) {
+	public ObjectArraySourceItemApi<P> source(final Class<?> sourceClass, final String sourceProperty) {
 		sourceHolders.add(
 				new SourceHolder(
 						sourceClass, 
@@ -74,17 +74,17 @@ public final class ArraySourceItemApiImpl<P> implements ArraySourceItemApi<P> {
 	}
 
 	@Override
-	public ArraySourceItemApi<P> source(final Class<?> sourceClass) {
+	public ObjectArraySourceItemApi<P> source(final Class<?> sourceClass) {
 		return source(sourceClass, targetPropertyName);
 	}
 		
 	@Override
-	public PropertyApi<P> map(final String propertyName) {
+	public ObjectPropertyApi<P> map(final String propertyName) {
 		return projectionBuilder.map(propertyName);
 	}
 
 	@Override
-	public PropertyApi<P> map(final String propertyName, final boolean reference) {
+	public ObjectPropertyApi<P> map(final String propertyName, final boolean reference) {
 		return projectionBuilder.map(propertyName, reference);
 	}
 	
@@ -94,13 +94,13 @@ public final class ArraySourceItemApiImpl<P> implements ArraySourceItemApi<P> {
 	}
 
 	@Override
-	public ArraySourceItemApi<P> conversion(final Class<? extends Converter<?, ?>> converter, final String...params) {
+	public ObjectArraySourceItemApi<P> conversion(final Class<? extends Converter<?, ?>> converter, final String...params) {
 		sourceHolders.getLast().conversions.add(ConversionMappingBuilder.newInstance().converter(converter).parameters(params));
 		return this;
 	}
 	
 	@Override
-	public <S, T> LambdaConversionApi<ArraySourceItemApi<P>, S, T> conversion(Class<? extends S> source, Class<? extends T> target) {
+	public <S, T> LambdaConversionApi<ObjectArraySourceItemApi<P>, S, T> conversion(Class<? extends S> source, Class<? extends T> target) {
 		
 		final ConversionMappingBuilder builder = ConversionMappingBuilder.newInstance().types(source, target);
 		

@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.apicatalog.projection.annotation.mapper.ProjectionMapper;
-import com.apicatalog.projection.api.ProjectionApi;
 import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.object.ObjectProjectionApi;
 import com.apicatalog.projection.conversion.TypeConversions;
 
 public final class ProjectionRegistry {
@@ -39,7 +39,7 @@ public final class ProjectionRegistry {
 		return this;
 	}
 
-	public ProjectionRegistry register(final ProjectionApi<?> projectionApi) throws ProjectionBuilderError {
+	public ProjectionRegistry register(final ObjectProjectionApi<?> projectionApi) throws ProjectionBuilderError {
 		projectionApi.build(this);
 		return this;
 	}
