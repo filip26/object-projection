@@ -1,4 +1,4 @@
-package com.apicatalog.projection.api.object.impl;
+package com.apicatalog.projection.api.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

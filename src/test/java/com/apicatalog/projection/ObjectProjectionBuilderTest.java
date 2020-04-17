@@ -20,7 +20,7 @@ import com.apicatalog.projection.projections.SimpleObjectTo;
 import com.apicatalog.projection.projections.UriTo;
 import com.apicatalog.projection.source.SourceObject;
 
-public class ProjectionBuilderTest {
+public class ObjectProjectionBuilderTest {
 
 
 	@Test

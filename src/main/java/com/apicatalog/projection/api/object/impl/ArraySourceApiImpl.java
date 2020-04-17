@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.LambdaConversionApi;
 import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.impl.LambdaConversionApiImpl;
 import com.apicatalog.projection.api.object.ObjectArraySourceApi;
 import com.apicatalog.projection.api.object.ObjectArraySourceItemApi;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;

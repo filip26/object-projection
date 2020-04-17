@@ -12,6 +12,7 @@ import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.api.LambdaConversionApi;
 import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.impl.LambdaConversionApiImpl;
 import com.apicatalog.projection.api.object.ObjectPropertyApi;
 import com.apicatalog.projection.api.object.ObjectSingleSourceApi;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
