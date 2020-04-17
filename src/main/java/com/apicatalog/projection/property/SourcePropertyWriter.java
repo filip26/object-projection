@@ -34,18 +34,18 @@ public final class SourcePropertyWriter implements PropertyWriter {
 	@Override
 	public void write(final ProjectionStack queue, final CompositionContext context) throws ProjectionError {
 
-		if (sourceReader == null) {
-			logger.warn("Source reader is missing. Property skipped.");
-			return;
-		}
-
 		if (targetSetter == null) {
 			logger.warn("Target setter is missing. Property skipped.");
 			return;
 		}
+
+		if (sourceReader == null) {
+			logger.warn("Source reader is missing. Property {} skipped.", targetSetter.getName());
+			return;
+		}
 		
 		if (logger.isDebugEnabled()) {
-			logger.debug("Write {} to {}, depth = {}", sourceReader.getType(), targetSetter.getType(), queue.length());
+			logger.debug("Write {} to {}, depth = {}", sourceReader.getType(), targetSetter, queue.length());
 		}
 
 		// get source value
@@ -54,6 +54,8 @@ public final class SourcePropertyWriter implements PropertyWriter {
 		if (object.isEmpty()) {
 			return;
 		}
+		
+		// 
 
 		if (composer != null) {
 			object = composer.compose(queue, object.get(), context);
@@ -61,7 +63,7 @@ public final class SourcePropertyWriter implements PropertyWriter {
 		
 		if (object.isPresent()) {
 			if (logger.isTraceEnabled()) {
-				logger.trace("{} : {} = {}", targetSetter.getName(), targetSetter.getType(), object.get());	
+				logger.trace("Writing {} to {}", object.get(), targetSetter);	
 			}
 			
 			targetSetter.set(queue.peek(), object.get());

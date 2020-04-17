@@ -28,7 +28,6 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.property.source.ArraySourceReader;
-import com.apicatalog.projection.property.source.ArraySourceWriter;
 
 public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> implements ArraySourceApi<P> {
 	
@@ -113,24 +112,24 @@ public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> imp
 
 		final Collection<SingleSourceWriterBuilder> sourceWriters = arraySourceItem.getWriters();
 
-		final Optional<ArraySourceWriter> sourceWriter = 
+		final ArraySourceWriterBuilder sourceWriter = 
 					ArraySourceWriterBuilder
 							.newInstance()
 							.sources(sourceWriters)
 							.optional(optional)
 							.converters(converters)
-							.targetType(targetGetter.getType(), targetReference)
-							.build(registry.getTypeConversions());
+							;
+							
 
-		if (sourceWriter.isEmpty()) {
-			if (logger.isTraceEnabled()) {
-				logger.trace("Source writer does not exist. Property '{}' is ignored for extraction.", targetGetter.getName());
-			}
-			return Optional.empty();
-		}
+//		if (sourceWriter.isEmpty()) {
+//			if (logger.isTraceEnabled()) {
+//				logger.trace("Source writer does not exist. Property '{}' is ignored for extraction.", targetGetter.getName());
+//			}
+//			return Optional.empty();
+//		}
 
 		return SourcePropertyReaderBuilder.newInstance()
-					.sourceWriter(sourceWriter.get())
+					.sourceWriter(sourceWriter)
 					.target(targetGetter, targetReference)
 					.build(registry).map(PropertyReader.class::cast)
 					;		

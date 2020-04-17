@@ -33,12 +33,15 @@ public final class ComposerBuilder {
 		if (setter == null) {
 			return Optional.empty();
 		}
-		
+
 		if (reference) {
 			if (setter.getType().isCollection()) {
-				return Optional.of(new CollectionComposer(registry, setter.getType()));
+				return Optional.of(new CollectionComposer(registry, setter.getType(), setter.getType().getComponentType()));
 			}
-			
+			if (setter.getType().isArray()) {
+				return Optional.of(new CollectionComposer(registry, setter.getType(), setter.getType().getType().getComponentType()));
+			}
+
 			return Optional.of(new ObjectComposer(registry, setter.getType()));
 		}
 		return Optional.empty();

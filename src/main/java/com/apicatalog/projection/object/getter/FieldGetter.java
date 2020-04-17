@@ -40,4 +40,11 @@ public final class FieldGetter implements Getter {
 	public ObjectType getType() {
 		return type;
 	}
+
+	@Override
+	public String toString() {
+		return "FieldGetter [name=" + (field != null ? field.getName() : "n/a") + ", type=" + type + "]";
+	}
+	
+	
 }

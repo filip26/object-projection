@@ -48,8 +48,10 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 		
 		logger.debug("Write {} : {}, qualifier = {}, optional = {}, depth = {}", targetSetter.getName(), targetSetter.getType(), objectQualifier, optional, stack.length());
 		
-		Optional<Object> object = context.get(objectQualifier, targetSetter.getType().getType());
-		
+		Optional<Object> object = context.get(objectQualifier, targetSetter.getType().getType())
+										 .or(() -> context.get(objectQualifier))
+										 ;
+
 		if (object.isEmpty()) {
 			return;
 		}
@@ -60,13 +62,17 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 									? ObjectType.of(value.getClass(), Object.class)
 									: ObjectType.of(value.getClass())
 									;
-		
+
 		if (composer != null) {
 			
 			object = composer.compose(stack, value, context);
 			
 			if (object.isPresent()) {
+				if (logger.isTraceEnabled()) {
+					logger.trace("Set {} to {}", object.get().getClass().getSimpleName(), targetSetter);
+				}
 				targetSetter.set(stack.peek(), object.get());
+
 			}
 			return;
 		}

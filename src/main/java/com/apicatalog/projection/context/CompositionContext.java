@@ -17,22 +17,25 @@ public final class CompositionContext {
 
 	final Logger logger = LoggerFactory.getLogger(CompositionContext.class);
 	
-	final Map<SourceType, Object> index;
+	final Map<SourceType, Object> typeIndex;
+	final Map<String, Object> nameIndex;
 	
 	final ContextNamespace namespace;
 	
-	protected CompositionContext(final Map<SourceType, Object> index) {
-		this.index = index;
+	protected CompositionContext(final Map<SourceType, Object> typeIndex, final Map<String, Object> nameIndex) {
+		this.typeIndex = typeIndex;
+		this.nameIndex = nameIndex;
 		this.namespace = new ContextNamespace();
 	}
 
 	public CompositionContext(final CompositionContext context) {
-		this.index = new LinkedHashMap<>(context.index);
+		this.typeIndex = new LinkedHashMap<>(context.typeIndex);
+		this.nameIndex = new LinkedHashMap<>(context.nameIndex);
 		this.namespace = new ContextNamespace(context.namespace);
 	}
 	
 	public static final CompositionContext of(Object...objects) {		
-		return new CompositionContext(index(objects));
+		return new CompositionContext(typeIndex(objects), nameIndex(objects));
 	}
 	
 	public Optional<Object> get(SourceType sourceType) {
@@ -43,9 +46,9 @@ public final class CompositionContext {
 		
 		final String qualifiedName = Optional.ofNullable(name).map(n -> namespace.getQName(name)).orElse(null);
 				
-		return Optional.ofNullable(index.get(SourceType.of(qualifiedName, clazz)))
+		return Optional.ofNullable(typeIndex.get(SourceType.of(qualifiedName, clazz)))
 				.or(() -> {
-					for (Map.Entry<SourceType, Object> entry : index.entrySet()) {
+					for (Map.Entry<SourceType, Object> entry : typeIndex.entrySet()) {
 						if (clazz.isAssignableFrom(entry.getKey().getType()) && ((StringUtils.isBlank(qualifiedName) && StringUtils.isBlank(entry.getKey().getName()))
 									|| StringUtils.isNotBlank(qualifiedName) && qualifiedName.equals(entry.getKey().getName())
 									)) {
@@ -57,8 +60,14 @@ public final class CompositionContext {
 				});
 	}
 	
+	public Optional<Object> get(final String name) {
+		final String qualifiedName = Optional.ofNullable(name).map(n -> namespace.getQName(name)).orElse(null);
+
+		return Optional.ofNullable(nameIndex.get(qualifiedName));
+	}
+	
 	public Stream<Object> stream() {
-		return index.entrySet()
+		return typeIndex.entrySet()
 				.stream()
 				.map(e -> StringUtils.isBlank(e.getKey().getName()) 
 							? e.getValue() 
@@ -72,7 +81,7 @@ public final class CompositionContext {
 	}
 	
 	public CompositionContext put(final String name, final Object object) {
-		index.put(SourceType.of(name, object.getClass()), object);
+		typeIndex.put(SourceType.of(name, object.getClass()), object);
 		return this;
 	}
 
@@ -81,10 +90,10 @@ public final class CompositionContext {
 	}
 
 	public int size() {
-		return index.size();
+		return typeIndex.size();
 	}
 	
-	protected static final Map<SourceType, Object> index(Object[] objects) {
+	protected static final Map<SourceType, Object> typeIndex(Object[] objects) {
 		return Stream
 				.of(objects)
 				.collect(Collectors.toMap(
@@ -95,4 +104,15 @@ public final class CompositionContext {
 									: o
 									));
 	}	
+	
+	protected static final Map<String, Object> nameIndex(Object[] objects) {
+		return Stream
+				.of(objects)
+				.filter(SourceObject.class::isInstance)
+				.map(SourceObject.class::cast)
+				.collect(Collectors.toMap(
+							SourceObject::getName,
+							SourceObject::getObject 
+									));
+	}
 }

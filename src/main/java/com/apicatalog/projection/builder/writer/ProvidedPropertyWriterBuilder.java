@@ -38,7 +38,7 @@ public final class ProvidedPropertyWriterBuilder {
 			return Optional.empty();
 		}
 
-		if (targetReference && !targetSetter.getType().isCollection()) {
+		if (targetReference && !targetSetter.getType().isCollection() && !targetSetter.getType().isArray()) {
 			return buildReference(registry);
 		}
 

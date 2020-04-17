@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.builder.Builder;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.conversion.ConversionNotFound;
 import com.apicatalog.projection.conversion.TypeConversions;
@@ -20,7 +21,7 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.source.SingleSourceWriter;
 import com.apicatalog.projection.source.SourceType;
 
-public final class SingleSourceWriterBuilder {
+public final class SingleSourceWriterBuilder implements Builder<SingleSourceWriter> {
 
 	final Logger logger = LoggerFactory.getLogger(SingleSourceWriterBuilder.class);
 	
@@ -51,6 +52,7 @@ public final class SingleSourceWriterBuilder {
 		return new SingleSourceWriterBuilder();
 	}
 	
+	@Override
 	public Optional<SingleSourceWriter> build(TypeConversions typeConverters) throws ProjectionBuilderError {
 
 		if (logger.isDebugEnabled()) {

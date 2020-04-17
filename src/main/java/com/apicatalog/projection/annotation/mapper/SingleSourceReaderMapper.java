@@ -25,7 +25,6 @@ import com.apicatalog.projection.object.getter.FieldGetter;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.SourcePropertyReader;
-import com.apicatalog.projection.property.source.SingleSourceWriter;
 
 final class SingleSourceReaderMapper {
 
@@ -57,19 +56,9 @@ final class SingleSourceReaderMapper {
 		if (sourceWriterBuilder.isEmpty()) {
 			return Optional.empty();			
 		}
-		
-		final Optional<SingleSourceWriter> sourceWriter = 
-					sourceWriterBuilder.get()
-						.targetType(targetGetter.getType(), targetReference)
-						.build(registry.getTypeConversions()); 
-		
-		if (sourceWriter.isEmpty()) {
-			logger.warn(SOURCE_IS_MISSING, field.getName());
-			return Optional.empty();
-		}
 				
 		return SourcePropertyReaderBuilder.newInstance()
-					.sourceWriter(sourceWriter.get())
+					.sourceWriter(sourceWriterBuilder.get())
 					.target(targetGetter, targetReference)						
 					.build(registry);
 	}

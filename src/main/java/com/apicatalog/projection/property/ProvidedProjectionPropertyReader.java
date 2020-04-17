@@ -40,22 +40,24 @@ public class ProvidedProjectionPropertyReader implements PropertyReader {
 
 		logger.debug("Read {} : {}, qualifier = {}, optional = {}, depth = {}", targetGetter.getName(), targetGetter.getType(), objectQualifier, optional, stack.length());
 
-		@SuppressWarnings("unchecked")
-		final Projection<Object> projection = (Projection<Object>) factory.get(targetGetter.getType().getType()); 
-		
-		if (projection == null) {
-			throw new ProjectionError("Projection " + targetGetter.getType().getType() +  " is not present.");			
-		}
-
-		Optional.ofNullable(objectQualifier).ifPresent(context::addNamespace);
 
 		final Optional<Object> object = targetGetter.get(stack.peek());
 
 		if (object.isPresent()) {
-			projection.extract(object.get(), context);
-		}
+			
+			@SuppressWarnings("unchecked")
+			final Projection<Object> projection = (Projection<Object>) factory.get(targetGetter.getType().getType()); 
+			
+			if (projection == null) {
+				throw new ProjectionError("Projection " + targetGetter.getType().getType() +  " is not present.");			
+			}
 
-		Optional.ofNullable(objectQualifier).ifPresent(s -> context.removeLastNamespace());
+			Optional.ofNullable(objectQualifier).ifPresent(context::addNamespace);
+
+			projection.extract(object.get(), context);
+			
+			Optional.ofNullable(objectQualifier).ifPresent(s -> context.removeLastNamespace());
+		}
 	}
 	
 	public void setTargetGetter(Getter targetGetter) {

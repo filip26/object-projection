@@ -119,9 +119,9 @@ final class PropertyReaderMapper {
 	}				
 	
 	protected static final boolean isReference(final ObjectType objectType) {
-		return objectType.isCollection()
-				? objectType.getComponentType().isAnnotationPresent(Projection.class)
-				: objectType.getType().isAnnotationPresent(Projection.class)
+		return (objectType.isCollection() && objectType.getComponentType().isAnnotationPresent(Projection.class))
+				|| (objectType.isArray() &&  objectType.getType().getComponentType().isAnnotationPresent(Projection.class))
+				|| objectType.getType().isAnnotationPresent(Projection.class)
 				;		
 	}	
 }

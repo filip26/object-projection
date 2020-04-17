@@ -28,7 +28,6 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.property.source.SourceReader;
-import com.apicatalog.projection.property.source.SourceWriter;
 
 public final class SingleSourceApiImpl<P> extends AbstractValueProviderApi<P> implements SingleSourceApi<P> {
 	
@@ -154,19 +153,12 @@ public final class SingleSourceApiImpl<P> extends AbstractValueProviderApi<P> im
 		final Setter sourceSetter = ObjectUtils.getSetter(sourceObjectClass, sourcePropertyName);
 		//TODO null setter
 
-		final Optional<SourceWriter> sourceWriter = 
-					sourceWriterBuilder
-						.setter(sourceSetter)
-						.targetType(targetGetter.getType(), targetReference)
-						.build(registry.getTypeConversions())
-							.map(SourceWriter.class::cast);		
-
-		if (sourceWriter.isEmpty()) {
-			return Optional.empty();
-		}
+ 
+		sourceWriterBuilder
+				.setter(sourceSetter);
 
 		return SourcePropertyReaderBuilder.newInstance()
-					.sourceWriter(sourceWriter.get())
+					.sourceWriter(sourceWriterBuilder)
 					.target(targetGetter, targetReference)
 					.build(registry).map(PropertyReader.class::cast);
 	}

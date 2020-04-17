@@ -39,4 +39,9 @@ public final class FieldSetter implements Setter {
 	public ObjectType getType() {
 		return type;
 	}
+	
+	@Override
+	public String toString() {
+		return "FieldSetter [name=" + (field != null ? field.getName() : "n/a") + ", type=" + type + "]";
+	}
 }

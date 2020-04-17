@@ -43,4 +43,10 @@ public final class MethodGetter implements Getter {
 	public ObjectType getType() {
 		return type;
 	}
+	
+	@Override
+	public String toString() {
+		return "MethodGetter [name=" + (method != null ? method.getName() : "n/a") + ", type=" + type + "]";
+	}
+
 }

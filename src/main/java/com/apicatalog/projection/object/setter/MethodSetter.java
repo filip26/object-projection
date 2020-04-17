@@ -44,4 +44,9 @@ public final class MethodSetter implements Setter {
 	public ObjectType getType() {
 		return type;
 	}	
+	
+	@Override
+	public String toString() {
+		return "MethodSetter [name=" + (method != null ? method.getName() : "n/a") + ", type=" + type + "]";
+	}
 }

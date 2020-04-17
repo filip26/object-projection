@@ -16,12 +16,10 @@ import com.apicatalog.projection.builder.reader.SourcePropertyReaderBuilder;
 import com.apicatalog.projection.builder.writer.ArraySourceWriterBuilder;
 import com.apicatalog.projection.builder.writer.SingleSourceWriterBuilder;
 import com.apicatalog.projection.converter.ConverterError;
-import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
 import com.apicatalog.projection.object.getter.FieldGetter;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.property.PropertyReader;
-import com.apicatalog.projection.property.source.ArraySourceWriter;
 
 final class ArraySourceReaderMapper {
 
@@ -46,27 +44,25 @@ final class ArraySourceReaderMapper {
 		
 		final boolean targetReference = PropertyReaderMapper.isReference(targetGetter.getType());
 
-		final Optional<ArraySourceWriter> arraySourceWriter = 
+		final Optional<ArraySourceWriterBuilder> arraySourceWriterBuilder = 
 					getArraySourceWriter(
 							sourcesAnnotation, 
 							field.getName(),
-							targetGetter.getType(),
-							targetReference,
 							defaultSourceClass
 							);
 
-		if (arraySourceWriter.isEmpty()) {
+		if (arraySourceWriterBuilder.isEmpty()) {
 			logger.warn(SOURCE_IS_MISSING, field.getName());
 			return Optional.empty();
 		}
 		
 		return SourcePropertyReaderBuilder.newInstance()
-				.sourceWriter(arraySourceWriter.get())
+				.sourceWriter(arraySourceWriterBuilder.get())
 				.target(targetGetter, targetReference)
 				.build(registry).map(PropertyReader.class::cast);
 	}
 	
-	Optional<ArraySourceWriter> getArraySourceWriter(final Sources sourcesAnnotation, final String fieldName, final ObjectType targetType, final boolean targetReference, final Class<?> defaultSourceObjectClass) throws ProjectionBuilderError {
+	Optional<ArraySourceWriterBuilder> getArraySourceWriter(final Sources sourcesAnnotation, final String fieldName, final Class<?> defaultSourceObjectClass) throws ProjectionBuilderError {
 							 								
 		final Collection<SingleSourceWriterBuilder> sources = new ArrayList<>(sourcesAnnotation.value().length);
 
@@ -82,12 +78,11 @@ final class ArraySourceReaderMapper {
 		}
 
 		try {
-			return ArraySourceWriterBuilder.newInstance()
+			return Optional.of(ArraySourceWriterBuilder.newInstance()
 						.optional(sourcesAnnotation.optional())
 						.sources(sources)
-						.targetType(targetType, targetReference)
 						.converters(SingleSourceReaderMapper.getConverterMapping(sourcesAnnotation.map()))	// set conversions to apply
-						.build(registry.getTypeConversions());
+						);
 			
 		} catch (ConverterError e) {
 			throw new ProjectionBuilderError(e);

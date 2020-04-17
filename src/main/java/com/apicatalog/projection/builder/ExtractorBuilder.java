@@ -36,12 +36,14 @@ public final class ExtractorBuilder {
 		
 		if (reference) {
 			if (getter.getType().isCollection()) {
-				return Optional.of(new CollectionExtractor(registry, getter.getType()));
+				return Optional.of(new CollectionExtractor(registry, getter.getType(), getter.getType().getComponentType()));
+			}
+			if (getter.getType().isArray()) {
+				return Optional.of(new CollectionExtractor(registry, getter.getType(), getter.getType().getType().getComponentType()));
 			}
 			
 			return Optional.of(new ObjectExtractor(registry));
 		}
-		
 
 		return Optional.empty();
 	}

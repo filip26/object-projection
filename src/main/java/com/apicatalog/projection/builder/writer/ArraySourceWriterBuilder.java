@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.builder.Builder;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.conversion.ConversionNotFound;
 import com.apicatalog.projection.conversion.TypeConversions;
@@ -17,7 +18,7 @@ import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.property.source.ArraySourceWriter;
 import com.apicatalog.projection.property.source.SourceWriter;
 
-public final class ArraySourceWriterBuilder {
+public final class ArraySourceWriterBuilder implements Builder<ArraySourceWriter> {
 
 	final Logger logger = LoggerFactory.getLogger(ArraySourceWriterBuilder.class);
 	
@@ -39,6 +40,7 @@ public final class ArraySourceWriterBuilder {
 		return new ArraySourceWriterBuilder();
 	}
 	
+	@Override
 	public Optional<ArraySourceWriter> build(TypeConversions typeConversions) throws ProjectionBuilderError {
 		
 		if (logger.isTraceEnabled()) {

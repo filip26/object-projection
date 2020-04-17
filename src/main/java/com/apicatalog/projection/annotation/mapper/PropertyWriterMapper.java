@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.annotation.Constant;
-import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Provided;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
@@ -20,7 +19,6 @@ import com.apicatalog.projection.builder.ComposerBuilder;
 import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
 import com.apicatalog.projection.builder.writer.ConstantWriterBuilder;
 import com.apicatalog.projection.builder.writer.ProvidedPropertyWriterBuilder;
-import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
 import com.apicatalog.projection.object.setter.FieldSetter;
 import com.apicatalog.projection.object.setter.Setter;
@@ -135,7 +133,7 @@ final class PropertyWriterMapper {
 					.optional(provided.optional())
 					.qualifier(provided.name())
 					.targetSetter(targetSetter)
-					.targetReference(isReference(targetSetter.getType()))
+					.targetReference(PropertyReaderMapper.isReference(targetSetter.getType()))
 					.build(registry);		
 	}				
 
@@ -148,14 +146,7 @@ final class PropertyWriterMapper {
 		return ConstantWriterBuilder
 					.newInstance()
 					.constants(constant.value())
-					.targetSetter(targetSetter, isReference(targetSetter.getType()))
+					.targetSetter(targetSetter, PropertyReaderMapper.isReference(targetSetter.getType()))
 					.build(registry).map(PropertyWriter.class::cast);
-	}
-	
-	protected static final boolean isReference(final ObjectType objectType) {
-		return objectType.isCollection()
-				? objectType.getComponentType().isAnnotationPresent(Projection.class)
-				: objectType.getType().isAnnotationPresent(Projection.class)
-				;		
 	}	
 }

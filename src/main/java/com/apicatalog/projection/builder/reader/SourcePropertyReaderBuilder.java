@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.builder.Builder;
 import com.apicatalog.projection.builder.ExtractorBuilder;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.property.SourcePropertyReader;
@@ -18,7 +20,7 @@ public final class SourcePropertyReaderBuilder {
 	
 	static final String SOURCE_IS_MISSING = "Source is missing. Property {} is ignored."; 
 	
-	SourceWriter sourceWriter;
+	Builder sourceWriterBuilder;
 	
 	Getter targetGetter;
 	
@@ -31,28 +33,41 @@ public final class SourcePropertyReaderBuilder {
 		return new SourcePropertyReaderBuilder();
 	}
 			
-	public Optional<SourcePropertyReader> build(final ProjectionRegistry registry) {
+	public Optional<SourcePropertyReader> build(final ProjectionRegistry registry) throws ProjectionBuilderError {
 
 		if (targetGetter == null) {
 			logger.warn("Target getter is missing. Skipping source.");
 			return Optional.empty();
 		}
 
-		if (sourceWriter == null) {
+		if (sourceWriterBuilder == null) {
 			logger.warn(SOURCE_IS_MISSING, targetGetter.getName());
 			return Optional.empty();
 		}
 
+		final Optional<SourceWriter> sourceWriter = sourceWriterBuilder
+							.targetType(targetGetter.getType(), targetReference)
+							.build(registry.getTypeConversions());
+		
+		if (sourceWriter.isEmpty()) {
+			logger.warn(SOURCE_IS_MISSING, targetGetter.getName());
+			return Optional.empty();			
+		}
+		
 		final Optional<Extractor> extractor =  
 				ExtractorBuilder.newInstance()
 					.getter(targetGetter, targetReference)
 					.build(registry);
 		
-		return Optional.of(new SourcePropertyReader(sourceWriter, targetGetter, extractor.orElse(null)));
+		if (extractor.isPresent()) {
+			sourceWriterBuilder.targetType(targetGetter.getType(), targetReference);	//FIXME
+		}
+		
+		return Optional.of(new SourcePropertyReader(sourceWriter.get(), targetGetter, extractor.orElse(null)));
 	}
 
-	public SourcePropertyReaderBuilder sourceWriter(SourceWriter sourceWriter) {
-		this.sourceWriter = sourceWriter;
+	public SourcePropertyReaderBuilder sourceWriter(Builder sourceWriterBuilder) {
+		this.sourceWriterBuilder = sourceWriterBuilder;
 		return this;
 	}
 

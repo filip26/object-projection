@@ -577,5 +577,4 @@ public class ProjectionBuilderTest {
 		Assert.assertNotNull(to);;
 		Assert.assertEquals(object1.i1 + object1.s1.toUpperCase(), to.s1);
 	}
-
 }
