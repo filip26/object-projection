@@ -17,12 +17,15 @@ public final class MapProjectionApiImpl implements MapProjectionApi {
 	
 	final List<MapEntryApiImpl> entries;
 	
-	protected MapProjectionApiImpl() {
+	final String name;
+	
+	protected MapProjectionApiImpl(final String name) {
+		this.name = name;
 		this.entries = new ArrayList<>();
 	}
 	
-	public static final MapProjectionApi hashMap() {
-		return new MapProjectionApiImpl();
+	public static final MapProjectionApi hashMap(final String name) {
+		return new MapProjectionApiImpl(name);
 	}
 
 	@Override
@@ -61,6 +64,7 @@ public final class MapProjectionApiImpl implements MapProjectionApi {
 		
 		final Projection<Map<String, Object>> projection = 
 					MapProjection.newInstance(
+									name,
 									readers.toArray(new PropertyReader[0]), 
 									writers.toArray(new PropertyWriter[0])
 									);

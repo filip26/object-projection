@@ -22,13 +22,16 @@ public final class MapProjection implements Projection<Map<String, Object>> {
 	final PropertyReader[] readers;
 	final PropertyWriter[] writers;
 	
-	protected MapProjection(final PropertyReader[] readers, final PropertyWriter[] writers) {
+	final String name;
+	
+	protected MapProjection(final String name, final PropertyReader[] readers, final PropertyWriter[] writers) {
+		this.name = name;
 		this.readers = readers;
 		this.writers = writers;
 	}
 	
-	public static final Projection<Map<String, Object>> newInstance(final PropertyReader[] readers, final PropertyWriter[] writers) {
-		return new MapProjection(readers, writers);
+	public static final Projection<Map<String, Object>> newInstance(final String name, final PropertyReader[] readers, final PropertyWriter[] writers) {
+		return new MapProjection(name, readers, writers);
 	}
 
 	/**
@@ -145,8 +148,8 @@ public final class MapProjection implements Projection<Map<String, Object>> {
 	}
 
 	@Override
-	public Class<Map<String, Object>> getProjectionClass() {
-		return (Class)Map.class;
+	public String getName() {
+		return name;
 	}
 
 }

@@ -15,7 +15,7 @@ public class MapProjectionBuilderTest {
 	public void test1c() throws ProjectionBuilderError, ProjectionError {
 		final Projection<Map<String, Object>> projection = 
 				Projection
-					.hashMap()
+					.hashMap("p1")
 						.map("s1", String.class).source(SimpleObject.class)
 						.map("i1", Integer.class).source(SimpleObject.class)
 					
@@ -40,7 +40,7 @@ public class MapProjectionBuilderTest {
 		
 		final Projection<Map<String, Object>> projection = 
 				Projection
-					.hashMap()
+					.hashMap("p1")
 					
 					.map("i1", Integer.class).source(SimpleObject.class)
 					.map("s1", String.class).source(SimpleObject.class)
@@ -64,7 +64,7 @@ public class MapProjectionBuilderTest {
 	public void test2c() throws ProjectionBuilderError, ProjectionError {
 		final Projection<Map<String, Object>> projection = 
 				Projection
-					.hashMap()
+					.hashMap("p1")
 						.map("s1", String.class).source(SimpleObject.class, "i1")
 						.map("i1", Integer.class).source(SimpleObject.class, "s1")
 					
@@ -89,7 +89,7 @@ public class MapProjectionBuilderTest {
 		
 		final Projection<Map<String, Object>> projection = 
 				Projection
-					.hashMap()
+					.hashMap("p1")
 					
 					.map("i1", Integer.class).source(SimpleObject.class, "s1")
 					.map("s1", String.class).source(SimpleObject.class, "i1")

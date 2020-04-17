@@ -146,7 +146,7 @@ public final class ObjectProjection<P> implements Projection<P> {
 		}
 	}
 	
-	public final Class<P> getProjectionClass() {
-		return projectionClass;
+	public final String getName() {
+		return projectionClass.getCanonicalName();
 	}
 }

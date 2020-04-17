@@ -40,14 +40,8 @@ public interface Projection<P> {
 
 	void extract(P projection, ExtractionContext context) throws ProjectionError;
 	
-	/**
-	 * use getQName();
-	 * @return
-	 */
-	@Deprecated(forRemoval = true, since = "v0.8.6")
-	Class<P> getProjectionClass();
+	String getName();
 
-	
 	static <P> ObjectProjectionApi<P> bind(Class<P> projectionType) {
 		return ProjectionApiImpl.bind(projectionType);
 	}
@@ -66,7 +60,7 @@ public interface Projection<P> {
 		};
 	}
 
-	static MapProjectionApi hashMap() {
-		return MapProjectionApiImpl.hashMap();
+	static MapProjectionApi hashMap(final String name) {
+		return MapProjectionApiImpl.hashMap(name);
 	}	
 }

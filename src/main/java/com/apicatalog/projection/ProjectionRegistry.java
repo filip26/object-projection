@@ -14,9 +14,9 @@ public final class ProjectionRegistry {
 	final ProjectionMapper mapper;
 	final TypeConversions typeConversions;
 	
-	final Map<Class<?>, Projection<?>> index;
+	final Map<String, Projection<?>> index;
 	
-	protected ProjectionRegistry(final Map<Class<?>, Projection<?>> index) {
+	protected ProjectionRegistry(final Map<String, Projection<?>> index) {
 		this.index = index;
 		this.mapper = new ProjectionMapper(this);
 		this.typeConversions = new TypeConversions();
@@ -26,16 +26,20 @@ public final class ProjectionRegistry {
 		return new ProjectionRegistry(new LinkedHashMap<>());
 	}
 	
-	@SuppressWarnings("unchecked")
 	public <P> Projection<P> get(final Class<P> projectionClass) {
-		return (Projection<P>) index.get(projectionClass);
+		return get(projectionClass.getCanonicalName());
+	}
+
+	@SuppressWarnings("unchecked")
+	public <P> Projection<P> get(final String name) {
+		return (Projection<P>) index.get(name);
 	}
 	
 	public ProjectionRegistry register(final Projection<?> projection) {
 		if (projection == null) {
 			throw new IllegalArgumentException();
 		}
-		index.put(projection.getProjectionClass(), projection);
+		index.put(projection.getName(), projection);
 		return this;
 	}
 
