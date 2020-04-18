@@ -83,7 +83,6 @@ public class MapProjectionBuilderTest {
 		Assert.assertEquals(object1.i1.toString(), map.get("s1"));
 	}
 	
-
 	@Test
 	public void test2e() throws ProjectionBuilderError, ProjectionError {
 		
@@ -108,4 +107,22 @@ public class MapProjectionBuilderTest {
 		Assert.assertEquals(Integer.valueOf((String)map.get("s1")), object1.i1);
 		Assert.assertEquals(map.get("i1").toString(), object1.s1);
 	}
+	
+	@Test
+	public void test3c() throws ProjectionBuilderError, ProjectionError {
+		final Projection<Map<String, Object>> projection = 
+				Projection
+					.hashMap("p1")
+						.map("i1", Integer.class).constant("12345")
+					
+						.build(ProjectionRegistry.newInstance());
+		
+		Assert.assertNotNull(projection);
+
+		Map<String, Object> map = projection.compose();
+		
+		Assert.assertNotNull(map);;
+		Assert.assertEquals(12345, map.get("i1"));
+	}
+
 }

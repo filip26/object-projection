@@ -36,10 +36,10 @@ public final class ComposerBuilder {
 
 		if (reference) {
 			if (setter.getType().isCollection()) {
-				return Optional.of(new CollectionComposer(registry, setter.getType(), setter.getType().getComponentType()));
+				return Optional.of(new CollectionComposer(registry, setter.getType(), setter.getType().getComponentType().getCanonicalName()));
 			}
 			if (setter.getType().isArray()) {
-				return Optional.of(new CollectionComposer(registry, setter.getType(), setter.getType().getType().getComponentType()));
+				return Optional.of(new CollectionComposer(registry, setter.getType(), setter.getType().getType().getComponentType().getCanonicalName()));
 			}
 
 			return Optional.of(new ObjectComposer(registry, setter.getType()));

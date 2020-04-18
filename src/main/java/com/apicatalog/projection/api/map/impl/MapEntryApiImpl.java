@@ -117,9 +117,9 @@ public final class MapEntryApiImpl implements MapEntryApi {
 			logger.trace("constant({})", Arrays.toString(values));
 		}
 		
-//		this.valueProvider = 
-//				new ConstantPropertyApi<>(projectionBuilder, values)
-//						.targetReference(targetReference);
+		this.valueProvider = 
+				new MapConstantPropertyApi(projectionBuilder, values)
+						.targetReference(false);	//targetReference);
 		
 		return projectionBuilder;
 	}
