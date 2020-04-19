@@ -15,8 +15,8 @@ public final class ProjectionStack {
 		return new ProjectionStack();
 	}
 	
-	public ProjectionStack push(Object projection) {
-		stack.addFirst(ProjectionStackKey.of(projection));
+	public ProjectionStack push(String name, Object projection) {
+		stack.addFirst(ProjectionStackKey.of(name, projection));
 		return this;
 	}
 	
@@ -28,8 +28,8 @@ public final class ProjectionStack {
 		return stack.removeFirst().getProjection();
 	}
 	
-	public boolean contains(Class<?> projectionClass) {
-		return stack.contains(ProjectionStackKey.of(projectionClass));
+	public boolean contains(String projectionName) {
+		return stack.contains(ProjectionStackKey.of(projectionName));
 	}
 
 	public int length() {

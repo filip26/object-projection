@@ -13,7 +13,7 @@ import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 
-public abstract class AbstractProjection<P> implements Projection<P> {
+abstract class AbstractProjection<P> implements Projection<P> {
 	
 	final Logger logger = LoggerFactory.getLogger(AbstractProjection.class);
 

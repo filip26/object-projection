@@ -27,6 +27,7 @@ public final class MapEntryGetter implements Getter {
 			return Optional.empty();
 		}
 		
+		@SuppressWarnings("unchecked")
 		final Map<Object, Object> map = (Map<Object, Object>)object;
 
 		return Optional.ofNullable(map.get(name));

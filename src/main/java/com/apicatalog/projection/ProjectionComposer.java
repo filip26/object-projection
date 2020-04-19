@@ -12,4 +12,5 @@ public interface ProjectionComposer<P> {
 	
 	Collection<SourceType> getSourceTypes();
 
+	Collection<String> getDependencies();
 }

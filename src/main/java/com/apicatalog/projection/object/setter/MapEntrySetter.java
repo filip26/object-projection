@@ -27,6 +27,7 @@ public final class MapEntrySetter implements Setter {
 			return;
 		}
 		
+		@SuppressWarnings("unchecked")
 		final Map<Object, Object> map = (Map<Object, Object>)object;
 
 		map.put(name, value);

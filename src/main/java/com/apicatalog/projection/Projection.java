@@ -33,6 +33,10 @@ public interface Projection<P> {
 		return ProjectionApiImpl.bind(projectionType);
 	}
 	
+	static MapProjectionApi hashMap(final String name) {
+		return MapProjectionApiImpl.hashMap(name);
+	}
+	
 	static <P> BuilderApi<P> scan(final Class<P> projectionType) {
 		return new BuilderApi<P>() {
 			@Override
@@ -46,8 +50,4 @@ public interface Projection<P> {
 			}
 		};
 	}
-
-	static MapProjectionApi hashMap(final String name) {
-		return MapProjectionApiImpl.hashMap(name);
-	}	
 }

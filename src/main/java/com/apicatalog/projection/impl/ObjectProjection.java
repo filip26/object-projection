@@ -18,7 +18,7 @@ public final class ObjectProjection<P> extends AbstractProjection<P> {
 		return new ObjectProjection<>(
 						projectionClass, 
 						ObjectProjectionComposer.newInstance(projectionClass, writers),
-						ObjectProjectionExtractor.newInstance(readers)
+						ProjectionExtractorImpl.newInstance(projectionClass.getCanonicalName(), readers)
 						);
 	}
 

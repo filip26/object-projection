@@ -5,19 +5,19 @@ import java.util.Objects;
 final class ProjectionStackKey {
 
 	final Object projection;
-	final Class<?> projectionClass;
+	final String projectionName;
 	
-	protected ProjectionStackKey(Object projection, Class<?> projectionClass) {
+	protected ProjectionStackKey(final Object projection, final String projectionName) {
 		this.projection = projection;
-		this.projectionClass = projectionClass;
+		this.projectionName = projectionName;
 	}
 	
-	public static final ProjectionStackKey of(Object projection) {
-		return new ProjectionStackKey(projection, projection.getClass());
+	public static final ProjectionStackKey of(final String name, final Object projection) {
+		return new ProjectionStackKey(projection, name);
 	}
 	
-	protected static final ProjectionStackKey of(Class<?> clazz) {
-		return new ProjectionStackKey(null, clazz);
+	protected static final ProjectionStackKey of(final String name) {
+		return new ProjectionStackKey(null, name);
 	}
 
 	public Object getProjection() {
@@ -26,7 +26,7 @@ final class ProjectionStackKey {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(projectionClass);
+		return Objects.hash(projectionName);
 	}
 
 	@Override
@@ -41,6 +41,6 @@ final class ProjectionStackKey {
 			return false;
 		}
 		ProjectionStackKey other = (ProjectionStackKey) obj;
-		return Objects.equals(projectionClass, other.projectionClass);
+		return Objects.equals(projectionName, other.projectionName);
 	}
 }
