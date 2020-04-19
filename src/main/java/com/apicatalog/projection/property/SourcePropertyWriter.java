@@ -1,6 +1,7 @@
 package com.apicatalog.projection.property;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
@@ -84,6 +85,11 @@ public final class SourcePropertyWriter implements PropertyWriter {
 	@Override
 	public Collection<SourceType> getSourceTypes() {
 		return sourceReader.getSourceTypes();
+	}
+	
+	@Override
+	public Collection<String> getDependencies() {
+		return Collections.emptySet();
 	}
 
 	@Override

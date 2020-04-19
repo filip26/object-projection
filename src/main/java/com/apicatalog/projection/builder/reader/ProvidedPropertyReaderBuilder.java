@@ -63,7 +63,7 @@ public final class ProvidedPropertyReaderBuilder {
 
 	Optional<PropertyReader> buildReference(ProjectionRegistry registry) {
 		
-		final ProvidedProjectionPropertyReader property = new ProvidedProjectionPropertyReader(registry);
+		final ProvidedProjectionPropertyReader property = new ProvidedProjectionPropertyReader(targetGetter.getType().getType().getCanonicalName());
 
 		property.setTargetGetter(targetGetter);
 
@@ -72,6 +72,8 @@ public final class ProvidedPropertyReaderBuilder {
 
 		property.setOptional(optional);
 
+		registry.request(targetGetter.getType().getType().getCanonicalName(), property::setProjection);
+		
 		return Optional.of(property);
 	}
 	

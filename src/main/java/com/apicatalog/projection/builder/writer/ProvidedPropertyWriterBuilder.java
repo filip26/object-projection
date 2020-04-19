@@ -63,7 +63,7 @@ public final class ProvidedPropertyWriterBuilder {
 
 	Optional<PropertyWriter> buildReference(ProjectionRegistry registry) {
 		
-		final ProvidedProjectionPropertyWriter property = new ProvidedProjectionPropertyWriter(registry);
+		final ProvidedProjectionPropertyWriter property = new ProvidedProjectionPropertyWriter(targetSetter.getType().getType().getCanonicalName());
 
 		property.setTargetSetter(targetSetter);
 		
@@ -72,6 +72,8 @@ public final class ProvidedPropertyWriterBuilder {
 
 		property.setOptional(optional);
 
+		registry.request(targetSetter.getType().getType().getCanonicalName(), property::setProjection);
+		
 		return Optional.of(property);
 	}
 

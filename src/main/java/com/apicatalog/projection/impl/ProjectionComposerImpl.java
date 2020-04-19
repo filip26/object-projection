@@ -27,6 +27,9 @@ public final class ProjectionComposerImpl<P> implements ProjectionComposer<P> {
 	final Class<P> projectionType;
 	
 	final Collection<SourceType> sourceTypes;
+	
+	final Collection<String> dependecies;
+	
 	final PropertyWriter[] writers;
 	
 	protected ProjectionComposerImpl(final String projectionName, final Class<P> projectionType, final PropertyWriter[] writers) {
@@ -34,6 +37,7 @@ public final class ProjectionComposerImpl<P> implements ProjectionComposer<P> {
 		this.projectionType = projectionType;
 		this.writers = writers;
 		this.sourceTypes = getComposableTypes(writers);
+		this.dependecies = getDependencies(writers);
 	}
 	
 	public static final <A> ProjectionComposer<A> newInstance(final String projectionName, final Class<A> projectionType, final PropertyWriter[] writers) {
@@ -43,6 +47,11 @@ public final class ProjectionComposerImpl<P> implements ProjectionComposer<P> {
 	static final Collection<SourceType> getComposableTypes(final Property[] writers) {
 		return Arrays.stream(writers).map(Property::getSourceTypes).flatMap(Collection::stream).collect(Collectors.toSet());
 	}
+	
+	static final Collection<String> getDependencies(final Property[] writers) {
+		return Arrays.stream(writers).map(Property::getDependencies).flatMap(Collection::stream).collect(Collectors.toSet());
+	}
+
 
 	@Override
 	public P compose(ProjectionStack stack, CompositionContext context) throws ProjectionError {
@@ -90,7 +99,7 @@ public final class ProjectionComposerImpl<P> implements ProjectionComposer<P> {
 
 	@Override
 	public Collection<String> getDependencies() {
-		return Collections.emptySet();	//TODO
+		return dependecies;
 	}
 	
 	protected P newInstance() {

@@ -1,5 +1,6 @@
 package com.apicatalog.projection.property;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -10,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.object.setter.Setter;
@@ -20,7 +20,9 @@ public class ProvidedProjectionPropertyWriter implements PropertyWriter {
 
 	final Logger logger = LoggerFactory.getLogger(ProvidedProjectionPropertyWriter.class);
 
-	final ProjectionRegistry factory;
+	final String projectionName;
+	
+	Projection<?> projection;
 	
 	Setter targetSetter;
 	
@@ -30,8 +32,8 @@ public class ProvidedProjectionPropertyWriter implements PropertyWriter {
 	
 	boolean optional;
 	
-	public ProvidedProjectionPropertyWriter(ProjectionRegistry factory) {
-		this.factory = factory;
+	public ProvidedProjectionPropertyWriter(final String projectionName) {
+		this.projectionName = projectionName;
 	}
 	
 	@Override
@@ -41,18 +43,18 @@ public class ProvidedProjectionPropertyWriter implements PropertyWriter {
 			return;
 		}
 		
-		logger.debug("Write {} : {}, qualifier = {}, optional = {}, depth = {}", targetSetter.getName(), targetSetter.getType(), objectQualifier, optional, stack.length());
+		if (logger.isDebugEnabled()) {
+			logger.debug("Write {} : {}, qualifier = {}, optional = {}, depth = {}", targetSetter.getName(), targetSetter.getType(), objectQualifier, optional, stack.length());
+		}
 
+		if (projection == null) {
+			throw new ProjectionError("Projection " + projectionName +  " is not set.");
+		}
+		
 		final CompositionContext clonedContext = new CompositionContext(context);
 		
 		Optional.ofNullable(objectQualifier).ifPresent(clonedContext::namespace);
-		
-		final Projection<?> projection = factory.get(targetSetter.getType().getType()); 
-		
-		if (projection == null) {
-			throw new ProjectionError("Projection " + targetSetter.getType().getType() +  " is not present.");
-		}
-			
+					
 		final Object object = projection.getComposer().compose(stack, clonedContext);
 		
 		if (object != null) {
@@ -86,7 +88,16 @@ public class ProvidedProjectionPropertyWriter implements PropertyWriter {
 	}
 
 	@Override
+	public Collection<String> getDependencies() {
+		return Arrays.asList(projectionName);
+	}
+
+	@Override
 	public String getName() {
 		return targetSetter.getName();
+	}
+	
+	public void setProjection(Projection<?> projection) {
+		this.projection = projection;
 	}
 }

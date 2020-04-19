@@ -1,8 +1,12 @@
 package com.apicatalog.projection;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import com.apicatalog.projection.annotation.mapper.ProjectionMapper;
 import com.apicatalog.projection.api.ProjectionBuilderError;
@@ -16,10 +20,13 @@ public final class ProjectionRegistry {
 	
 	final Map<String, Projection<?>> index;
 	
+	final Map<String, Collection<Consumer<Projection<?>>>> consumers;
+	
 	protected ProjectionRegistry(final Map<String, Projection<?>> index) {
 		this.index = index;
 		this.mapper = new ProjectionMapper(this);
 		this.typeConversions = new TypeConversions();
+		this.consumers = new HashMap<>(48);
 	}
 
 	public static final ProjectionRegistry newInstance() {
@@ -39,7 +46,16 @@ public final class ProjectionRegistry {
 		if (projection == null) {
 			throw new IllegalArgumentException();
 		}
-		index.put(projection.getName(), projection);
+		
+		final String projectionName = projection.getName();
+		
+		index.put(projectionName, projection);
+		
+		if (consumers.containsKey(projectionName)) {
+			consumers.get(projectionName).forEach(c -> c.accept(projection));
+			consumers.remove(projectionName);
+		}
+
 		return this;
 	}
 
@@ -48,11 +64,11 @@ public final class ProjectionRegistry {
 		return this;
 	}
 
-	public ProjectionRegistry register(Class<?> annotatedProjectionClass) throws ProjectionBuilderError {
-		if (annotatedProjectionClass == null) {
+	public ProjectionRegistry register(Class<?> annotatedProjectionType) throws ProjectionBuilderError {
+		if (annotatedProjectionType == null) {
 			throw new IllegalArgumentException();
 		}
-		Optional.ofNullable(mapper.getProjectionOf(annotatedProjectionClass)).ifPresent(this::register);		
+		Optional.ofNullable(mapper.getProjectionOf(annotatedProjectionType)).ifPresent(this::register);		
 		return this;
 	}
 
@@ -64,7 +80,19 @@ public final class ProjectionRegistry {
 		return typeConversions;
 	}
 	
-	ProjectionError unknownProjection(Class<?> projectionClass) {
-		return new ProjectionError("Projection " + projectionClass.getCanonicalName() + " is not present.");
+	ProjectionError unknownProjection(Class<?> projectionType) {
+		return new ProjectionError("Projection " + projectionType.getCanonicalName() + " is not present.");
+	}
+
+	public void request(final String projectionName, final Consumer<Projection<?>> consumer) {
+
+		Projection<?> projection = index.get(projectionName);
+		if (projection != null) {
+			consumer.accept(projection);
+			return;
+		}
+		
+		consumers.putIfAbsent(projectionName, new ArrayList<>());
+		consumers.get(projectionName).add(consumer);
 	}	
 }

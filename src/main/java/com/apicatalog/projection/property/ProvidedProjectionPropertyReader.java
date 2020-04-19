@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.ProjectionExtractor;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.object.getter.Getter;
@@ -20,7 +20,9 @@ public class ProvidedProjectionPropertyReader implements PropertyReader {
 
 	final Logger logger = LoggerFactory.getLogger(ProvidedProjectionPropertyReader.class);
 
-	final ProjectionRegistry factory;
+	final String projectionName;
+	
+	ProjectionExtractor<Object> extractor;
 	
 	Getter targetGetter;
 	
@@ -30,8 +32,8 @@ public class ProvidedProjectionPropertyReader implements PropertyReader {
 	
 	boolean optional;
 	
-	public ProvidedProjectionPropertyReader(ProjectionRegistry factory) {
-		this.factory = factory;
+	public ProvidedProjectionPropertyReader(final String projectionName) {
+		this.projectionName = projectionName;
 	}
 	
 	@Override
@@ -43,21 +45,17 @@ public class ProvidedProjectionPropertyReader implements PropertyReader {
 
 		logger.debug("Read {} : {}, qualifier = {}, optional = {}, depth = {}", targetGetter.getName(), targetGetter.getType(), objectQualifier, optional, stack.length());
 
+		if (extractor == null) {
+			throw new ProjectionError("Projection " + targetGetter.getType().getType() +  " is not set.");			
+		}
 
 		final Optional<Object> object = targetGetter.get(stack.peek());
 
 		if (object.isPresent()) {
 			
-			@SuppressWarnings("unchecked")
-			final Projection<Object> projection = (Projection<Object>) factory.get(targetGetter.getType().getType()); 
-			
-			if (projection == null) {
-				throw new ProjectionError("Projection " + targetGetter.getType().getType() +  " is not present.");			
-			}
-
 			Optional.ofNullable(objectQualifier).ifPresent(context::addNamespace);
 
-			projection.getExtractor().extract(object.get(), context);
+			extractor.extract(object.get(), context);
 			
 			Optional.ofNullable(objectQualifier).ifPresent(s -> context.removeLastNamespace());
 		}
@@ -87,9 +85,18 @@ public class ProvidedProjectionPropertyReader implements PropertyReader {
 	public Collection<SourceType> getSourceTypes() {
 		return Collections.emptySet();
 	}
+	
+	@Override
+	public Collection<String> getDependencies() {
+		return Collections.emptySet();
+	}
 
 	@Override
 	public String getName() {
 		return targetGetter.getName();
+	}
+	
+	public void setProjection(final Projection<?> projection) {
+		this.extractor = (ProjectionExtractor<Object>) projection.getExtractor();
 	}
 }

@@ -1,6 +1,7 @@
 package com.apicatalog.projection.property;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -59,6 +60,11 @@ public final class SourcePropertyReader implements PropertyReader {
 	@Override
 	public Collection<SourceType> getSourceTypes() {
 		return sourceWriter.getSourceTypes();
+	}
+	
+	@Override
+	public Collection<String> getDependencies() {
+		return Collections.emptySet();
 	}
 
 	@Override

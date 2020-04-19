@@ -32,7 +32,8 @@ public class ProvidedObjectPropertyReader implements PropertyReader {
 	Extractor extractor;
 	
 	@Override
-	public void read(ProjectionStack stack, ExtractionContext context) throws ProjectionError {
+	public void read(final ProjectionStack stack, final ExtractionContext context) throws ProjectionError {
+		
 		if (targetGetter == null) {
 			return;
 		}
@@ -91,6 +92,11 @@ public class ProvidedObjectPropertyReader implements PropertyReader {
 
 	@Override
 	public Collection<SourceType> getSourceTypes() {
+		return Collections.emptySet();
+	}
+
+	@Override
+	public Collection<String> getDependencies() {
 		return Collections.emptySet();
 	}
 
