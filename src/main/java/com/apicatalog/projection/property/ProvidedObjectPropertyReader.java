@@ -1,6 +1,8 @@
 package com.apicatalog.projection.property;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
@@ -13,6 +15,7 @@ import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.property.target.Extractor;
+import com.apicatalog.projection.source.SourceType;
 
 public class ProvidedObjectPropertyReader implements PropertyReader {
 
@@ -84,5 +87,10 @@ public class ProvidedObjectPropertyReader implements PropertyReader {
 	
 	public void setExtractor(Extractor extractor) {
 		this.extractor = extractor;
+	}
+
+	@Override
+	public Collection<SourceType> getSourceTypes() {
+		return Collections.emptySet();
 	}
 }

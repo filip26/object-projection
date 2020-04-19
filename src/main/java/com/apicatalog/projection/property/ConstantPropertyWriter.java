@@ -1,6 +1,7 @@
 package com.apicatalog.projection.property;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
@@ -13,6 +14,7 @@ import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.object.setter.Setter;
+import com.apicatalog.projection.source.SourceType;
 
 public final class ConstantPropertyWriter implements PropertyWriter {
 
@@ -75,5 +77,10 @@ public final class ConstantPropertyWriter implements PropertyWriter {
 	
 	public void setVisibility(final Set<Integer> levels) {
 		this.visibleLevels = levels;
+	}
+
+	@Override
+	public Collection<SourceType> getSourceTypes() {
+		return Collections.emptyList();
 	}
 }

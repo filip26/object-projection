@@ -1,6 +1,7 @@
 package com.apicatalog.projection.property.source;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.object.ObjectType;
+import com.apicatalog.projection.source.SourceType;
 
 public final class ArraySourceReader implements SourceReader {
 
@@ -20,6 +22,8 @@ public final class ArraySourceReader implements SourceReader {
 	SourceReader[] sources;
 	
 	Collection<Conversion<Object, Object>> conversions;
+	
+	Collection<SourceType> sourceTypes;
 	
 	ObjectType targetType;
 	
@@ -73,6 +77,12 @@ public final class ArraySourceReader implements SourceReader {
 	
 	public void setSources(SourceReader[] sources) {
 		this.sources = sources;
+		
+		this.sourceTypes = new HashSet<>();
+		
+		for (SourceReader reader : sources) {
+			this.sourceTypes.addAll(reader.getSourceTypes());
+		}
 	}
 	
 	public void setTargetType(ObjectType targetType) {
@@ -86,5 +96,10 @@ public final class ArraySourceReader implements SourceReader {
 
 	public void setConversions(Collection<Conversion<Object, Object>> conversions) {
 		this.conversions = conversions;
+	}
+
+	@Override
+	public Collection<SourceType> getSourceTypes() {
+		return sourceTypes;
 	}
 }

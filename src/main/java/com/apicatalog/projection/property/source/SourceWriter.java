@@ -1,5 +1,7 @@
 package com.apicatalog.projection.property.source;
 
+import java.util.Collection;
+
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.object.ObjectType;
@@ -12,5 +14,7 @@ public interface SourceWriter  {
 	ObjectType getType();
 	
 	boolean isAnyTypeOf(SourceType...sourceTypes);
+
+	Collection<SourceType> getSourceTypes();
 
 }

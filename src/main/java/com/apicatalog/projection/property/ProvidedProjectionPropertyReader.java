@@ -1,5 +1,7 @@
 package com.apicatalog.projection.property;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
@@ -12,6 +14,7 @@ import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.object.getter.Getter;
+import com.apicatalog.projection.source.SourceType;
 
 public class ProvidedProjectionPropertyReader implements PropertyReader {
 
@@ -54,7 +57,7 @@ public class ProvidedProjectionPropertyReader implements PropertyReader {
 
 			Optional.ofNullable(objectQualifier).ifPresent(context::addNamespace);
 
-			projection.extract(object.get(), context);
+			projection.getExtractor().extract(object.get(), context);
 			
 			Optional.ofNullable(objectQualifier).ifPresent(s -> context.removeLastNamespace());
 		}
@@ -78,5 +81,10 @@ public class ProvidedProjectionPropertyReader implements PropertyReader {
 	
 	public void setOptional(boolean optional) {
 		this.optional = optional;
+	}
+
+	@Override
+	public Collection<SourceType> getSourceTypes() {
+		return Collections.emptySet();
 	}
 }

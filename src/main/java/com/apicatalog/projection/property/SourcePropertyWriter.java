@@ -1,5 +1,6 @@
 package com.apicatalog.projection.property;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.source.SourceReader;
 import com.apicatalog.projection.property.target.Composer;
+import com.apicatalog.projection.source.SourceType;
 
 public final class SourcePropertyWriter implements PropertyWriter {
 
@@ -77,5 +79,10 @@ public final class SourcePropertyWriter implements PropertyWriter {
 	
 	public void setVisibility(final Set<Integer> levels) {
 		this.visibleLevels = levels;
-	}	
+	}
+
+	@Override
+	public Collection<SourceType> getSourceTypes() {
+		return sourceReader.getSourceTypes();
+	}
 }

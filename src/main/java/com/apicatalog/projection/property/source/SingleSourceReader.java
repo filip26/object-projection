@@ -1,6 +1,8 @@
 package com.apicatalog.projection.property.source;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -21,6 +23,8 @@ public final class SingleSourceReader implements SourceReader {
 	Getter getter;
 
 	SourceType sourceObjectType;
+	
+	Collection<SourceType> sourceTypes;
 	
 	ObjectType type;
 	
@@ -92,9 +96,15 @@ public final class SingleSourceReader implements SourceReader {
 		
 	public void setSourceObjectType(SourceType sourceObjectType) {
 		this.sourceObjectType = sourceObjectType;
+		this.sourceTypes = new HashSet<>(Arrays.asList(sourceObjectType));
 	}
 	
 	public void setConversions(Collection<Conversion<Object, Object>> conversions) {
 		this.conversions = conversions;
+	}
+
+	@Override
+	public Collection<SourceType> getSourceTypes() {
+		return sourceTypes;
 	}
 }

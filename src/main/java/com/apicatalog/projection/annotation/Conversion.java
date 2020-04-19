@@ -7,6 +7,12 @@ import java.lang.annotation.Target;
 
 import com.apicatalog.projection.converter.Converter;
 
+/**
+ * Defines a {@link Converter} to be used for conversion of a source property.
+ * 
+ * @author filip
+ *  
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Conversion {

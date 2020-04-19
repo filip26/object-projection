@@ -19,6 +19,7 @@ import com.apicatalog.projection.projections.Object2To;
 import com.apicatalog.projection.projections.SimpleObjectTo;
 import com.apicatalog.projection.projections.UriTo;
 import com.apicatalog.projection.source.SourceObject;
+import com.apicatalog.projection.source.SourceType;
 
 public class ObjectProjectionBuilderTest {
 
@@ -44,7 +45,18 @@ public class ObjectProjectionBuilderTest {
 		
 		Assert.assertNotNull(to);;
 		Assert.assertEquals(object1.i1, to.i1);
-		Assert.assertEquals(object1.s1, to.s1);		
+		Assert.assertEquals(object1.s1, to.s1);
+		
+		Assert.assertNotNull(projection.getComposer());
+		Assert.assertNotNull(projection.getComposer().getSourceTypes());
+		Assert.assertEquals(1, projection.getComposer().getSourceTypes().size());
+		Assert.assertEquals(SourceType.of(SimpleObject.class), projection.getComposer().getSourceTypes().iterator().next());
+		
+		Assert.assertNotNull(projection.getExtractor());
+		Assert.assertNotNull(projection.getExtractor().getSourceTypes());
+		Assert.assertEquals(1, projection.getExtractor().getSourceTypes().size());
+		Assert.assertEquals(SourceType.of(SimpleObject.class), projection.getExtractor().getSourceTypes().iterator().next());
+
 	}
 
 	@Test

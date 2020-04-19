@@ -1,6 +1,7 @@
 package com.apicatalog.projection.property;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
@@ -17,6 +18,7 @@ import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.target.Composer;
+import com.apicatalog.projection.source.SourceType;
 
 
 public class ProvidedObjectPropertyWriter implements PropertyWriter {
@@ -119,5 +121,10 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 	
 	public void setComposer(Composer composer) {
 		this.composer = composer;
+	}
+
+	@Override
+	public Collection<SourceType> getSourceTypes() {
+		return Collections.emptySet();
 	}
 }

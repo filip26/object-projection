@@ -1,5 +1,6 @@
 package com.apicatalog.projection.property;
 
+import java.util.Collection;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.property.source.SourceWriter;
 import com.apicatalog.projection.property.target.Extractor;
+import com.apicatalog.projection.source.SourceType;
 
 public final class SourcePropertyReader implements PropertyReader {
 
@@ -52,5 +54,11 @@ public final class SourcePropertyReader implements PropertyReader {
 		if (object.isPresent()) {
 			sourceWriter.write(context, object.get());
 		}
+	}
+
+	@Override
+	public Collection<SourceType> getSourceTypes() {
+
+		return sourceWriter.getSourceTypes();
 	}		
 }

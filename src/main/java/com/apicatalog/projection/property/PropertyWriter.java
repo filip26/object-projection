@@ -6,7 +6,7 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 
-public interface PropertyWriter {
+public interface PropertyWriter extends Property {
 
 	void write(ProjectionStack stack, CompositionContext context) throws ProjectionError;
 	

@@ -2,6 +2,7 @@ package com.apicatalog.projection.property.source;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -23,6 +24,8 @@ public final class SingleSourceWriter implements SourceWriter {
 	Setter setter;
 
 	SourceType sourceType;
+	
+	Collection<SourceType> sourceTypes;
 	
 	ObjectType targetType;
 	
@@ -98,6 +101,7 @@ public final class SingleSourceWriter implements SourceWriter {
 		
 	public void setSourceType(SourceType sourceType) {
 		this.sourceType = sourceType;
+		this.sourceTypes = new HashSet<>(Arrays.asList(sourceType));
 	}
 
 	@Override
@@ -107,5 +111,10 @@ public final class SingleSourceWriter implements SourceWriter {
 	
 	public void setConversions(Collection<Conversion<Object, Object>> conversions) {
 		this.conversions = conversions;
+	}
+
+	@Override
+	public Collection<SourceType> getSourceTypes() {
+		return sourceTypes;
 	}	
 }

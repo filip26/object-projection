@@ -1,5 +1,7 @@
 package com.apicatalog.projection.property;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
@@ -12,6 +14,7 @@ import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.object.setter.Setter;
+import com.apicatalog.projection.source.SourceType;
 
 public class ProvidedProjectionPropertyWriter implements PropertyWriter {
 
@@ -50,7 +53,7 @@ public class ProvidedProjectionPropertyWriter implements PropertyWriter {
 			throw new ProjectionError("Projection " + targetSetter.getType().getType() +  " is not present.");
 		}
 			
-		final Object object = projection.compose(stack, clonedContext);
+		final Object object = projection.getComposer().compose(stack, clonedContext);
 		
 		if (object != null) {
 			targetSetter.set(stack.peek(), object);
@@ -75,5 +78,10 @@ public class ProvidedProjectionPropertyWriter implements PropertyWriter {
 	
 	public void setOptional(boolean optional) {
 		this.optional = optional;
+	}
+
+	@Override
+	public Collection<SourceType> getSourceTypes() {
+		return Collections.emptySet();
 	}
 }
