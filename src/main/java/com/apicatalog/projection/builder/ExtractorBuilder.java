@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.property.target.CollectionExtractor;
-import com.apicatalog.projection.property.target.Extractor;
+import com.apicatalog.projection.property.target.TargetExtractor;
 import com.apicatalog.projection.property.target.ObjectExtractor;
 
 public final class ExtractorBuilder {
@@ -28,7 +28,7 @@ public final class ExtractorBuilder {
 		return new ExtractorBuilder();
 	}
 		
-	public Optional<Extractor> build(ProjectionRegistry registry) {
+	public Optional<TargetExtractor> build(ProjectionRegistry registry) {
 		
 		if (getter == null) {
 			return Optional.empty();
@@ -54,7 +54,7 @@ public final class ExtractorBuilder {
 		return this;
 	}
 	
-	final Optional<Extractor> collection(final String projectionName, final ProjectionRegistry registry) {
+	final Optional<TargetExtractor> collection(final String projectionName, final ProjectionRegistry registry) {
 		
 		final CollectionExtractor extractor = new CollectionExtractor(getter.getType(), projectionName);
 		
@@ -63,7 +63,7 @@ public final class ExtractorBuilder {
 		return Optional.of(extractor);		
 	}
 
-	final Optional<Extractor> object(final String projectionName, final ProjectionRegistry registry) {
+	final Optional<TargetExtractor> object(final String projectionName, final ProjectionRegistry registry) {
 		
 		final ObjectExtractor extractor = new ObjectExtractor(projectionName);
 		

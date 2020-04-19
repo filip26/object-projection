@@ -2,6 +2,7 @@ package com.apicatalog.projection.impl;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -11,7 +12,6 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionExtractor;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
-import com.apicatalog.projection.property.Property;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.source.SourceType;
 
@@ -21,6 +21,8 @@ public final class ProjectionExtractorImpl<P> implements ProjectionExtractor<P> 
 
 	final Collection<SourceType> sourceTypes;
 	
+	final Collection<String> dependecies;
+	
 	final String projectionName;
 	
 	final PropertyReader[] readers;
@@ -29,6 +31,7 @@ public final class ProjectionExtractorImpl<P> implements ProjectionExtractor<P> 
 		this.projectionName = projectionName;
 		this.readers = readers;
 		this.sourceTypes = getSourceTypes(readers);
+		this.dependecies = getDependencies(readers);
 	}
 
 	public static <P> ProjectionExtractor<P> newInstance(final String projectionName, final PropertyReader[] readers) {
@@ -36,8 +39,13 @@ public final class ProjectionExtractorImpl<P> implements ProjectionExtractor<P> 
 	}
 
 	static final Collection<SourceType> getSourceTypes(final PropertyReader[] readers) {		
-		return Arrays.stream(readers).map(Property::getSourceTypes).flatMap(Collection::stream).collect(Collectors.toSet());
+		return Arrays.stream(readers).map(PropertyReader::getSourceTypes).flatMap(Collection::stream).collect(Collectors.toSet());
 	}
+	
+	static final Collection<String> getDependencies(final PropertyReader[] readers) {
+		return Arrays.stream(readers).map(PropertyReader::getDependency).filter(Objects::nonNull).collect(Collectors.toSet());
+	}
+
 	
 	@Override
 	public void extract(P projection, ExtractionContext context) throws ProjectionError {
@@ -64,5 +72,15 @@ public final class ProjectionExtractorImpl<P> implements ProjectionExtractor<P> 
 	@Override
 	public Collection<SourceType> getSourceTypes() {
 		return sourceTypes;
+	}
+
+	@Override
+	public Collection<String> getDependencies() {
+		return dependecies;
+	}
+
+	@Override
+	public String getProjectionName() {
+		return projectionName;
 	}
 }

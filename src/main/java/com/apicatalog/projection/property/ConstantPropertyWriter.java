@@ -90,7 +90,7 @@ public final class ConstantPropertyWriter implements PropertyWriter {
 	}
 
 	@Override
-	public Collection<String> getDependencies() {
-		return Collections.emptySet();
+	public String getDependency() {
+		return null;
 	}
 }

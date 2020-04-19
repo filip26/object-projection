@@ -17,7 +17,7 @@ import com.apicatalog.projection.conversion.ConversionNotFound;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.setter.Setter;
-import com.apicatalog.projection.property.target.Composer;
+import com.apicatalog.projection.property.target.TargetComposer;
 import com.apicatalog.projection.source.SourceType;
 
 
@@ -33,7 +33,7 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 	
 	String objectQualifier;
 	
-	Composer composer;
+	TargetComposer composer;
 	
 	boolean optional;	
 	
@@ -119,7 +119,7 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 		this.optional = optional;
 	}
 	
-	public void setComposer(Composer composer) {
+	public void setComposer(TargetComposer composer) {
 		this.composer = composer;
 	}
 
@@ -129,8 +129,8 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 	}
 	
 	@Override
-	public Collection<String> getDependencies() {
-		return Collections.emptySet();
+	public String getDependency() {
+		return composer != null ? composer.getProjectionName() : null;
 	}
 
 	@Override

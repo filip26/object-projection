@@ -1,6 +1,5 @@
 package com.apicatalog.projection.property;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -88,8 +87,8 @@ public class ProvidedProjectionPropertyWriter implements PropertyWriter {
 	}
 
 	@Override
-	public Collection<String> getDependencies() {
-		return Arrays.asList(projectionName);
+	public String getDependency() {
+		return projectionName;
 	}
 
 	@Override

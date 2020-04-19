@@ -52,8 +52,7 @@ public final class ProjectionRegistry {
 		index.put(projectionName, projection);
 		
 		if (consumers.containsKey(projectionName)) {
-			consumers.get(projectionName).forEach(c -> c.accept(projection));
-			consumers.remove(projectionName);
+			consumers.remove(projectionName).forEach(c -> c.accept(projection));
 		}
 
 		return this;

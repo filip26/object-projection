@@ -1,7 +1,6 @@
 package com.apicatalog.projection.property;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -12,7 +11,7 @@ import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.property.source.SourceWriter;
-import com.apicatalog.projection.property.target.Extractor;
+import com.apicatalog.projection.property.target.TargetExtractor;
 import com.apicatalog.projection.source.SourceType;
 
 public final class SourcePropertyReader implements PropertyReader {
@@ -23,9 +22,9 @@ public final class SourcePropertyReader implements PropertyReader {
 	
 	final Getter targetGetter;
 	
-	final Extractor extractor;
+	final TargetExtractor extractor;
 	
-	public SourcePropertyReader(final SourceWriter sourceWriter, final Getter targetGetter, final Extractor extractor) {
+	public SourcePropertyReader(final SourceWriter sourceWriter, final Getter targetGetter, final TargetExtractor extractor) {
 		this.sourceWriter = sourceWriter;
 		this.targetGetter = targetGetter;
 		this.extractor = extractor;
@@ -63,8 +62,8 @@ public final class SourcePropertyReader implements PropertyReader {
 	}
 	
 	@Override
-	public Collection<String> getDependencies() {
-		return Collections.emptySet();
+	public String getDependency() {
+		return extractor != null ? extractor.getProjectionName() : null;
 	}
 
 	@Override

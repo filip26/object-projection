@@ -17,6 +17,7 @@ public final class MapProjection extends AbstractProjection<Map<String, Object>>
 		this.name = name;
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static final Projection<Map<String, Object>> newInstance(final String name, final PropertyReader[] readers, final PropertyWriter[] writers) {
 		return new MapProjection(
 						name, 

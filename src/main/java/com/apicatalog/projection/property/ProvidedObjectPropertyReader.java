@@ -14,7 +14,7 @@ import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.getter.Getter;
-import com.apicatalog.projection.property.target.Extractor;
+import com.apicatalog.projection.property.target.TargetExtractor;
 import com.apicatalog.projection.source.SourceType;
 
 public class ProvidedObjectPropertyReader implements PropertyReader {
@@ -29,7 +29,7 @@ public class ProvidedObjectPropertyReader implements PropertyReader {
 	
 	boolean optional;	
 	
-	Extractor extractor;
+	TargetExtractor extractor;
 	
 	@Override
 	public void read(final ProjectionStack stack, final ExtractionContext context) throws ProjectionError {
@@ -86,7 +86,7 @@ public class ProvidedObjectPropertyReader implements PropertyReader {
 		this.optional = optional;
 	}
 	
-	public void setExtractor(Extractor extractor) {
+	public void setExtractor(TargetExtractor extractor) {
 		this.extractor = extractor;
 	}
 
@@ -96,8 +96,8 @@ public class ProvidedObjectPropertyReader implements PropertyReader {
 	}
 
 	@Override
-	public Collection<String> getDependencies() {
-		return Collections.emptySet();
+	public String getDependency() {
+		return extractor != null ? extractor.getProjectionName() : null;
 	}
 
 	@Override

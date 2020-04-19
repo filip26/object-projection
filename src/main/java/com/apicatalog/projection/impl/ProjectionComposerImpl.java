@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -14,7 +15,6 @@ import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.object.ObjectUtils;
-import com.apicatalog.projection.property.Property;
 import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.source.SourceType;
 
@@ -43,14 +43,13 @@ public final class ProjectionComposerImpl<P> implements ProjectionComposer<P> {
 		return new ProjectionComposerImpl<>(projectionName, projectionType, writers);
 	}
 	
-	static final Collection<SourceType> getComposableTypes(final Property[] writers) {
-		return Arrays.stream(writers).map(Property::getSourceTypes).flatMap(Collection::stream).collect(Collectors.toSet());
+	static final Collection<SourceType> getComposableTypes(final PropertyWriter[] writers) {
+		return Arrays.stream(writers).map(PropertyWriter::getSourceTypes).flatMap(Collection::stream).collect(Collectors.toSet());
 	}
 	
-	static final Collection<String> getDependencies(final Property[] writers) {
-		return Arrays.stream(writers).map(Property::getDependencies).flatMap(Collection::stream).collect(Collectors.toSet());
+	static final Collection<String> getDependencies(final PropertyWriter[] writers) {
+		return Arrays.stream(writers).map(PropertyWriter::getDependency).filter(Objects::nonNull).collect(Collectors.toSet());
 	}
-
 
 	@Override
 	public P compose(ProjectionStack stack, CompositionContext context) throws ProjectionError {

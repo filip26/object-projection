@@ -12,7 +12,7 @@ import com.apicatalog.projection.builder.ExtractorBuilder;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.property.SourcePropertyReader;
 import com.apicatalog.projection.property.source.SourceWriter;
-import com.apicatalog.projection.property.target.Extractor;
+import com.apicatalog.projection.property.target.TargetExtractor;
 
 public final class SourcePropertyReaderBuilder {
 
@@ -54,7 +54,7 @@ public final class SourcePropertyReaderBuilder {
 			return Optional.empty();			
 		}
 		
-		final Optional<Extractor> extractor =  
+		final Optional<TargetExtractor> extractor =  
 				ExtractorBuilder.newInstance()
 					.getter(targetGetter, targetReference)
 					.build(registry);

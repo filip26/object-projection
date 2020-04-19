@@ -25,7 +25,7 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.property.SourcePropertyWriter;
 import com.apicatalog.projection.property.source.SingleSourceReader;
-import com.apicatalog.projection.property.target.Composer;
+import com.apicatalog.projection.property.target.TargetComposer;
 
 final class PropertyWriterMapper {
 
@@ -115,7 +115,7 @@ final class PropertyWriterMapper {
 			return Optional.empty();
 		}
 		
-		final Optional<Composer> composer =  
+		final Optional<TargetComposer> composer =  
 				ComposerBuilder.newInstance()
 					.setter(targetSetter, targetReference)
 					.build(registry);

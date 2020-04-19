@@ -1,7 +1,6 @@
 package com.apicatalog.projection.property;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
@@ -13,7 +12,7 @@ import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.source.SourceReader;
-import com.apicatalog.projection.property.target.Composer;
+import com.apicatalog.projection.property.target.TargetComposer;
 import com.apicatalog.projection.source.SourceType;
 
 public final class SourcePropertyWriter implements PropertyWriter {
@@ -24,11 +23,11 @@ public final class SourcePropertyWriter implements PropertyWriter {
 	
 	final Setter targetSetter;
 	
-	final Composer composer;
+	final TargetComposer composer;
 	
 	Set<Integer> visibleLevels;
 
-	public SourcePropertyWriter(final SourceReader sourceReader, final Setter targetSetter, final Composer composer) {
+	public SourcePropertyWriter(final SourceReader sourceReader, final Setter targetSetter, final TargetComposer composer) {
 		this.sourceReader = sourceReader;
 		this.targetSetter = targetSetter;
 		this.composer = composer;
@@ -88,8 +87,8 @@ public final class SourcePropertyWriter implements PropertyWriter {
 	}
 	
 	@Override
-	public Collection<String> getDependencies() {
-		return Collections.emptySet();
+	public String getDependency() {
+		return composer != null ? composer.getProjectionName() : null;
 	}
 
 	@Override

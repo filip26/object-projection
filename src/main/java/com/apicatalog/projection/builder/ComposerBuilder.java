@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.target.CollectionComposer;
-import com.apicatalog.projection.property.target.Composer;
+import com.apicatalog.projection.property.target.TargetComposer;
 import com.apicatalog.projection.property.target.ObjectComposer;
 
 public final class ComposerBuilder {
@@ -28,7 +28,7 @@ public final class ComposerBuilder {
 		return new ComposerBuilder();
 	}
 		
-	public Optional<Composer> build(ProjectionRegistry registry) {
+	public Optional<TargetComposer> build(ProjectionRegistry registry) {
 
 		if (setter == null) {
 			return Optional.empty();
@@ -56,7 +56,7 @@ public final class ComposerBuilder {
 		return this;
 	}
 	
-	final Optional<Composer> collection(final String projectionName, final ProjectionRegistry registry) {
+	final Optional<TargetComposer> collection(final String projectionName, final ProjectionRegistry registry) {
 		
 		final CollectionComposer composer = new CollectionComposer(setter.getType(), projectionName);
 		
@@ -65,7 +65,7 @@ public final class ComposerBuilder {
 		return Optional.of(composer);		
 	}
 	
-	final Optional<Composer> object(final String projectionName, final ProjectionRegistry registry) {
+	final Optional<TargetComposer> object(final String projectionName, final ProjectionRegistry registry) {
 		
 		final ObjectComposer composer = new ObjectComposer(projectionName);
 		

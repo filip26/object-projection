@@ -52,11 +52,16 @@ public class ObjectProjectionBuilderTest {
 		Assert.assertEquals(1, projection.getComposer().getSourceTypes().size());
 		Assert.assertEquals(SourceType.of(SimpleObject.class), projection.getComposer().getSourceTypes().iterator().next());
 		
+		Assert.assertNotNull(projection.getComposer().getDependencies());
+		Assert.assertEquals(0, projection.getComposer().getDependencies().size());
+		
 		Assert.assertNotNull(projection.getExtractor());
 		Assert.assertNotNull(projection.getExtractor().getSourceTypes());
 		Assert.assertEquals(1, projection.getExtractor().getSourceTypes().size());
 		Assert.assertEquals(SourceType.of(SimpleObject.class), projection.getExtractor().getSourceTypes().iterator().next());
 
+		Assert.assertNotNull(projection.getExtractor().getDependencies());
+		Assert.assertEquals(0, projection.getExtractor().getDependencies().size());
 	}
 
 	@Test

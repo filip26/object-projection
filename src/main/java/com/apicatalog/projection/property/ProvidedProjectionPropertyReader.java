@@ -87,8 +87,8 @@ public class ProvidedProjectionPropertyReader implements PropertyReader {
 	}
 	
 	@Override
-	public Collection<String> getDependencies() {
-		return Collections.emptySet();
+	public String getDependency() {
+		return projectionName;
 	}
 
 	@Override
