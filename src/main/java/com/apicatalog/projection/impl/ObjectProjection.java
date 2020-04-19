@@ -14,11 +14,11 @@ public final class ObjectProjection<P> extends AbstractProjection<P> {
 		this.projectionClass = projectionClass;
 	}
 	
-	public static final <A> ObjectProjection<A> newInstance(final Class<A> projectionClass, final PropertyReader[] readers, final PropertyWriter[] writers) {
+	public static final <A> ObjectProjection<A> newInstance(final Class<A> projectionType, final PropertyReader[] readers, final PropertyWriter[] writers) {
 		return new ObjectProjection<>(
-						projectionClass, 
-						ObjectProjectionComposer.newInstance(projectionClass, writers),
-						ProjectionExtractorImpl.newInstance(projectionClass.getCanonicalName(), readers)
+						projectionType, 
+						ProjectionComposerImpl.newInstance(projectionType.getCanonicalName(), projectionType, writers),
+						ProjectionExtractorImpl.newInstance(projectionType.getCanonicalName(), readers)
 						);
 	}
 

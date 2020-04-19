@@ -3,6 +3,8 @@ package com.apicatalog.projection.impl;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -12,22 +14,30 @@ import com.apicatalog.projection.ProjectionComposer;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ProjectionStack;
+import com.apicatalog.projection.object.ObjectUtils;
 import com.apicatalog.projection.property.Property;
 import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.source.SourceType;
 
-abstract class AbstractProjectionComposer<P> implements ProjectionComposer<P> {
+public final class ProjectionComposerImpl<P> implements ProjectionComposer<P> {
 	
-	final Logger logger = LoggerFactory.getLogger(AbstractProjectionComposer.class);
+	final Logger logger = LoggerFactory.getLogger(ProjectionComposerImpl.class);
 
 	final String projectionName;
+	final Class<P> projectionType;
+	
 	final Collection<SourceType> sourceTypes;
 	final PropertyWriter[] writers;
 	
-	protected AbstractProjectionComposer(final String projectionName, final PropertyWriter[] writers) {
+	protected ProjectionComposerImpl(final String projectionName, final Class<P> projectionType, final PropertyWriter[] writers) {
 		this.projectionName = projectionName;
+		this.projectionType = projectionType;
 		this.writers = writers;
 		this.sourceTypes = getComposableTypes(writers);
+	}
+	
+	public static final <A> ProjectionComposer<A> newInstance(final String projectionName, final Class<A> projectionType, final PropertyWriter[] writers) {
+		return new ProjectionComposerImpl<>(projectionName, projectionType, writers);
 	}
 	
 	static final Collection<SourceType> getComposableTypes(final Property[] writers) {
@@ -83,5 +93,12 @@ abstract class AbstractProjectionComposer<P> implements ProjectionComposer<P> {
 		return Collections.emptySet();	//TODO
 	}
 	
-	protected abstract P newInstance();
+	protected P newInstance() {
+		
+		if (Map.class.isAssignableFrom(projectionType)) {
+			return (P)new HashMap<String, Object>();
+		}
+		
+		return ObjectUtils.newInstance(projectionType);
+	}
 }
