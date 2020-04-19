@@ -12,7 +12,7 @@ public interface Property {
 
 //TODO
 //	ObjectType getTargetType();
-//	
+	
 	String getName();
 
 }

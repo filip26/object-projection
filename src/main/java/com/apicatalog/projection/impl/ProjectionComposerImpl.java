@@ -2,7 +2,6 @@ package com.apicatalog.projection.impl;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -102,6 +101,7 @@ public final class ProjectionComposerImpl<P> implements ProjectionComposer<P> {
 		return dependecies;
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected P newInstance() {
 		
 		if (Map.class.isAssignableFrom(projectionType)) {

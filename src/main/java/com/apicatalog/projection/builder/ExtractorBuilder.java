@@ -42,7 +42,7 @@ public final class ExtractorBuilder {
 				return collection(getter.getType().getType().getComponentType().getCanonicalName(), registry);
 			}
 			
-			return Optional.of(new ObjectExtractor(registry));
+			return object(getter.getType().getType().getCanonicalName(), registry);
 		}
 
 		return Optional.empty();
@@ -54,9 +54,18 @@ public final class ExtractorBuilder {
 		return this;
 	}
 	
-	protected Optional<Extractor> collection(final String projectionName, final ProjectionRegistry registry) {
+	final Optional<Extractor> collection(final String projectionName, final ProjectionRegistry registry) {
 		
 		final CollectionExtractor extractor = new CollectionExtractor(getter.getType(), projectionName);
+		
+		registry.request(projectionName, extractor::setProjection);
+		
+		return Optional.of(extractor);		
+	}
+
+	final Optional<Extractor> object(final String projectionName, final ProjectionRegistry registry) {
+		
+		final ObjectExtractor extractor = new ObjectExtractor(projectionName);
 		
 		registry.request(projectionName, extractor::setProjection);
 		

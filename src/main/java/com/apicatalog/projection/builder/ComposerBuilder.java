@@ -45,7 +45,7 @@ public final class ComposerBuilder {
 				return collection(setter.getType().getType().getComponentType().getCanonicalName(), registry);
 			}
 
-			return Optional.of(new ObjectComposer(registry, setter.getType()));
+			return object(setter.getType().getType().getCanonicalName(), registry);
 		}
 		return Optional.empty();
 	}
@@ -56,9 +56,18 @@ public final class ComposerBuilder {
 		return this;
 	}
 	
-	protected Optional<Composer> collection(final String projectionName, final ProjectionRegistry registry) {
+	final Optional<Composer> collection(final String projectionName, final ProjectionRegistry registry) {
 		
 		final CollectionComposer composer = new CollectionComposer(setter.getType(), projectionName);
+		
+		registry.request(projectionName, composer::setProjection);
+		
+		return Optional.of(composer);		
+	}
+	
+	final Optional<Composer> object(final String projectionName, final ProjectionRegistry registry) {
+		
+		final ObjectComposer composer = new ObjectComposer(projectionName);
 		
 		registry.request(projectionName, composer::setProjection);
 		
