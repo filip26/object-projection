@@ -36,10 +36,13 @@ public final class ComposerBuilder {
 
 		if (reference) {
 			if (setter.getType().isCollection()) {
-				return Optional.of(new CollectionComposer(registry, setter.getType(), setter.getType().getComponentType().getCanonicalName()));
+				
+				return collection(setter.getType().getComponentType().getCanonicalName(), registry);
+				
 			}
 			if (setter.getType().isArray()) {
-				return Optional.of(new CollectionComposer(registry, setter.getType(), setter.getType().getType().getComponentType().getCanonicalName()));
+				
+				return collection(setter.getType().getType().getComponentType().getCanonicalName(), registry);
 			}
 
 			return Optional.of(new ObjectComposer(registry, setter.getType()));
@@ -51,5 +54,14 @@ public final class ComposerBuilder {
 		this.setter = setter;
 		this.reference = reference;
 		return this;
+	}
+	
+	protected Optional<Composer> collection(final String projectionName, final ProjectionRegistry registry) {
+		
+		final CollectionComposer composer = new CollectionComposer(setter.getType(), projectionName);
+		
+		registry.request(projectionName, composer::setProjection);
+		
+		return Optional.of(composer);		
 	}
 }

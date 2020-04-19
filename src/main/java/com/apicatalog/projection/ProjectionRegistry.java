@@ -86,13 +86,13 @@ public final class ProjectionRegistry {
 
 	public void request(final String projectionName, final Consumer<Projection<?>> consumer) {
 
-		Projection<?> projection = index.get(projectionName);
+		final Projection<?> projection = index.get(projectionName);
+		
 		if (projection != null) {
 			consumer.accept(projection);
 			return;
 		}
 		
-		consumers.putIfAbsent(projectionName, new ArrayList<>());
-		consumers.get(projectionName).add(consumer);
+		consumers.computeIfAbsent(projectionName, x -> new ArrayList<>()).add(consumer);
 	}	
 }

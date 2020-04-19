@@ -96,6 +96,7 @@ public class ProvidedProjectionPropertyReader implements PropertyReader {
 		return targetGetter.getName();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void setProjection(final Projection<?> projection) {
 		this.extractor = (ProjectionExtractor<Object>) projection.getExtractor();
 	}

@@ -36,10 +36,10 @@ public final class ExtractorBuilder {
 
 		if (reference) {
 			if (getter.getType().isCollection()) {
-				return Optional.of(new CollectionExtractor(registry, getter.getType(), getter.getType().getComponentType().getCanonicalName()));
+				return collection(getter.getType().getComponentType().getCanonicalName(), registry);
 			}
 			if (getter.getType().isArray()) {
-				return Optional.of(new CollectionExtractor(registry, getter.getType(), getter.getType().getType().getComponentType().getCanonicalName()));
+				return collection(getter.getType().getType().getComponentType().getCanonicalName(), registry);
 			}
 			
 			return Optional.of(new ObjectExtractor(registry));
@@ -53,4 +53,14 @@ public final class ExtractorBuilder {
 		this.reference = reference;
 		return this;
 	}
+	
+	protected Optional<Extractor> collection(final String projectionName, final ProjectionRegistry registry) {
+		
+		final CollectionExtractor extractor = new CollectionExtractor(getter.getType(), projectionName);
+		
+		registry.request(projectionName, extractor::setProjection);
+		
+		return Optional.of(extractor);		
+	}
+
 }
