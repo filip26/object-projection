@@ -83,4 +83,9 @@ public final class ConstantPropertyWriter implements PropertyWriter {
 	public Collection<SourceType> getSourceTypes() {
 		return Collections.emptyList();
 	}
+
+	@Override
+	public String getName() {
+		return targetSetter.getName();
+	}
 }

@@ -90,7 +90,7 @@ public final class ArraySourceReader implements SourceReader {
 	}
 
 	@Override
-	public ObjectType getType() {
+	public ObjectType getTargetType() {
 		return targetType;
 	}
 

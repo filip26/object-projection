@@ -98,7 +98,7 @@ public final class ArraySourceWriter implements SourceWriter {
 	}
 
 	@Override
-	public ObjectType getType() {
+	public ObjectType getTargetType() {
 		return targetType;
 	}
 

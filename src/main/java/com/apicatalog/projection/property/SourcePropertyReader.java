@@ -38,7 +38,7 @@ public final class SourcePropertyReader implements PropertyReader {
 		}
 		
 		if (logger.isDebugEnabled()) {
-			logger.debug("Read {} from {}, depth = {}", sourceWriter.getType(), targetGetter.getType(), stack.length());
+			logger.debug("Read {} from {}, depth = {}", sourceWriter.getTargetType(), targetGetter.getType(), stack.length());
 		}
 
 		Optional<Object> object = targetGetter.get(stack.peek());
@@ -48,7 +48,7 @@ public final class SourcePropertyReader implements PropertyReader {
 		}
 		
 		if (extractor != null) {
-			object = extractor.extract(sourceWriter.getType(), object.get(), context);
+			object = extractor.extract(sourceWriter.getTargetType(), object.get(), context);
 		}
 		
 		if (object.isPresent()) {
@@ -58,7 +58,11 @@ public final class SourcePropertyReader implements PropertyReader {
 
 	@Override
 	public Collection<SourceType> getSourceTypes() {
-
 		return sourceWriter.getSourceTypes();
+	}
+
+	@Override
+	public String getName() {
+		return targetGetter.getName();
 	}		
 }

@@ -11,7 +11,7 @@ public interface SourceWriter  {
 
 	void write(ExtractionContext context, Object object) throws ProjectionError;
 
-	ObjectType getType();
+	ObjectType getTargetType();
 	
 	boolean isAnyTypeOf(SourceType...sourceTypes);
 

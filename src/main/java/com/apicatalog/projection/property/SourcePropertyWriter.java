@@ -47,7 +47,7 @@ public final class SourcePropertyWriter implements PropertyWriter {
 		}
 		
 		if (logger.isDebugEnabled()) {
-			logger.debug("Write {} to {}, depth = {}", sourceReader.getType(), targetSetter, queue.length());
+			logger.debug("Write {} to {}, depth = {}", sourceReader.getTargetType(), targetSetter, queue.length());
 		}
 
 		// get source value
@@ -84,5 +84,10 @@ public final class SourcePropertyWriter implements PropertyWriter {
 	@Override
 	public Collection<SourceType> getSourceTypes() {
 		return sourceReader.getSourceTypes();
+	}
+
+	@Override
+	public String getName() {
+		return targetSetter.getName();
 	}
 }

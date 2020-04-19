@@ -90,7 +90,7 @@ public final class SingleSourceReader implements SourceReader {
 		this.type = type;
 	}
 	
-	public ObjectType getType() {
+	public ObjectType getTargetType() {
 		return type;
 	}
 		

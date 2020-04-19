@@ -12,7 +12,7 @@ public interface SourceReader  {
 
 	Optional<Object> read(CompositionContext context) throws ProjectionError;
 		
-	ObjectType getType();
+	ObjectType getTargetType();
 	
 	Collection<SourceType> getSourceTypes();
 }

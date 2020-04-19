@@ -93,4 +93,9 @@ public class ProvidedObjectPropertyReader implements PropertyReader {
 	public Collection<SourceType> getSourceTypes() {
 		return Collections.emptySet();
 	}
+
+	@Override
+	public String getName() {
+		return targetGetter.getName();
+	}
 }

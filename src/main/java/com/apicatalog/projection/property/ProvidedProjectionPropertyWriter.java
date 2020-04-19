@@ -84,4 +84,9 @@ public class ProvidedProjectionPropertyWriter implements PropertyWriter {
 	public Collection<SourceType> getSourceTypes() {
 		return Collections.emptySet();
 	}
+
+	@Override
+	public String getName() {
+		return targetSetter.getName();
+	}
 }

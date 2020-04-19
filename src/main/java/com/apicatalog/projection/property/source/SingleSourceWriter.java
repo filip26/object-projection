@@ -95,7 +95,7 @@ public final class SingleSourceWriter implements SourceWriter {
 		this.targetType = targetType;
 	}
 	
-	public ObjectType getType() {
+	public ObjectType getTargetType() {
 		return targetType;
 	}
 		

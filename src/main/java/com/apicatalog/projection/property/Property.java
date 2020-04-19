@@ -8,4 +8,9 @@ public interface Property {
 
 	Collection<SourceType> getSourceTypes();
 
+//TODO
+//	ObjectType getTargetType();
+//	
+	String getName();
+
 }

@@ -127,4 +127,9 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 	public Collection<SourceType> getSourceTypes() {
 		return Collections.emptySet();
 	}
+
+	@Override
+	public String getName() {
+		return targetSetter.getName();
+	}
 }
