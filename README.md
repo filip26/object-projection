@@ -72,3 +72,20 @@ Projection.of(RecordTo.class).build();
 }
 ```
 
+
+
+```javascript
+Projection
+    .hashMap()
+
+        .mapString("code")
+            .source(Item.class)
+          
+        .mapDouble("price");
+            .source(Item.class)
+          
+        .mapReference("details", ItemDetailsTo.class)
+             .provided()
+                          
+        .build();
+```
