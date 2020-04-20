@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.objects.SimpleObject;
+import com.apicatalog.projection.source.SourceObject;
 
 public class MapProjectionBuilderTest {
 	
@@ -150,17 +151,45 @@ public class MapProjectionBuilderTest {
 				Projection
 					.hashMap()
 						.mapFloat("f").provided()
-						.mapBoolean("b").provided()
+						.mapBoolean("b1").provided()
+						.mapBoolean("b2").provided("b2")
 					
 						.build(ProjectionRegistry.newInstance());
 		
 		Assert.assertNotNull(projection);
 
-		Map<String, Object> map = projection.compose(12.34f, true);
+		Map<String, Object> map = projection.compose(12.34f, true, SourceObject.of("b2", Boolean.FALSE));
 		
 		Assert.assertNotNull(map);;
 		Assert.assertEquals(12.34f, map.get("f"));
-		Assert.assertTrue((boolean) map.get("b"));
+		Assert.assertTrue((boolean) map.get("b1"));
+		Assert.assertFalse((boolean) map.get("b2"));
+	}
+
+	@Test
+	public void test4e() throws ProjectionBuilderError, ProjectionError {
+		final Projection<Map<String, Object>> projection = 
+				Projection
+					.hashMap()
+						.mapFloat("f").provided()
+						.mapBoolean("b1").provided()
+						.mapBoolean("b2").provided("b2")
+					
+						.build(ProjectionRegistry.newInstance());
+		
+		Assert.assertNotNull(projection);
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("b2", Boolean.TRUE);
+		map.put("b1", Boolean.FALSE);
+
+		Boolean b1 = projection.extract(map, Boolean.class);
+		Assert.assertNotNull(b1);
+		Assert.assertFalse(b1);
+		
+		Boolean b2 = projection.extract(map, "b2", Boolean.class);
+		Assert.assertNotNull(b2);;
+		Assert.assertTrue(b2);
 	}
 
 }

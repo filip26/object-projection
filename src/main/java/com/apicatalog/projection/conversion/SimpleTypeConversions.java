@@ -30,10 +30,20 @@ public final class SimpleTypeConversions {
 		if (target == Integer.class) return o -> Integer.valueOf((String)o);
 		if (target == Float.class) return o -> Float.valueOf((String)o);
 		if (target == Double.class) return o -> Double.valueOf((String)o);
-		if (target == Boolean.class) return o -> Boolean.valueOf((String)o);
+		if (target == Boolean.class) return stringToBoolean();
 		if (target == URI.class) return o -> URI.create((String)o);
 		
 		return null;
+	}
+
+	private static Conversion<Object, Object> stringToBoolean() {
+		return o -> (
+					"true".equalsIgnoreCase((String)o)					 
+					|| "yes".equalsIgnoreCase((String)o)
+					|| "T".equalsIgnoreCase((String)o)
+					|| "Y".equalsIgnoreCase((String)o)
+					|| "1".equalsIgnoreCase((String)o)
+					);		
 	}
 
 	static final Conversion<Object, Object> fromInteger(final Class<?> target) {
