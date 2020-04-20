@@ -1,14 +1,12 @@
 package com.apicatalog.projection.api.map.impl;
 
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.api.map.MapArraySourceApi;
@@ -24,11 +22,9 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
-public final class MapEntryApiImpl implements MapEntryApi {
+public final class MapEntryApiImpl extends MapProjectionApiWrapper implements MapEntryApi {
 	
 	final Logger logger = LoggerFactory.getLogger(MapEntryApiImpl.class);
-
-	final MapProjectionApi projectionBuilder;
 
 	final String name;
 	
@@ -36,12 +32,16 @@ public final class MapEntryApiImpl implements MapEntryApi {
 	
 	final Class<?> componentType;
 	
-	AbstractValueProviderApi<Map<String, Object>> valueProvider;
+	AbstractValueProviderApi valueProvider;
+
+	protected MapEntryApiImpl(final MapProjectionApi projectionBuilder, final String name, final Class<?> type) {
+		this(projectionBuilder, name, type, null);
+	}
 	
-	protected MapEntryApiImpl(MapProjectionApi projectionBuilder, String name, Class<?> type, Class<?> componentType) {
-		this.projectionBuilder = projectionBuilder;
+	protected MapEntryApiImpl(final MapProjectionApi projectionBuilder, final String name, final Class<?> collectionType, final Class<?> componentType) {
+		super(projectionBuilder);
 		this.name = name;
-		this.type = type;
+		this.type = collectionType;
 		this.componentType = componentType;
 	}
 
@@ -123,22 +123,7 @@ public final class MapEntryApiImpl implements MapEntryApi {
 		
 		return projectionBuilder;
 	}
-	
-	@Override
-	public MapEntryApi map(String name, Class<?> type) {
-		return projectionBuilder.map(name, type, null);
-	}
-
-	@Override
-	public MapEntryApi map(String name, Class<?> type, Class<?> componentType) {
-		return projectionBuilder.map(name, type, componentType);
-	}
-	
-	@Override
-	public Projection<Map<String, Object>> build(final ProjectionRegistry registry) throws ProjectionBuilderError {
-		return projectionBuilder.build(registry);
-	}
-	
+		
 	protected Optional<PropertyReader> buildReader(final ProjectionRegistry registry) throws ProjectionBuilderError {
 
 		if (valueProvider == null) {

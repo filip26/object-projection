@@ -29,17 +29,71 @@ public final class MapProjectionApiImpl implements MapProjectionApi {
 	}
 
 	@Override
-	public MapEntryApi map(final String name, final Class<?> type) {
-		return map(name, type, null);
+	public MapEntryApi mapString(String name) {
+		return mapObject(name, String.class);
 	}
 
 	@Override
-	public MapEntryApi map(final String name, final Class<?> type, Class<?> componentType) {
-		
-		final MapEntryApiImpl propertyBuilder = new MapEntryApiImpl(this, name, type, componentType);
+	public MapEntryApi mapInteger(String name) {
+		return mapObject(name, Integer.class);
+	}
+
+	@Override
+	public MapEntryApi mapLong(String name) {
+		return mapObject(name, Long.class);
+	}
+
+	@Override
+	public MapEntryApi mapFloat(String name) {
+		return mapObject(name, Float.class);
+	}
+
+	@Override
+	public MapEntryApi mapDouble(String name) {
+		return mapObject(name, Double.class);
+	}
+
+	@Override
+	public MapEntryApi mapBoolean(String name) {
+		return mapObject(name, Boolean.class);
+	}
+
+	@Override
+	public MapEntryApi mapObject(String name, Class<?> objectType) {
+		final MapEntryApiImpl propertyBuilder = new MapEntryApiImpl(this, name, objectType);
 		entries.add(propertyBuilder);
-		
+		return propertyBuilder;		
+	}
+
+	@Override
+	public MapEntryApi mapCollection(String name, Class<?> collectionType, Class<?> componentType) {
+		final MapEntryApiImpl propertyBuilder = new MapEntryApiImpl(this, name, collectionType, componentType);
+		entries.add(propertyBuilder);
 		return propertyBuilder;
+	}
+
+	@Override
+	public MapEntryApi mapReference(String name, Class<?> projectionType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public MapEntryApi mapReference(String name, String projectionName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public MapEntryApi mapReference(String name, Class<?> collectionType, Class<?> projectionType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public MapEntryApi mapReference(String name, Class<?> collectionType, String projectionName) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	@Override

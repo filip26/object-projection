@@ -35,6 +35,10 @@ public final class ProjectionExtractorImpl<P> implements ProjectionExtractor<P> 
 	}
 
 	public static <P> ProjectionExtractor<P> newInstance(final String projectionName, final PropertyReader[] readers) {
+		if (readers == null || readers.length == 0) {
+			return null;
+		}
+		
 		return new ProjectionExtractorImpl<>(projectionName, readers);
 	}
 

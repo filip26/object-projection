@@ -34,7 +34,10 @@ abstract class AbstractProjection<P> implements Projection<P> {
 	 */
 	@Override
 	public final P compose(Object... objects) throws ProjectionError {
-		return composer.compose(ProjectionStack.create(), CompositionContext.of(objects));
+		return composer != null 
+					? composer.compose(ProjectionStack.create(), CompositionContext.of(objects))
+					: null
+					;
 	}
 
 	/**
@@ -43,11 +46,19 @@ abstract class AbstractProjection<P> implements Projection<P> {
 	 */
 	@Override
 	public final <S> S extract(P projection, Class<S> objectType) throws ProjectionError {
+		if (extractor == null) {
+			return null;
+		}
+		
 		return extract(projection, null, objectType);
 	}
 	
 	@Override
 	public final <S> S extract(P projection, String qualifier, Class<S> objectType) throws ProjectionError {
+
+		if (extractor == null) {
+			return null;
+		}
 
 		if (projection == null || objectType == null) {
 			throw new IllegalArgumentException();
@@ -65,6 +76,11 @@ abstract class AbstractProjection<P> implements Projection<P> {
 
 	@Override
 	public final <I> Collection<I> extractCollection(P projection, Class<I> componentType) throws ProjectionError {
+		
+		if (extractor == null) {
+			return null;
+		}
+
 		return extractCollection(projection, null, componentType); 
 	}
 	
@@ -72,6 +88,10 @@ abstract class AbstractProjection<P> implements Projection<P> {
 	@SuppressWarnings("unchecked")
 	public final <I> Collection<I> extractCollection(P projection, String qualifier, Class<I> componentType) throws ProjectionError {
 		
+		if (extractor == null) {
+			return null;
+		}
+
 		if (projection == null || componentType == null) {
 			throw new IllegalArgumentException();
 		}

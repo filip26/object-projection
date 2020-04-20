@@ -14,7 +14,6 @@ import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.api.LambdaConversionApi;
 import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.api.impl.LambdaConversionApiImpl;
-import com.apicatalog.projection.api.map.MapEntryApi;
 import com.apicatalog.projection.api.map.MapProjectionApi;
 import com.apicatalog.projection.api.map.MapSingleSourceApi;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
@@ -32,9 +31,7 @@ import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.property.source.SourceReader;
 
-public final class MapSingleSourceApiImpl extends AbstractValueProviderApi<Map<String, Object>> implements MapSingleSourceApi {
-	
-	final MapProjectionApi projectionBuilder;
+public final class MapSingleSourceApiImpl extends AbstractValueProviderApi implements MapSingleSourceApi {
 	
 	final SingleSourceReaderBuilder sourceReaderBuilder;
 	final SingleSourceWriterBuilder sourceWriterBuilder;
@@ -50,7 +47,7 @@ public final class MapSingleSourceApiImpl extends AbstractValueProviderApi<Map<S
 	boolean targetReference;
 	
 	protected MapSingleSourceApiImpl(final MapProjectionApi projectionBuilder, final Class<?> sourceObjectClass, final String sourcePropertyName) {
-		this.projectionBuilder = projectionBuilder;
+		super(projectionBuilder);
 		
 		this.sourceReaderBuilder = SingleSourceReaderBuilder.newInstance().objectClass(sourceObjectClass);
 		this.sourceWriterBuilder = SingleSourceWriterBuilder.newInstance().objectClass(sourceObjectClass);
@@ -105,16 +102,6 @@ public final class MapSingleSourceApiImpl extends AbstractValueProviderApi<Map<S
 		return this;
 	}
 	
-	@Override
-	public MapEntryApi map(final String name, final Class<?> type) {
-		return projectionBuilder.map(name, type, null);
-	}
-
-	@Override
-	public MapEntryApi map(final String name, final Class<?> type, final Class<?> componentType) {
-		return projectionBuilder.map(name, type, componentType);
-	}
-
 	@Override
 	public MapSingleSourceApi conversion(final Class<? extends Converter<?, ?>> converter, final String...params) {
 		conversions.add(ConversionMappingBuilder.newInstance().converter(converter).parameters(params));

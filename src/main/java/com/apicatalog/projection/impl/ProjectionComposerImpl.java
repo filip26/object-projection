@@ -40,6 +40,10 @@ public final class ProjectionComposerImpl<P> implements ProjectionComposer<P> {
 	}
 	
 	public static final <A> ProjectionComposer<A> newInstance(final String projectionName, final Class<A> projectionType, final PropertyWriter[] writers) {
+		if (writers == null || writers.length == 0) {
+			return null;
+		}
+		
 		return new ProjectionComposerImpl<>(projectionName, projectionType, writers);
 	}
 	

@@ -6,8 +6,28 @@ import com.apicatalog.projection.api.BuilderApi;
 
 public interface MapProjectionApi extends BuilderApi<Map<String, Object>> {
 
-	MapEntryApi map(String name, Class<?> type);
+	MapEntryApi mapString(String name);
 	
-	MapEntryApi map(String name, Class<?> type, Class<?> componentType);
+	MapEntryApi mapInteger(String name);
 	
+	MapEntryApi mapLong(String name);
+
+	MapEntryApi mapFloat(String name);
+	
+	MapEntryApi mapDouble(String name);
+	
+	MapEntryApi mapBoolean(String name);
+	
+	MapEntryApi mapObject(String name, Class<?> objectType);
+	
+	MapEntryApi mapCollection(String name, Class<?> collectionType, Class<?> componentType);
+	
+	MapEntryApi mapReference(String name, Class<?> projectionType);
+	
+	MapEntryApi mapReference(String name, String projectionName);
+	
+	MapEntryApi mapReference(String name, Class<?> collectionType, Class<?> projectionType);
+	
+	MapEntryApi mapReference(String name, Class<?> collectionType, String projectionName);
+
 }

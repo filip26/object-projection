@@ -1,6 +1,5 @@
 package com.apicatalog.projection.api.map.impl;
 
-import java.util.Map;
 import java.util.Optional;
 
 import com.apicatalog.projection.ProjectionRegistry;
@@ -12,9 +11,7 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
-public class MapConstantPropertyApi extends AbstractValueProviderApi<Map<String, Object>> {
-	
-	final MapProjectionApi projectionBuilder;
+public class MapConstantPropertyApi extends AbstractValueProviderApi {
 	
 	final String[] constants; 
 	
@@ -23,30 +20,30 @@ public class MapConstantPropertyApi extends AbstractValueProviderApi<Map<String,
 	boolean targetReference;
 
 	protected MapConstantPropertyApi(final MapProjectionApi projectionBuilder, String[] constants) {
-		this.projectionBuilder = projectionBuilder;
+		super(projectionBuilder);
 		this.constants = constants;
 	}
 	
 	@Override
-	public AbstractValueProviderApi<Map<String, Object>> targetGetter(Getter targetGetter) {
+	protected AbstractValueProviderApi targetGetter(Getter targetGetter) {
 		return this;
 	}
 
 	@Override
-	public AbstractValueProviderApi<Map<String, Object>> targetReference(boolean targetReference) {
+	protected AbstractValueProviderApi targetReference(boolean targetReference) {
 		this.targetReference = targetReference;
 		return this;
 	}
 
 	@Override
-	public Optional<PropertyReader> buildyReader(ProjectionRegistry registry) {
-		return Optional.empty();
+	protected AbstractValueProviderApi targetSetter(Setter targetSetter) {
+		this.targetSetter = targetSetter;
+		return this;
 	}
 
 	@Override
-	protected AbstractValueProviderApi<Map<String, Object>> targetSetter(Setter targetSetter) {
-		this.targetSetter = targetSetter;
-		return this;
+	protected Optional<PropertyReader> buildyReader(ProjectionRegistry registry) {
+		return Optional.empty();
 	}
 
 	@Override
@@ -58,6 +55,4 @@ public class MapConstantPropertyApi extends AbstractValueProviderApi<Map<String,
 					.map(PropertyWriter.class::cast)
 					;
 	}
-
-	
 }

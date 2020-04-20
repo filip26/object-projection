@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionBuilderError;
@@ -15,6 +16,7 @@ import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.objects.ObjectsCollection;
 import com.apicatalog.projection.projections.NameOverrideTo;
 import com.apicatalog.projection.projections.RefCollectionTo;
+import com.apicatalog.projection.source.SourceType;
 
 public class RefCollectionTest {
 
@@ -50,7 +52,33 @@ public class RefCollectionTest {
     	Assert.assertEquals(oa.booleanValue, pa.projectedBoolean);
     	Assert.assertEquals(oa.doubleValue, pa.projectedDouble);
     }
+
+    @Test
+    public void testComposerSources() throws ProjectionError, ConverterError {
+    	
+    	Projection<RefCollectionTo> projection = projections.get(RefCollectionTo.class);
+    	
+    	Assert.assertNotNull(projection);
+    	Assert.assertNotNull(projection.getComposer());    	
+    	Assert.assertNotNull(projection.getComposer().getSourceTypes());
+    	
+    	Assert.assertEquals(1, projection.getComposer().getSourceTypes().size());
+    	Assert.assertTrue(projection.getComposer().getSourceTypes().contains(SourceType.of(ObjectsCollection.class)));
+    }
     
+    @Test
+    public void testComposerDependencies() throws ProjectionError, ConverterError {
+    	
+    	Projection<RefCollectionTo> projection = projections.get(RefCollectionTo.class);
+    	
+    	Assert.assertNotNull(projection);
+    	Assert.assertNotNull(projection.getComposer());    	
+    	Assert.assertNotNull(projection.getComposer().getDependencies());
+    	
+    	Assert.assertEquals(1, projection.getComposer().getDependencies().size());
+    	Assert.assertTrue(projection.getComposer().getDependencies().contains(NameOverrideTo.class.getCanonicalName()));
+    }
+
     @Test
     public void testExtract() throws ProjectionError, ConverterError {
     	
@@ -86,4 +114,31 @@ public class RefCollectionTest {
     	Assert.assertEquals(to3.projectedString, oa2.stringValue);
     			
     }
+    
+    @Test
+    public void testExtractorSources() throws ProjectionError, ConverterError {
+    	
+    	Projection<RefCollectionTo> projection = projections.get(RefCollectionTo.class);
+    	
+    	Assert.assertNotNull(projection);
+    	Assert.assertNotNull(projection.getExtractor());    	
+    	Assert.assertNotNull(projection.getExtractor().getSourceTypes());
+    	
+    	Assert.assertEquals(1, projection.getExtractor().getSourceTypes().size());
+    	Assert.assertTrue(projection.getExtractor().getSourceTypes().contains(SourceType.of(ObjectsCollection.class)));
+    }
+
+    @Test
+    public void testExtractorDependencies() throws ProjectionError, ConverterError {
+    	
+    	Projection<RefCollectionTo> projection = projections.get(RefCollectionTo.class);
+    	
+    	Assert.assertNotNull(projection);
+    	Assert.assertNotNull(projection.getExtractor());    	
+    	Assert.assertNotNull(projection.getExtractor().getDependencies());
+    	
+    	Assert.assertEquals(1, projection.getExtractor().getDependencies().size());
+    	Assert.assertTrue(projection.getExtractor().getDependencies().contains(NameOverrideTo.class.getCanonicalName()));
+    }
+
 }
