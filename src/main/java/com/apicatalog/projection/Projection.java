@@ -33,6 +33,10 @@ public interface Projection<P> {
 		return ProjectionApiImpl.bind(projectionType);
 	}
 	
+	static MapProjectionApi hashMap() {
+		return hashMap(null);
+	}
+	
 	static MapProjectionApi hashMap(final String name) {
 		return MapProjectionApiImpl.hashMap(name);
 	}

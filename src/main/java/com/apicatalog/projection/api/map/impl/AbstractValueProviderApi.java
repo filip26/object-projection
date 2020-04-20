@@ -10,7 +10,7 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
-public abstract class AbstractValueProviderApi extends MapProjectionApiWrapper {
+abstract class AbstractValueProviderApi extends MapProjectionApiWrapper {
 
 	protected AbstractValueProviderApi(MapProjectionApi projectionBuilder) {
 		super(projectionBuilder);

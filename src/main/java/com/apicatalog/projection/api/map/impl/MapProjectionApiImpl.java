@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionBuilderError;
@@ -17,10 +19,10 @@ public final class MapProjectionApiImpl implements MapProjectionApi {
 	
 	final List<MapEntryApiImpl> entries;
 	
-	final String name;
+	final String projectionName;
 	
-	protected MapProjectionApiImpl(final String name) {
-		this.name = name;
+	protected MapProjectionApiImpl(final String projectionName) {
+		this.projectionName = projectionName;
 		this.entries = new ArrayList<>();
 	}
 	
@@ -74,8 +76,7 @@ public final class MapProjectionApiImpl implements MapProjectionApi {
 
 	@Override
 	public MapEntryApi mapReference(String name, Class<?> projectionType) {
-		// TODO Auto-generated method stub
-		return null;
+		return mapReference(name, projectionType.getCanonicalName());
 	}
 
 	@Override
@@ -86,8 +87,7 @@ public final class MapProjectionApiImpl implements MapProjectionApi {
 
 	@Override
 	public MapEntryApi mapReference(String name, Class<?> collectionType, Class<?> projectionType) {
-		// TODO Auto-generated method stub
-		return null;
+		return mapReference(name, collectionType, projectionType.getCanonicalName());
 	}
 
 	@Override
@@ -118,12 +118,14 @@ public final class MapProjectionApiImpl implements MapProjectionApi {
 		
 		final Projection<Map<String, Object>> projection = 
 					MapProjection.newInstance(
-									name,
+									projectionName,
 									readers.toArray(new PropertyReader[0]), 
 									writers.toArray(new PropertyWriter[0])
 									);
 
-		factory.register(projection);
+		if (StringUtils.isNotBlank(projectionName)) {
+			factory.register(projection);
+		}
 		
 		return projection;
 	}

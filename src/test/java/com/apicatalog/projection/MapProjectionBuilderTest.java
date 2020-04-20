@@ -15,7 +15,7 @@ public class MapProjectionBuilderTest {
 	public void test1c() throws ProjectionBuilderError, ProjectionError {
 		final Projection<Map<String, Object>> projection = 
 				Projection
-					.hashMap("p1")
+					.hashMap()
 						.mapString("s1").source(SimpleObject.class)
 						.mapInteger("i1").source(SimpleObject.class)
 					
@@ -40,7 +40,7 @@ public class MapProjectionBuilderTest {
 		
 		final Projection<Map<String, Object>> projection = 
 				Projection
-					.hashMap("p1")					
+					.hashMap()					
 						.mapInteger("i1").source(SimpleObject.class)
 						.mapString("s1").source(SimpleObject.class)
 						
@@ -63,7 +63,7 @@ public class MapProjectionBuilderTest {
 	public void test2c() throws ProjectionBuilderError, ProjectionError {
 		final Projection<Map<String, Object>> projection = 
 				Projection
-					.hashMap("p1")
+					.hashMap()
 						.mapString("s1").source(SimpleObject.class, "i1")
 						.mapInteger("i1").source(SimpleObject.class, "s1")
 					
@@ -87,7 +87,7 @@ public class MapProjectionBuilderTest {
 		
 		final Projection<Map<String, Object>> projection = 
 				Projection
-					.hashMap("p1")					
+					.hashMap()					
 						.mapInteger("i1").source(SimpleObject.class, "s1")
 						.mapString("s1").source(SimpleObject.class, "i1")
 						
@@ -127,7 +127,7 @@ public class MapProjectionBuilderTest {
 	public void test3e() throws ProjectionBuilderError, ProjectionError {
 		final Projection<Map<String, Object>> projection = 
 				Projection
-					.hashMap("p1")
+					.hashMap()
 						.mapInteger("i1").constant("12345")
 					
 						.build(ProjectionRegistry.newInstance());
@@ -144,21 +144,23 @@ public class MapProjectionBuilderTest {
 		Assert.assertNull(projection.getExtractor());
 	}
 
-//	@Test
-//	public void test4c() throws ProjectionBuilderError, ProjectionError {
-//		final Projection<Map<String, Object>> projection = 
-//				Projection
-//					.hashMap()
-//						.reference("ref", BasicTypesTo.class).provided();
-//					
-//						.build(ProjectionRegistry.newInstance());
-//		
-//		Assert.assertNotNull(projection);
-//
-//		Map<String, Object> map = projection.compose();
-//		
-//		Assert.assertNotNull(map);;
-//		Assert.assertEquals(12345, map.get("i1"));
-//	}
+	@Test
+	public void test4c() throws ProjectionBuilderError, ProjectionError {
+		final Projection<Map<String, Object>> projection = 
+				Projection
+					.hashMap()
+						.mapFloat("f").provided()
+						.mapBoolean("b").provided()
+					
+						.build(ProjectionRegistry.newInstance());
+		
+		Assert.assertNotNull(projection);
+
+		Map<String, Object> map = projection.compose(12.34f, true);
+		
+		Assert.assertNotNull(map);;
+		Assert.assertEquals(12.34f, map.get("f"));
+		Assert.assertTrue((boolean) map.get("b"));
+	}
 
 }

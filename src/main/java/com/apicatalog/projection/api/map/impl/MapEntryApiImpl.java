@@ -100,14 +100,14 @@ public final class MapEntryApiImpl extends MapProjectionApiWrapper implements Ma
 			logger.trace("provided({})", qualifier);
 		}
 		
-//		final ProvidedApiImpl<P> providedPropertyApi = 
-//				new ProvidedApiImpl<>(projectionBuilder, StringUtils.isNotBlank(qualifier) ? qualifier : null)
+		final MapProvidedApiImpl providedPropertyApi = 
+				new MapProvidedApiImpl(projectionBuilder, StringUtils.isNotBlank(qualifier) ? qualifier : null)
 //						.targetReference(targetReference);
+					;
 //		
-//		this.valueProvider = providedPropertyApi;
+		this.valueProvider = providedPropertyApi;
 //		
-//		return providedPropertyApi;
-		return null;
+		return providedPropertyApi;
 	}
 
 	@Override
@@ -119,7 +119,7 @@ public final class MapEntryApiImpl extends MapProjectionApiWrapper implements Ma
 		
 		this.valueProvider = 
 				new MapConstantPropertyApi(projectionBuilder, values)
-						.targetReference(false);	//targetReference);
+						.targetReference(false);
 		
 		return projectionBuilder;
 	}

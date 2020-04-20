@@ -9,7 +9,7 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
-public abstract class AbstractValueProviderApi<P> {
+abstract class AbstractValueProviderApi<P> {
 
 	protected abstract AbstractValueProviderApi<P> targetGetter(Getter targetGetter);
 	
