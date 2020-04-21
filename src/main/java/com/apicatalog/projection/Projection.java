@@ -1,6 +1,7 @@
 package com.apicatalog.projection;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import com.apicatalog.projection.api.BuilderApi;
 import com.apicatalog.projection.api.ProjectionBuilderError;
@@ -13,21 +14,21 @@ public interface Projection<P> {
 
 	P compose(Object... objects) throws ProjectionError;
 	
-	<S> S extract(P projection, Class<S> objectType) throws ProjectionError;
+	<S> Optional<S> extract(P projection, Class<S> objectType) throws ProjectionError;
 	
-	<S> S extract(P projection, String qualifier, Class<S> objectType) throws ProjectionError;
+	<S> Optional<S> extract(P projection, String qualifier, Class<S> objectType) throws ProjectionError;
 	
-	<I> Collection<I> extractCollection(P projection, Class<I> componentType) throws ProjectionError;
+	<I> Optional<Collection<I>> extractCollection(P projection, Class<I> componentType) throws ProjectionError;
 	
-	<I> Collection<I> extractCollection(P projection, String qualifier, Class<I> componentType) throws ProjectionError;
+	<I> Optional<Collection<I>> extractCollection(P projection, String qualifier, Class<I> componentType) throws ProjectionError;
 
-	String getName();
+	Optional<String> getName();
 	
 	Class<?> getType();
 	
-	ProjectionComposer<P> getComposer();
+	Optional<ProjectionComposer<P>> getComposer();
 	
-	ProjectionExtractor<P> getExtractor();
+	Optional<ProjectionExtractor<P>> getExtractor();
 	
 	static <P> ObjectProjectionApi<P> bind(Class<P> projectionType) {
 		return ProjectionApiImpl.bind(projectionType);

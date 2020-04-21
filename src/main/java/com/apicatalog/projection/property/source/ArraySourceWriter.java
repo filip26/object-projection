@@ -63,7 +63,7 @@ public final class ArraySourceWriter implements SourceWriter {
 			
 			for (int i = 0; i < sources.length; i++) {
 				
-				if (sourceObjects[i] == null) {
+				if (i >= sourceObjects.length || sourceObjects[i] == null) {
 					continue;
 				}
 				

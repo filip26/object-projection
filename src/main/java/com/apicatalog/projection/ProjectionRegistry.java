@@ -47,14 +47,15 @@ public final class ProjectionRegistry {
 			throw new IllegalArgumentException();
 		}
 		
-		final String projectionName = projection.getName();
+		final Optional<String> name = projection.getName();
 		
-		index.put(projectionName, projection);
-		
-		if (consumers.containsKey(projectionName)) {
-			consumers.remove(projectionName).forEach(c -> c.accept(projection));
+		if (name.isPresent()) {
+			index.put(name.get(), projection);
+			if (consumers.containsKey(name.get())) {
+				consumers.remove(name.get()).forEach(c -> c.accept(projection));
+			}
 		}
-
+		
 		return this;
 	}
 

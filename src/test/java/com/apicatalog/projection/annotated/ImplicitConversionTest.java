@@ -80,7 +80,7 @@ public class ImplicitConversionTest {
     	projection.doubleValue = 1.23d;
     	projection.stringCollection = Arrays.asList("1 item", "2 item", "3 item");
 
-    	BasicTypes object = projections.get(ImplicitConversionTo.class).extract(projection, BasicTypes.class);
+    	BasicTypes object = projections.get(ImplicitConversionTo.class).extract(projection, BasicTypes.class).orElse(null);
     	Assert.assertNotNull(object);
     	
     	Assert.assertEquals("1.23", object.stringValue);
@@ -115,7 +115,7 @@ public class ImplicitConversionTest {
     	UriTo to = new UriTo();
 		to.uri = "https://example.org/a/b/c";
     	
-    	UriObject object = projections.get(UriTo.class).extract(to, UriObject.class);
+    	UriObject object = projections.get(UriTo.class).extract(to, UriObject.class).orElse(null);
     	
     	Assert.assertNotNull(object);
     	Assert.assertEquals(UriObject.class, object.getClass());

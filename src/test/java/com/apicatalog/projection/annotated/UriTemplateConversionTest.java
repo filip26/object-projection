@@ -43,10 +43,10 @@ public class UriTemplateConversionTest {
     	UriTemplateConversion to = new UriTemplateConversion();
     	to.href = "https://www.example.org/123456/ABC";
     	
-    	BasicTypes object1 = projections.get(UriTemplateConversion.class).extract(to, BasicTypes.class);
+    	BasicTypes object1 = projections.get(UriTemplateConversion.class).extract(to, BasicTypes.class).orElse(null);
 		checkBasic(object1, 123456l);
 		
-    	Reference object2 = projections.get(UriTemplateConversion.class).extract(to, Reference.class);    	
+    	Reference object2 = projections.get(UriTemplateConversion.class).extract(to, Reference.class).orElse(null);
 		checkReference(object2, "ABC");
     }
     

@@ -1,5 +1,6 @@
 package com.apicatalog.projection;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -55,7 +56,7 @@ public class MapProjectionBuilderTest {
 		map.put("i1", 443546356);
 		map.put("s1", "string-1");
 				
-		SimpleObject object1 = projection.extract(map, SimpleObject.class);
+		SimpleObject object1 = projection.extract(map, SimpleObject.class).orElse(null);
 		
 		Assert.assertNotNull(object1);
 		Assert.assertEquals(map.get("i1"), object1.i1);
@@ -102,7 +103,7 @@ public class MapProjectionBuilderTest {
 		map.put("i1", 443546356);
 		map.put("s1", "3674787");
 				
-		SimpleObject object1 = projection.extract(map, SimpleObject.class);
+		SimpleObject object1 = projection.extract(map, SimpleObject.class).orElse(null);
 		
 		Assert.assertNotNull(object1);
 		Assert.assertEquals(Integer.valueOf((String)map.get("s1")), object1.i1);
@@ -140,11 +141,11 @@ public class MapProjectionBuilderTest {
 		Map<String, Object> to = new HashMap<>();
 		to.put("i1", 443546356);
 
-		Long i = projection.extract(to, Long.class);
+		Long i = projection.extract(to, Long.class).orElse(null);
 		
 		Assert.assertNull(i);
 
-		Assert.assertNull(projection.getExtractor());
+		Assert.assertTrue(projection.getExtractor().isEmpty());
 	}
 
 	@Test
@@ -185,11 +186,11 @@ public class MapProjectionBuilderTest {
 		map.put("b2", Boolean.TRUE);
 		map.put("b1", Boolean.FALSE);
 
-		Boolean b1 = projection.extract(map, Boolean.class);
+		Boolean b1 = projection.extract(map, Boolean.class).orElse(null);
 		Assert.assertNotNull(b1);
 		Assert.assertFalse(b1);
 		
-		Boolean b2 = projection.extract(map, "b2", Boolean.class);
+		Boolean b2 = projection.extract(map, "b2", Boolean.class).orElse(null);
 		Assert.assertNotNull(b2);;
 		Assert.assertTrue(b2);
 	}
@@ -229,4 +230,31 @@ public class MapProjectionBuilderTest {
 		Assert.assertEquals(o1.i1.toString(), it.next());
 	}
 
+	@Test
+	public void test5e() throws ProjectionBuilderError, ProjectionError {
+		final Projection<Map<String, Object>> projection = 
+				Projection
+					.hashMap()
+						.mapCollection("s", Collection.class, String.class)
+							.sources()
+								.source(SimpleObject.class, "s1")
+								.source(SimpleObject.class, "i1")
+					
+						.build(ProjectionRegistry.newInstance());
+		
+		Assert.assertNotNull(projection);
+
+		Map<String, Object> map = new HashMap<>();
+		ArrayList<String> list = new ArrayList<>();
+		list.add("abcdef");
+		list.add("123456");
+		map.put("s",list);
+		
+		SimpleObject o1 = projection.extract(map, SimpleObject.class).orElse(null);
+		
+		Assert.assertNotNull(o1);
+		
+		Assert.assertEquals(Integer.valueOf(123456), o1.i1);
+		Assert.assertEquals("abcdef", o1.s1);
+	}
 }

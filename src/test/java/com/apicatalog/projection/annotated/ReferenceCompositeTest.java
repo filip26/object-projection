@@ -59,7 +59,7 @@ public class ReferenceCompositeTest {
     	ReferenceTo projection2 = new ReferenceTo();
     	projection2.ref = projection1;
 
-    	Reference object = projections.get(ReferenceTo.class).extract(projection2, Reference.class);
+    	Reference object = projections.get(ReferenceTo.class).extract(projection2, Reference.class).orElse(null);
     	
     	Assert.assertNotNull(object);
 

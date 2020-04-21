@@ -1,6 +1,7 @@
 package com.apicatalog.projection.impl;
 
 import java.util.Map;
+import java.util.Optional;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionComposer;
@@ -27,8 +28,8 @@ public final class MapProjection extends AbstractProjection<Map<String, Object>>
 	}
 
 	@Override
-	public final String getName() {
-		return name;
+	public final Optional<String> getName() {
+		return Optional.ofNullable(name);
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package com.apicatalog.projection;
 
 import java.net.URI;
+import java.util.Optional;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -47,21 +48,21 @@ public class ObjectProjectionBuilderTest {
 		Assert.assertEquals(object1.i1, to.i1);
 		Assert.assertEquals(object1.s1, to.s1);
 		
-		Assert.assertNotNull(projection.getComposer());
-		Assert.assertNotNull(projection.getComposer().getSourceTypes());
-		Assert.assertEquals(1, projection.getComposer().getSourceTypes().size());
-		Assert.assertEquals(SourceType.of(SimpleObject.class), projection.getComposer().getSourceTypes().iterator().next());
+		Assert.assertTrue(projection.getComposer().isPresent());
+		Assert.assertNotNull(projection.getComposer().get().getSourceTypes());
+		Assert.assertEquals(1, projection.getComposer().get().getSourceTypes().size());
+		Assert.assertEquals(SourceType.of(SimpleObject.class), projection.getComposer().get().getSourceTypes().iterator().next());
 		
-		Assert.assertNotNull(projection.getComposer().getDependencies());
-		Assert.assertEquals(0, projection.getComposer().getDependencies().size());
+		Assert.assertNotNull(projection.getComposer().get().getDependencies());
+		Assert.assertEquals(0, projection.getComposer().get().getDependencies().size());
 		
-		Assert.assertNotNull(projection.getExtractor());
-		Assert.assertNotNull(projection.getExtractor().getSourceTypes());
-		Assert.assertEquals(1, projection.getExtractor().getSourceTypes().size());
-		Assert.assertEquals(SourceType.of(SimpleObject.class), projection.getExtractor().getSourceTypes().iterator().next());
+		Assert.assertTrue(projection.getExtractor().isPresent());
+		Assert.assertNotNull(projection.getExtractor().get().getSourceTypes());
+		Assert.assertEquals(1, projection.getExtractor().get().getSourceTypes().size());
+		Assert.assertEquals(SourceType.of(SimpleObject.class), projection.getExtractor().get().getSourceTypes().iterator().next());
 
-		Assert.assertNotNull(projection.getExtractor().getDependencies());
-		Assert.assertEquals(0, projection.getExtractor().getDependencies().size());
+		Assert.assertNotNull(projection.getExtractor().get().getDependencies());
+		Assert.assertEquals(0, projection.getExtractor().get().getDependencies().size());
 	}
 
 	@Test
@@ -81,11 +82,11 @@ public class ObjectProjectionBuilderTest {
 		to.i1 = 443546356;
 		to.s1 = "string-1";
 				
-		SimpleObject object1 = projection.extract(to, SimpleObject.class);
+		Optional<SimpleObject> object1 = projection.extract(to, SimpleObject.class);
 		
-		Assert.assertNotNull(object1);
-		Assert.assertEquals(to.i1, object1.i1);
-		Assert.assertEquals(to.s1, object1.s1);
+		Assert.assertTrue(object1.isPresent());
+		Assert.assertEquals(to.i1, object1.get().i1);
+		Assert.assertEquals(to.s1, object1.get().s1);
 	}
 	@Test
 	public void test2c() throws ProjectionBuilderError, ProjectionError {
@@ -128,11 +129,11 @@ public class ObjectProjectionBuilderTest {
 		to.i1 = 443546356;
 		to.s1 = "57566735";
 		
-		SimpleObject object1 = projection.extract(to, SimpleObject.class);
+		Optional<SimpleObject> object1 = projection.extract(to, SimpleObject.class);
 		
-		Assert.assertNotNull(object1);
-		Assert.assertEquals(Integer.valueOf(to.s1), object1.i1);
-		Assert.assertEquals(String.valueOf(to.i1), object1.s1);
+		Assert.assertTrue(object1.isPresent());
+		Assert.assertEquals(Integer.valueOf(to.s1), object1.get().i1);
+		Assert.assertEquals(String.valueOf(to.i1), object1.get().s1);
 	}
 
 	@Test
@@ -266,13 +267,13 @@ public class ObjectProjectionBuilderTest {
 		
 		to1.object2 = to2;
 		
-		Object1 object1 = projection1.extract(to1, Object1.class);
+		Optional<Object1> object1 = projection1.extract(to1, Object1.class);
 		
-		Assert.assertNotNull(object1);;
-		Assert.assertEquals(to1.id, object1.id);
+		Assert.assertTrue(object1.isPresent());
+		Assert.assertEquals(to1.id, object1.get().id);
 		
-		Assert.assertNotNull(object1.object2);
-		Assert.assertEquals(to2.id, object1.object2.id);		
+		Assert.assertNotNull(object1.get().object2);
+		Assert.assertEquals(to2.id, object1.get().object2.id);		
 	}
 	@Test
 	public void test5c2() throws ProjectionBuilderError, ProjectionError {
@@ -558,11 +559,13 @@ public class ObjectProjectionBuilderTest {
 		to2.id = "3GFD42EE7";
 		to.object2  = to2;
 		
-		String id = registry.get(Object1To.class).extract(to, "id", String.class);
-		Assert.assertEquals(to.id, id);
+		Optional<String> id = registry.get(Object1To.class).extract(to, "id", String.class);		
+		Assert.assertTrue(id.isPresent());
+		Assert.assertEquals(to.id, id.get());
 
-		String id2 = registry.get(Object1To.class).extract(to, "obj2.id", String.class);
-		Assert.assertEquals(to2.id, id2);	
+		Optional<String> id2 = registry.get(Object1To.class).extract(to, "obj2.id", String.class);
+		Assert.assertTrue(id2.isPresent());
+		Assert.assertEquals(to2.id, id2.get());	
 	}
 	
 	@Test

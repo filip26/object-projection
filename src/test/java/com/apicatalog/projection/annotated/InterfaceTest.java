@@ -41,7 +41,7 @@ public class InterfaceTest {
     	Interface1To to = new Interface1To();
     	to.id = 951846237l;
     	
-    	Interface1 object  = projection.extract(to, Interface1Impl.class);
+    	Interface1 object  = projection.extract(to, Interface1Impl.class).orElse(null);
     	
     	Assert.assertNotNull(object);
     	Assert.assertEquals(Long.toString(to.id), object.getId());

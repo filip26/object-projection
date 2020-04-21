@@ -1,5 +1,7 @@
 package com.apicatalog.projection.impl;
 
+import java.util.Optional;
+
 import com.apicatalog.projection.ProjectionComposer;
 import com.apicatalog.projection.ProjectionExtractor;
 import com.apicatalog.projection.property.PropertyReader;
@@ -22,8 +24,8 @@ public final class ObjectProjection<P> extends AbstractProjection<P> {
 						);
 	}
 
-	public final String getName() {
-		return projectionClass.getCanonicalName();
+	public final Optional<String> getName() {
+		return Optional.of(projectionClass.getCanonicalName());
 	}
 
 	@Override

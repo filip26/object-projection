@@ -42,7 +42,7 @@ public class PrefixMappingTest {
     	PrefixTo projection = new PrefixTo();
     	projection.id = "At the beginning of the New World";
     	
-    	Object1 object = projections.get(PrefixTo.class).extract(projection, Object1.class);
+    	Object1 object = projections.get(PrefixTo.class).extract(projection, Object1.class).orElse(null);
     	
     	Assert.assertNotNull(object);
     	

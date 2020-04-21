@@ -1,7 +1,7 @@
 package com.apicatalog.projection.impl;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,19 +46,19 @@ abstract class AbstractProjection<P> implements Projection<P> {
 	 *
 	 */
 	@Override
-	public final <S> S extract(P projection, Class<S> objectType) throws ProjectionError {
+	public final <S> Optional<S> extract(P projection, Class<S> objectType) throws ProjectionError {
 		if (extractor == null) {
-			return null;
+			return Optional.empty();
 		}
 		
 		return extract(projection, null, objectType);
 	}
 	
 	@Override
-	public final <S> S extract(P projection, String qualifier, Class<S> objectType) throws ProjectionError {
+	public final <S> Optional<S> extract(P projection, String qualifier, Class<S> objectType) throws ProjectionError {
 
 		if (extractor == null) {
-			return null;
+			return Optional.empty();
 		}
 
 		if (projection == null || objectType == null) {
@@ -72,25 +72,24 @@ abstract class AbstractProjection<P> implements Projection<P> {
 		
 		extractor.extract(projection, context);
 
-		return context.get(qualifier, objectType, null).map(objectType::cast).orElse(null);
+		return context.get(qualifier, objectType, null).map(objectType::cast);
 	}
 
 	@Override
-	public final <I> Collection<I> extractCollection(P projection, Class<I> componentType) throws ProjectionError {
+	public final <I> Optional<Collection<I>> extractCollection(P projection, Class<I> componentType) throws ProjectionError {
 		
 		if (extractor == null) {
-			return Collections.emptyList();
+			return Optional.empty();
 		}
 
 		return extractCollection(projection, null, componentType); 
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
-	public final <I> Collection<I> extractCollection(P projection, String qualifier, Class<I> componentType) throws ProjectionError {
+	public final <I> Optional<Collection<I>> extractCollection(P projection, String qualifier, Class<I> componentType) throws ProjectionError {
 		
 		if (extractor == null) {
-			return Collections.emptyList();
+			return Optional.empty();
 		}
 
 		if (projection == null || componentType == null) {
@@ -102,16 +101,16 @@ abstract class AbstractProjection<P> implements Projection<P> {
 		
 		extractor.extract(projection, context);
 	
-		return (Collection<I>) context.get(qualifier, Collection.class, componentType).orElse(null);
+		return context.get(qualifier, Collection.class, componentType).map(Collection.class::cast);
 	}
 
 	@Override
-	public final ProjectionComposer<P> getComposer() {
-		return composer;
+	public final Optional<ProjectionComposer<P>> getComposer() {
+		return Optional.ofNullable(composer);
 	}
 
 	@Override
-	public final ProjectionExtractor<P> getExtractor() {
-		return extractor;
+	public final Optional<ProjectionExtractor<P>> getExtractor() {
+		return Optional.ofNullable(extractor);
 	}
 }

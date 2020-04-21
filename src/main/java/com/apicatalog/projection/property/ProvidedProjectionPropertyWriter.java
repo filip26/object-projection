@@ -54,7 +54,9 @@ public class ProvidedProjectionPropertyWriter implements PropertyWriter {
 		
 		Optional.ofNullable(objectQualifier).ifPresent(clonedContext::namespace);
 					
-		final Object object = projection.getComposer().compose(stack, clonedContext);
+		final Object object = projection.getComposer()
+									.orElseThrow(() -> new ProjectionError("Projection " + projectionName + " composer is not set."))
+									.compose(stack, clonedContext);
 		
 		if (object != null) {
 			targetSetter.set(stack.peek(), object);

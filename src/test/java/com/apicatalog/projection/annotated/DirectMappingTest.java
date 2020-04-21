@@ -55,7 +55,7 @@ public class DirectMappingTest {
     	to.longValue = 123456l;
     	to.stringValue = "ABCDEF";
     	
-    	BasicTypes object = projections.get(TypeObjectTo.class).extract(to, BasicTypes.class);
+    	BasicTypes object = projections.get(TypeObjectTo.class).extract(to, BasicTypes.class).orElse(null);
     	
     	Assert.assertNotNull(object);
     	

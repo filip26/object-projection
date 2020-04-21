@@ -5,7 +5,7 @@
   
 	<groupId>com.apicatalog</groupId>
 	<artifactId>object-projection</artifactId>
-	<version>0.8.10-SNAPSHOT</version>
+	<version>0.8.11-SNAPSHOT</version>
 	<packaging>jar</packaging>
   
 	<name>Object Projection</name>  
@@ -32,6 +32,14 @@
             <distribution>repo</distribution>
         </license>
     </licenses>   
+
+	<distributionManagement>
+	   <repository>
+	     <id>github</id>
+	     <name>GitHub filip26 Apache Maven Packages</name>
+	     <url>https://maven.pkg.github.com/filip26/object-projection</url>
+	   </repository>
+	</distributionManagement>
 
 	<scm>
         <connection>scm:git:git://github.com/filip26/object-projection.git</connection>

@@ -2,6 +2,7 @@ package com.apicatalog.projection.annotated;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Optional;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -59,11 +60,11 @@ public class RefCollectionTest {
     	Projection<RefCollectionTo> projection = projections.get(RefCollectionTo.class);
     	
     	Assert.assertNotNull(projection);
-    	Assert.assertNotNull(projection.getComposer());    	
-    	Assert.assertNotNull(projection.getComposer().getSourceTypes());
+    	Assert.assertTrue(projection.getComposer().isPresent());    	
+    	Assert.assertNotNull(projection.getComposer().get().getSourceTypes());
     	
-    	Assert.assertEquals(1, projection.getComposer().getSourceTypes().size());
-    	Assert.assertTrue(projection.getComposer().getSourceTypes().contains(SourceType.of(ObjectsCollection.class)));
+    	Assert.assertEquals(1, projection.getComposer().get().getSourceTypes().size());
+    	Assert.assertTrue(projection.getComposer().get().getSourceTypes().contains(SourceType.of(ObjectsCollection.class)));
     }
     
     @Test
@@ -72,11 +73,11 @@ public class RefCollectionTest {
     	Projection<RefCollectionTo> projection = projections.get(RefCollectionTo.class);
     	
     	Assert.assertNotNull(projection);
-    	Assert.assertNotNull(projection.getComposer());    	
-    	Assert.assertNotNull(projection.getComposer().getDependencies());
+    	Assert.assertTrue(projection.getComposer().isPresent());    	
+    	Assert.assertNotNull(projection.getComposer().get().getDependencies());
     	
-    	Assert.assertEquals(1, projection.getComposer().getDependencies().size());
-    	Assert.assertTrue(projection.getComposer().getDependencies().contains(NameOverrideTo.class.getCanonicalName()));
+    	Assert.assertEquals(1, projection.getComposer().get().getDependencies().size());
+    	Assert.assertTrue(projection.getComposer().get().getDependencies().contains(NameOverrideTo.class.getCanonicalName()));
     }
 
     @Test
@@ -94,13 +95,13 @@ public class RefCollectionTest {
     	to.items.add(to2);
     	to.items.add(to3);
 
-    	ObjectsCollection object = projections.get(RefCollectionTo.class).extract(to, ObjectsCollection.class);
+    	Optional<ObjectsCollection> object = projections.get(RefCollectionTo.class).extract(to, ObjectsCollection.class);
 
-    	Assert.assertNotNull(object);
-    	Assert.assertNotNull(object.items);
-    	Assert.assertEquals(2, object.items.size());
+    	Assert.assertTrue(object.isPresent());
+    	Assert.assertNotNull(object.get().items);
+    	Assert.assertEquals(2, object.get().items.size());
     	
-    	Iterator<BasicTypes> it = object.items.iterator();
+    	Iterator<BasicTypes> it = object.get().items.iterator();
     	
     	BasicTypes oa1 = it.next();
     	Assert.assertNotNull(oa1);
@@ -121,11 +122,11 @@ public class RefCollectionTest {
     	Projection<RefCollectionTo> projection = projections.get(RefCollectionTo.class);
     	
     	Assert.assertNotNull(projection);
-    	Assert.assertNotNull(projection.getExtractor());    	
-    	Assert.assertNotNull(projection.getExtractor().getSourceTypes());
+    	Assert.assertTrue(projection.getExtractor().isPresent());    	
+    	Assert.assertNotNull(projection.getExtractor().get().getSourceTypes());
     	
-    	Assert.assertEquals(1, projection.getExtractor().getSourceTypes().size());
-    	Assert.assertTrue(projection.getExtractor().getSourceTypes().contains(SourceType.of(ObjectsCollection.class)));
+    	Assert.assertEquals(1, projection.getExtractor().get().getSourceTypes().size());
+    	Assert.assertTrue(projection.getExtractor().get().getSourceTypes().contains(SourceType.of(ObjectsCollection.class)));
     }
 
     @Test
@@ -134,11 +135,11 @@ public class RefCollectionTest {
     	Projection<RefCollectionTo> projection = projections.get(RefCollectionTo.class);
     	
     	Assert.assertNotNull(projection);
-    	Assert.assertNotNull(projection.getExtractor());    	
-    	Assert.assertNotNull(projection.getExtractor().getDependencies());
+    	Assert.assertTrue(projection.getExtractor().isPresent());    	
+    	Assert.assertNotNull(projection.getExtractor().get().getDependencies());
     	
-    	Assert.assertEquals(1, projection.getExtractor().getDependencies().size());
-    	Assert.assertTrue(projection.getExtractor().getDependencies().contains(NameOverrideTo.class.getCanonicalName()));
+    	Assert.assertEquals(1, projection.getExtractor().get().getDependencies().size());
+    	Assert.assertTrue(projection.getExtractor().get().getDependencies().contains(NameOverrideTo.class.getCanonicalName()));
     }
 
 }

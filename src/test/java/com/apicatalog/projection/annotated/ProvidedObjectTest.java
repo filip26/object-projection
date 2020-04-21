@@ -58,11 +58,11 @@ public class ProvidedObjectTest {
 
     	projection.object = object2;
     	
-    	BasicTypes object1ref = projections.get(ProvidedObjectTo.class).extract(projection, BasicTypes.class);
+    	BasicTypes object1ref = projections.get(ProvidedObjectTo.class).extract(projection, BasicTypes.class).orElse(null);
     	Assert.assertNotNull(object1ref);
     	Assert.assertEquals(projection.title, object1ref.stringValue);    	
     	
-    	SimpleObject object2ref = projections.get(ProvidedObjectTo.class).extract(projection, SimpleObject.class);
+    	SimpleObject object2ref = projections.get(ProvidedObjectTo.class).extract(projection, SimpleObject.class).orElse(null);
     	Assert.assertNotNull(object2ref);
     	Assert.assertEquals(object2.i1, object2ref.i1);
     	Assert.assertEquals(object2.s1, object2ref.s1);

@@ -55,7 +55,7 @@ public class PropertyNameOverrideTest {
     	to.projectedLong = 123456l;
     	to.projectedString = "ABCDEF";
     	
-    	BasicTypes object = projection.extract(to, BasicTypes.class);
+    	BasicTypes object = projection.extract(to, BasicTypes.class).orElse(null);
     	
     	Assert.assertNotNull(object);
     	Assert.assertEquals(to.projectedString, object.stringValue);

@@ -52,7 +52,7 @@ public class ConstantTest {
     	to.stringArray = new String[] {"10", "20", "30"};
     	to.booleanCollection = Arrays.asList(false, true);
     	
-    	Object1 object = projection.extract(to, Object1.class);
+    	Object1 object = projection.extract(to, Object1.class).orElse(null);
     	
     	Assert.assertNotNull(object);
     	
@@ -68,7 +68,7 @@ public class ConstantTest {
     	to.stringArray = new String[] {"10", "20", "30"};
     	to.booleanCollection = Arrays.asList(false, true);
     	
-    	Object1 object = projection.extract(to, Object1.class);
+    	Object1 object = projection.extract(to, Object1.class).orElse(null);
 
     	Assert.assertNull(object);
     }

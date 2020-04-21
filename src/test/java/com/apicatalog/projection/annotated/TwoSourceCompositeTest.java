@@ -46,10 +46,10 @@ public class TwoSourceCompositeTest {
     	to.source1 = 123456l;
     	to.source2 = "source 2 value";
 
-    	BasicTypes object1 = projection.extract(to, BasicTypes.class);
+    	BasicTypes object1 = projection.extract(to, BasicTypes.class).orElse(null);
 		checkBasic(object1, to.source1);
 		
-    	Reference object2 = projection.extract(to, Reference.class);
+    	Reference object2 = projection.extract(to, Reference.class).orElse(null);
 		checkReference(object2, to.source2);
     }
     

@@ -58,7 +58,7 @@ public class ArrayCollectorTest {
     	to.objectArray = new Object[] { 1.234d, false, Instant.now(), new String[] { "s1", "s2", "s3" }};
     	to.stringCollection = Arrays.asList(new String[] { "951", "false" });
 
-    	BasicTypes object = projection.extract(to, BasicTypes.class);
+    	BasicTypes object = projection.extract(to, BasicTypes.class).orElse(null);
 
     	Assert.assertNotNull(object);
     	
