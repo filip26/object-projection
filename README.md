@@ -41,7 +41,7 @@ public class RecordTo {
   ...
 }
 
-Projection.of(RecordTo.class).build();
+Projection.scan(RecordTo.class).build();
 ```
 
 ```java
@@ -82,7 +82,7 @@ Projection
             .source(Item.class)
           
         .mapDouble("price");
-            .source(Item.class)
+            .source(Item.class, "totalPrice")
           
         .mapReference("details", ItemDetailsTo.class)
              .provided()
