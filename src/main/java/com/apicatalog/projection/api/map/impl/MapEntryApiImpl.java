@@ -11,7 +11,7 @@ import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.api.map.MapArraySourceApi;
 import com.apicatalog.projection.api.map.MapEntryApi;
-import com.apicatalog.projection.api.map.MapProjectionApi;
+import com.apicatalog.projection.api.map.MapProjectionBuilderApi;
 import com.apicatalog.projection.api.map.MapProvidedApi;
 import com.apicatalog.projection.api.map.MapSingleSourceApi;
 import com.apicatalog.projection.object.ObjectType;
@@ -34,11 +34,11 @@ public final class MapEntryApiImpl extends MapProjectionApiWrapper implements Ma
 	
 	AbstractValueProviderApi valueProvider;
 
-	protected MapEntryApiImpl(final MapProjectionApi projectionBuilder, final String name, final Class<?> type) {
+	protected MapEntryApiImpl(final MapProjectionBuilderApi projectionBuilder, final String name, final Class<?> type) {
 		this(projectionBuilder, name, type, null);
 	}
 	
-	protected MapEntryApiImpl(final MapProjectionApi projectionBuilder, final String name, final Class<?> collectionType, final Class<?> componentType) {
+	protected MapEntryApiImpl(final MapProjectionBuilderApi projectionBuilder, final String name, final Class<?> collectionType, final Class<?> componentType) {
 		super(projectionBuilder);
 		this.name = name;
 		this.type = collectionType;
@@ -110,7 +110,7 @@ public final class MapEntryApiImpl extends MapProjectionApiWrapper implements Ma
 	}
 
 	@Override
-	public MapProjectionApi constant(final String...values) {
+	public MapProjectionBuilderApi constant(final String...values) {
 
 		if (logger.isTraceEnabled()) {
 			logger.trace("constant({})", Arrays.toString(values));

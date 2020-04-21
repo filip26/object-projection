@@ -1,10 +1,6 @@
 package com.apicatalog.projection.api.map;
 
-import java.util.Map;
-
-import com.apicatalog.projection.api.BuilderApi;
-
-public interface MapProjectionApi extends BuilderApi<Map<String, Object>> {
+public interface MapProjectionApi {
 
 	MapEntryApi mapString(String name);
 	

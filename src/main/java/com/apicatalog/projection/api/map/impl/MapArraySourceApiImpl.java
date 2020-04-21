@@ -14,7 +14,7 @@ import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.api.impl.LambdaConversionApiImpl;
 import com.apicatalog.projection.api.map.MapArraySourceApi;
 import com.apicatalog.projection.api.map.MapArraySourceItemApi;
-import com.apicatalog.projection.api.map.MapProjectionApi;
+import com.apicatalog.projection.api.map.MapProjectionBuilderApi;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
 import com.apicatalog.projection.builder.reader.ArraySourceReaderBuilder;
 import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
@@ -48,7 +48,7 @@ public final class MapArraySourceApiImpl extends AbstractValueProviderApi implem
 	
 	boolean optional;
 	
-	protected MapArraySourceApiImpl(final MapProjectionApi projectionApi, final String projectionPropertyName) {
+	protected MapArraySourceApiImpl(final MapProjectionBuilderApi projectionApi, final String projectionPropertyName) {
 		super(projectionApi);
 		this.conversionBuilder = new ArrayList<>();
 		

@@ -257,4 +257,25 @@ public class MapProjectionBuilderTest {
 		Assert.assertEquals(Integer.valueOf(123456), o1.i1);
 		Assert.assertEquals("abcdef", o1.s1);
 	}
+	
+//	@Test
+//	public void test6c() throws ProjectionBuilderError, ProjectionError {
+//		final Projection<Map<String, Object>> projection = 
+//				Projection
+//					.hashMap()
+//						.mapString("s1").source(Map.class)
+//					
+//						.build(ProjectionRegistry.newInstance());
+//		
+//		Assert.assertNotNull(projection);
+//
+//		Map<String, Object> m1 = new HashMap<>();
+//		m1.put("s1", "ABCDEFG");
+//		
+//		Map<String, Object> m2 = projection.compose(m1);
+//		
+//		Assert.assertNotNull(m2);
+//		Assert.assertEquals(m1, m2);
+//		
+//	}
 }

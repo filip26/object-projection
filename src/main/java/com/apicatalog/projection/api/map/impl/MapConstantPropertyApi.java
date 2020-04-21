@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionBuilderError;
-import com.apicatalog.projection.api.map.MapProjectionApi;
+import com.apicatalog.projection.api.map.MapProjectionBuilderApi;
 import com.apicatalog.projection.builder.writer.ConstantWriterBuilder;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.object.setter.Setter;
@@ -19,7 +19,7 @@ public class MapConstantPropertyApi extends AbstractValueProviderApi {
 	
 	boolean targetReference;
 
-	protected MapConstantPropertyApi(final MapProjectionApi projectionBuilder, String[] constants) {
+	protected MapConstantPropertyApi(final MapProjectionBuilderApi projectionBuilder, String[] constants) {
 		super(projectionBuilder);
 		this.constants = constants;
 	}

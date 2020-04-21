@@ -1,18 +1,14 @@
 package com.apicatalog.projection.api.map.impl;
 
-import java.util.Map;
-
-import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.api.map.MapEntryApi;
 import com.apicatalog.projection.api.map.MapProjectionApi;
+import com.apicatalog.projection.api.map.MapProjectionBuilderApi;
 
 public class MapProjectionApiWrapper implements MapProjectionApi {
 	
-	final MapProjectionApi projectionBuilder;
+	final MapProjectionBuilderApi projectionBuilder;
 	
-	protected MapProjectionApiWrapper(final MapProjectionApi projectionBuilder) {
+	protected MapProjectionApiWrapper(final MapProjectionBuilderApi projectionBuilder) {
 		this.projectionBuilder = projectionBuilder;
 	}
 	
@@ -74,10 +70,5 @@ public class MapProjectionApiWrapper implements MapProjectionApi {
 	@Override
 	public MapEntryApi mapReference(String name, Class<?> collectionType, String projectionName) {
 		return projectionBuilder.mapReference(name,  collectionType, projectionName);
-	}
-
-	@Override
-	public Projection<Map<String, Object>> build(ProjectionRegistry registry) throws ProjectionBuilderError {
-		return projectionBuilder.build(registry);
 	}
 }

@@ -4,17 +4,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apicatalog.projection.Projection;
+import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.api.LambdaConversionApi;
 import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.api.impl.LambdaConversionApiImpl;
 import com.apicatalog.projection.api.map.MapArraySourceItemApi;
-import com.apicatalog.projection.api.map.MapProjectionApi;
+import com.apicatalog.projection.api.map.MapProjectionBuilderApi;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
 import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
 import com.apicatalog.projection.builder.writer.SingleSourceWriterBuilder;
@@ -33,7 +36,7 @@ public final class MapArraySourceItemApiImpl extends MapProjectionApiWrapper imp
 	
 	final String targetPropertyName;
 	
-	protected MapArraySourceItemApiImpl(final MapProjectionApi projectionApi, final String targetPropertyName) {
+	protected MapArraySourceItemApiImpl(final MapProjectionBuilderApi projectionApi, final String targetPropertyName) {
 		super(projectionApi);
 		this.sourceHolders = new LinkedList<>();
 		this.targetPropertyName = targetPropertyName;
@@ -192,5 +195,10 @@ public final class MapArraySourceItemApiImpl extends MapProjectionApiWrapper imp
 		public void mode(final AccessMode mode) {
 			this.mode = mode;
 		}
+	}
+
+	@Override
+	public Projection<Map<String, Object>> build(ProjectionRegistry registry) throws ProjectionBuilderError {
+		return projectionBuilder.build(registry);
 	}
 }

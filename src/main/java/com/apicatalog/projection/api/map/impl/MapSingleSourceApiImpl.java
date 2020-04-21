@@ -14,7 +14,7 @@ import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.api.LambdaConversionApi;
 import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.api.impl.LambdaConversionApiImpl;
-import com.apicatalog.projection.api.map.MapProjectionApi;
+import com.apicatalog.projection.api.map.MapProjectionBuilderApi;
 import com.apicatalog.projection.api.map.MapSingleSourceApi;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
 import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
@@ -46,7 +46,7 @@ public final class MapSingleSourceApiImpl extends AbstractValueProviderApi imple
 	
 	boolean targetReference;
 	
-	protected MapSingleSourceApiImpl(final MapProjectionApi projectionBuilder, final Class<?> sourceObjectClass, final String sourcePropertyName) {
+	protected MapSingleSourceApiImpl(final MapProjectionBuilderApi projectionBuilder, final Class<?> sourceObjectClass, final String sourcePropertyName) {
 		super(projectionBuilder);
 		
 		this.sourceReaderBuilder = SingleSourceReaderBuilder.newInstance().objectClass(sourceObjectClass);

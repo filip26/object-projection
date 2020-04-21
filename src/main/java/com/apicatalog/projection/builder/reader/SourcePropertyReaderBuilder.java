@@ -60,7 +60,7 @@ public final class SourcePropertyReaderBuilder {
 					.build(registry);
 		
 		if (extractor.isPresent()) {
-			sourceWriterBuilder.targetType(targetGetter.getType(), targetReference);	//FIXME
+			sourceWriterBuilder.targetType(targetGetter.getType(), targetReference);
 		}
 		
 		return Optional.of(new SourcePropertyReader(sourceWriter.get(), targetGetter, extractor.orElse(null)));

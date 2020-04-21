@@ -11,11 +11,12 @@ import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.api.map.MapEntryApi;
 import com.apicatalog.projection.api.map.MapProjectionApi;
+import com.apicatalog.projection.api.map.MapProjectionBuilderApi;
 import com.apicatalog.projection.impl.MapProjection;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
-public final class MapProjectionApiImpl implements MapProjectionApi {
+public final class MapProjectionApiImpl implements MapProjectionBuilderApi {
 	
 	final List<MapEntryApiImpl> entries;
 	

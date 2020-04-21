@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionBuilderError;
-import com.apicatalog.projection.api.map.MapProjectionApi;
+import com.apicatalog.projection.api.map.MapProjectionBuilderApi;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyReader;
@@ -12,7 +12,7 @@ import com.apicatalog.projection.property.PropertyWriter;
 
 abstract class AbstractValueProviderApi extends MapProjectionApiWrapper {
 
-	protected AbstractValueProviderApi(MapProjectionApi projectionBuilder) {
+	protected AbstractValueProviderApi(MapProjectionBuilderApi projectionBuilder) {
 		super(projectionBuilder);
 	}
 

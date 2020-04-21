@@ -1,10 +1,12 @@
 package com.apicatalog.projection.api.map.impl;
 
+import java.util.Map;
 import java.util.Optional;
 
+import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionBuilderError;
-import com.apicatalog.projection.api.map.MapProjectionApi;
+import com.apicatalog.projection.api.map.MapProjectionBuilderApi;
 import com.apicatalog.projection.api.map.MapProvidedApi;
 import com.apicatalog.projection.builder.reader.ProvidedPropertyReaderBuilder;
 import com.apicatalog.projection.builder.writer.ProvidedPropertyWriterBuilder;
@@ -24,7 +26,7 @@ public final class MapProvidedApiImpl extends AbstractValueProviderApi implement
 	
 	boolean optional;
 	
-	protected MapProvidedApiImpl(final MapProjectionApi projection, final String name) {
+	protected MapProvidedApiImpl(final MapProjectionBuilderApi projection, final String name) {
 		super(projection);
 		this.qualifier = name;
 	}
@@ -81,5 +83,10 @@ public final class MapProvidedApiImpl extends AbstractValueProviderApi implement
 	protected MapProvidedApiImpl targetReference(final boolean reference) {
 		this.targetReference = reference;
 		return this;
+	}
+
+	@Override
+	public Projection<Map<String, Object>> build(ProjectionRegistry registry) throws ProjectionBuilderError {
+		return projectionBuilder.build(registry);
 	}
 }

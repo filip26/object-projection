@@ -2,7 +2,7 @@ package com.apicatalog.projection.api.map;
 
 import com.apicatalog.projection.api.SourceApi;
 
-public interface MapEntryApi extends MapProjectionApi, SourceApi<MapSingleSourceApi> {
+public interface MapEntryApi extends SourceApi<MapSingleSourceApi> {
 
 	MapArraySourceApi sources();
 
@@ -10,6 +10,6 @@ public interface MapEntryApi extends MapProjectionApi, SourceApi<MapSingleSource
 	
 	MapProvidedApi provided(final String name);
 	
-	MapProjectionApi constant(final String...values);
+	MapProjectionBuilderApi constant(final String...values);
 	
 }
