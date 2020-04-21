@@ -10,7 +10,6 @@ import java.util.function.Consumer;
 
 import com.apicatalog.projection.annotation.mapper.ProjectionMapper;
 import com.apicatalog.projection.api.ProjectionBuilderError;
-import com.apicatalog.projection.api.object.ObjectProjectionApi;
 import com.apicatalog.projection.conversion.TypeConversions;
 
 public final class ProjectionRegistry {
@@ -59,12 +58,7 @@ public final class ProjectionRegistry {
 		return this;
 	}
 
-	public ProjectionRegistry register(final ObjectProjectionApi<?> projectionApi) throws ProjectionBuilderError {
-		projectionApi.build(this);
-		return this;
-	}
-
-	public ProjectionRegistry register(Class<?> annotatedProjectionType) throws ProjectionBuilderError {
+	public ProjectionRegistry register(final Class<?> annotatedProjectionType) throws ProjectionBuilderError {
 		if (annotatedProjectionType == null) {
 			throw new IllegalArgumentException();
 		}
@@ -80,10 +74,6 @@ public final class ProjectionRegistry {
 		return typeConversions;
 	}
 	
-	ProjectionError unknownProjection(Class<?> projectionType) {
-		return new ProjectionError("Projection " + projectionType.getCanonicalName() + " is not present.");
-	}
-
 	public void request(final String projectionName, final Consumer<Projection<?>> consumer) {
 
 		final Projection<?> projection = index.get(projectionName);

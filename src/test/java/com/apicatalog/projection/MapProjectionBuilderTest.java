@@ -10,6 +10,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.converters.Concatenation;
 import com.apicatalog.projection.objects.SimpleObject;
 import com.apicatalog.projection.source.SourceObject;
 
@@ -204,7 +205,9 @@ public class MapProjectionBuilderTest {
 							.sources()
 								.source(SimpleObject.class, "s1")
 								.source(SimpleObject.class, "i1")
-					
+									.conversion(Integer.class, Integer.class)
+										.forward(i -> i + 100)
+
 						.build(ProjectionRegistry.newInstance());
 		
 		Assert.assertNotNull(projection);
@@ -227,7 +230,7 @@ public class MapProjectionBuilderTest {
 		Iterator<String> it = col.iterator();
 		
 		Assert.assertEquals(o1.s1, it.next());
-		Assert.assertEquals(o1.i1.toString(), it.next());
+		Assert.assertEquals(Integer.valueOf(o1.i1 + 100).toString(), it.next());
 	}
 
 	@Test
@@ -239,6 +242,8 @@ public class MapProjectionBuilderTest {
 							.sources()
 								.source(SimpleObject.class, "s1")
 								.source(SimpleObject.class, "i1")
+									.conversion(Integer.class, Integer.class)
+										.backward(i -> i - 100)
 					
 						.build(ProjectionRegistry.newInstance());
 		
@@ -254,28 +259,8 @@ public class MapProjectionBuilderTest {
 		
 		Assert.assertNotNull(o1);
 		
-		Assert.assertEquals(Integer.valueOf(123456), o1.i1);
+		Assert.assertEquals(Integer.valueOf(123456 - 100), o1.i1);
 		Assert.assertEquals("abcdef", o1.s1);
 	}
-	
-//	@Test
-//	public void test6c() throws ProjectionBuilderError, ProjectionError {
-//		final Projection<Map<String, Object>> projection = 
-//				Projection
-//					.hashMap()
-//						.mapString("s1").source(Map.class)
-//					
-//						.build(ProjectionRegistry.newInstance());
-//		
-//		Assert.assertNotNull(projection);
-//
-//		Map<String, Object> m1 = new HashMap<>();
-//		m1.put("s1", "ABCDEFG");
-//		
-//		Map<String, Object> m2 = projection.compose(m1);
-//		
-//		Assert.assertNotNull(m2);
-//		Assert.assertEquals(m1, m2);
-//		
-//	}
+
 }

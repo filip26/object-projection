@@ -40,9 +40,9 @@ public final class ProjectionMapper {
 			throw new IllegalArgumentException();
 		}
 		
-		// ignore unannotated classes
+		// unannotated classes
 		if (!targetProjectionClass.isAnnotationPresent(com.apicatalog.projection.annotation.Projection.class)) {
-			return null;
+			throw new ProjectionBuilderError("Class " + targetProjectionClass.getCanonicalName() + " is not a projection. Did you forget to add @Projection annotation?");
 		}
 		
 		if (logger.isDebugEnabled()) {
@@ -71,10 +71,7 @@ public final class ProjectionMapper {
 		}
 		
 		if (writers.isEmpty() && readers.isEmpty()) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Ignored {} because has no projected properties", targetProjectionClass.getSimpleName());
-			}
-			return null;
+			throw new ProjectionBuilderError("Projection " + targetProjectionClass.getCanonicalName() + " has no annotated fields.");
 		}
 		
 		return ObjectProjection.newInstance(

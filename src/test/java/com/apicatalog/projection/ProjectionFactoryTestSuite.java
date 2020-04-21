@@ -12,6 +12,7 @@ import com.apicatalog.projection.annotated.DirectMappingTest;
 import com.apicatalog.projection.annotated.ImplicitConversionTest;
 import com.apicatalog.projection.annotated.InterfaceTest;
 import com.apicatalog.projection.annotated.MixedObjectsTest;
+import com.apicatalog.projection.annotated.NegativeTest;
 import com.apicatalog.projection.annotated.OneToOneWithFncTest;
 import com.apicatalog.projection.annotated.PrefixMappingTest;
 import com.apicatalog.projection.annotated.PropertyNameOverrideTest;
@@ -37,6 +38,7 @@ import com.apicatalog.projection.annotated.VisibilityTest;
 	ImplicitConversionTest.class,
 	InterfaceTest.class,
 	MixedObjectsTest.class,
+	NegativeTest.class,
 	OneToOneWithFncTest.class,
 	PrefixMappingTest.class,
 	PropertyNameOverrideTest.class,
