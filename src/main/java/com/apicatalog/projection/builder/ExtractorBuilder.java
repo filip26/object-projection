@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.property.target.CollectionExtractor;
-import com.apicatalog.projection.property.target.TargetExtractor;
 import com.apicatalog.projection.property.target.ObjectExtractor;
+import com.apicatalog.projection.property.target.TargetExtractor;
 
 public final class ExtractorBuilder {
 

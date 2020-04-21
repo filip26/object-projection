@@ -1,4 +1,4 @@
-package com.apicatalog.projection.api.object.impl;
+package com.apicatalog.projection.api.map.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,8 +12,9 @@ import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.LambdaConversionApi;
 import com.apicatalog.projection.api.ProjectionBuilderError;
 import com.apicatalog.projection.api.impl.LambdaConversionApiImpl;
-import com.apicatalog.projection.api.object.ObjectArraySourceApi;
-import com.apicatalog.projection.api.object.ObjectArraySourceItemApi;
+import com.apicatalog.projection.api.map.MapArraySourceApi;
+import com.apicatalog.projection.api.map.MapArraySourceItemApi;
+import com.apicatalog.projection.api.map.MapProjectionApi;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
 import com.apicatalog.projection.builder.reader.ArraySourceReaderBuilder;
 import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
@@ -30,17 +31,15 @@ import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.property.source.ArraySourceReader;
 
-public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> implements ObjectArraySourceApi<P> {
+public final class MapArraySourceApiImpl extends AbstractValueProviderApi implements MapArraySourceApi {
 	
-	final Logger logger = LoggerFactory.getLogger(ArraySourceApiImpl.class);
+	final Logger logger = LoggerFactory.getLogger(MapArraySourceApiImpl.class);
 	
-	final ProjectionApiImpl<P> projectionBuilder;
-
 	final List<ConversionMappingBuilder> conversionBuilder;
 
 	final String projectionPropertyName;
 
-	ArraySourceItemApiImpl<P> arraySourceItem;
+	MapArraySourceItemApiImpl arraySourceItem;
 	
 	Getter targetGetter;
 	Setter targetSetter;
@@ -49,27 +48,27 @@ public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> imp
 	
 	boolean optional;
 	
-	protected ArraySourceApiImpl(final ProjectionApiImpl<P> projection, final String projectionPropertyName) {
-		this.projectionBuilder = projection;
+	protected MapArraySourceApiImpl(final MapProjectionApi projectionApi, final String projectionPropertyName) {
+		super(projectionApi);
 		this.conversionBuilder = new ArrayList<>();
 		
 		this.projectionPropertyName = projectionPropertyName;
 	}
 	
-	public ObjectArraySourceApi<P> optional() {
+	public MapArraySourceApi optional() {
 		this.optional = true;
 		return this;
 	}
 
-	public ObjectArraySourceApi<P> required() {
+	public MapArraySourceApi required() {
 		this.optional = false;
 		return this;
 	}
 
 	@Override
-	public ObjectArraySourceItemApi<P> source(final Class<?> sourceClass, final String sourceProperty) {
+	public MapArraySourceItemApi source(final Class<?> sourceClass, final String sourceProperty) {
 
-		arraySourceItem = new ArraySourceItemApiImpl<>(projectionBuilder, projectionPropertyName);
+		arraySourceItem = new MapArraySourceItemApiImpl(projectionBuilder, projectionPropertyName);
 		
 		arraySourceItem.source(sourceClass, sourceProperty);
 								
@@ -77,24 +76,14 @@ public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> imp
 	}
 
 	@Override
-	public ObjectArraySourceItemApi<P> source(final Class<?> sourceClass) {
+	public MapArraySourceItemApi source(final Class<?> sourceClass) {
 		return source(sourceClass, null);
 	}
 
 	@Override
-	public ObjectArraySourceApi<P> conversion(final Class<? extends Converter<?, ?>> converter, final String...params) {
+	public MapArraySourceApi conversion(final Class<? extends Converter<?, ?>> converter, final String...params) {
 		conversionBuilder.add(ConversionMappingBuilder.newInstance().converter(converter).parameters(params));
 		return this;
-	}
-
-	@Override
-	public <S, T> LambdaConversionApi<ObjectArraySourceApi<P>, S, T> conversion(Class<? extends S> source, Class<? extends T> target) {
-		
-		final ConversionMappingBuilder builder = ConversionMappingBuilder.newInstance().types(source, target);
-		
-		conversionBuilder.add(builder);
-		
-		return new LambdaConversionApiImpl<>(builder, this);
 	}
 
 	@Override
@@ -167,20 +156,32 @@ public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> imp
 	}
 	
 	@Override
-	protected ArraySourceApiImpl<P> targetGetter(final Getter targetGetter) {
+	protected MapArraySourceApiImpl targetGetter(final Getter targetGetter) {
 		this.targetGetter = targetGetter; 
 		return this;
 	}
 
 	@Override
-	protected ArraySourceApiImpl<P> targetSetter(final Setter targetSetter) {
+	protected MapArraySourceApiImpl targetSetter(final Setter targetSetter) {
 		this.targetSetter = targetSetter;
 		return this;
 	}
 	
 	@Override
-	protected ArraySourceApiImpl<P> targetReference(final boolean reference) {
+	protected MapArraySourceApiImpl targetReference(final boolean reference) {
 		this.targetReference = reference;
 		return this;
 	}
+
+	@Override
+	public <S, T> LambdaConversionApi<MapArraySourceApi, S, T> conversion(Class<? extends S> source,
+			Class<? extends T> target) {
+
+		final ConversionMappingBuilder builder = ConversionMappingBuilder.newInstance().types(source, target);
+		
+		conversionBuilder.add(builder);
+		
+		return new LambdaConversionApiImpl<>(builder, this);
+	}
+
 }

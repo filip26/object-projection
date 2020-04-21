@@ -78,14 +78,13 @@ public final class MapEntryApiImpl extends MapProjectionApiWrapper implements Ma
 			logger.trace("sources()");
 		}
 		
-//		final ArraySourceApiImpl<P> sourcesPropertyApi = 
-//				new ArraySourceApiImpl<>(projectionBuilder, targetPropertyName)
-//						.targetReference(targetReference);
-//		
-//		this.valueProvider = sourcesPropertyApi;
-//		
-//		return sourcesPropertyApi;
-		return null;
+		final MapArraySourceApiImpl sourcesPropertyApi = 
+				new MapArraySourceApiImpl(projectionBuilder, name);
+//TODO						.targetReference(targetReference);
+		
+		this.valueProvider = sourcesPropertyApi;
+		
+		return sourcesPropertyApi;
 	}
 
 	@Override
@@ -104,9 +103,9 @@ public final class MapEntryApiImpl extends MapProjectionApiWrapper implements Ma
 				new MapProvidedApiImpl(projectionBuilder, StringUtils.isNotBlank(qualifier) ? qualifier : null)
 //						.targetReference(targetReference);
 					;
-//		
+		
 		this.valueProvider = providedPropertyApi;
-//		
+		
 		return providedPropertyApi;
 	}
 

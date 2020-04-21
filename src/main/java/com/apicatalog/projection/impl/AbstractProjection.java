@@ -1,6 +1,7 @@
 package com.apicatalog.projection.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +79,7 @@ abstract class AbstractProjection<P> implements Projection<P> {
 	public final <I> Collection<I> extractCollection(P projection, Class<I> componentType) throws ProjectionError {
 		
 		if (extractor == null) {
-			return null;
+			return Collections.emptyList();
 		}
 
 		return extractCollection(projection, null, componentType); 
@@ -89,7 +90,7 @@ abstract class AbstractProjection<P> implements Projection<P> {
 	public final <I> Collection<I> extractCollection(P projection, String qualifier, Class<I> componentType) throws ProjectionError {
 		
 		if (extractor == null) {
-			return null;
+			return Collections.emptyList();
 		}
 
 		if (projection == null || componentType == null) {

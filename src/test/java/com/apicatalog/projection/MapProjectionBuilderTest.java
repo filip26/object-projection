@@ -1,6 +1,8 @@
 package com.apicatalog.projection;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.junit.Assert;
@@ -112,7 +114,7 @@ public class MapProjectionBuilderTest {
 		final Projection<Map<String, Object>> projection = 
 				Projection
 					.hashMap("p1")
-						.mapInteger("i1").constant("12345")
+						.mapLong("i1").constant("12345")
 					
 						.build(ProjectionRegistry.newInstance());
 		
@@ -121,7 +123,7 @@ public class MapProjectionBuilderTest {
 		Map<String, Object> map = projection.compose();
 		
 		Assert.assertNotNull(map);;
-		Assert.assertEquals(12345, map.get("i1"));
+		Assert.assertEquals(12345l, map.get("i1"));
 	}
 
 	@Test
@@ -129,7 +131,7 @@ public class MapProjectionBuilderTest {
 		final Projection<Map<String, Object>> projection = 
 				Projection
 					.hashMap()
-						.mapInteger("i1").constant("12345")
+						.mapLong("i1").constant("12345")
 					
 						.build(ProjectionRegistry.newInstance());
 		
@@ -138,7 +140,7 @@ public class MapProjectionBuilderTest {
 		Map<String, Object> to = new HashMap<>();
 		to.put("i1", 443546356);
 
-		Integer i = projection.extract(to, Integer.class);
+		Long i = projection.extract(to, Long.class);
 		
 		Assert.assertNull(i);
 
@@ -190,6 +192,41 @@ public class MapProjectionBuilderTest {
 		Boolean b2 = projection.extract(map, "b2", Boolean.class);
 		Assert.assertNotNull(b2);;
 		Assert.assertTrue(b2);
+	}
+
+	@Test
+	public void test5c() throws ProjectionBuilderError, ProjectionError {
+		final Projection<Map<String, Object>> projection = 
+				Projection
+					.hashMap()
+						.mapCollection("s", Collection.class, String.class)
+							.sources()
+								.source(SimpleObject.class, "s1")
+								.source(SimpleObject.class, "i1")
+					
+						.build(ProjectionRegistry.newInstance());
+		
+		Assert.assertNotNull(projection);
+
+		SimpleObject o1 = new SimpleObject();
+		o1.i1 = 123456;
+		o1.s1 = "abcdef";
+		
+		Map<String, Object> map = projection.compose(o1);
+		
+		Assert.assertNotNull(map);
+		Assert.assertNotNull(map.get("s"));
+		Assert.assertNotNull(Collection.class.isInstance(map.get("s")));
+		
+		@SuppressWarnings("unchecked")
+		Collection<String> col = (Collection<String>) map.get("s");
+		
+		Assert.assertEquals(2, col.size());
+		
+		Iterator<String> it = col.iterator();
+		
+		Assert.assertEquals(o1.s1, it.next());
+		Assert.assertEquals(o1.i1.toString(), it.next());
 	}
 
 }

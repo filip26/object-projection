@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.target.CollectionComposer;
-import com.apicatalog.projection.property.target.TargetComposer;
 import com.apicatalog.projection.property.target.ObjectComposer;
+import com.apicatalog.projection.property.target.TargetComposer;
 
 public final class ComposerBuilder {
 
