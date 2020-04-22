@@ -12,7 +12,11 @@ public class ProjectionError extends Exception {
 		super(message, e);
 	}
 	
-	@Deprecated
+	/**
+	 * 
+	 * @deprecated use ProjectionError(String message, Throwable e)
+	 */
+	@Deprecated(since = "v0.8.12", forRemoval = true)
 	public ProjectionError(Throwable e) {
 		super(e);
 	}

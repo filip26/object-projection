@@ -92,18 +92,11 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 			}
 
 			if (object.isPresent()) {
-
-				try {
-					targetSetter.set(stack.peek(), object.get());
-				} catch (ObjectError e) {
-					throw new CompositionError("Can not set " + object.get() + " to " + stack.peek().getClass().getCanonicalName() + "." + targetSetter.getName());
-				}
-
+				targetSetter.set(stack.peek(), object.get());
 			}
-
 					
-		} catch (ConversionNotFound | ConverterError e) {
-			throw new CompositionError(e);
+		} catch (ConversionNotFound | ConverterError | ObjectError e) {
+			throw new CompositionError("Can not compose value for " + stack.peek().getClass().getCanonicalName() + "." + targetSetter.getName() + ".");
 		}		
 	}
 	
