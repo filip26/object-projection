@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.api.object.ObjectProjectionApi;
 import com.apicatalog.projection.api.object.ObjectPropertyApi;
 import com.apicatalog.projection.impl.ObjectProjection;
@@ -14,12 +14,12 @@ import com.apicatalog.projection.property.PropertyWriter;
 
 public final class ProjectionApiImpl<P> implements ObjectProjectionApi<P> {
 	
-	final Class<P> projectionClass;
+	final Class<P> projectionType;
 	
 	final List<PropertyApiImpl<P>> properties;
 	
 	protected ProjectionApiImpl(final Class<P> projectionClass) {
-		this.projectionClass = projectionClass;
+		this.projectionType = projectionClass;
 		this.properties = new ArrayList<>();
 	}
 	
@@ -42,7 +42,7 @@ public final class ProjectionApiImpl<P> implements ObjectProjectionApi<P> {
 	}
 	
 	@Override
-	public Projection<P> build(final ProjectionRegistry factory) throws ProjectionBuilderError {
+	public Projection<P> build(final ProjectionRegistry factory) throws ProjectionError {
 
 		final List<PropertyReader> readers = new ArrayList<>(); 
 		final List<PropertyWriter> writers = new ArrayList<>();
@@ -63,7 +63,7 @@ public final class ProjectionApiImpl<P> implements ObjectProjectionApi<P> {
 		
 		final Projection<P> projection = 
 					ObjectProjection.newInstance(
-									projectionClass, 
+									projectionType, 
 									readers.toArray(new PropertyReader[0]), 
 									writers.toArray(new PropertyWriter[0])
 									);
@@ -73,7 +73,11 @@ public final class ProjectionApiImpl<P> implements ObjectProjectionApi<P> {
 		return projection;
 	}
 
-	protected Class<?> projectionClass() {
-		return projectionClass;
+	protected Class<?> getType() {
+		return projectionType;
+	}
+
+	public String getName() {
+		return projectionType.getCanonicalName();
 	}
 }

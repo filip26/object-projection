@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.conversion.ConversionNotFound;
 import com.apicatalog.projection.conversion.TypeConversions;
@@ -33,7 +33,7 @@ public final class ConstantWriterBuilder {
 		return new ConstantWriterBuilder();
 	}
 	
-	public Optional<ConstantPropertyWriter> build(final ProjectionRegistry registry) throws ProjectionBuilderError {
+	public Optional<ConstantPropertyWriter> build(final ProjectionRegistry registry) throws ProjectionError {
 		
 		final ConstantPropertyWriter property = new ConstantPropertyWriter();
 		
@@ -62,7 +62,7 @@ public final class ConstantWriterBuilder {
 			return Optional.of(property);
 			
 		} catch (ConversionNotFound e) {
-			throw new ProjectionBuilderError(e);
+			throw new ProjectionError("Can not build constant property.", e);
 		}
 	}	
 	

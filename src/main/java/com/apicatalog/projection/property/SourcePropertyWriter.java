@@ -7,9 +7,10 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ProjectionStack;
+import com.apicatalog.projection.object.ObjectError;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.source.SourceReader;
 import com.apicatalog.projection.property.target.TargetComposer;
@@ -23,31 +24,34 @@ public final class SourcePropertyWriter implements PropertyWriter {
 	
 	final Setter targetSetter;
 	
-	final TargetComposer composer;
+	TargetComposer composer;
 	
 	Set<Integer> visibleLevels;
 
-	public SourcePropertyWriter(final SourceReader sourceReader, final Setter targetSetter, final TargetComposer composer) {
+	protected SourcePropertyWriter(final SourceReader sourceReader, final Setter targetSetter) {
 		this.sourceReader = sourceReader;
 		this.targetSetter = targetSetter;
-		this.composer = composer;
 	}
 
-	@Override
-	public void write(final ProjectionStack queue, final CompositionContext context) throws ProjectionError {
-
+	public static final SourcePropertyWriter newInstance(final SourceReader sourceReader, final Setter targetSetter) {
+		
 		if (targetSetter == null) {
-			logger.warn("Target setter is missing. Property skipped.");
-			return;
+			throw new IllegalArgumentException("Target setter is not set.");
 		}
 
 		if (sourceReader == null) {
-			logger.warn("Source reader is missing. Property {} skipped.", targetSetter.getName());
-			return;
+			throw new IllegalArgumentException("Source reader is not set.");
 		}
 		
+		return new SourcePropertyWriter(sourceReader, targetSetter);
+	}
+	
+	@Override
+	public void write(final ProjectionStack stack, final CompositionContext context) throws CompositionError {
+
+		
 		if (logger.isDebugEnabled()) {
-			logger.debug("Write {} to {}, depth = {}", sourceReader.getTargetType(), targetSetter, queue.length());
+			logger.debug("Write {} to {}, depth = {}", sourceReader.getTargetType(), targetSetter, stack.length());
 		}
 
 		// get source value
@@ -60,7 +64,7 @@ public final class SourcePropertyWriter implements PropertyWriter {
 		// 
 
 		if (composer != null) {
-			object = composer.compose(queue, object.get(), context);
+			object = composer.compose(stack, object.get(), context);
 		}
 		
 		if (object.isPresent()) {
@@ -68,7 +72,11 @@ public final class SourcePropertyWriter implements PropertyWriter {
 				logger.trace("Writing {} to {}", object.get(), targetSetter);	
 			}
 			
-			targetSetter.set(queue.peek(), object.get());
+			try {
+				targetSetter.set(stack.peek(), object.get());
+			} catch (ObjectError e) {
+				throw new CompositionError("Can not set value " + object.get() + " to " + stack.peek().getClass().getCanonicalName());
+			}
 		}		
 	}
 
@@ -79,6 +87,10 @@ public final class SourcePropertyWriter implements PropertyWriter {
 	
 	public void setVisibility(final Set<Integer> levels) {
 		this.visibleLevels = levels;
+	}
+	
+	public void setComposer(TargetComposer composer) {
+		this.composer = composer;
 	}
 
 	@Override

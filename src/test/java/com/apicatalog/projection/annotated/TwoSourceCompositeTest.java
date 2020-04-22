@@ -5,9 +5,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.objects.Reference;
@@ -18,12 +18,12 @@ public class TwoSourceCompositeTest {
 	Projection<CompositeTo> projection;
 
 	@Before
-	public void setup() throws ProjectionError, ProjectionBuilderError {
+	public void setup() throws CompositionError, ProjectionError {
 		projection = Projection.scan(CompositeTo.class).build(ProjectionRegistry.newInstance());
 	}	
 	
     @Test
-    public void testCompose() throws ProjectionError, ConverterError {
+    public void testCompose() throws CompositionError, ConverterError {
     	
     	BasicTypes source1 = new BasicTypes();
     	source1.longValue = 123456l;
@@ -40,7 +40,7 @@ public class TwoSourceCompositeTest {
     }
     
     @Test
-    public void testExtract() throws ProjectionError, ConverterError {
+    public void testExtract() throws CompositionError, ConverterError {
     	
     	CompositeTo to = new CompositeTo();
     	to.source1 = 123456l;

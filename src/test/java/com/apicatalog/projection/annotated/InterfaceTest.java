@@ -5,9 +5,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.Interface1;
 import com.apicatalog.projection.objects.Interface1Impl;
@@ -18,12 +18,12 @@ public class InterfaceTest {
 	Projection<Interface1To> projection;
 	
 	@Before
-	public void setup() throws ProjectionError, ProjectionBuilderError {
+	public void setup() throws CompositionError, ProjectionError {
 		projection = Projection.scan(Interface1To.class).build(ProjectionRegistry.newInstance());
 	}
 	
     @Test
-    public void testCompose() throws ProjectionError, ConverterError {
+    public void testCompose() throws CompositionError, ConverterError {
     	
     	Interface1Impl i1 = new Interface1Impl();
     	i1.setId("987654321");
@@ -36,7 +36,7 @@ public class InterfaceTest {
 
 
     @Test
-    public void testExtract() throws ProjectionError, ConverterError {
+    public void testExtract() throws CompositionError, ConverterError {
     	
     	Interface1To to = new Interface1To();
     	to.id = 951846237l;

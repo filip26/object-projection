@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.api.map.MapArraySourceApi;
 import com.apicatalog.projection.api.map.MapEntryApi;
 import com.apicatalog.projection.api.map.MapProjectionBuilderApi;
@@ -123,7 +123,7 @@ public final class MapEntryApiImpl extends MapProjectionApiWrapper implements Ma
 		return projectionBuilder;
 	}
 		
-	protected Optional<PropertyReader> buildReader(final ProjectionRegistry registry) throws ProjectionBuilderError {
+	protected Optional<PropertyReader> buildReader(final ProjectionRegistry registry) throws ProjectionError {
 
 		if (valueProvider == null) {
 			return Optional.empty();
@@ -140,7 +140,7 @@ public final class MapEntryApiImpl extends MapProjectionApiWrapper implements Ma
 					;
 	}
 	
-	protected Optional<PropertyWriter> buildWriter(final ProjectionRegistry registry) throws ProjectionBuilderError {
+	protected Optional<PropertyWriter> buildWriter(final ProjectionRegistry registry) throws ProjectionError {
 
 		if (valueProvider == null) {
 			return Optional.empty();

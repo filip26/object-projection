@@ -3,7 +3,7 @@ package com.apicatalog.projection.api.object.impl;
 import java.util.Optional;
 
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.builder.writer.ConstantWriterBuilder;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.object.setter.Setter;
@@ -48,7 +48,7 @@ public class ConstantPropertyApi<P> extends AbstractValueProviderApi<P> {
 	}
 
 	@Override
-	protected Optional<PropertyWriter> buildyWriter(final ProjectionRegistry registry) throws ProjectionBuilderError {
+	protected Optional<PropertyWriter> buildyWriter(final ProjectionRegistry registry) throws ProjectionError {
 		return ConstantWriterBuilder.newInstance()
 					.constants(constants)
 					.targetSetter(targetSetter, targetReference)

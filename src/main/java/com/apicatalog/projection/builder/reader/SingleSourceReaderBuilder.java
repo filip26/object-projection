@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.annotation.AccessMode;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.conversion.ConversionNotFound;
 import com.apicatalog.projection.conversion.TypeConversions;
@@ -51,12 +51,14 @@ public final class SingleSourceReaderBuilder {
 		return new SingleSourceReaderBuilder();
 	}
 
-	public Optional<SingleSourceReader> build(TypeConversions typeConverters) throws ProjectionBuilderError {
+	public Optional<SingleSourceReader> build(TypeConversions typeConverters) throws ProjectionError {
+ 
+		if (sourceGetter == null) {
+			throw new ProjectionError("Source getter is not set.");
+		}
 
-		// no getter ? 
-		if (sourceGetter == null || targetType == null) {
-			// nothing to do with this
-			return Optional.empty();
+		if (targetType == null) {
+			throw new ProjectionError("Target type is unknown.");
 		}
 
 		final SingleSourceReader source = new SingleSourceReader();
@@ -86,7 +88,7 @@ public final class SingleSourceReaderBuilder {
 			return Optional.of(source);
 			
 		} catch (ConversionNotFound e) {
-			throw new ProjectionBuilderError(e);
+			throw new ProjectionError("Can not map source " + sourceGetter.getName() + " of " + sourceObjectClass + ".", e);
 		}
 	}
 	

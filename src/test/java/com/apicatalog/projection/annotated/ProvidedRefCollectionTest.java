@@ -8,9 +8,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.SimpleObject;
 import com.apicatalog.projection.projections.ProvidedRefCollectionTo;
@@ -22,7 +22,7 @@ public class ProvidedRefCollectionTest {
 	ProjectionRegistry projections;
 	
 	@Before
-	public void setup() throws ProjectionError, ProjectionBuilderError {
+	public void setup() throws CompositionError, ProjectionError {
 		projections = ProjectionRegistry.newInstance();		
 		
 		projections
@@ -31,7 +31,7 @@ public class ProvidedRefCollectionTest {
 	}
 	
     @Test
-    public void testCompose1() throws ProjectionError, ConverterError {
+    public void testCompose1() throws CompositionError, ConverterError {
     	
     	Collection<SimpleObject> items = new ArrayList<>();
     	
@@ -44,7 +44,7 @@ public class ProvidedRefCollectionTest {
     }
     
     @Test
-    public void testCompose2() throws ProjectionError, ConverterError {
+    public void testCompose2() throws CompositionError, ConverterError {
     	
     	Collection<SimpleObject> items = new ArrayList<>();
     	
@@ -80,7 +80,7 @@ public class ProvidedRefCollectionTest {
     }
     
     @Test
-    public void testExtract() throws ProjectionError, ConverterError {
+    public void testExtract() throws CompositionError, ConverterError {
     	
     	ProvidedRefCollectionTo to = new ProvidedRefCollectionTo();
     	to.items = new ArrayList<>();

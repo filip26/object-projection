@@ -1,16 +1,14 @@
 package com.apicatalog.projection.builder.writer;
 
-import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.builder.ComposerBuilder;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.SourcePropertyWriter;
 import com.apicatalog.projection.property.source.SourceReader;
-import com.apicatalog.projection.property.target.TargetComposer;
 
 public final class SourcePropertyWriterBuilder {
 
@@ -31,24 +29,25 @@ public final class SourcePropertyWriterBuilder {
 		return new SourcePropertyWriterBuilder();
 	}
 			
-	public Optional<SourcePropertyWriter> build(final ProjectionRegistry registry) {
+	public SourcePropertyWriter build(final ProjectionRegistry registry) throws ProjectionError {
 
 		if (targetSetter == null) {
-			logger.warn("Target setter is missing. Skipping source.");
-			return Optional.empty();
+			throw new ProjectionError("Target setter is missing.");
+
 		}
 
 		if (sourceReader == null) {
-			logger.warn(SOURCE_IS_MISSING, targetSetter.getName());
-			return Optional.empty();
+			throw new ProjectionError("Source reader is not set.");
 		}		
 		
-		final Optional<TargetComposer> composer =  
-				ComposerBuilder.newInstance()
-					.setter(targetSetter, targetReference)
-					.build(registry);
+		final SourcePropertyWriter sourcePropertyWriter = SourcePropertyWriter.newInstance(sourceReader, targetSetter);
+		  
+		ComposerBuilder.newInstance()
+			.setter(targetSetter, targetReference)
+			.build(registry)
+			.ifPresent(sourcePropertyWriter::setComposer);
 
-		return Optional.of(new SourcePropertyWriter(sourceReader, targetSetter, composer.orElse(null)));		
+		return sourcePropertyWriter;		
 	}
 
 	public SourcePropertyWriterBuilder sourceReader(SourceReader sourceReader) {

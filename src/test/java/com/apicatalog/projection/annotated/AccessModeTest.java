@@ -4,9 +4,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.projections.AccessModeTo;
@@ -16,13 +16,13 @@ public class AccessModeTest {
 	ProjectionRegistry projections;
 	
 	@Before
-	public void setup() throws ProjectionError, ProjectionBuilderError {
+	public void setup() throws CompositionError, ProjectionError {
 		projections = ProjectionRegistry.newInstance()
 						.register(AccessModeTo.class);
 	}
 	
     @Test
-    public void testCompose() throws ProjectionError, ConverterError {
+    public void testCompose() throws CompositionError, ConverterError {
     	
     	BasicTypes o1 = new BasicTypes();
     	o1.stringValue = "ABC123";
@@ -41,7 +41,7 @@ public class AccessModeTest {
     }
  
     @Test
-    public void testExtract() throws ProjectionError, ConverterError {
+    public void testExtract() throws CompositionError, ConverterError {
     	
     	AccessModeTo to = new AccessModeTo();
     	to.stringValue = "ABC123";

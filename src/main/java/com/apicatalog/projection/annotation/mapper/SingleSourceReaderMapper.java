@@ -14,16 +14,15 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.annotation.Conversion;
 import com.apicatalog.projection.annotation.Source;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.builder.ConversionMappingBuilder;
 import com.apicatalog.projection.builder.reader.SourcePropertyReaderBuilder;
 import com.apicatalog.projection.builder.writer.SingleSourceWriterBuilder;
-import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
+import com.apicatalog.projection.object.ObjectError;
 import com.apicatalog.projection.object.ObjectUtils;
 import com.apicatalog.projection.object.getter.FieldGetter;
 import com.apicatalog.projection.object.getter.Getter;
-import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.SourcePropertyReader;
 
 final class SingleSourceReaderMapper {
@@ -38,7 +37,7 @@ final class SingleSourceReaderMapper {
 		this.registry = registry;
 	}
 	
-	Optional<SourcePropertyReader> getSourceProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionBuilderError {
+	Optional<SourcePropertyReader> getSourceProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionError {
 
 		final Source sourceAnnotation = field.getAnnotation(Source.class);
 		
@@ -63,7 +62,7 @@ final class SingleSourceReaderMapper {
 					.build(registry);
 	}
 
-	Optional<SingleSourceWriterBuilder> getSingleSourceWriter(final Source sourceAnnotation, final String fieldName, final Class<?> defaultSourceClass) {
+	Optional<SingleSourceWriterBuilder> getSingleSourceWriter(final Source sourceAnnotation, final String fieldName, final Class<?> defaultSourceClass) throws ProjectionError {
 		
 		Class<?> sourceObjectClass = defaultSourceClass;
 		
@@ -94,37 +93,34 @@ final class SingleSourceReaderMapper {
 
 		// set conversions to apply
 		if (Optional.ofNullable(sourceAnnotation.map()).isPresent()) {
-			try {
-				sourceBuilder.converters(getConverterMapping(sourceAnnotation.map()));
-				
-			} catch (ConverterError e) {
-				logger.error("Property " + sourceFieldName + " is ignored.", e);
-				return Optional.empty();
-			}
+			sourceBuilder.converters(getConverterMapping(sourceAnnotation.map()));				
 		}
 		
-		return getSingleSourceWriter(
+		return Optional.of(getSingleSourceWriter(
 					sourceObjectClass, 
 					sourceFieldName, 
 					sourceBuilder
-					);
+					));
 	}
 
-	Optional<SingleSourceWriterBuilder> getSingleSourceWriter(final Class<?> sourceObjectClass, final String sourceFieldName, final SingleSourceWriterBuilder sourceBuilder) {
-		
-		// extract setter
-		final Setter sourceSetter = ObjectUtils.getSetter(sourceObjectClass, sourceFieldName);
+	SingleSourceWriterBuilder getSingleSourceWriter(final Class<?> sourceObjectClass, final String sourceFieldName, final SingleSourceWriterBuilder sourceBuilder) throws ProjectionError {
 
-		return Optional.of(sourceBuilder.setter(sourceSetter));
+		try {
+			// extract setter
+			return sourceBuilder.setter(ObjectUtils.getSetter(sourceObjectClass, sourceFieldName));
+			
+		} catch (ObjectError e) {
+			throw new ProjectionError("Can not get setter for " + sourceObjectClass.getCanonicalName() + "." + sourceFieldName + ".", e);
+		}
 	}
 	
-	protected static final Collection<ConverterMapping> getConverterMapping(final Conversion[] conversions) throws ConverterError {
+	protected static final Collection<ConverterMapping> getConverterMapping(final Conversion[] conversions) throws ProjectionError {
 
-		final List<ConverterMapping> converters = new ArrayList<>(conversions.length);
-		
-		if (conversions.length == 0) {
+		if (conversions == null || conversions.length == 0) {
 			return Collections.emptyList();
 		}
+		
+		final List<ConverterMapping> converters = new ArrayList<>(conversions.length);
 
 		for (final Conversion conversion : conversions) {
 			converters.add(
@@ -136,6 +132,6 @@ final class SingleSourceReaderMapper {
 							);
 		}
 
-		return converters.isEmpty() ? null : converters;
+		return converters;
 	}	
 }

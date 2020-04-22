@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.projections.EmptyProjection;
 
 
@@ -19,7 +19,7 @@ public class NegativeTest {
 	}
 	
     @Test
-    public void testNull() throws ProjectionBuilderError {
+    public void testNull() throws ProjectionError {
     
     	try {
     		registry.register((Class<?>)null);
@@ -38,7 +38,7 @@ public class NegativeTest {
     		
     		Assert.fail();
     		
-    	} catch (ProjectionBuilderError e) {
+    	} catch (ProjectionError e) {
     	}
     }
 
@@ -50,7 +50,7 @@ public class NegativeTest {
     		
     		Assert.fail();
     		
-    	} catch (ProjectionBuilderError e) {
+    	} catch (ProjectionError e) {
     	}
     }
 

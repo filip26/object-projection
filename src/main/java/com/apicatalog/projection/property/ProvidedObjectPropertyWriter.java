@@ -8,13 +8,14 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.conversion.ConversionNotFound;
 import com.apicatalog.projection.converter.ConverterError;
+import com.apicatalog.projection.object.ObjectError;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.target.TargetComposer;
@@ -42,7 +43,7 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 	}
 	
 	@Override
-	public void write(final ProjectionStack stack, final CompositionContext context) throws ProjectionError {		
+	public void write(final ProjectionStack stack, final CompositionContext context) throws CompositionError {		
 
 		if (targetSetter == null) {
 			return;
@@ -68,8 +69,11 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 				if (logger.isTraceEnabled()) {
 					logger.trace("Set {} to {}", object.get().getClass().getSimpleName(), targetSetter);
 				}
-				targetSetter.set(stack.peek(), object.get());
-
+				try {
+					targetSetter.set(stack.peek(), object.get());
+				} catch (ObjectError e) {
+					throw new CompositionError("Can not set " + object.get() + " to " + stack.peek().getClass().getCanonicalName() + "." + targetSetter.getName());
+				}
 			}
 			return;
 		}
@@ -88,12 +92,18 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 			}
 
 			if (object.isPresent()) {
-				targetSetter.set(stack.peek(), object.get());
+
+				try {
+					targetSetter.set(stack.peek(), object.get());
+				} catch (ObjectError e) {
+					throw new CompositionError("Can not set " + object.get() + " to " + stack.peek().getClass().getCanonicalName() + "." + targetSetter.getName());
+				}
+
 			}
 
 					
 		} catch (ConversionNotFound | ConverterError e) {
-			throw new ProjectionError(e);
+			throw new CompositionError(e);
 		}		
 	}
 	

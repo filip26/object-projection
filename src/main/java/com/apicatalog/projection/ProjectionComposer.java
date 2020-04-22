@@ -8,7 +8,7 @@ import com.apicatalog.projection.source.SourceType;
 
 public interface ProjectionComposer<P> {
 
-	P compose(ProjectionStack stack, CompositionContext context) throws ProjectionError;
+	P compose(ProjectionStack stack, CompositionContext context) throws CompositionError;
 	
 	Collection<SourceType> getSourceTypes();
 

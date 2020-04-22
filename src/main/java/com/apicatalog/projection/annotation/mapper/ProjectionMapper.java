@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.impl.ObjectProjection;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
@@ -34,7 +34,7 @@ public final class ProjectionMapper {
 		this.propertyWriterMapper = propertyWriterMapper;
 	}
 
-	public <P> Projection<P> getProjectionOf(final Class<P> targetProjectionClass) throws ProjectionBuilderError {
+	public <P> Projection<P> getProjectionOf(final Class<P> targetProjectionClass) throws ProjectionError {
 
 		if (targetProjectionClass == null) {
 			throw new IllegalArgumentException();
@@ -42,7 +42,7 @@ public final class ProjectionMapper {
 		
 		// unannotated classes
 		if (!targetProjectionClass.isAnnotationPresent(com.apicatalog.projection.annotation.Projection.class)) {
-			throw new ProjectionBuilderError("Class " + targetProjectionClass.getCanonicalName() + " is not a projection. Did you forget to add @Projection annotation?");
+			throw new ProjectionError("Class " + targetProjectionClass.getCanonicalName() + " is not a projection. Did you forget to add @Projection annotation?");
 		}
 		
 		if (logger.isDebugEnabled()) {
@@ -71,7 +71,7 @@ public final class ProjectionMapper {
 		}
 		
 		if (writers.isEmpty() && readers.isEmpty()) {
-			throw new ProjectionBuilderError("Projection " + targetProjectionClass.getCanonicalName() + " has no annotated fields.");
+			throw new ProjectionError("Projection " + targetProjectionClass.getCanonicalName() + " has no annotated fields.");
 		}
 		
 		return ObjectProjection.newInstance(
@@ -81,7 +81,7 @@ public final class ProjectionMapper {
 							);
 	}
 	
-	protected void getWriter(final Field field, final Class<?> defaultSourceClass, final Class<?> targetProjectionClass, final List<PropertyWriter> writers) throws ProjectionBuilderError {
+	protected void getWriter(final Field field, final Class<?> defaultSourceClass, final Class<?> targetProjectionClass, final List<PropertyWriter> writers) throws ProjectionError {
 		propertyWriterMapper
 			.getProperty(field, defaultSourceClass)
 			.ifPresent(
@@ -94,7 +94,7 @@ public final class ProjectionMapper {
 				);
 	}
 
-	protected void getReader(final Field field, final Class<?> defaultSourceClass, final Class<?> targetProjectionClass, final List<PropertyReader> readers) throws ProjectionBuilderError {
+	protected void getReader(final Field field, final Class<?> defaultSourceClass, final Class<?> targetProjectionClass, final List<PropertyReader> readers) throws ProjectionError {
 		propertyReaderMapper
 			.getProperty(field, defaultSourceClass)
 			.ifPresent(

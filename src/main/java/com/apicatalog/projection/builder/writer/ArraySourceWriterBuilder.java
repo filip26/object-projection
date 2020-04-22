@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.builder.Builder;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.conversion.ConversionNotFound;
@@ -41,7 +41,7 @@ public final class ArraySourceWriterBuilder implements Builder<SourceWriter> {
 	}
 	
 	@Override
-	public Optional<SourceWriter> build(TypeConversions typeConversions) throws ProjectionBuilderError {
+	public Optional<SourceWriter> build(TypeConversions typeConversions) throws ProjectionError {
 		
 		if (logger.isTraceEnabled()) {
 			logger.trace("Build {} sources, {} converters, target={}", 
@@ -87,7 +87,7 @@ public final class ArraySourceWriterBuilder implements Builder<SourceWriter> {
 			return Optional.of(source);
 			
 		} catch (ConversionNotFound e) {
-			throw new ProjectionBuilderError(e);
+			throw new ProjectionError("Can not create sources.", e);
 		}
 	}	
 

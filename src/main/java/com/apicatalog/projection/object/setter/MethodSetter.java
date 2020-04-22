@@ -3,7 +3,7 @@ package com.apicatalog.projection.object.setter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.object.ObjectError;
 import com.apicatalog.projection.object.ObjectType;
 
 public final class MethodSetter implements Setter {
@@ -25,13 +25,13 @@ public final class MethodSetter implements Setter {
 	}
 
 	@Override
-	public void set(final Object object, final Object value) throws ProjectionError {
+	public void set(final Object object, final Object value) throws ObjectError {
 		
 		try {
 			method.invoke(object, value);
 			
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			/* ignored */
+			throw new ObjectError("Can not set value " + value + " to " + object.getClass().getCanonicalName() + "." + method.getName(), e);
 		}
 	}
 

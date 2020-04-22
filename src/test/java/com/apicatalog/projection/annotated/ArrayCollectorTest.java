@@ -8,9 +8,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.projections.ArrayCollectorTo;
@@ -20,12 +20,12 @@ public class ArrayCollectorTest {
 	Projection<ArrayCollectorTo> projection;
 	
 	@Before
-	public void setup() throws ProjectionError, ProjectionBuilderError {
+	public void setup() throws CompositionError, ProjectionError {
 		projection = Projection.scan(ArrayCollectorTo.class).build(ProjectionRegistry.newInstance());		
 	}
 	
     @Test
-    public void testCompose() throws ProjectionError, ConverterError {
+    public void testCompose() throws CompositionError, ConverterError {
     	
     	BasicTypes o1 = new BasicTypes();
     	o1.integerValue = 12345;
@@ -52,7 +52,7 @@ public class ArrayCollectorTest {
     }
     
     @Test
-    public void testExtract() throws ProjectionError, ConverterError {
+    public void testExtract() throws CompositionError, ConverterError {
     	
     	ArrayCollectorTo to = new ArrayCollectorTo();
     	to.objectArray = new Object[] { 1.234d, false, Instant.now(), new String[] { "s1", "s2", "s3" }};

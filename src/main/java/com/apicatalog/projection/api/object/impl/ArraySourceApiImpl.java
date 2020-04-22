@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.LambdaConversionApi;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.api.impl.LambdaConversionApiImpl;
 import com.apicatalog.projection.api.object.ObjectArraySourceApi;
 import com.apicatalog.projection.api.object.ObjectArraySourceItemApi;
@@ -22,7 +22,6 @@ import com.apicatalog.projection.builder.writer.ArraySourceWriterBuilder;
 import com.apicatalog.projection.builder.writer.SingleSourceWriterBuilder;
 import com.apicatalog.projection.builder.writer.SourcePropertyWriterBuilder;
 import com.apicatalog.projection.converter.Converter;
-import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.object.setter.Setter;
@@ -98,17 +97,12 @@ public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> imp
 	}
 
 	@Override
-	protected Optional<PropertyReader> buildyReader(final ProjectionRegistry registry) throws ProjectionBuilderError {
+	protected Optional<PropertyReader> buildyReader(final ProjectionRegistry registry) throws ProjectionError {
 
 		final Collection<ConverterMapping> converters = new ArrayList<>(conversionBuilder.size()*2);
 		
-		try {
-			for (ConversionMappingBuilder cb : conversionBuilder) {
-				converters.add(cb.build());
-			}
-			
-		} catch (ConverterError e) {
-			throw new ProjectionBuilderError(e);
+		for (ConversionMappingBuilder cb : conversionBuilder) {
+			converters.add(cb.build());
 		}
 
 		final Collection<SingleSourceWriterBuilder> sourceWriters = arraySourceItem.getWriters();
@@ -129,17 +123,12 @@ public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> imp
 	}
 
 	@Override
-	protected Optional<PropertyWriter> buildyWriter(ProjectionRegistry registry) throws ProjectionBuilderError {
+	protected Optional<PropertyWriter> buildyWriter(final ProjectionRegistry registry) throws ProjectionError {
 		
 		final Collection<ConverterMapping> converters = new ArrayList<>(conversionBuilder.size()*2);
 		
-		try {
-			for (ConversionMappingBuilder cb : conversionBuilder) {
-				converters.add(cb.build());
-			}
-			
-		} catch (ConverterError e) {
-			throw new ProjectionBuilderError(e);
+		for (ConversionMappingBuilder cb : conversionBuilder) {
+			converters.add(cb.build());
 		}
 
 		final Collection<SingleSourceReaderBuilder> sourceReaders = arraySourceItem.getReaders(); 
@@ -159,10 +148,10 @@ public final class ArraySourceApiImpl<P> extends AbstractValueProviderApi<P> imp
 			return Optional.empty();
 		}
 
-		return SourcePropertyWriterBuilder.newInstance()
+		return Optional.ofNullable(SourcePropertyWriterBuilder.newInstance()
 					.sourceReader(sourceReader.get())
 					.target(targetSetter, targetReference)
-					.build(registry).map(PropertyWriter.class::cast)
+					.build(registry)).map(PropertyWriter.class::cast)
 					;
 	}
 	

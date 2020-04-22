@@ -21,22 +21,34 @@ public final class ObjectUtils {
 
 	ObjectUtils() {}
 	
-	public static <T> T newInstance(final Class<? extends T> clazz) {
+	public static final <T> T newInstance(final Class<? extends T> clazz) throws ObjectError {
+		
+		if (clazz == null) {
+			throw new IllegalArgumentException();
+		}
+		
 		try {
 			return clazz.getDeclaredConstructor().newInstance();
 					
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-			/* ignore */
+			
+			throw new ObjectError("Can not instantiate class " + clazz.getCanonicalName(), e);
 		}
-		
-		return null;
 	}
 	
-	public static Field getProperty(final Class<?> clazz, final String property) {
+	static final Field getProperty(final Class<?> clazz, final String name) {
+
+		if (clazz == null) {
+			throw new IllegalArgumentException();
+		}
 		
+		if (StringUtils.isBlank(name)) {
+			throw new IllegalArgumentException();
+		}
+
 		try {
-			Field field = clazz.getDeclaredField(property);
+			Field field = clazz.getDeclaredField(name);
 
 			if (!Modifier.isStatic(field.getModifiers())
 					&& !Modifier.isTransient(field.getModifiers())) {
@@ -48,8 +60,16 @@ public final class ObjectUtils {
 		return null;
 	}
 	
-	public static Method getMethod(final Class<?> clazz, final String name) {
+	static final Method getMethod(final Class<?> clazz, final String name) {
 				
+		if (clazz == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		if (StringUtils.isBlank(name)) {
+			throw new IllegalArgumentException();
+		}
+		
 		try {
 			
 			return Arrays.stream(clazz.getMethods()).filter(m -> m.getName().equals(name)).findFirst().orElse(null);
@@ -59,43 +79,63 @@ public final class ObjectUtils {
 		return null;
 	}
 	
-	public static final Getter getGetter(final Class<?> objectClass, final String name) {
+	public static final Getter getGetter(final Class<?> clazz, final String name) throws ObjectError {
 
-		final Field sourceField = ObjectUtils.getProperty(objectClass, name);
+		if (clazz == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		if (StringUtils.isBlank(name)) {
+			throw new IllegalArgumentException();
+		}
+		
+		final Field sourceField = ObjectUtils.getProperty(clazz, name);
 		
 		if (sourceField != null) {
 			return FieldGetter.from(sourceField, getTypeOf(sourceField));
 		}
 
 		// look for getter method
-		final Method sourceGetter = ObjectUtils.getMethod(objectClass, "get".concat(StringUtils.capitalize(name)));
+		final Method sourceGetter = ObjectUtils.getMethod(clazz, "get".concat(StringUtils.capitalize(name)));
 		
 		if (sourceGetter != null) {
 			return MethodGetter.from(sourceGetter, name, getReturnTypeOf(sourceGetter));
 		}
 
-		return null;
+		throw new ObjectError("Can not get getter for " + name + ", class " + clazz.getCanonicalName());
 	}
 	
-	public static final Setter getSetter(final Class<?> objectClass, final String name) {
+	public static final Setter getSetter(final Class<?> clazz, final String name) throws ObjectError {
 
-		final Field sourceField = ObjectUtils.getProperty(objectClass, name);
+		if (clazz == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		if (StringUtils.isBlank(name)) {
+			throw new IllegalArgumentException();
+		}
+		
+		final Field sourceField = ObjectUtils.getProperty(clazz, name);
 		
 		if (sourceField != null) {
 			return FieldSetter.from(sourceField, getTypeOf(sourceField));
 		}
 
 		// look for getter method
-		final Method sourceSetter = ObjectUtils.getMethod(objectClass, "set".concat(StringUtils.capitalize(name)));
+		final Method sourceSetter = ObjectUtils.getMethod(clazz, "set".concat(StringUtils.capitalize(name)));
 
 		if (sourceSetter != null) {
 			return MethodSetter.from(sourceSetter, name, getParameterTypeOf(sourceSetter));
 		}
 
-		return null;
+		throw new ObjectError("Can not get setter for " + name + ", class " + clazz.getCanonicalName());
 	}
 
 	public static final ObjectType getTypeOf(final Field field) {
+		
+		if (field == null) {
+			throw new IllegalArgumentException();
+		}
 		
 		Class<?> objectClass = field.getType();
 		Class<?> componentClass = null;
@@ -107,7 +147,11 @@ public final class ObjectUtils {
 		return ObjectType.of(objectClass, componentClass);
 	}
 	
-	protected static final ObjectType getReturnTypeOf(final Method method) {
+	static final ObjectType getReturnTypeOf(final Method method) {
+		
+		if (method == null) {
+			throw new IllegalArgumentException();
+		}
 		
 		Class<?> objectClass = method.getReturnType();
 		Class<?> componentClass = null;
@@ -119,7 +163,11 @@ public final class ObjectUtils {
 		return ObjectType.of(objectClass, componentClass);
 	}
 	
-	protected static final ObjectType getParameterTypeOf(final Method method) {
+	static final ObjectType getParameterTypeOf(final Method method) {
+		
+		if (method == null) {
+			throw new IllegalArgumentException();
+		}
 		
 		Class<?> objectClass = method.getParameters()[0].getType();
 		Class<?> componentClass = null;

@@ -1,6 +1,5 @@
 package com.apicatalog.projection.api.object.impl;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -10,18 +9,14 @@ import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.api.object.ObjectArraySourceApi;
 import com.apicatalog.projection.api.object.ObjectProjectionApi;
 import com.apicatalog.projection.api.object.ObjectPropertyApi;
 import com.apicatalog.projection.api.object.ObjectProvidedApi;
 import com.apicatalog.projection.api.object.ObjectSingleSourceApi;
-import com.apicatalog.projection.object.ObjectType;
+import com.apicatalog.projection.object.ObjectError;
 import com.apicatalog.projection.object.ObjectUtils;
-import com.apicatalog.projection.object.getter.FieldGetter;
-import com.apicatalog.projection.object.getter.Getter;
-import com.apicatalog.projection.object.setter.FieldSetter;
-import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
@@ -131,45 +126,55 @@ public final class PropertyApiImpl<P> implements ObjectPropertyApi<P> {
 	}
 	
 	@Override
-	public Projection<P> build(final ProjectionRegistry registry) throws ProjectionBuilderError {
+	public Projection<P> build(final ProjectionRegistry registry) throws ProjectionError {
 		return projectionBuilder.build(registry);
 	}
 	
-	protected Optional<PropertyReader> buildReader(final ProjectionRegistry registry) throws ProjectionBuilderError {
+	protected Optional<PropertyReader> buildReader(final ProjectionRegistry registry) throws ProjectionError {
 
 		if (valueProvider == null) {
 			return Optional.empty();
 		}
 		
-		final Field field = ObjectUtils.getProperty(projectionBuilder.projectionClass(), targetPropertyName);
-		
-		final ObjectType targetType = ObjectUtils.getTypeOf(field);
+//		final Field field = ObjectUtils.getProperty(projectionBuilder.getType(), targetPropertyName);
+//		
+//		final ObjectType targetType = ObjectUtils.getTypeOf(field);
+//
+//		// extract getter
+//		final Getter targetGetter = FieldGetter.from(field, targetType);
 
-		// extract getter
-		final Getter targetGetter = FieldGetter.from(field, targetType);
-
-		return valueProvider
-					.targetGetter(targetGetter)
-					.buildyReader(registry)
-					;
+		try {
+			return valueProvider
+						.targetGetter(ObjectUtils.getGetter(projectionBuilder.getType(), targetPropertyName))
+						.buildyReader(registry)
+						;
+		} catch (ObjectError e) {
+			throw new ProjectionError("Can not map property " + targetPropertyName + " of " + projectionBuilder.getType().getClass().getCanonicalName() + ".", e);
+		}
 	}
 	
-	protected Optional<PropertyWriter> buildWriter(final ProjectionRegistry registry) throws ProjectionBuilderError {
+	protected Optional<PropertyWriter> buildWriter(final ProjectionRegistry registry) throws ProjectionError {
 
 		if (valueProvider == null) {
 			return Optional.empty();
 		}
 
-		final Field field = ObjectUtils.getProperty(projectionBuilder.projectionClass(), targetPropertyName);
-		
-		final ObjectType targetType = ObjectUtils.getTypeOf(field);
+//		final Field field = ObjectUtils.getProperty(projectionBuilder.getType(), targetPropertyName);
+//		
+//		final ObjectType targetType = ObjectUtils.getTypeOf(field);
+//
+//		// extract setter
+//		final Setter targetSetter = FieldSetter.from(field, targetType);
 
-		// extract setter
-		final Setter targetSetter = FieldSetter.from(field, targetType);
-
-		return valueProvider
-					.targetSetter(targetSetter)
-					.buildyWriter(registry)
-					;		
+		try {
+			return valueProvider
+						.targetSetter(ObjectUtils.getSetter(projectionBuilder.getType(), targetPropertyName))
+						.buildyWriter(registry)
+						;
+			
+		} catch (ObjectError e) {
+			throw new ProjectionError("Can not map property " + targetPropertyName + " of " + projectionBuilder.getType().getClass().getCanonicalName() + ".", e);
+		}
+			
 	}
 }

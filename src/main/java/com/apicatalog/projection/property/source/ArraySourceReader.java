@@ -8,7 +8,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.ConverterError;
@@ -32,7 +32,7 @@ public final class ArraySourceReader implements SourceReader {
 	boolean optional;
 	
 	@Override
-	public Optional<Object> read(final CompositionContext context) throws ProjectionError {
+	public Optional<Object> read(final CompositionContext context) throws CompositionError {
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("Read {} source(s), optional = {}", sources.length, optional);
@@ -63,7 +63,7 @@ public final class ArraySourceReader implements SourceReader {
 			return object;
 			
 		} catch (ConverterError e) {
-			throw new ProjectionError(e);
+			throw new CompositionError(e);
 		}
 	}
 	

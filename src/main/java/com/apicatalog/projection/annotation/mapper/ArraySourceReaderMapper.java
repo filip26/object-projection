@@ -11,11 +11,10 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.builder.reader.SourcePropertyReaderBuilder;
 import com.apicatalog.projection.builder.writer.ArraySourceWriterBuilder;
 import com.apicatalog.projection.builder.writer.SingleSourceWriterBuilder;
-import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.object.ObjectUtils;
 import com.apicatalog.projection.object.getter.FieldGetter;
 import com.apicatalog.projection.object.getter.Getter;
@@ -36,7 +35,7 @@ final class ArraySourceReaderMapper {
 		this.singleSourceMapper = new SingleSourceReaderMapper(registry);
 	}
 		
-	Optional<PropertyReader> getSourcesProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionBuilderError {
+	Optional<PropertyReader> getSourcesProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionError {
 		
 		final Sources sourcesAnnotation = field.getAnnotation(Sources.class);
 
@@ -62,7 +61,7 @@ final class ArraySourceReaderMapper {
 				.build(registry).map(PropertyReader.class::cast);
 	}
 	
-	Optional<ArraySourceWriterBuilder> getArraySourceWriter(final Sources sourcesAnnotation, final String fieldName, final Class<?> defaultSourceObjectClass) throws ProjectionBuilderError {
+	Optional<ArraySourceWriterBuilder> getArraySourceWriter(final Sources sourcesAnnotation, final String fieldName, final Class<?> defaultSourceObjectClass) throws ProjectionError {
 							 								
 		final Collection<SingleSourceWriterBuilder> sources = new ArrayList<>(sourcesAnnotation.value().length);
 
@@ -77,15 +76,10 @@ final class ArraySourceReaderMapper {
 			return Optional.empty();
 		}
 
-		try {
-			return Optional.of(ArraySourceWriterBuilder.newInstance()
-						.optional(sourcesAnnotation.optional())
-						.sources(sources)
-						.converters(SingleSourceReaderMapper.getConverterMapping(sourcesAnnotation.map()))	// set conversions to apply
-						);
-			
-		} catch (ConverterError e) {
-			throw new ProjectionBuilderError(e);
-		}
+		return Optional.of(ArraySourceWriterBuilder.newInstance()
+					.optional(sourcesAnnotation.optional())
+					.sources(sources)
+					.converters(SingleSourceReaderMapper.getConverterMapping(sourcesAnnotation.map()))	// set conversions to apply
+					);			
 	}	
 }

@@ -11,11 +11,10 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.builder.reader.ArraySourceReaderBuilder;
 import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
 import com.apicatalog.projection.builder.writer.SourcePropertyWriterBuilder;
-import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
 import com.apicatalog.projection.object.setter.FieldSetter;
@@ -38,7 +37,7 @@ final class ArraySourceWriterMapper {
 		this.singleSourceMapper = new SingleSourceWriterMapper(registry);
 	}
 		
-	Optional<PropertyWriter> getSourcesPropertyMapping(final Field field, final Class<?> defaultSourceClass) throws ProjectionBuilderError {
+	Optional<PropertyWriter> getSourcesPropertyMapping(final Field field, final Class<?> defaultSourceClass) throws ProjectionError {
 		
 		final Sources sourcesAnnotation = field.getAnnotation(Sources.class);
 
@@ -60,19 +59,19 @@ final class ArraySourceWriterMapper {
 			return Optional.empty();
 		}
 		
-		return SourcePropertyWriterBuilder.newInstance()
+		return Optional.ofNullable(SourcePropertyWriterBuilder.newInstance()
 					.sourceReader(arraySourceReader.get())
 					.target(targetSetter, targetReference)
-					.build(registry).map(PropertyWriter.class::cast);
+					.build(registry)).map(PropertyWriter.class::cast);
 	}
 	
-	Optional<ArraySourceReader> getArraySourceReader(final Sources sourcesAnnotation, final String fieldName, final ObjectType targetType, final boolean targetReference, final Class<?> defaultSourceObjectClass) throws ProjectionBuilderError {
+	Optional<ArraySourceReader> getArraySourceReader(final Sources sourcesAnnotation, final String fieldName, final ObjectType targetType, final boolean targetReference, final Class<?> defaultSourceObjectClass) throws ProjectionError {
 		
 		final Collection<SingleSourceReaderBuilder> sources = new ArrayList<>(sourcesAnnotation.value().length);
 		
 		for (final Source source : sourcesAnnotation.value()) {
-			singleSourceMapper
-				.getSingleSourceReader(source, fieldName, defaultSourceObjectClass)
+			Optional.ofNullable(singleSourceMapper
+				.getSingleSourceReader(source, fieldName, defaultSourceObjectClass))
 				.ifPresent(sources::add);
 		}
 		
@@ -81,18 +80,13 @@ final class ArraySourceWriterMapper {
 			return Optional.empty();
 		}
 
-		try {
-			return 
-				ArraySourceReaderBuilder.newInstance()
-					.optional(sourcesAnnotation.optional())
-					.sources(sources)
-					.targetType(targetType, targetReference)
-					.converters(SingleSourceReaderMapper.getConverterMapping(sourcesAnnotation.map()))	// set conversions to apply
-					.build(registry.getTypeConversions());
+		return 
+			ArraySourceReaderBuilder.newInstance()
+				.optional(sourcesAnnotation.optional())
+				.sources(sources)
+				.targetType(targetType, targetReference)
+				.converters(SingleSourceReaderMapper.getConverterMapping(sourcesAnnotation.map()))	// set conversions to apply
+				.build(registry.getTypeConversions());
 			
-		} catch (ConverterError | ProjectionBuilderError e) {
-			logger.error("Property " + fieldName + " is ignored.", e);
-			return Optional.empty();
-		}
 	}
 }

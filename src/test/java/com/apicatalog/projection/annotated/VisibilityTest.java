@@ -4,9 +4,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.Object1;
 import com.apicatalog.projection.objects.Object2;
@@ -20,7 +20,7 @@ public class VisibilityTest {
 	ProjectionRegistry projections;
 	
 	@Before
-	public void setup() throws ProjectionError, ProjectionBuilderError {
+	public void setup() throws CompositionError, ProjectionError {
 		projections = ProjectionRegistry.newInstance()
 						.register(Object1To.class)
 						.register(Object2To.class)
@@ -29,7 +29,7 @@ public class VisibilityTest {
 	}
 	
     @Test
-    public void testCompose1() throws ProjectionError, ConverterError {
+    public void testCompose1() throws CompositionError, ConverterError {
     	
     	Object1 o1 =new Object1();
     	o1.id = "Object #1";
@@ -51,7 +51,7 @@ public class VisibilityTest {
     }
 
     @Test
-    public void testCompose2() throws ProjectionError, ConverterError {
+    public void testCompose2() throws CompositionError, ConverterError {
 
     	Object2 o2 =new Object2();
     	o2.id = "Object 2";

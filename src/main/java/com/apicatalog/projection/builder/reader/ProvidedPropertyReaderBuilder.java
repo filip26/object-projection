@@ -42,15 +42,13 @@ public final class ProvidedPropertyReaderBuilder {
 			return buildReference(registry);
 		}
 		
-		final ProvidedObjectPropertyReader property = new ProvidedObjectPropertyReader();
+		final ProvidedObjectPropertyReader property = ProvidedObjectPropertyReader.newInstance(targetGetter);
 
 		// set qualifier				
 		property.setObjectQualifier(qualifier);
 		
 		property.setOptional(optional);
 		
-		property.setTargetGetter(targetGetter);
-
 		ExtractorBuilder
 			.newInstance()
 				.getter(targetGetter, targetReference)

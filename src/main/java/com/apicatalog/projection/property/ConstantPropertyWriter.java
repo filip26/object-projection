@@ -8,11 +8,12 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.ConverterError;
+import com.apicatalog.projection.object.ObjectError;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.source.SourceType;
 
@@ -29,7 +30,7 @@ public final class ConstantPropertyWriter implements PropertyWriter {
 	Set<Integer> visibleLevels;
 
 	@Override
-	public void write(final ProjectionStack stack, final CompositionContext context) throws ProjectionError {
+	public void write(final ProjectionStack stack, final CompositionContext context) throws CompositionError {
 		
 		if (targetSetter == null) {
 			return;
@@ -49,12 +50,16 @@ public final class ConstantPropertyWriter implements PropertyWriter {
 					object = Optional.ofNullable(conversion.convert(object.get()));
 				}
 			} catch (ConverterError e) {
-				throw new ProjectionError(e);
+				throw new CompositionError(e);
 			}
 		}
 		
 		if (object.isPresent()) {
-			targetSetter.set(stack.peek(), object.get());
+			try {
+				targetSetter.set(stack.peek(), object.get());
+			} catch (ObjectError e) {
+				throw new CompositionError("Can not set " + object.get() + " to " + stack.peek().getClass().getCanonicalName() + "." + targetSetter.getName() + ".");
+			}
 		}
 	}
 

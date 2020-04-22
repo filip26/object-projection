@@ -7,7 +7,7 @@ import com.apicatalog.projection.source.SourceType;
 
 public interface ProjectionExtractor<P> {
 
-	void extract(P projection, ExtractionContext context) throws ProjectionError;
+	void extract(P projection, ExtractionContext context) throws CompositionError;
 	
 	Collection<SourceType> getSourceTypes();
 	

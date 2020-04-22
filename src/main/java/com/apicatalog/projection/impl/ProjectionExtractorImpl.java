@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.ProjectionExtractor;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
@@ -52,7 +52,7 @@ public final class ProjectionExtractorImpl<P> implements ProjectionExtractor<P> 
 
 	
 	@Override
-	public void extract(P projection, ExtractionContext context) throws ProjectionError {
+	public void extract(P projection, ExtractionContext context) throws CompositionError {
 		
 		if (projection == null || context == null || readers == null) {
 			throw new IllegalArgumentException();

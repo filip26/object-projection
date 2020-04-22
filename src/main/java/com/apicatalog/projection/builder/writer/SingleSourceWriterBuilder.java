@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.annotation.AccessMode;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.builder.Builder;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.conversion.ConversionNotFound;
@@ -54,7 +54,7 @@ public final class SingleSourceWriterBuilder implements Builder<SourceWriter> {
 	}
 	
 	@Override
-	public Optional<SourceWriter> build(TypeConversions typeConverters) throws ProjectionBuilderError {
+	public Optional<SourceWriter> build(TypeConversions typeConverters) throws ProjectionError {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Build single source writer from {} to {}.{} : {}",
@@ -98,7 +98,7 @@ public final class SingleSourceWriterBuilder implements Builder<SourceWriter> {
 			return Optional.of(source);
 			
 		} catch (ConversionNotFound e) {
-			throw new ProjectionBuilderError(e);
+			throw new ProjectionError("Can not build source writer.", e);
 		}
 	}
 	

@@ -9,10 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.ProjectionExtractor;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
+import com.apicatalog.projection.object.ObjectError;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.source.SourceType;
 
@@ -37,7 +38,7 @@ public class ProvidedProjectionPropertyReader implements PropertyReader {
 	}
 	
 	@Override
-	public void read(ProjectionStack stack, ExtractionContext context) throws ProjectionError {
+	public void read(ProjectionStack stack, ExtractionContext context) throws CompositionError {
 
 		if (targetGetter == null) {
 			return;
@@ -46,18 +47,22 @@ public class ProvidedProjectionPropertyReader implements PropertyReader {
 		logger.debug("Read {} : {}, qualifier = {}, optional = {}, depth = {}", targetGetter.getName(), targetGetter.getType(), objectQualifier, optional, stack.length());
 
 		if (extractor == null) {
-			throw new ProjectionError("Projection " + targetGetter.getType().getType() +  " is not set.");			
+			throw new CompositionError("Projection " + targetGetter.getType().getType() +  " is not set.");			
 		}
 
-		final Optional<Object> object = targetGetter.get(stack.peek());
-
-		if (object.isPresent()) {
-			
-			Optional.ofNullable(objectQualifier).ifPresent(context::addNamespace);
-
-			extractor.extract(object.get(), context);
-			
-			Optional.ofNullable(objectQualifier).ifPresent(s -> context.removeLastNamespace());
+		try {
+			final Optional<Object> object = targetGetter.get(stack.peek());
+	
+			if (object.isPresent()) {
+				
+				Optional.ofNullable(objectQualifier).ifPresent(context::addNamespace);
+	
+				extractor.extract(object.get(), context);
+				
+				Optional.ofNullable(objectQualifier).ifPresent(s -> context.removeLastNamespace());
+			}
+		} catch (ObjectError e) {
+			throw new CompositionError("Can not get value of " + stack.peek().getClass().getCanonicalName() + "." + targetGetter.getName() + ".");
 		}
 	}
 	

@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import com.apicatalog.projection.annotation.mapper.ProjectionMapper;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.conversion.TypeConversions;
 
 public final class ProjectionRegistry {
@@ -58,7 +58,7 @@ public final class ProjectionRegistry {
 		return this;
 	}
 
-	public ProjectionRegistry register(final Class<?> annotatedProjectionType) throws ProjectionBuilderError {
+	public ProjectionRegistry register(final Class<?> annotatedProjectionType) throws ProjectionError {
 		if (annotatedProjectionType == null) {
 			throw new IllegalArgumentException();
 		}

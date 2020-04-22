@@ -6,9 +6,10 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
+import com.apicatalog.projection.object.ObjectError;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.property.source.SourceWriter;
 import com.apicatalog.projection.property.target.TargetExtractor;
@@ -22,18 +23,30 @@ public final class SourcePropertyReader implements PropertyReader {
 	
 	final Getter targetGetter;
 	
-	final TargetExtractor extractor;
+	TargetExtractor extractor;
 	
-	public SourcePropertyReader(final SourceWriter sourceWriter, final Getter targetGetter, final TargetExtractor extractor) {
+	protected SourcePropertyReader(final SourceWriter sourceWriter, final Getter targetGetter) {
 		this.sourceWriter = sourceWriter;
 		this.targetGetter = targetGetter;
-		this.extractor = extractor;
+	}
+	
+	public static final SourcePropertyReader newInstance(final SourceWriter sourceWriter, final Getter targetGetter) {
+		
+		if (targetGetter == null) {
+			throw new IllegalArgumentException("Target getter is not set.");
+		}
+
+		if (sourceWriter == null) {
+			throw new IllegalArgumentException("Source writer is not set.");
+		}
+		
+		return new SourcePropertyReader(sourceWriter, targetGetter);		
 	}
 
 	@Override
-	public void read(final ProjectionStack stack, final ExtractionContext context) throws ProjectionError {
+	public void read(final ProjectionStack stack, final ExtractionContext context) throws CompositionError {
 
-		if (sourceWriter == null || targetGetter == null || !sourceWriter.isAnyTypeOf(context.getAcceptedTypes())) {
+		if (!sourceWriter.isAnyTypeOf(context.getAcceptedTypes())) {
 			return;
 		}
 		
@@ -41,21 +54,30 @@ public final class SourcePropertyReader implements PropertyReader {
 			logger.debug("Read {} from {}, depth = {}", sourceWriter.getTargetType(), targetGetter.getType(), stack.length());
 		}
 
-		Optional<Object> object = targetGetter.get(stack.peek());
-		
-		if (object.isEmpty()) {
-			return;
-		}
-		
-		if (extractor != null) {
-			object = extractor.extract(sourceWriter.getTargetType(), object.get(), context);
-		}
-		
-		if (object.isPresent()) {
-			sourceWriter.write(context, object.get());
+		try {
+			Optional<Object> object = targetGetter.get(stack.peek());
+			
+			if (object.isEmpty()) {
+				return;
+			}
+			
+			if (extractor != null) {
+				object = extractor.extract(sourceWriter.getTargetType(), object.get(), context);
+			}
+			
+			if (object.isPresent()) {
+				sourceWriter.write(context, object.get());
+			}
+			
+		} catch (ObjectError e) {
+			throw new CompositionError("Can not get value of " + stack.peek().getClass().getCanonicalName() + "." + targetGetter.getName() + ".", e);
 		}
 	}
 
+	public void setExtractor(TargetExtractor extractor) {
+		this.extractor = extractor;
+	}
+	
 	@Override
 	public Collection<SourceType> getSourceTypes() {
 		return sourceWriter.getSourceTypes();

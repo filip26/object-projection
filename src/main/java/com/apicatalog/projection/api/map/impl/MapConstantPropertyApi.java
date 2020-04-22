@@ -3,7 +3,7 @@ package com.apicatalog.projection.api.map.impl;
 import java.util.Optional;
 
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.api.map.MapProjectionBuilderApi;
 import com.apicatalog.projection.builder.writer.ConstantWriterBuilder;
 import com.apicatalog.projection.object.getter.Getter;
@@ -47,7 +47,7 @@ public class MapConstantPropertyApi extends AbstractValueProviderApi {
 	}
 
 	@Override
-	protected Optional<PropertyWriter> buildyWriter(final ProjectionRegistry registry) throws ProjectionBuilderError {
+	protected Optional<PropertyWriter> buildyWriter(final ProjectionRegistry registry) throws ProjectionError {
 		return ConstantWriterBuilder.newInstance()
 					.constants(constants)
 					.targetSetter(targetSetter, targetReference)

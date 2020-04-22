@@ -8,9 +8,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.projections.StringCollectionTo;
 import com.apicatalog.projection.source.SourceObject;
@@ -20,14 +20,14 @@ public class ProvidedCollectionTest {
 	ProjectionRegistry projections;
 	
 	@Before
-	public void setup() throws ProjectionError, ProjectionBuilderError {
+	public void setup() throws CompositionError, ProjectionError {
 		projections = ProjectionRegistry.newInstance();
 		
 		projections.register(StringCollectionTo.class);
 	}
 	
     @Test
-    public void testCompose() throws ProjectionError, ConverterError {
+    public void testCompose() throws CompositionError, ConverterError {
     	
     	String href = "https://example.org/provided";
 
@@ -47,7 +47,7 @@ public class ProvidedCollectionTest {
     }
     
     @Test
-    public void testExtract() throws ProjectionError, ConverterError {
+    public void testExtract() throws CompositionError, ConverterError {
     	
     	StringCollectionTo to = new StringCollectionTo();
     	to.href = "https://example.org/provided";

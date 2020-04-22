@@ -12,7 +12,7 @@ import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.api.LambdaConversionApi;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.api.impl.LambdaConversionApiImpl;
 import com.apicatalog.projection.api.map.MapProjectionBuilderApi;
 import com.apicatalog.projection.api.map.MapSingleSourceApi;
@@ -22,8 +22,8 @@ import com.apicatalog.projection.builder.reader.SourcePropertyReaderBuilder;
 import com.apicatalog.projection.builder.writer.SingleSourceWriterBuilder;
 import com.apicatalog.projection.builder.writer.SourcePropertyWriterBuilder;
 import com.apicatalog.projection.converter.Converter;
-import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.converter.ConverterMapping;
+import com.apicatalog.projection.object.ObjectError;
 import com.apicatalog.projection.object.ObjectUtils;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.object.setter.Setter;
@@ -119,75 +119,71 @@ public final class MapSingleSourceApiImpl extends AbstractValueProviderApi imple
 	}
 	
 	@Override
-	public Projection<Map<String, Object>> build(final ProjectionRegistry factory) throws ProjectionBuilderError {
+	public Projection<Map<String, Object>> build(final ProjectionRegistry factory) throws ProjectionError {
 		return projectionBuilder.build(factory);
 	}
 
 	@Override
-	protected Optional<PropertyReader> buildyReader(final ProjectionRegistry registry) throws ProjectionBuilderError {
+	protected Optional<PropertyReader> buildyReader(final ProjectionRegistry registry) throws ProjectionError {
 			
 		final Collection<ConverterMapping> converters = new ArrayList<>(conversions.size()*2);
 		
-		try {
-			for (ConversionMappingBuilder cb : conversions) {
-				converters.add(cb.build());
-			}
-			
-		} catch (ConverterError e) {
-			throw new ProjectionBuilderError(e);
+		for (ConversionMappingBuilder cb : conversions) {
+			converters.add(cb.build());
 		}
 		
 		sourceWriterBuilder.converters(converters);
-
-		// extract setter
-		final Setter sourceSetter = ObjectUtils.getSetter(sourceObjectClass, sourcePropertyName);
-		//TODO null setter
-
- 
-		sourceWriterBuilder
-				.setter(sourceSetter);
-
-		return SourcePropertyReaderBuilder.newInstance()
-					.sourceWriter(sourceWriterBuilder)
-					.target(targetGetter, targetReference)
-					.build(registry).map(PropertyReader.class::cast);
+		
+		try {
+			// extract setter
+			final Setter sourceSetter = ObjectUtils.getSetter(sourceObjectClass, sourcePropertyName);
+	 
+			sourceWriterBuilder
+					.setter(sourceSetter);
+	
+			return SourcePropertyReaderBuilder.newInstance()
+						.sourceWriter(sourceWriterBuilder)
+						.target(targetGetter, targetReference)
+						.build(registry).map(PropertyReader.class::cast);
+		} catch (ObjectError e) {
+			throw new ProjectionError("Can not get setter for " + sourceObjectClass.getCanonicalName() + "." + sourcePropertyName + ".", e);
+		}
 	}
 	
 	@Override
-	protected Optional<PropertyWriter> buildyWriter(final ProjectionRegistry registry) throws ProjectionBuilderError {
+	protected Optional<PropertyWriter> buildyWriter(final ProjectionRegistry registry) throws ProjectionError {
 
 		final Collection<ConverterMapping> converters = new ArrayList<>(conversions.size()*2);
 		
-		try {
-			for (ConversionMappingBuilder cb : conversions) {
-				converters.add(cb.build());
-			}
-			
-		} catch (ConverterError e) {
-			throw new ProjectionBuilderError(e);
+		for (ConversionMappingBuilder cb : conversions) {
+			converters.add(cb.build());
 		}
 		
 		sourceReaderBuilder.converters(converters);
 
-		// extract getter
-		final Getter sourceGetter = ObjectUtils.getGetter(sourceObjectClass, sourcePropertyName);
-		//TODO null getter
+		try {
+			// extract getter
+			final Getter sourceGetter = ObjectUtils.getGetter(sourceObjectClass, sourcePropertyName);
+			
+			final Optional<SourceReader> sourceReader = 
+						sourceReaderBuilder
+							.getter(sourceGetter)
+							.targetType(targetSetter.getType(), targetReference)
+							.build(registry.getTypeConversions())
+								.map(SourceReader.class::cast);
 		
-		final Optional<SourceReader> sourceReader = 
-					sourceReaderBuilder
-						.getter(sourceGetter)
-						.targetType(targetSetter.getType(), targetReference)
-						.build(registry.getTypeConversions())
-							.map(SourceReader.class::cast);
+			if (sourceReader.isEmpty()) {
+				return Optional.empty();
+			}
 	
-		if (sourceReader.isEmpty()) {
-			return Optional.empty();
+			return Optional.ofNullable(SourcePropertyWriterBuilder.newInstance()
+						.sourceReader(sourceReader.get())
+						.target(targetSetter, targetReference)
+						.build(registry)).map(PropertyWriter.class::cast);
+			
+		} catch (ObjectError e) {
+			throw new ProjectionError("Can not get getter for " + sourceObjectClass.getCanonicalName() + "." + sourcePropertyName + ".", e);
 		}
-
-		return SourcePropertyWriterBuilder.newInstance()
-					.sourceReader(sourceReader.get())
-					.target(targetSetter, targetReference)
-					.build(registry).map(PropertyWriter.class::cast);
 	}
 	
 	@Override

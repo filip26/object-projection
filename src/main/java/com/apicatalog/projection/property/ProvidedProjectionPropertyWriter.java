@@ -9,9 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ProjectionStack;
+import com.apicatalog.projection.object.ObjectError;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.source.SourceType;
 
@@ -36,7 +37,7 @@ public class ProvidedProjectionPropertyWriter implements PropertyWriter {
 	}
 	
 	@Override
-	public void write(ProjectionStack stack, CompositionContext context) throws ProjectionError {
+	public void write(ProjectionStack stack, CompositionContext context) throws CompositionError {
 
 		if (targetSetter == null) {
 			return;
@@ -47,7 +48,7 @@ public class ProvidedProjectionPropertyWriter implements PropertyWriter {
 		}
 
 		if (projection == null) {
-			throw new ProjectionError("Projection " + projectionName +  " is not set.");
+			throw new CompositionError("Projection " + projectionName +  " is not set.");
 		}
 		
 		final CompositionContext clonedContext = new CompositionContext(context);
@@ -55,11 +56,16 @@ public class ProvidedProjectionPropertyWriter implements PropertyWriter {
 		Optional.ofNullable(objectQualifier).ifPresent(clonedContext::namespace);
 					
 		final Object object = projection.getComposer()
-									.orElseThrow(() -> new ProjectionError("Projection " + projectionName + " composer is not set."))
+									.orElseThrow(() -> new CompositionError("Projection " + projectionName + " composer is not set."))
 									.compose(stack, clonedContext);
 		
 		if (object != null) {
-			targetSetter.set(stack.peek(), object);
+			try {
+				targetSetter.set(stack.peek(), object);
+				
+			} catch (ObjectError e) {
+				throw new CompositionError("Can not set value " + object + " to " + stack.peek().getClass().getCanonicalName());
+			}
 		}
 	}
 

@@ -9,15 +9,14 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.apicatalog.projection.api.ProjectionBuilderError;
-import com.apicatalog.projection.converters.Concatenation;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.objects.SimpleObject;
 import com.apicatalog.projection.source.SourceObject;
 
 public class MapProjectionBuilderTest {
 	
 	@Test
-	public void test1c() throws ProjectionBuilderError, ProjectionError {
+	public void test1c() throws ProjectionError, CompositionError {
 		final Projection<Map<String, Object>> projection = 
 				Projection
 					.hashMap()
@@ -41,7 +40,7 @@ public class MapProjectionBuilderTest {
 	
 
 	@Test
-	public void test1e() throws ProjectionBuilderError, ProjectionError {
+	public void test1e() throws ProjectionError, CompositionError {
 		
 		final Projection<Map<String, Object>> projection = 
 				Projection
@@ -65,7 +64,7 @@ public class MapProjectionBuilderTest {
 	}
 	
 	@Test
-	public void test2c() throws ProjectionBuilderError, ProjectionError {
+	public void test2c() throws ProjectionError, CompositionError {
 		final Projection<Map<String, Object>> projection = 
 				Projection
 					.hashMap()
@@ -88,7 +87,7 @@ public class MapProjectionBuilderTest {
 	}
 	
 	@Test
-	public void test2e() throws ProjectionBuilderError, ProjectionError {
+	public void test2e() throws ProjectionError, CompositionError {
 		
 		final Projection<Map<String, Object>> projection = 
 				Projection
@@ -112,7 +111,7 @@ public class MapProjectionBuilderTest {
 	}
 	
 	@Test
-	public void test3c() throws ProjectionBuilderError, ProjectionError {
+	public void test3c() throws ProjectionError, CompositionError {
 		final Projection<Map<String, Object>> projection = 
 				Projection
 					.hashMap("p1")
@@ -129,7 +128,7 @@ public class MapProjectionBuilderTest {
 	}
 
 	@Test
-	public void test3e() throws ProjectionBuilderError, ProjectionError {
+	public void test3e() throws ProjectionError, CompositionError {
 		final Projection<Map<String, Object>> projection = 
 				Projection
 					.hashMap()
@@ -150,7 +149,7 @@ public class MapProjectionBuilderTest {
 	}
 
 	@Test
-	public void test4c() throws ProjectionBuilderError, ProjectionError {
+	public void test4c() throws ProjectionError, CompositionError {
 		final Projection<Map<String, Object>> projection = 
 				Projection
 					.hashMap()
@@ -171,7 +170,7 @@ public class MapProjectionBuilderTest {
 	}
 
 	@Test
-	public void test4e() throws ProjectionBuilderError, ProjectionError {
+	public void test4e() throws ProjectionError, CompositionError {
 		final Projection<Map<String, Object>> projection = 
 				Projection
 					.hashMap()
@@ -197,7 +196,7 @@ public class MapProjectionBuilderTest {
 	}
 
 	@Test
-	public void test5c() throws ProjectionBuilderError, ProjectionError {
+	public void test5c() throws ProjectionError, CompositionError {
 		final Projection<Map<String, Object>> projection = 
 				Projection
 					.hashMap()
@@ -234,7 +233,7 @@ public class MapProjectionBuilderTest {
 	}
 
 	@Test
-	public void test5e() throws ProjectionBuilderError, ProjectionError {
+	public void test5e() throws ProjectionError, CompositionError {
 		final Projection<Map<String, Object>> projection = 
 				Projection
 					.hashMap()

@@ -9,9 +9,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.objects.ObjectsCollection;
@@ -24,7 +24,7 @@ public class RefCollectionTest {
 	ProjectionRegistry projections;
 	
 	@Before
-	public void setup() throws ProjectionError, ProjectionBuilderError {
+	public void setup() throws CompositionError, ProjectionError {
 		projections = ProjectionRegistry.newInstance()
 						.register(RefCollectionTo.class)
 						.register(NameOverrideTo.class)
@@ -32,7 +32,7 @@ public class RefCollectionTest {
 	}
 	
     @Test
-    public void testCompose() throws ProjectionError, ConverterError {
+    public void testCompose() throws CompositionError, ConverterError {
     	
     	BasicTypes oa = new BasicTypes();
     	oa.booleanValue = true;
@@ -55,7 +55,7 @@ public class RefCollectionTest {
     }
 
     @Test
-    public void testComposerSources() throws ProjectionError, ConverterError {
+    public void testComposerSources() throws CompositionError, ConverterError {
     	
     	Projection<RefCollectionTo> projection = projections.get(RefCollectionTo.class);
     	
@@ -68,7 +68,7 @@ public class RefCollectionTest {
     }
     
     @Test
-    public void testComposerDependencies() throws ProjectionError, ConverterError {
+    public void testComposerDependencies() throws CompositionError, ConverterError {
     	
     	Projection<RefCollectionTo> projection = projections.get(RefCollectionTo.class);
     	
@@ -81,7 +81,7 @@ public class RefCollectionTest {
     }
 
     @Test
-    public void testExtract() throws ProjectionError, ConverterError {
+    public void testExtract() throws CompositionError, ConverterError {
     	
     	RefCollectionTo to = new RefCollectionTo();
     	to.items = new ArrayList<>();
@@ -117,7 +117,7 @@ public class RefCollectionTest {
     }
     
     @Test
-    public void testExtractorSources() throws ProjectionError, ConverterError {
+    public void testExtractorSources() throws CompositionError, ConverterError {
     	
     	Projection<RefCollectionTo> projection = projections.get(RefCollectionTo.class);
     	
@@ -130,7 +130,7 @@ public class RefCollectionTest {
     }
 
     @Test
-    public void testExtractorDependencies() throws ProjectionError, ConverterError {
+    public void testExtractorDependencies() throws CompositionError, ConverterError {
     	
     	Projection<RefCollectionTo> projection = projections.get(RefCollectionTo.class);
     	

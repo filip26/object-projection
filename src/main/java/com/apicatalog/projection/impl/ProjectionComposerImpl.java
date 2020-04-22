@@ -10,10 +10,11 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.ProjectionComposer;
-import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ProjectionStack;
+import com.apicatalog.projection.object.ObjectError;
 import com.apicatalog.projection.object.ObjectUtils;
 import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.source.SourceType;
@@ -56,7 +57,7 @@ public final class ProjectionComposerImpl<P> implements ProjectionComposer<P> {
 	}
 
 	@Override
-	public P compose(ProjectionStack stack, CompositionContext context) throws ProjectionError {
+	public P compose(ProjectionStack stack, CompositionContext context) throws CompositionError {
 		
 		if (stack == null || context == null || writers == null) {
 			throw new IllegalArgumentException();
@@ -105,12 +106,17 @@ public final class ProjectionComposerImpl<P> implements ProjectionComposer<P> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected P newInstance() {
+	protected P newInstance() throws CompositionError {
 		
 		if (Map.class.isAssignableFrom(projectionType)) {
 			return (P)new HashMap<String, Object>();
 		}
 		
-		return ObjectUtils.newInstance(projectionType);
+		try {
+			return ObjectUtils.newInstance(projectionType);
+			
+		} catch (ObjectError e) {
+			throw new CompositionError("Can not instantiate projection " + projectionName + ".", e);
+		}
 	}
 }

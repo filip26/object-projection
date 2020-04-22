@@ -4,9 +4,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.Object1;
 import com.apicatalog.projection.projections.PrefixTo;
@@ -17,14 +17,14 @@ public class PrefixMappingTest {
 	ProjectionRegistry projections;
 	
 	@Before
-	public void setup() throws ProjectionError, ProjectionBuilderError {
+	public void setup() throws CompositionError, ProjectionError {
 		projections = ProjectionRegistry.newInstance();
 		
 		projections.register(PrefixTo.class);
 	}
 	
     @Test
-    public void testComposition() throws ProjectionError, ConverterError {
+    public void testComposition() throws CompositionError, ConverterError {
     	
     	Object1 o1 = new Object1();
     	o1.id = "of the New World";
@@ -37,7 +37,7 @@ public class PrefixMappingTest {
     }
     
     @Test
-    public void testExtraction() throws ProjectionError, ConverterError {
+    public void testExtraction() throws CompositionError, ConverterError {
     	
     	PrefixTo projection = new PrefixTo();
     	projection.id = "At the beginning of the New World";

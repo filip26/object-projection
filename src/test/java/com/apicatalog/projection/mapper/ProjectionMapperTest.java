@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.annotation.mapper.ProjectionMapper;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.objects.SimpleObject;
 
 public class ProjectionMapperTest {
@@ -27,7 +27,7 @@ public class ProjectionMapperTest {
 			mapper.getProjectionOf(SimpleObject.class);
 			
 			Assert.fail();
-		} catch (ProjectionBuilderError e) {
+		} catch (ProjectionError e) {
 			
 		}
 	}

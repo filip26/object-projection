@@ -14,7 +14,7 @@ import com.apicatalog.projection.annotation.Provided;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.annotation.Visibility;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.builder.ComposerBuilder;
 import com.apicatalog.projection.builder.reader.SingleSourceReaderBuilder;
 import com.apicatalog.projection.builder.writer.ConstantWriterBuilder;
@@ -25,7 +25,6 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyWriter;
 import com.apicatalog.projection.property.SourcePropertyWriter;
 import com.apicatalog.projection.property.source.SingleSourceReader;
-import com.apicatalog.projection.property.target.TargetComposer;
 
 final class PropertyWriterMapper {
 
@@ -43,7 +42,7 @@ final class PropertyWriterMapper {
 		this.arraySourceMapper = new ArraySourceWriterMapper(registry);
 	}
 	
-	public Optional<PropertyWriter> getProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionBuilderError {
+	public Optional<PropertyWriter> getProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionError {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Get property {} : {}, object={}", field.getName(), field.getType().getSimpleName(), defaultSourceClass != null ? defaultSourceClass.getSimpleName() : "n/a");
@@ -69,7 +68,13 @@ final class PropertyWriterMapper {
 
 		// direct mapping or a reference
 		} else {
-			mapping = getDefaultProperty(field, defaultSourceClass);
+			try {
+				mapping = getDefaultProperty(field, defaultSourceClass);
+				
+			} catch (ProjectionError e) {
+				// properties in error without explicit mapping are ignored
+				return Optional.empty();
+			}
 		}
 		
 		if (field.isAnnotationPresent(Visibility.class)) {
@@ -83,44 +88,40 @@ final class PropertyWriterMapper {
 		return mapping.map(PropertyWriter.class::cast);
 	}
 
-	Optional<PropertyWriter> getDefaultProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionBuilderError {
+	Optional<PropertyWriter> getDefaultProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionError {
 
 		if (defaultSourceClass == null) {
-			logger.warn("Source class is missing. Property {} is ignored.", field.getName());
-			return Optional.empty();
+			throw new ProjectionError("Source class is missing for property + " + field.getName() + ".");
 		}
 
 		final Setter targetSetter = FieldSetter.from(field, ObjectUtils.getTypeOf(field));
 
 		final boolean targetReference = PropertyReaderMapper.isReference(targetSetter.getType());
-		
-		final Optional<SingleSourceReaderBuilder> sourceReaderBuilder = 
-				singleSourceMapper.getSingleSourceReader(
+
+		final Optional<SingleSourceReader> sourceReader = 
+				singleSourceMapper
+					.getSingleSourceReader(
 						defaultSourceClass, 
 						field.getName(),
 						SingleSourceReaderBuilder.newInstance()
 							.objectClass(defaultSourceClass)
 							.optional(true)
 							.targetType(targetSetter.getType(), targetReference)
-						);
-		
-		if (sourceReaderBuilder.isEmpty()) {
-			return Optional.empty();
-		}
-
-		final Optional<SingleSourceReader> sourceReader = sourceReaderBuilder.get().build(registry.getTypeConversions()); 
+						)
+					.build(registry.getTypeConversions());
 		
 		if (sourceReader.isEmpty()) {
-			logger.warn("Source is missing. Property {} is ignored.", field.getName());
 			return Optional.empty();
 		}
 		
-		final Optional<TargetComposer> composer =  
-				ComposerBuilder.newInstance()
-					.setter(targetSetter, targetReference)
-					.build(registry);
+		final SourcePropertyWriter sourcePropertyWriter = SourcePropertyWriter.newInstance(sourceReader.get(), targetSetter); 
+				  
+		ComposerBuilder.newInstance()
+				.setter(targetSetter, targetReference)
+				.build(registry)
+				.ifPresent(sourcePropertyWriter::setComposer);
 	
-		return Optional.of(new SourcePropertyWriter(sourceReader.get(), targetSetter, composer.orElse(null)));
+		return Optional.of(sourcePropertyWriter);			
 	}
 
 	Optional<PropertyWriter> getProvidedProperty(final Field field) {
@@ -137,7 +138,7 @@ final class PropertyWriterMapper {
 					.build(registry);		
 	}				
 
-	Optional<PropertyWriter> getConstantProperty(final Field field) throws ProjectionBuilderError {
+	Optional<PropertyWriter> getConstantProperty(final Field field) throws ProjectionError {
 		
 		final Constant constant = field.getAnnotation(Constant.class);
 		

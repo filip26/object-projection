@@ -7,9 +7,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.Object1;
 import com.apicatalog.projection.projections.ConstantTo;
@@ -19,12 +19,12 @@ public class ConstantTest {
 	Projection<ConstantTo> projection;
 	
 	@Before
-	public void setup() throws ProjectionError, ProjectionBuilderError {
+	public void setup() throws CompositionError, ProjectionError {
 		projection = Projection.scan(ConstantTo.class).build(ProjectionRegistry.newInstance());
 	}
 	
     @Test
-    public void testCompose() throws ProjectionError, ConverterError {
+    public void testCompose() throws CompositionError, ConverterError {
     	
     	Object1 o1 = new Object1();
     	o1.id = "ABC123";
@@ -45,7 +45,7 @@ public class ConstantTest {
     }
     
     @Test
-    public void testExtract1() throws ProjectionError, ConverterError {
+    public void testExtract1() throws CompositionError, ConverterError {
     	
     	ConstantTo to = new ConstantTo();
     	to.id = "https://example.org/c/";
@@ -62,7 +62,7 @@ public class ConstantTest {
     }
     
     @Test
-    public void testExtract2() throws ProjectionError, ConverterError {
+    public void testExtract2() throws CompositionError, ConverterError {
     	
     	ConstantTo to = new ConstantTo();
     	to.stringArray = new String[] {"10", "20", "30"};

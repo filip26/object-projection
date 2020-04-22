@@ -4,9 +4,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.objects.SimpleObject;
@@ -18,7 +18,7 @@ public class ProvidedRefTest {
 	ProjectionRegistry projections;
 	
 	@Before
-	public void setup() throws ProjectionError, ProjectionBuilderError {
+	public void setup() throws CompositionError, ProjectionError {
 		projections = ProjectionRegistry.newInstance()
 						.register(ProvidedReferefenceTo.class)
 						.register(SimpleObjectTo.class)
@@ -26,7 +26,7 @@ public class ProvidedRefTest {
 	}
 	
     @Test
-    public void testCompose() throws ProjectionError, ConverterError {
+    public void testCompose() throws CompositionError, ConverterError {
     	
     	BasicTypes object1 = new BasicTypes();
     	object1.stringValue = "A B C D E";
@@ -49,7 +49,7 @@ public class ProvidedRefTest {
     }
     
     @Test
-    public void testExtract() throws ProjectionError, ConverterError {
+    public void testExtract() throws CompositionError, ConverterError {
     	
     	ProvidedReferefenceTo projection1 = new ProvidedReferefenceTo();
     	projection1.title = "QWERTY ZXCVBN";

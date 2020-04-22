@@ -5,5 +5,5 @@ import com.apicatalog.projection.ProjectionRegistry;
 
 public interface BuilderApi<P> {
 
-	Projection<P> build(ProjectionRegistry registry) throws ProjectionBuilderError;
+	Projection<P> build(ProjectionRegistry registry) throws ProjectionError;
 }

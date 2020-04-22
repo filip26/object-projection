@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.api.map.MapEntryApi;
 import com.apicatalog.projection.api.map.MapProjectionApi;
 import com.apicatalog.projection.api.map.MapProjectionBuilderApi;
@@ -98,7 +98,7 @@ public final class MapProjectionApiImpl implements MapProjectionBuilderApi {
 	}
 	
 	@Override
-	public Projection<Map<String, Object>> build(final ProjectionRegistry factory) throws ProjectionBuilderError {
+	public Projection<Map<String, Object>> build(final ProjectionRegistry factory) throws ProjectionError {
 
 		final List<PropertyReader> readers = new ArrayList<>(); 
 		final List<PropertyWriter> writers = new ArrayList<>();

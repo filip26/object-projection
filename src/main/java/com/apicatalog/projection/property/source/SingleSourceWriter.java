@@ -8,10 +8,11 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.ConverterError;
+import com.apicatalog.projection.object.ObjectError;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.ObjectUtils;
 import com.apicatalog.projection.object.setter.Setter;
@@ -34,7 +35,7 @@ public final class SingleSourceWriter implements SourceWriter {
 	boolean optional;
 
 	@Override
-	public void write(final ExtractionContext context, final Object object) throws ProjectionError {
+	public void write(final ExtractionContext context, final Object object) throws CompositionError {
 		
 		if (!context.isAccepted(sourceType)) {
 			return;
@@ -62,25 +63,30 @@ public final class SingleSourceWriter implements SourceWriter {
 					}
 				}
 			} catch (ConverterError e) {
-				throw new ProjectionError(e);
+				throw new CompositionError(e);
 			}
 		}
 		
 		Optional<?> instance =  context.get(sourceType);
 
-		if (instance.isEmpty()) {
-			
-			final Optional<Class<?>> instanceClass = context.getAssignableType(sourceType);
-			
-			if (instanceClass.isEmpty()) {
-				return;
+		try {
+			if (instance.isEmpty()) {
+				
+				final Optional<Class<?>> instanceClass = context.getAssignableType(sourceType);
+				
+				if (instanceClass.isEmpty()) {
+					return;
+				}
+				
+				instance = Optional.of(ObjectUtils.newInstance(instanceClass.get()));
+				context.set(sourceType.getName(), instance.get());
 			}
 			
-			instance = Optional.of(ObjectUtils.newInstance(instanceClass.get()));
-			context.set(sourceType.getName(), instance.get());
+			setter.set(instance.get(), value.get());
+			
+		} catch (ObjectError e) {
+			throw new CompositionError(e);
 		}
-		
-		setter.set(instance.get(), value.get());
 	}
 	
 	public void setSetter(Setter setter) {

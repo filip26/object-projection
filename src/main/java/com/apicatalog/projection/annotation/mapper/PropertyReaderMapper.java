@@ -7,11 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.annotation.Constant;
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Provided;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.builder.ExtractorBuilder;
 import com.apicatalog.projection.builder.reader.ProvidedPropertyReaderBuilder;
 import com.apicatalog.projection.builder.writer.SingleSourceWriterBuilder;
@@ -22,7 +23,6 @@ import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.SourcePropertyReader;
 import com.apicatalog.projection.property.source.SourceWriter;
-import com.apicatalog.projection.property.target.TargetExtractor;
 
 final class PropertyReaderMapper {
 
@@ -40,7 +40,7 @@ final class PropertyReaderMapper {
 		this.arraySourceMapper = new ArraySourceReaderMapper(registry);
 	}
 	
-	Optional<PropertyReader> getProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionBuilderError {
+	Optional<PropertyReader> getProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionError {
 
 		final Optional<? extends PropertyReader> mapping;
 		
@@ -56,52 +56,59 @@ final class PropertyReaderMapper {
 		} else if (field.isAnnotationPresent(Provided.class)) {
 			mapping = getProvided(field);
 			
+		} else if (field.isAnnotationPresent(Constant.class)) {
+			
+			// ignore
+			mapping = Optional.empty();
+			
 		// direct mapping or a reference
 		} else {
-			mapping = getDefaultProperty(field, defaultSourceClass);
+			try {
+				mapping = getDefaultProperty(field, defaultSourceClass);
+				
+			} catch (ProjectionError e) {
+				// properties in error without explicit mapping are ignored
+				return Optional.empty();
+			}				
 		}
 		
 		return mapping.map(PropertyReader.class::cast);
 	}
 
-	Optional<PropertyReader> getDefaultProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionBuilderError {
+	Optional<PropertyReader> getDefaultProperty(final Field field, final Class<?> defaultSourceClass) throws ProjectionError {
 
 		if (defaultSourceClass == null) {
-			logger.warn("Source class is missing. Property {} is ignored.", field.getName());
-			return Optional.empty();				
+			throw new ProjectionError("Source class is missing for property + " + field.getName() + ".");				
 		}
 
 		final Getter targetGetter = FieldGetter.from(field, ObjectUtils.getTypeOf(field));
 		
 		final boolean targetReference = PropertyReaderMapper.isReference(targetGetter.getType());
 
-		final Optional<SingleSourceWriterBuilder> sourceWriterBuilder = 
-				singleSourceMapper.getSingleSourceWriter(
+		final Optional<SourceWriter> sourceWriter =  
+				singleSourceMapper
+					.getSingleSourceWriter(
 						defaultSourceClass, 
 						field.getName(),
 						SingleSourceWriterBuilder.newInstance()
 							.objectClass(defaultSourceClass)
 							.optional(true)
 							.targetType(targetGetter.getType(), targetReference)
-						);
-				
-		if (sourceWriterBuilder.isEmpty()) {
-			return Optional.empty();
-		}
-
-		final Optional<SourceWriter> sourceWriter =  sourceWriterBuilder.get().build(registry.getTypeConversions());
+						)
+					.build(registry.getTypeConversions());
 				
 		if (sourceWriter.isEmpty()) {
-			logger.warn("Source is missing. Property {} is ignored.", field.getName());
 			return Optional.empty();
 		}
 		
-		final Optional<TargetExtractor> extractor =  
-				ExtractorBuilder.newInstance()
-					.getter(targetGetter, targetReference)
-					.build(registry);
+		final SourcePropertyReader sourcePropertyReader = SourcePropertyReader.newInstance(sourceWriter.get(), targetGetter);
+  
+		ExtractorBuilder.newInstance()
+			.getter(targetGetter, targetReference)
+			.build(registry)
+			.ifPresent(sourcePropertyReader::setExtractor);
 			
-		return Optional.of(new SourcePropertyReader(sourceWriter.get(), targetGetter, extractor.orElse(null)));	
+		return Optional.of(sourcePropertyReader);	
 	}
 
 	Optional<PropertyReader> getProvided(final Field field) {

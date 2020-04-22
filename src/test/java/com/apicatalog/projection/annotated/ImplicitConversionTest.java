@@ -9,9 +9,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.objects.UriObject;
@@ -23,7 +23,7 @@ public class ImplicitConversionTest {
 	ProjectionRegistry projections;
 	
 	@Before
-	public void setup() throws ProjectionError, ProjectionBuilderError {
+	public void setup() throws CompositionError, ProjectionError {
 		projections = ProjectionRegistry.newInstance()
 						.register(ImplicitConversionTo.class)
 						.register(UriTo.class)
@@ -31,7 +31,7 @@ public class ImplicitConversionTest {
 	}
 	
     @Test
-    public void testCompose() throws ProjectionError, ConverterError {
+    public void testCompose() throws CompositionError, ConverterError {
     	
     	BasicTypes object = new BasicTypes();
     	object.instantValue = Instant.now();
@@ -70,7 +70,7 @@ public class ImplicitConversionTest {
     }
     
     @Test
-    public void testExtract() throws ProjectionError, ConverterError {
+    public void testExtract() throws CompositionError, ConverterError {
     	
     	ImplicitConversionTo projection = new ImplicitConversionTo();
     	projection.stringValue = "987654";
@@ -98,7 +98,7 @@ public class ImplicitConversionTest {
     }
        
     @Test
-    public void testCompose2() throws ProjectionError, ConverterError {
+    public void testCompose2() throws CompositionError, ConverterError {
     	
     	UriObject object = new UriObject();
 		object.uri = URI.create("https://example.org/a/b/c");
@@ -110,7 +110,7 @@ public class ImplicitConversionTest {
     }
     
     @Test
-    public void testExtract2() throws ProjectionError, ConverterError {
+    public void testExtract2() throws CompositionError, ConverterError {
     	
     	UriTo to = new UriTo();
 		to.uri = "https://example.org/a/b/c";

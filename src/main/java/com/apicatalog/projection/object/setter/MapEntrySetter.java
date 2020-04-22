@@ -2,7 +2,6 @@ package com.apicatalog.projection.object.setter;
 
 import java.util.Map;
 
-import com.apicatalog.projection.ProjectionError;
 import com.apicatalog.projection.object.ObjectType;
 
 public final class MapEntrySetter implements Setter {
@@ -21,7 +20,7 @@ public final class MapEntrySetter implements Setter {
 	}
 
 	@Override
-	public void set(final Object object, final Object value) throws ProjectionError {
+	public void set(final Object object, final Object value) {
 
 		if ((object == null) || !Map.class.isInstance(object)) {
 			return;

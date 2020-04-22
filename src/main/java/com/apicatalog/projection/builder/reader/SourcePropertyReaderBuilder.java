@@ -6,13 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.builder.Builder;
 import com.apicatalog.projection.builder.ExtractorBuilder;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.property.SourcePropertyReader;
 import com.apicatalog.projection.property.source.SourceWriter;
-import com.apicatalog.projection.property.target.TargetExtractor;
 
 public final class SourcePropertyReaderBuilder {
 
@@ -33,7 +32,7 @@ public final class SourcePropertyReaderBuilder {
 		return new SourcePropertyReaderBuilder();
 	}
 			
-	public Optional<SourcePropertyReader> build(final ProjectionRegistry registry) throws ProjectionBuilderError {
+	public Optional<SourcePropertyReader> build(final ProjectionRegistry registry) throws ProjectionError {
 
 		if (targetGetter == null) {
 			logger.warn("Target getter is missing. Skipping source.");
@@ -54,16 +53,17 @@ public final class SourcePropertyReaderBuilder {
 			return Optional.empty();			
 		}
 		
-		final Optional<TargetExtractor> extractor =  
-				ExtractorBuilder.newInstance()
-					.getter(targetGetter, targetReference)
-					.build(registry);
-		
-		if (extractor.isPresent()) {
-			sourceWriterBuilder.targetType(targetGetter.getType(), targetReference);
-		}
-		
-		return Optional.of(new SourcePropertyReader(sourceWriter.get(), targetGetter, extractor.orElse(null)));
+		final SourcePropertyReader sourcePropertyReader = SourcePropertyReader.newInstance(sourceWriter.get(), targetGetter);
+			  
+		ExtractorBuilder.newInstance()
+			.getter(targetGetter, targetReference)
+			.build(registry)
+			.ifPresent(e -> {
+					sourcePropertyReader.setExtractor(e);
+					sourceWriterBuilder.targetType(targetGetter.getType(), targetReference);
+				});		
+
+		return Optional.of(sourcePropertyReader);
 	}
 
 	public SourcePropertyReaderBuilder sourceWriter(Builder<SourceWriter> sourceWriterBuilder) {

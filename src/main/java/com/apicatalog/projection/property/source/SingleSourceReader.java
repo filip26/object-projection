@@ -8,10 +8,11 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.ConverterError;
+import com.apicatalog.projection.object.ObjectError;
 import com.apicatalog.projection.object.ObjectType;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.source.SourceType;
@@ -33,7 +34,7 @@ public final class SingleSourceReader implements SourceReader {
 	boolean optional;
 
 	@Override
-	public Optional<Object> read(CompositionContext context) throws ProjectionError {
+	public Optional<Object> read(CompositionContext context) throws CompositionError {
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("Read {}.{}, optional = {}", sourceObjectType, getter.getName(), optional);
@@ -45,23 +46,23 @@ public final class SingleSourceReader implements SourceReader {
 			if (optional) {
 				return Optional.empty();
 			}
-			throw new ProjectionError("Source instance of " + sourceObjectType + ",  is not present.");
+			throw new CompositionError("Source instance of " + sourceObjectType + ",  is not present.");
 		}
 
-		// get source value
-		Optional<Object> object = getter.get(instance.get());
-
-		if (object.isEmpty()) {
-			return Optional.empty();
-		}
-
-		if (logger.isTraceEnabled()) {
-			logger.trace("{}.{} = {}", sourceObjectType, getter.getName(), object.get());
-		}
-
-		// apply conversions
-		if (conversions != null) {
-			try {
+		try { 
+			// get source value
+			Optional<Object> object = getter.get(instance.get());
+	
+			if (object.isEmpty()) {
+				return Optional.empty();
+			}
+	
+			if (logger.isTraceEnabled()) {
+				logger.trace("{}.{} = {}", sourceObjectType, getter.getName(), object.get());
+			}
+	
+			// apply conversions
+			if (conversions != null) {
 				for (final Conversion<Object, Object> conversion : conversions) {
 					
 					object = Optional.ofNullable(conversion.convert(object.get()));
@@ -70,12 +71,14 @@ public final class SingleSourceReader implements SourceReader {
 						break;
 					}
 				}
-			} catch (ConverterError e) {
-				throw new ProjectionError(e);
 			}
+	
+			return object;
+			
+		} catch (ObjectError | ConverterError e) {
+			throw new CompositionError(e);
 		}
 
-		return object;
 	}
 	
 	public void setGetter(Getter getter) {

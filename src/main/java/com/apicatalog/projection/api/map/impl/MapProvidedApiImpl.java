@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.api.map.MapProjectionBuilderApi;
 import com.apicatalog.projection.api.map.MapProvidedApi;
 import com.apicatalog.projection.builder.reader.ProvidedPropertyReaderBuilder;
@@ -44,7 +44,7 @@ public final class MapProvidedApiImpl extends AbstractValueProviderApi implement
 	}
 	
 	@Override
-	protected Optional<PropertyReader> buildyReader(final ProjectionRegistry registry) throws ProjectionBuilderError {
+	protected Optional<PropertyReader> buildyReader(final ProjectionRegistry registry) throws ProjectionError {
 		return ProvidedPropertyReaderBuilder
 						.newInstance()
 							.qualifier(qualifier)
@@ -56,7 +56,7 @@ public final class MapProvidedApiImpl extends AbstractValueProviderApi implement
 	}
 
 	@Override
-	protected Optional<PropertyWriter> buildyWriter(final ProjectionRegistry registry) throws ProjectionBuilderError {
+	protected Optional<PropertyWriter> buildyWriter(final ProjectionRegistry registry) throws ProjectionError {
 		return ProvidedPropertyWriterBuilder
 						.newInstance()
 							.qualifier(qualifier)
@@ -86,7 +86,7 @@ public final class MapProvidedApiImpl extends AbstractValueProviderApi implement
 	}
 
 	@Override
-	public Projection<Map<String, Object>> build(ProjectionRegistry registry) throws ProjectionBuilderError {
+	public Projection<Map<String, Object>> build(ProjectionRegistry registry) throws ProjectionError {
 		return projectionBuilder.build(registry);
 	}
 }

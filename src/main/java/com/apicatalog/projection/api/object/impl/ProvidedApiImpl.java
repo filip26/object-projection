@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.api.object.ObjectPropertyApi;
 import com.apicatalog.projection.api.object.ObjectProvidedApi;
 import com.apicatalog.projection.builder.reader.ProvidedPropertyReaderBuilder;
@@ -54,12 +54,12 @@ public final class ProvidedApiImpl<P> extends AbstractValueProviderApi<P> implem
 		return projectionBuilder.map(propertyName, reference);
 	}
 
-	public Projection<P> build(final ProjectionRegistry registry) throws ProjectionBuilderError {
+	public Projection<P> build(final ProjectionRegistry registry) throws ProjectionError {
 		return projectionBuilder.build(registry);
 	}	
 	
 	@Override
-	protected Optional<PropertyReader> buildyReader(final ProjectionRegistry registry) throws ProjectionBuilderError {
+	protected Optional<PropertyReader> buildyReader(final ProjectionRegistry registry) throws ProjectionError {
 		return ProvidedPropertyReaderBuilder
 						.newInstance()
 							.qualifier(qualifier)
@@ -71,7 +71,7 @@ public final class ProvidedApiImpl<P> extends AbstractValueProviderApi<P> implem
 	}
 
 	@Override
-	protected Optional<PropertyWriter> buildyWriter(final ProjectionRegistry registry) throws ProjectionBuilderError {
+	protected Optional<PropertyWriter> buildyWriter(final ProjectionRegistry registry) throws ProjectionError {
 		return ProvidedPropertyWriterBuilder
 						.newInstance()
 							.qualifier(qualifier)

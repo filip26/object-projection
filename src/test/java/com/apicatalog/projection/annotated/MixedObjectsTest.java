@@ -4,9 +4,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.apicatalog.projection.ProjectionError;
+import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.ProjectionRegistry;
-import com.apicatalog.projection.api.ProjectionBuilderError;
+import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.Object3;
 import com.apicatalog.projection.objects.Object4;
@@ -18,7 +18,7 @@ public class MixedObjectsTest {
 	ProjectionRegistry projections;
 	
 	@Before
-	public void setup() throws ProjectionError, ProjectionBuilderError {
+	public void setup() throws CompositionError, ProjectionError {
 		projections = ProjectionRegistry.newInstance();
 		
 		projections
@@ -28,7 +28,7 @@ public class MixedObjectsTest {
 	}
 	
     @Test
-    public void testCompose() throws ProjectionError, ConverterError {
+    public void testCompose() throws CompositionError, ConverterError {
     	
     	Object3 o3 = new Object3();
     	o3.id = "id-3";
@@ -53,7 +53,7 @@ public class MixedObjectsTest {
     }
     
     @Test
-    public void testExtract1() throws ProjectionError, ConverterError {
+    public void testExtract1() throws CompositionError, ConverterError {
     	
     	Object3To to3 = new Object3To();
     	to3.id = "id-3";
@@ -77,7 +77,7 @@ public class MixedObjectsTest {
     }
     
     @Test
-    public void testExtract2() throws ProjectionError, ConverterError {
+    public void testExtract2() throws CompositionError, ConverterError {
     	
     	Object3To to3 = new Object3To();
     	to3.id = "id-3";
@@ -97,7 +97,7 @@ public class MixedObjectsTest {
     }
     
     @Test
-    public void testExtract3() throws ProjectionError, ConverterError {
+    public void testExtract3() throws CompositionError, ConverterError {
     	
     	Object3To to3 = new Object3To();
     	to3.id = "id-3";
