@@ -9,6 +9,7 @@ import com.apicatalog.projection.annotated.ArrayCollectorTest;
 import com.apicatalog.projection.annotated.ConstantTest;
 import com.apicatalog.projection.annotated.CycleCheckTest;
 import com.apicatalog.projection.annotated.DirectMappingTest;
+import com.apicatalog.projection.annotated.HrefTest;
 import com.apicatalog.projection.annotated.ImplicitConversionTest;
 import com.apicatalog.projection.annotated.InterfaceTest;
 import com.apicatalog.projection.annotated.MixedObjectsTest;
@@ -35,6 +36,7 @@ import com.apicatalog.projection.annotated.VisibilityTest;
 	ConstantTest.class,
 	CycleCheckTest.class,
 	DirectMappingTest.class,
+	HrefTest.class,
 	ImplicitConversionTest.class,
 	InterfaceTest.class,
 	MixedObjectsTest.class,

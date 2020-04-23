@@ -56,7 +56,10 @@ public class TypeConversions {
 			} else if (targetType.isArray()) {
 				return arrayToArray(sourceType, targetType);
 			}
-			
+		}
+		
+		if (targetType.isArray()) {
+			return objectToArray(sourceType, targetType);
 		}
 
 		Optional<Conversion<Object, Object>> conversion = get(sourceType.getType(), targetType.getType());
@@ -205,7 +208,36 @@ public class TypeConversions {
 				converted[index++] = componentConversion.convert(object);
 			}
 
-			return (String[])converted;
+			return converted;
+		});
+	}
+
+	Optional<Conversion<Object, Object>> objectToArray(ObjectType sourceType, ObjectType targetType) throws ConversionNotFound {
+
+		final Conversion<Object, Object> componentConversion = 
+							!targetType.getType().getComponentType().isAssignableFrom(sourceType.getType())
+									? get(sourceType.getType(), targetType.getType().getComponentType())
+											.orElseThrow(() -> new ConversionNotFound(sourceType, targetType))
+									: null;
+
+		// no conversion needed?
+		if (componentConversion == null) {
+			return Optional.of(o -> {
+				final Object[] converted = (Object[])java.lang.reflect.Array.newInstance(targetType.getType().getComponentType(), 1);
+
+				converted[0] = o;
+
+				return converted;
+			});
+		}
+		
+		return Optional.of(o -> {
+
+			final Object[] converted = (Object[])java.lang.reflect.Array.newInstance(targetType.getType().getComponentType(), 1);
+
+			converted[0] = componentConversion.convert(o);
+
+			return converted;
 		});
 	}
 

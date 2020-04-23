@@ -8,6 +8,7 @@ import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.projections.invalid.ConstantConversionErrorTo;
 import com.apicatalog.projection.projections.invalid.EmptyTo;
+import com.apicatalog.projection.projections.invalid.SourceConversionError2To;
 import com.apicatalog.projection.projections.invalid.SourceConversionErrorTo;
 import com.apicatalog.projection.projections.invalid.UnmappableSourcePropertyTo;
 import com.apicatalog.projection.projections.invalid.UnmappableSourcesPropertyTo;
@@ -83,6 +84,19 @@ public class NegativeTest {
     }
 
     @Test
+    public void testSourceConversionError2() {
+    
+    	try {
+    		registry.register(SourceConversionError2To.class);
+    		
+//    		Assert.fail();
+    		
+    	} catch (ProjectionError e) {
+    		e.printStackTrace();
+    	}
+    }
+
+    @Test
     public void testConstantConversionError() {
     
     	try {
@@ -103,7 +117,6 @@ public class NegativeTest {
     		Assert.fail();
     		
     	} catch (ProjectionError e) {
-    		e.printStackTrace();
     	}
     }
   

@@ -88,7 +88,7 @@ public final class SingleSourceReaderBuilder {
 			return Optional.of(source);
 			
 		} catch (ConversionNotFound e) {
-			throw new ProjectionError("Can not map source " + sourceGetter.getName() + " of " + sourceObjectClass + ".", e);
+			throw new ProjectionError("Can not map property " + sourceGetter.getName() + " of " + sourceObjectClass + " as value source.", e);
 		}
 	}
 	
