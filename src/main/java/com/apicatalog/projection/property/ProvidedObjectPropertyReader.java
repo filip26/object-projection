@@ -9,7 +9,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.CompositionError;
+import com.apicatalog.projection.ExtractionError;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.object.ObjectError;
@@ -46,7 +46,7 @@ public final class ProvidedObjectPropertyReader implements PropertyReader {
 	}
 	
 	@Override
-	public void read(final ProjectionStack stack, final ExtractionContext context) throws CompositionError {
+	public void read(final ProjectionStack stack, final ExtractionContext context) throws ExtractionError {
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("Read {} : {}, qualifier = {}, optional = {}, depth = {}", targetGetter.getName(), targetGetter.getType(), objectQualifier, optional, stack.length());
@@ -59,7 +59,7 @@ public final class ProvidedObjectPropertyReader implements PropertyReader {
 			object = targetGetter.get(stack.peek());
 			
 		} catch (ObjectError e) {
-			throw new CompositionError("Can not get value of " + targetGetter.getName() + " of " + stack.peek().getClass());
+			throw new ExtractionError("Can not get value of " + targetGetter.getName() + " of " + stack.peek().getClass());
 		}
 		
 		if (object.isEmpty()) {

@@ -66,7 +66,7 @@ public class ObjectProjectionBuilderTest {
 	}
 
 	@Test
-	public void test1e() throws ProjectionError, CompositionError {
+	public void test1e() throws ProjectionError, ExtractionError {
 		final Projection<SimpleObjectTo> projection = 
 				Projection
 					.bind(SimpleObjectTo.class)
@@ -113,7 +113,7 @@ public class ObjectProjectionBuilderTest {
 	}
 
 	@Test
-	public void test2e() throws ProjectionError, CompositionError {
+	public void test2e() throws ProjectionError, ExtractionError {
 		final Projection<SimpleObjectTo> projection = 
 				Projection
 					.bind(SimpleObjectTo.class)
@@ -233,7 +233,7 @@ public class ObjectProjectionBuilderTest {
 	}
 
 	@Test
-	public void test5e1() throws ProjectionError, CompositionError {
+	public void test5e1() throws ProjectionError, ExtractionError {
 		
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		
@@ -528,7 +528,7 @@ public class ObjectProjectionBuilderTest {
 	}
 	
 	@Test
-	public void test13() throws ProjectionError, CompositionError {
+	public void test13() throws ProjectionError, ExtractionError {
 		
 		ProjectionRegistry registry = ProjectionRegistry.newInstance();
 		

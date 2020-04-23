@@ -14,13 +14,13 @@ public interface Projection<P> {
 
 	P compose(Object... objects) throws CompositionError;
 	
-	<S> Optional<S> extract(P projection, Class<S> objectType) throws CompositionError;
+	<S> Optional<S> extract(P projection, Class<S> objectType) throws ExtractionError;
 	
-	<S> Optional<S> extract(P projection, String qualifier, Class<S> objectType) throws CompositionError;
+	<S> Optional<S> extract(P projection, String qualifier, Class<S> objectType) throws ExtractionError;
 	
-	<I> Optional<Collection<I>> extractCollection(P projection, Class<I> componentType) throws CompositionError;
+	<I> Optional<Collection<I>> extractCollection(P projection, Class<I> componentType) throws ExtractionError;
 	
-	<I> Optional<Collection<I>> extractCollection(P projection, String qualifier, Class<I> componentType) throws CompositionError;
+	<I> Optional<Collection<I>> extractCollection(P projection, String qualifier, Class<I> componentType) throws ExtractionError;
 
 	Optional<String> getName();
 	

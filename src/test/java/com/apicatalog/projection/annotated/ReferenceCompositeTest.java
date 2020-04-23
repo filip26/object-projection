@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.apicatalog.projection.CompositionError;
+import com.apicatalog.projection.ExtractionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
@@ -50,7 +51,7 @@ public class ReferenceCompositeTest {
     }
     
     @Test
-    public void testExtract() throws CompositionError, ConverterError {
+    public void testExtract() throws ExtractionError, ConverterError {
     	
     	CompositeTo projection1 = new CompositeTo();
     	projection1.source1 = 123456l;

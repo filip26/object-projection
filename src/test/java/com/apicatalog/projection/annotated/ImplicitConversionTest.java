@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.apicatalog.projection.CompositionError;
+import com.apicatalog.projection.ExtractionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
@@ -70,7 +71,7 @@ public class ImplicitConversionTest {
     }
     
     @Test
-    public void testExtract() throws CompositionError, ConverterError {
+    public void testExtract() throws ExtractionError, ConverterError {
     	
     	ImplicitConversionTo projection = new ImplicitConversionTo();
     	projection.stringValue = "987654";
@@ -110,7 +111,7 @@ public class ImplicitConversionTest {
     }
     
     @Test
-    public void testExtract2() throws CompositionError, ConverterError {
+    public void testExtract2() throws ExtractionError, ConverterError {
     	
     	UriTo to = new UriTo();
 		to.uri = "https://example.org/a/b/c";

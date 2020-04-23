@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.apicatalog.projection.CompositionError;
+import com.apicatalog.projection.ExtractionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
@@ -47,7 +48,7 @@ public class ProvidedCollectionTest {
     }
     
     @Test
-    public void testExtract() throws CompositionError, ConverterError {
+    public void testExtract() throws ExtractionError, ConverterError {
     	
     	StringCollectionTo to = new StringCollectionTo();
     	to.href = "https://example.org/provided";

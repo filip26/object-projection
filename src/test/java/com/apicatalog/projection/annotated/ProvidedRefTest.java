@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.apicatalog.projection.CompositionError;
+import com.apicatalog.projection.ExtractionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
@@ -49,7 +50,7 @@ public class ProvidedRefTest {
     }
     
     @Test
-    public void testExtract() throws CompositionError, ConverterError {
+    public void testExtract() throws ExtractionError, ConverterError {
     	
     	ProvidedReferefenceTo projection1 = new ProvidedReferefenceTo();
     	projection1.title = "QWERTY ZXCVBN";

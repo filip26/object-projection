@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.apicatalog.projection.CompositionError;
+import com.apicatalog.projection.ExtractionError;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
@@ -37,7 +38,7 @@ public class PrefixMappingTest {
     }
     
     @Test
-    public void testExtraction() throws CompositionError, ConverterError {
+    public void testExtraction() throws ExtractionError, ConverterError {
     	
     	PrefixTo projection = new PrefixTo();
     	projection.id = "At the beginning of the New World";

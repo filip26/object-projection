@@ -9,7 +9,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.CompositionError;
+import com.apicatalog.projection.ExtractionError;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.ConverterError;
@@ -33,7 +33,7 @@ public final class ArraySourceWriter implements SourceWriter {
 	boolean optional;
 	
 	@Override
-	public void write(final ExtractionContext context, final Object object) throws CompositionError {
+	public void write(final ExtractionContext context, final Object object) throws ExtractionError {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Write {}, {} sources(s), optional = {}", object, sources.length, optional);
@@ -71,7 +71,7 @@ public final class ArraySourceWriter implements SourceWriter {
 			}				
 
 		} catch (ConverterError e) {
-			throw new CompositionError(e);
+			throw new ExtractionError(e);
 		}
 	}
 	

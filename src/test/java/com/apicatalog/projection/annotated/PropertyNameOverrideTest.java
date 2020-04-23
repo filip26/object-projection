@@ -6,8 +6,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.CompositionError;
+import com.apicatalog.projection.ExtractionError;
+import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
@@ -46,7 +47,7 @@ public class PropertyNameOverrideTest {
     }
     
     @Test
-    public void testExtract() throws CompositionError, ConverterError {
+    public void testExtract() throws ExtractionError, ConverterError {
     	
     	NameOverrideTo to = new NameOverrideTo();
     	to.projectedBoolean = true;

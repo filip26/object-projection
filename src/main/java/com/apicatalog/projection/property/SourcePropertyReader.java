@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.CompositionError;
+import com.apicatalog.projection.ExtractionError;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.object.ObjectError;
@@ -44,7 +44,7 @@ public final class SourcePropertyReader implements PropertyReader {
 	}
 
 	@Override
-	public void read(final ProjectionStack stack, final ExtractionContext context) throws CompositionError {
+	public void read(final ProjectionStack stack, final ExtractionContext context) throws ExtractionError {
 
 		if (!sourceWriter.isAnyTypeOf(context.getAcceptedTypes())) {
 			return;
@@ -70,7 +70,7 @@ public final class SourcePropertyReader implements PropertyReader {
 			}
 			
 		} catch (ObjectError e) {
-			throw new CompositionError("Can not get value of " + stack.peek().getClass().getCanonicalName() + "." + targetGetter.getName() + ".", e);
+			throw new ExtractionError("Can not get value of " + stack.peek().getClass().getCanonicalName() + "." + targetGetter.getName() + ".", e);
 		}
 	}
 

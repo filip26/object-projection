@@ -6,8 +6,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.CompositionError;
+import com.apicatalog.projection.ExtractionError;
+import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
@@ -45,7 +46,7 @@ public class ConstantTest {
     }
     
     @Test
-    public void testExtract1() throws CompositionError, ConverterError {
+    public void testExtract1() throws ExtractionError, ConverterError {
     	
     	ConstantTo to = new ConstantTo();
     	to.id = "https://example.org/c/";
@@ -62,7 +63,7 @@ public class ConstantTest {
     }
     
     @Test
-    public void testExtract2() throws CompositionError, ConverterError {
+    public void testExtract2() throws ExtractionError, ConverterError {
     	
     	ConstantTo to = new ConstantTo();
     	to.stringArray = new String[] {"10", "20", "30"};

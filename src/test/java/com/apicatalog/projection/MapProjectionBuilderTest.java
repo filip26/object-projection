@@ -40,7 +40,7 @@ public class MapProjectionBuilderTest {
 	
 
 	@Test
-	public void test1e() throws ProjectionError, CompositionError {
+	public void test1e() throws ProjectionError, ExtractionError {
 		
 		final Projection<Map<String, Object>> projection = 
 				Projection
@@ -87,7 +87,7 @@ public class MapProjectionBuilderTest {
 	}
 	
 	@Test
-	public void test2e() throws ProjectionError, CompositionError {
+	public void test2e() throws ProjectionError, ExtractionError {
 		
 		final Projection<Map<String, Object>> projection = 
 				Projection
@@ -128,7 +128,7 @@ public class MapProjectionBuilderTest {
 	}
 
 	@Test
-	public void test3e() throws ProjectionError, CompositionError {
+	public void test3e() throws ProjectionError, ExtractionError {
 		final Projection<Map<String, Object>> projection = 
 				Projection
 					.hashMap()
@@ -170,7 +170,7 @@ public class MapProjectionBuilderTest {
 	}
 
 	@Test
-	public void test4e() throws ProjectionError, CompositionError {
+	public void test4e() throws ProjectionError, ExtractionError {
 		final Projection<Map<String, Object>> projection = 
 				Projection
 					.hashMap()
@@ -233,7 +233,7 @@ public class MapProjectionBuilderTest {
 	}
 
 	@Test
-	public void test5e() throws ProjectionError, CompositionError {
+	public void test5e() throws ProjectionError, ExtractionError {
 		final Projection<Map<String, Object>> projection = 
 				Projection
 					.hashMap()

@@ -6,9 +6,10 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apicatalog.projection.CompositionError;
+import com.apicatalog.projection.ExtractionError;
 import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionComposer;
-import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.ProjectionExtractor;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ExtractionContext;
@@ -46,7 +47,7 @@ abstract class AbstractProjection<P> implements Projection<P> {
 	 *
 	 */
 	@Override
-	public final <S> Optional<S> extract(P projection, Class<S> objectType) throws CompositionError {
+	public final <S> Optional<S> extract(P projection, Class<S> objectType) throws ExtractionError {
 		if (extractor == null) {
 			return Optional.empty();
 		}
@@ -55,7 +56,7 @@ abstract class AbstractProjection<P> implements Projection<P> {
 	}
 	
 	@Override
-	public final <S> Optional<S> extract(P projection, String qualifier, Class<S> objectType) throws CompositionError {
+	public final <S> Optional<S> extract(P projection, String qualifier, Class<S> objectType) throws ExtractionError {
 
 		if (extractor == null) {
 			return Optional.empty();
@@ -76,7 +77,7 @@ abstract class AbstractProjection<P> implements Projection<P> {
 	}
 
 	@Override
-	public final <I> Optional<Collection<I>> extractCollection(P projection, Class<I> componentType) throws CompositionError {
+	public final <I> Optional<Collection<I>> extractCollection(P projection, Class<I> componentType) throws ExtractionError {
 		
 		if (extractor == null) {
 			return Optional.empty();
@@ -86,7 +87,7 @@ abstract class AbstractProjection<P> implements Projection<P> {
 	}
 	
 	@Override
-	public final <I> Optional<Collection<I>> extractCollection(P projection, String qualifier, Class<I> componentType) throws CompositionError {
+	public final <I> Optional<Collection<I>> extractCollection(P projection, String qualifier, Class<I> componentType) throws ExtractionError {
 		
 		if (extractor == null) {
 			return Optional.empty();

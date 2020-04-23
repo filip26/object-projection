@@ -8,7 +8,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.CompositionError;
+import com.apicatalog.projection.ExtractionError;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.converter.ConverterError;
@@ -35,7 +35,7 @@ public final class SingleSourceWriter implements SourceWriter {
 	boolean optional;
 
 	@Override
-	public void write(final ExtractionContext context, final Object object) throws CompositionError {
+	public void write(final ExtractionContext context, final Object object) throws ExtractionError {
 		
 		if (!context.isAccepted(sourceType)) {
 			return;
@@ -63,7 +63,7 @@ public final class SingleSourceWriter implements SourceWriter {
 					}
 				}
 			} catch (ConverterError e) {
-				throw new CompositionError(e);
+				throw new ExtractionError(e);
 			}
 		}
 		
@@ -85,7 +85,7 @@ public final class SingleSourceWriter implements SourceWriter {
 			setter.set(instance.get(), value.get());
 			
 		} catch (ObjectError e) {
-			throw new CompositionError(e);
+			throw new ExtractionError(e);
 		}
 	}
 	
