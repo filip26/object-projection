@@ -58,6 +58,10 @@ public class TypeConversions {
 			}
 		}
 		
+		if (targetType.isCollection()) {
+			return objectToCollection(sourceType, targetType);
+		}
+		
 		if (targetType.isArray()) {
 			return objectToArray(sourceType, targetType);
 		}
@@ -184,7 +188,7 @@ public class TypeConversions {
 			return collection;
 		});		
 	}
-	
+		
 	Optional<Conversion<Object, Object>> arrayToArray(ObjectType sourceType, ObjectType targetType) throws ConversionNotFound {
 		
 		final Conversion<Object, Object> componentConversion =
@@ -239,6 +243,29 @@ public class TypeConversions {
 
 			return converted;
 		});
+	}
+
+	Optional<Conversion<Object, Object>> objectToCollection(ObjectType sourceType, ObjectType targetType) throws ConversionNotFound {
+		
+		final Conversion<Object, Object> componentConversion = 
+								!targetType.getComponentType().isAssignableFrom(sourceType.getType())
+									? get(sourceType.getType(), targetType.getComponentType())
+											.orElseThrow(() -> new ConversionNotFound(sourceType, targetType))
+									: null;	
+
+		// no conversion needed?
+		if (componentConversion == null) {
+			return Optional.of(Arrays::asList);
+		}
+		
+		return Optional.of(o -> {
+			
+			final ArrayList<Object> collection = new ArrayList<>(1);
+			
+			collection.add(componentConversion.convert(o));
+
+			return collection;
+		});		
 	}
 
 }

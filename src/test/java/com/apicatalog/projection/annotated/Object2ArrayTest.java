@@ -12,9 +12,9 @@ import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.Env;
-import com.apicatalog.projection.projections.HrefTo;
+import com.apicatalog.projection.projections.Object2ArrayTo;
 
-public class HrefTest {
+public class Object2ArrayTest {
 
 	ProjectionRegistry projections;
 	
@@ -22,7 +22,7 @@ public class HrefTest {
 	public void setup() throws CompositionError, ProjectionError {
 		projections = ProjectionRegistry.newInstance();
 		
-		projections.register(HrefTo.class);
+		projections.register(Object2ArrayTo.class);
 	}
 			
     @Test
@@ -30,7 +30,7 @@ public class HrefTest {
     	
     	Env env = new Env(URI.create("/1/2"));
     	
-    	HrefTo to = projections.get(HrefTo.class).compose(env);
+    	Object2ArrayTo to = projections.get(Object2ArrayTo.class).compose(env);
     	
     	Assert.assertNotNull(to);
     	
@@ -40,10 +40,10 @@ public class HrefTest {
     @Test
     public void testExtract() throws ExtractionError, ConverterError {
     	
-    	HrefTo to = new HrefTo();
+    	Object2ArrayTo to = new Object2ArrayTo();
     	to.href = "/1/2/a/b/c";
     	
-    	Env object = projections.get(HrefTo.class).extract(to, Env.class).orElse(null);
+    	Env object = projections.get(Object2ArrayTo.class).extract(to, Env.class).orElse(null);
     	
     	Assert.assertNull(object);
     }

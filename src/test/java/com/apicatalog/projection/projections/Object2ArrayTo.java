@@ -8,7 +8,7 @@ import com.apicatalog.projection.converters.UriTemplate;
 import com.apicatalog.projection.objects.Env;
 
 @Projection
-public class HrefTo {
+public class Object2ArrayTo {
 
 	@Source(
 			type = Env.class, value = "baseUri", mode = AccessMode.READ_ONLY, 
