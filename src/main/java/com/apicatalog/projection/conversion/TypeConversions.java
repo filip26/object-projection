@@ -11,6 +11,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.object.ObjectType;
 
 public class TypeConversions {
@@ -49,6 +50,8 @@ public class TypeConversions {
 				return collectionToArray(sourceType, targetType);
 			}
 			
+			return collectionToObject(sourceType, targetType);
+			
 		} else if (sourceType.isArray()) {
 			if (targetType.isCollection()) {
 				return arrayToCollection(sourceType, targetType);
@@ -56,6 +59,8 @@ public class TypeConversions {
 			} else if (targetType.isArray()) {
 				return arrayToArray(sourceType, targetType);
 			}
+			
+			return arrayToObject(sourceType, targetType);
 		}
 		
 		if (targetType.isCollection()) {
@@ -234,7 +239,7 @@ public class TypeConversions {
 				return converted;
 			});
 		}
-		
+
 		return Optional.of(o -> {
 
 			final Object[] converted = (Object[])java.lang.reflect.Array.newInstance(targetType.getType().getComponentType(), 1);
@@ -268,4 +273,88 @@ public class TypeConversions {
 		});		
 	}
 
+	Optional<Conversion<Object, Object>> collectionToObject(ObjectType sourceType, ObjectType targetType) throws ConversionNotFound {
+
+		final Conversion<Object, Object> componentConversion = 
+							!targetType.getType().isAssignableFrom(sourceType.getComponentType())
+									? get(sourceType.getComponentType(), targetType.getType())
+											.orElseThrow(() -> new ConversionNotFound(sourceType, targetType))
+									: null;
+
+		// no conversion needed?
+		if (componentConversion == null) {
+
+			return Optional.of(o -> {
+				
+						final Collection<?> collection = (Collection<?>)o;
+
+						if (collection.isEmpty()) {
+							return null;
+						}
+						
+						if (collection.size() == 1) {
+							return collection.iterator().next();
+						}
+						
+						throw new ConverterError("Can not convert " + sourceType + " to " + targetType);
+				});
+		}
+		
+		return Optional.of(o -> {
+
+			final Collection<?> collection = (Collection<?>)o;
+
+			if (collection.isEmpty()) {
+				return null;
+			}
+			
+			if (collection.size() == 1) {
+				return componentConversion.convert(collection.iterator().next());
+			}
+			
+			throw new ConverterError("Can not convert " + sourceType + " to " + targetType);
+		});
+	}
+
+	Optional<Conversion<Object, Object>> arrayToObject(ObjectType sourceType, ObjectType targetType) throws ConversionNotFound {
+		
+		final Conversion<Object, Object> componentConversion =
+											!targetType.getType().isAssignableFrom(sourceType.getType().getComponentType())
+											? get(sourceType.getType().getComponentType(), targetType.getType())
+													.orElseThrow(() -> new ConversionNotFound(sourceType, targetType))
+											: null;	
+
+		// no conversion needed?
+		if (componentConversion == null) {
+			return Optional.of(o -> {
+				
+				final Object[] array = (Object[])o;
+				
+				if (array.length == 0) {
+					return null;
+				}
+				
+				if (array.length == 1) {
+					return array[0];
+				}
+				
+				throw new ConverterError("Can not convert " + sourceType + " to " + targetType);
+			});			
+		}
+		
+		return Optional.of(o -> {
+			
+			final Object[] array = (Object[])o;
+			
+			if (array.length == 0) {
+				return null;
+			}
+			
+			if (array.length == 1) {
+				return componentConversion.convert(array[0]);
+			}
+			
+			throw new ConverterError("Can not convert " + sourceType + " to " + targetType);
+		});
+	}
 }
