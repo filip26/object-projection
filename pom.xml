@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
   
 	<name>Object Projection</name>  
-	<description>Straightforward Data Transfer Objects Composition and Extraction for Java</description>
+	<description>Straightforward Data Transfer Objects Composition and Extraction</description>
 
 	<properties>
 		<maven.compiler.target>11</maven.compiler.target>
