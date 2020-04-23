@@ -115,7 +115,7 @@ final class SingleSourceWriterMapper {
 	
 			return sourceBuilder.getter(sourceGetter);
 		} catch (ObjectError e) {
-			throw new ProjectionError("Can not get getter for " + sourceFieldName + "." + sourceFieldName + ".", e);
+			throw new ProjectionError("Can not get getter for " + sourceObjectClass.getCanonicalName() + "." + sourceFieldName + ".", e);
 		}
 	}
 

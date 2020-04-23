@@ -6,7 +6,11 @@ import org.junit.Test;
 
 import com.apicatalog.projection.ProjectionRegistry;
 import com.apicatalog.projection.api.ProjectionError;
-import com.apicatalog.projection.projections.EmptyProjection;
+import com.apicatalog.projection.projections.invalid.ConstantConversionErrorTo;
+import com.apicatalog.projection.projections.invalid.EmptyTo;
+import com.apicatalog.projection.projections.invalid.SourceConversionErrorTo;
+import com.apicatalog.projection.projections.invalid.UnmappableSourcePropertyTo;
+import com.apicatalog.projection.projections.invalid.UnmappableSourcesPropertyTo;
 
 
 public class NegativeTest {
@@ -46,7 +50,7 @@ public class NegativeTest {
     public void testEmpty() {
     
     	try {
-    		registry.register(EmptyProjection.class);
+    		registry.register(EmptyTo.class);
     		
     		Assert.fail();
     		
@@ -54,4 +58,53 @@ public class NegativeTest {
     	}
     }
 
+    @Test
+    public void testUnmappableSourceProperty() {
+    
+    	try {
+    		registry.register(UnmappableSourcePropertyTo.class);
+    		
+    		Assert.fail();
+    		
+    	} catch (ProjectionError e) {
+    	}
+    }
+
+    @Test
+    public void testSourceConversionError() {
+    
+    	try {
+    		registry.register(SourceConversionErrorTo.class);
+    		
+    		Assert.fail();
+    		
+    	} catch (ProjectionError e) {
+    	}
+    }
+
+    @Test
+    public void testConstantConversionError() {
+    
+    	try {
+    		registry.register(ConstantConversionErrorTo.class);
+    		
+    		Assert.fail();
+    		
+    	} catch (ProjectionError e) {
+    	}
+    }
+
+    @Test
+    public void testUnmappableSourcesProperty() {
+    
+    	try {
+    		registry.register(UnmappableSourcesPropertyTo.class);
+    		
+    		Assert.fail();
+    		
+    	} catch (ProjectionError e) {
+    		e.printStackTrace();
+    	}
+    }
+  
 }

@@ -135,13 +135,6 @@ public final class PropertyApiImpl<P> implements ObjectPropertyApi<P> {
 		if (valueProvider == null) {
 			return Optional.empty();
 		}
-		
-//		final Field field = ObjectUtils.getProperty(projectionBuilder.getType(), targetPropertyName);
-//		
-//		final ObjectType targetType = ObjectUtils.getTypeOf(field);
-//
-//		// extract getter
-//		final Getter targetGetter = FieldGetter.from(field, targetType);
 
 		try {
 			return valueProvider
@@ -158,13 +151,6 @@ public final class PropertyApiImpl<P> implements ObjectPropertyApi<P> {
 		if (valueProvider == null) {
 			return Optional.empty();
 		}
-
-//		final Field field = ObjectUtils.getProperty(projectionBuilder.getType(), targetPropertyName);
-//		
-//		final ObjectType targetType = ObjectUtils.getTypeOf(field);
-//
-//		// extract setter
-//		final Setter targetSetter = FieldSetter.from(field, targetType);
 
 		try {
 			return valueProvider

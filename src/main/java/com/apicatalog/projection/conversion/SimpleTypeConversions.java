@@ -17,13 +17,12 @@ public final class SimpleTypeConversions {
 		if (source == Double.class) return fromDouble(target);
 		if (source == Boolean.class) return fromBoolean(target);
 		if (source == Instant.class) return fromInstant(target);
-		
-		if (target == String.class) return Object::toString;
-		
-		return null;
+				
+		return fromObject(target);
 	}
 	
 	static final Conversion<Object, Object> fromString(final Class<?> target) {
+
 		if (target == Byte.class) return o -> Byte.valueOf((String)o);
 		if (target == Short.class) return o -> Short.valueOf((String)o);
 		if (target == Long.class) return o -> Long.valueOf((String)o);
@@ -33,7 +32,7 @@ public final class SimpleTypeConversions {
 		if (target == Boolean.class) return stringToBoolean();
 		if (target == URI.class) return o -> URI.create((String)o);
 		
-		return null;
+		return fromObject(target);
 	}
 
 	private static Conversion<Object, Object> stringToBoolean() {
@@ -47,8 +46,7 @@ public final class SimpleTypeConversions {
 	}
 
 	static final Conversion<Object, Object> fromInteger(final Class<?> target) {
-		
-		if (target == String.class) return Object::toString; 
+		 
 		if (target == Byte.class) return o -> ((Integer)o).byteValue();
 		if (target == Short.class) return o -> ((Integer)o).shortValue();
 		if (target == Long.class) return o -> ((Integer)o).longValue();
@@ -56,12 +54,11 @@ public final class SimpleTypeConversions {
 		if (target == Double.class) return o -> ((Integer)o).doubleValue();
 		if (target == Boolean.class) return o -> ((Integer)o) == 0 ? Boolean.FALSE : Boolean.TRUE;
 
-		return null;
+		return fromObject(target);
 	}
 
 	static final Conversion<Object, Object> fromLong(final Class<?> target) {
-		
-		if (target == String.class) return Object::toString; 
+ 
 		if (target == Byte.class) return o -> ((Long)o).byteValue();
 		if (target == Short.class) return o -> ((Long)o).shortValue();
 		if (target == Integer.class) return o -> ((Long)o).intValue();
@@ -70,12 +67,11 @@ public final class SimpleTypeConversions {
 		if (target == Boolean.class) return o -> ((Long)o) == 0 ? Boolean.FALSE : Boolean.TRUE;
 		if (target == Instant.class) return o -> Instant.ofEpochMilli((Long)o);
 
-		return null;
+		return fromObject(target);
 	}
 
 	static final Conversion<Object, Object> fromFloat(final Class<?> target) {
-		
-		if (target == String.class) return Object::toString; 
+		 
 		if (target == Byte.class) return o -> ((Float)o).byteValue();
 		if (target == Short.class) return o -> ((Float)o).shortValue();
 		if (target == Integer.class) return o -> ((Float)o).intValue();
@@ -83,40 +79,43 @@ public final class SimpleTypeConversions {
 		if (target == Double.class) return o -> ((Float)o).doubleValue();
 		if (target == Boolean.class) return o -> ((Float)o) == 0 ? Boolean.FALSE : Boolean.TRUE;
 		
-		return null;
+		return fromObject(target);
 	}
 
 	static final Conversion<Object, Object> fromDouble(final Class<?> target) {
-		
-		if (target == String.class) return Object::toString; 
+		 
 		if (target == Byte.class) return o -> ((Double)o).byteValue();
 		if (target == Short.class) return o -> ((Double)o).shortValue();
 		if (target == Integer.class) return o -> ((Double)o).intValue();
 		if (target == Long.class) return o -> ((Double)o).longValue();
 		if (target == Float.class) return o -> ((Double)o).floatValue();
 		
-		return null;
+		return fromObject(target);
 	}
 
 	static final Conversion<Object, Object> fromInstant(final Class<?> target) {
-
-		if (target == String.class) return Object::toString;  
+  
 		if (target == Long.class) return o -> ((Instant)o).toEpochMilli();
 		if (target == Date.class) return o -> Date.from((Instant)o);
 
-		return null;
+		return fromObject(target);
 	}
 
 	static final Conversion<Object, Object> fromBoolean(final Class<?> target) {
+		 
+		if (target == Byte.class) return o -> Boolean.TRUE.equals(o) ? 1 : 0;
+		if (target == Short.class) return o -> Boolean.TRUE.equals(o) ? 1 : 0;
+		if (target == Integer.class) return o -> Boolean.TRUE.equals(o) ? 1 : 0;
+		if (target == Long.class) return o -> Boolean.TRUE.equals(o) ? 1l : 0l;
+		if (target == Float.class) return o -> Boolean.TRUE.equals(o) ? 1f : 0f;
+		if (target == Double.class) return o -> Boolean.TRUE.equals(o) ? 1d : 0d;
 		
-		if (target == String.class) return Object::toString; 
-		if (target == Byte.class) return o -> ((boolean)o) ? 1 : 0;
-		if (target == Short.class) return o -> ((boolean)o) ? 1 : 0;
-		if (target == Integer.class) return o -> ((boolean)o) ? 1 : 0;
-		if (target == Long.class) return o -> ((boolean)o) ? 1l : 0l;
-		if (target == Float.class) return o -> ((boolean)o) ? 1f : 0f;
-		if (target == Double.class) return o -> ((boolean)o) ? 1d : 0d;
-		
+		return fromObject(target);
+	}
+	
+	static final Conversion<Object, Object> fromObject(final Class<?> target) {
+		if (target == String.class) return Object::toString;
+
 		return null;
 	}
 }
