@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.object.ObjectType;
 
-public class TypeConversions {
+public final class TypeConversions {
 	
 	final Logger logger = LoggerFactory.getLogger(TypeConversions.class);
 
@@ -27,7 +27,7 @@ public class TypeConversions {
 	 * @return <code>Optional.empty()</code> if no conversion is needed or a conversion
 	 * @throws ConversionNotFound if a conversion is needed but does not exist
 	 */
-	public Optional<Conversion<Object, Object>> get(ObjectType sourceType, ObjectType targetType) throws ConversionNotFound {
+	public Optional<Conversion<Object, Object>> get(final ObjectType sourceType, final ObjectType targetType) throws ConversionNotFound {
 
 		if (sourceType == null || targetType == null) {
 			throw new IllegalArgumentException();
@@ -43,24 +43,11 @@ public class TypeConversions {
 		}
 
 		if (sourceType.isCollection()) {
-			if (targetType.isCollection()) {
-				return collectionToCollection(sourceType, targetType);
-				
-			} else if (targetType.isArray()) {
-				return collectionToArray(sourceType, targetType);
-			}
-			
-			return collectionToObject(sourceType, targetType);
-			
-		} else if (sourceType.isArray()) {
-			if (targetType.isCollection()) {
-				return arrayToCollection(sourceType, targetType);
-				
-			} else if (targetType.isArray()) {
-				return arrayToArray(sourceType, targetType);
-			}
-			
-			return arrayToObject(sourceType, targetType);
+			return fromCollection(sourceType, targetType);
+		}
+		
+		if (sourceType.isArray()) {
+			return fromArray(sourceType, targetType);
 		}
 		
 		if (targetType.isCollection()) {
@@ -79,7 +66,7 @@ public class TypeConversions {
 		return conversion;
 	}
 	
-	Optional<Conversion<Object, Object>> get(Class<?> source, Class<?> target) {
+	Optional<Conversion<Object, Object>> get(final Class<?> source, final Class<?> target) {
 
 		if (source == null || target == null) {
 			throw new IllegalArgumentException();
@@ -87,7 +74,31 @@ public class TypeConversions {
 
 		return Optional.ofNullable(SimpleTypeConversions.get(source, target));		
 	}
+	
+	Optional<Conversion<Object, Object>> fromCollection(final ObjectType sourceType, final ObjectType targetType) throws ConversionNotFound {
+		
+		if (targetType.isCollection()) {
+			return collectionToCollection(sourceType, targetType);
+			
+		} else if (targetType.isArray()) {
+			return collectionToArray(sourceType, targetType);
+		}
+		
+		return collectionToObject(sourceType, targetType);
+	}
 
+	Optional<Conversion<Object, Object>> fromArray(final ObjectType sourceType, final ObjectType targetType) throws ConversionNotFound {
+		
+		if (targetType.isCollection()) {
+			return arrayToCollection(sourceType, targetType);
+			
+		} else if (targetType.isArray()) {
+			return arrayToArray(sourceType, targetType);
+		}
+		
+		return arrayToObject(sourceType, targetType);
+	}
+	
 	Optional<Conversion<Object, Object>> collectionToCollection(final ObjectType sourceType, final ObjectType targetType) throws ConversionNotFound {
 		
 		final Conversion<Object, Object> componentConversion = 
@@ -128,7 +139,7 @@ public class TypeConversions {
 		return Optional.of(conversion);
 	}
 	
-	Optional<Conversion<Object, Object>> collectionToArray(ObjectType sourceType, ObjectType targetType) throws ConversionNotFound {
+	Optional<Conversion<Object, Object>> collectionToArray(final ObjectType sourceType, final ObjectType targetType) throws ConversionNotFound {
 
 		final Conversion<Object, Object> componentConversion = 
 							!targetType.getType().getComponentType().isAssignableFrom(sourceType.getComponentType())
@@ -169,7 +180,7 @@ public class TypeConversions {
 		});
 	}
 	
-	Optional<Conversion<Object, Object>> arrayToCollection(ObjectType sourceType, ObjectType targetType) throws ConversionNotFound {
+	Optional<Conversion<Object, Object>> arrayToCollection(final ObjectType sourceType, final ObjectType targetType) throws ConversionNotFound {
 		
 		final Conversion<Object, Object> componentConversion = 
 								!targetType.getComponentType().isAssignableFrom(sourceType.getType().getComponentType())
@@ -194,7 +205,7 @@ public class TypeConversions {
 		});		
 	}
 		
-	Optional<Conversion<Object, Object>> arrayToArray(ObjectType sourceType, ObjectType targetType) throws ConversionNotFound {
+	Optional<Conversion<Object, Object>> arrayToArray(final ObjectType sourceType, final ObjectType targetType) throws ConversionNotFound {
 		
 		final Conversion<Object, Object> componentConversion =
 											!targetType.getType().getComponentType().isAssignableFrom(sourceType.getType().getComponentType())
@@ -221,7 +232,7 @@ public class TypeConversions {
 		});
 	}
 
-	Optional<Conversion<Object, Object>> objectToArray(ObjectType sourceType, ObjectType targetType) throws ConversionNotFound {
+	Optional<Conversion<Object, Object>> objectToArray(final ObjectType sourceType, final ObjectType targetType) throws ConversionNotFound {
 
 		final Conversion<Object, Object> componentConversion = 
 							!targetType.getType().getComponentType().isAssignableFrom(sourceType.getType())
@@ -250,7 +261,7 @@ public class TypeConversions {
 		});
 	}
 
-	Optional<Conversion<Object, Object>> objectToCollection(ObjectType sourceType, ObjectType targetType) throws ConversionNotFound {
+	Optional<Conversion<Object, Object>> objectToCollection(final ObjectType sourceType, final ObjectType targetType) throws ConversionNotFound {
 		
 		final Conversion<Object, Object> componentConversion = 
 								!targetType.getComponentType().isAssignableFrom(sourceType.getType())
@@ -273,7 +284,7 @@ public class TypeConversions {
 		});		
 	}
 
-	Optional<Conversion<Object, Object>> collectionToObject(ObjectType sourceType, ObjectType targetType) throws ConversionNotFound {
+	Optional<Conversion<Object, Object>> collectionToObject(final ObjectType sourceType, final ObjectType targetType) throws ConversionNotFound {
 
 		final Conversion<Object, Object> componentConversion = 
 							!targetType.getType().isAssignableFrom(sourceType.getComponentType())
@@ -316,7 +327,7 @@ public class TypeConversions {
 		});
 	}
 
-	Optional<Conversion<Object, Object>> arrayToObject(ObjectType sourceType, ObjectType targetType) throws ConversionNotFound {
+	Optional<Conversion<Object, Object>> arrayToObject(final ObjectType sourceType, final ObjectType targetType) throws ConversionNotFound {
 		
 		final Conversion<Object, Object> componentConversion =
 											!targetType.getType().isAssignableFrom(sourceType.getType().getComponentType())

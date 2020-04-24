@@ -25,7 +25,7 @@ public final class UriTemplateL1 {
 	protected UriTemplateL1(String[] elements, int[] variables, char[] stopCharacters) {
 		this.elements = elements;
 		this.variables = variables;
-		this.stopCharacters = stopCharacters;
+		this.stopCharacters = stopCharacters;		
 	}
 
 	public static UriTemplateL1 of(final String urlPattern) throws MalformedUriTemplate {

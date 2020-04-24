@@ -111,6 +111,15 @@ public class UriTemplateExtractTest {
     }
 
     @Test
+    public void testExtract1Var12() throws MalformedUriTemplate {
+    	final UriTemplateL1 pattern = UriTemplateL1.of("/{baseUri}/a/b/c");
+    	final String[] params = pattern.extract("/1/a/b/c");
+    	Assert.assertNotNull(params);
+    	Assert.assertEquals(1, params.length);
+    	Assert.assertEquals("1", params[0]);
+    }
+
+    @Test
     public void testExtract2Var() throws MalformedUriTemplate {
     	final UriTemplateL1 pattern = UriTemplateL1.of("https://example.org/x{var1}y/x{var2}y/x");
     	final String[] params = pattern.extract("https://example.org/x123y/xABCy/x");

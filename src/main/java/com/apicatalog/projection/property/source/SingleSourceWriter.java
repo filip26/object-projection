@@ -50,12 +50,17 @@ public final class SingleSourceWriter implements SourceWriter {
 		if (value.isEmpty()) {
 			return;
 		}
-		
+
 		// apply conversions
 		if (conversions != null) {
 			try {
 				for (final Conversion<Object, Object> conversion : conversions) {
-					
+
+					if (logger.isTraceEnabled()) {
+						logger.trace("Applying conversion on {}", value.get());
+					}
+
+
 					value = Optional.ofNullable(conversion.convert(value.get()));
 					
 					if (value.isEmpty()) {
@@ -66,7 +71,7 @@ public final class SingleSourceWriter implements SourceWriter {
 				throw new ExtractionError(e);
 			}
 		}
-		
+
 		Optional<?> instance =  context.get(sourceType);
 
 		try {
