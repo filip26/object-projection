@@ -242,24 +242,13 @@ public final class TypeConversions {
 											.orElseThrow(() -> new ConversionNotFound(sourceType, targetType))
 									: null;
 
-		// no conversion needed?
-		if (componentConversion == null) {
-			return Optional.of(o -> {
-				final Object converted = java.lang.reflect.Array.newInstance(targetType.getType().getComponentType(), 1);
-				
-				Array.set(converted, 0, o);
-				
-				return converted;
-			});
-		}
-
 		return Optional.of(o -> {
 
-			final Object converted = java.lang.reflect.Array.newInstance(targetType.getType().getComponentType(), 1);
+			final Object array = java.lang.reflect.Array.newInstance(targetType.getType().getComponentType(), 1);
 
-			Array.set(converted, 0, componentConversion.convert(o));
+			Array.set(array, 0, componentConversion != null ? componentConversion.convert(o) : o);
 
-			return converted;
+			return array;
 		});
 	}
 
