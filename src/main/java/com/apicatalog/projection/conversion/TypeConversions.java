@@ -1,5 +1,6 @@
 package com.apicatalog.projection.conversion;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -154,11 +155,12 @@ public final class TypeConversions {
 				
 						final Collection<?> collection = (Collection<?>)o;
 				
-						final Object[] converted = (Object[])java.lang.reflect.Array.newInstance(targetType.getType().getComponentType(), collection.size());
+						final Object converted = java.lang.reflect.Array.newInstance(targetType.getType().getComponentType(), collection.size());
 			
 						int index = 0;
+						
 						for (Object object : collection) {
-							converted[index++] = object;
+							Array.set(converted, index++, object);
 						}
 						
 						return converted;
@@ -169,12 +171,12 @@ public final class TypeConversions {
 			
 			final Collection<?> collection = (Collection<?>)o;
 			
-			final Object[] converted = (Object[])java.lang.reflect.Array.newInstance(targetType.getType().getComponentType(), collection.size());
+			final Object converted = java.lang.reflect.Array.newInstance(targetType.getType().getComponentType(), collection.size());
 
 			int index = 0;
 			
 			for (Object object : collection) {
-				converted[index++] = componentConversion.convert(object);
+				Array.set(converted, index++, componentConversion.convert(object));
 			}
 			return converted;
 		});
@@ -220,12 +222,12 @@ public final class TypeConversions {
 		
 		return Optional.of(array -> {
 			
-			final Object[] converted = (Object[])java.lang.reflect.Array.newInstance(targetType.getType().getComponentType(), ((Object[])array).length);
+			final Object converted = java.lang.reflect.Array.newInstance(targetType.getType().getComponentType(), ((Object[])array).length);
 
 			int index = 0;
 			
 			for (Object object : (Object[])array) {
-				converted[index++] = componentConversion.convert(object);
+				Array.set(converted, index++, componentConversion.convert(object));
 			}
 
 			return converted;
@@ -243,19 +245,19 @@ public final class TypeConversions {
 		// no conversion needed?
 		if (componentConversion == null) {
 			return Optional.of(o -> {
-				final Object[] converted = (Object[])java.lang.reflect.Array.newInstance(targetType.getType().getComponentType(), 1);
-
-				converted[0] = o;
-
+				final Object converted = java.lang.reflect.Array.newInstance(targetType.getType().getComponentType(), 1);
+				
+				Array.set(converted, 0, o);
+				
 				return converted;
 			});
 		}
 
 		return Optional.of(o -> {
 
-			final Object[] converted = (Object[])java.lang.reflect.Array.newInstance(targetType.getType().getComponentType(), 1);
+			final Object converted = java.lang.reflect.Array.newInstance(targetType.getType().getComponentType(), 1);
 
-			converted[0] = componentConversion.convert(o);
+			Array.set(converted, 0, componentConversion.convert(o));
 
 			return converted;
 		});

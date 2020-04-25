@@ -17,9 +17,10 @@ public class Object2ArrayTo {
 			optional = true
 	)
 	public String href;
-	
-	
+
 	@Source(type = BasicTypes.class, value = "booleanValue", optional = true)
 	public Long[] longArray;
-	
+
+	@Source(type = BasicTypes.class, value = "stringValue", optional = true)
+	public String[] stringArray;
 }

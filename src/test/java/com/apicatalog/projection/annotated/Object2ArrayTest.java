@@ -62,7 +62,7 @@ public class Object2ArrayTest {
     	Assert.assertNotNull(to.longArray);
     	Assert.assertArrayEquals(new Long[] {1l}, to.longArray);
     }
-
+    
     @Test
     public void testExtract2() throws ExtractionError, ConverterError {
     	
@@ -75,4 +75,29 @@ public class Object2ArrayTest {
     	Assert.assertNotNull(object.booleanValue);
     	Assert.assertFalse(object.booleanValue);
     }
+    
+    @Test
+    public void testCompose3() throws CompositionError, ConverterError {
+    	
+    	BasicTypes object = new BasicTypes();
+    	object.stringValue = "1 2 3";
+    	
+    	Object2ArrayTo to = projections.get(Object2ArrayTo.class).compose(object);
+    	
+    	Assert.assertNotNull(to);
+    	Assert.assertArrayEquals(new String[] {object.stringValue }, to.stringArray);
+    }
+
+    @Test
+    public void testExtract3() throws ExtractionError, ConverterError {
+    	
+    	Object2ArrayTo to = new Object2ArrayTo();
+    	to.stringArray = new String[] {"A B C D E F"};
+    	
+    	BasicTypes object = projections.get(Object2ArrayTo.class).extract(to, BasicTypes.class).orElse(null);
+    	
+    	Assert.assertNotNull(object);
+    	Assert.assertEquals("A B C D E F", object.stringValue);
+    }
+
 }
