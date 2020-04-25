@@ -44,32 +44,11 @@ public final class SingleSourceWriter implements SourceWriter {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Write {} to {}.{}, optional = {}", object, sourceType, setter.getName(), optional);
 		}
-
-		Optional<Object> value = Optional.ofNullable(object);
+		
+		Optional<Object> value = applyConversions(object);
 		
 		if (value.isEmpty()) {
 			return;
-		}
-
-		// apply conversions
-		if (conversions != null) {
-			try {
-				for (final Conversion<Object, Object> conversion : conversions) {
-
-					if (logger.isTraceEnabled()) {
-						logger.trace("Applying conversion on {}", value.get());
-					}
-
-
-					value = Optional.ofNullable(conversion.convert(value.get()));
-					
-					if (value.isEmpty()) {
-						return;
-					}
-				}
-			} catch (ConverterError e) {
-				throw new ExtractionError(e);
-			}
 		}
 
 		Optional<?> instance =  context.get(sourceType);
@@ -92,6 +71,38 @@ public final class SingleSourceWriter implements SourceWriter {
 		} catch (ObjectError e) {
 			throw new ExtractionError(e);
 		}
+	}
+	
+	protected Optional<Object> applyConversions(final Object object) throws ExtractionError {
+		
+		if (object == null) {
+			return Optional.empty();
+		}
+		
+		Optional<Object> value = Optional.of(object);
+
+		// apply conversions
+		if (conversions != null) {
+			try {
+				for (final Conversion<Object, Object> conversion : conversions) {
+
+					if (logger.isTraceEnabled()) {
+						logger.trace("Applying conversion on {}", value.get());
+					}
+
+
+					value = Optional.ofNullable(conversion.convert(value.get()));
+					
+					if (value.isEmpty()) {
+						return Optional.empty();
+					}
+				}
+			} catch (ConverterError e) {
+				throw new ExtractionError(e);
+			}
+		}
+		
+		return value;
 	}
 	
 	public void setSetter(Setter setter) {

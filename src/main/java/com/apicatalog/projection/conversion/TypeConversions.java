@@ -155,15 +155,15 @@ public final class TypeConversions {
 				
 						final Collection<?> collection = (Collection<?>)o;
 				
-						final Object converted = java.lang.reflect.Array.newInstance(targetType.getType().getComponentType(), collection.size());
+						final Object array = java.lang.reflect.Array.newInstance(targetType.getType().getComponentType(), collection.size());
 			
 						int index = 0;
 						
 						for (Object object : collection) {
-							Array.set(converted, index++, object);
+							Array.set(array, index++, object);
 						}
 						
-						return converted;
+						return array;
 				});
 		}
 		
@@ -171,14 +171,14 @@ public final class TypeConversions {
 			
 			final Collection<?> collection = (Collection<?>)o;
 			
-			final Object converted = java.lang.reflect.Array.newInstance(targetType.getType().getComponentType(), collection.size());
+			final Object array = java.lang.reflect.Array.newInstance(targetType.getType().getComponentType(), collection.size());
 
 			int index = 0;
 			
 			for (Object object : collection) {
-				Array.set(converted, index++, componentConversion.convert(object));
+				Array.set(array, index++, componentConversion.convert(object));
 			}
-			return converted;
+			return array;
 		});
 	}
 	
