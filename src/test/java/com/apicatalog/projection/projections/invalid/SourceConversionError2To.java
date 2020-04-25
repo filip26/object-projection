@@ -11,6 +11,6 @@ public class SourceConversionError2To {
 
 
 	@Source
-	public URI stringValue;
+	public URI booleanValue;
 	
 }

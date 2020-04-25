@@ -89,10 +89,10 @@ public class NegativeTest {
     	try {
     		registry.register(SourceConversionError2To.class);
     		
-//    		Assert.fail();
+    		Assert.fail();
     		
     	} catch (ProjectionError e) {
-    		e.printStackTrace();
+
     	}
     }
 
