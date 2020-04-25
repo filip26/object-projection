@@ -307,7 +307,7 @@ public final class TypeConversions {
 							return collection.iterator().next();
 						}
 						
-						throw new ConverterError("Can not convert " + sourceType + " to " + targetType);
+						throw ConverterError.unconvertable(sourceType, targetType);
 				});
 		}
 		
@@ -323,7 +323,7 @@ public final class TypeConversions {
 				return componentConversion.convert(collection.iterator().next());
 			}
 			
-			throw new ConverterError("Can not convert " + sourceType + " to " + targetType);
+			throw ConverterError.unconvertable(sourceType, targetType);
 		});
 	}
 
@@ -349,7 +349,7 @@ public final class TypeConversions {
 					return array[0];
 				}
 				
-				throw new ConverterError("Can not convert " + sourceType + " to " + targetType);
+				throw ConverterError.unconvertable(sourceType, targetType);
 			});			
 		}
 		
@@ -365,7 +365,7 @@ public final class TypeConversions {
 				return componentConversion.convert(array[0]);
 			}
 			
-			throw new ConverterError("Can not convert " + sourceType + " to " + targetType);
+			throw ConverterError.unconvertable(sourceType, targetType);
 		});
-	}
+	}	
 }
