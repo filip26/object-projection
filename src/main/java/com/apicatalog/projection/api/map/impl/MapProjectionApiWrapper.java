@@ -43,6 +43,16 @@ public class MapProjectionApiWrapper implements MapProjectionApi {
 	}
 	
 	@Override
+	public MapEntryApi mapDate(String propertyName) {
+		return projectionBuilder.mapDate(propertyName);
+	}
+
+	@Override
+	public MapEntryApi mapInstant(String propertyName) {
+		return projectionBuilder.mapInstant(propertyName);
+	}
+	
+	@Override
 	public MapEntryApi mapObject(String name, Class<?> objectType) {
 		return projectionBuilder.mapObject(name, objectType);
 	}

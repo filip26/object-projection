@@ -1,6 +1,8 @@
 package com.apicatalog.projection.api.map.impl;
 
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -61,6 +63,16 @@ public final class MapProjectionApiImpl implements MapProjectionBuilderApi {
 		return mapObject(name, Boolean.class);
 	}
 
+	@Override
+	public MapEntryApi mapDate(String propertyName) {
+		return mapObject(propertyName, Date.class);
+	}
+
+	@Override
+	public MapEntryApi mapInstant(String propertyName) {
+		return mapObject(propertyName, Instant.class);
+	}
+	
 	@Override
 	public MapEntryApi mapObject(String name, Class<?> objectType) {
 		final MapEntryApiImpl propertyBuilder = new MapEntryApiImpl(this, name, objectType, false);

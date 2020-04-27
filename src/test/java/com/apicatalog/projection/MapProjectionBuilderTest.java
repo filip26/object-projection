@@ -1,7 +1,9 @@
 package com.apicatalog.projection;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -339,5 +341,52 @@ public class MapProjectionBuilderTest {
 		Assert.assertEquals(map2.get("d1"), object1.doubleValue);
 	}
 
+	@Test
+	public void test7c() throws ProjectionError, CompositionError {
+		
+		final Projection<Map<String, Object>> projection = 
+				Projection
+					.hashMap()
+						.mapString("s1").source(BasicTypes.class, "floatValue")
+						.mapDate("d1").source(BasicTypes.class, "instantValue")
+					
+						.build(Registry.newInstance());
+		
+		Assert.assertNotNull(projection);
 
+		BasicTypes object1 = new BasicTypes();
+		object1.floatValue = 0.32f;
+		object1.instantValue = Instant.now();
+		
+		Map<String, Object> map = projection.compose(object1);
+		
+		Assert.assertNotNull(map);;
+		Assert.assertEquals(object1.floatValue.toString(), map.get("s1"));
+		Assert.assertEquals(Date.from(object1.instantValue), map.get("d1"));
+	}
+	
+
+	@Test
+	public void test7e() throws ProjectionError, ExtractionError {
+		
+		final Projection<Map<String, Object>> projection = 
+				Projection
+					.hashMap()
+						.mapString("s1").source(BasicTypes.class, "floatValue")
+						.mapDate("d1").source(BasicTypes.class, "instantValue")
+					
+						.build(Registry.newInstance());
+		
+		Assert.assertNotNull(projection);
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("s1", "1.23");
+		map.put("d1", new Date());
+				
+		BasicTypes object1 = projection.extract(map, BasicTypes.class).orElse(null);
+		
+		Assert.assertNotNull(object1);
+		Assert.assertEquals(Float.valueOf((String)map.get("s1")), object1.floatValue);
+		Assert.assertEquals(((Date)map.get("d1")).toInstant(), object1.instantValue);
+	}
 }

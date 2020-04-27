@@ -2,28 +2,32 @@ package com.apicatalog.projection.api.map;
 
 public interface MapProjectionApi {
 
-	MapEntryApi mapString(String name);
+	MapEntryApi mapString(String propertyName);
 	
-	MapEntryApi mapInteger(String name);
+	MapEntryApi mapInteger(String propertyName);
 	
-	MapEntryApi mapLong(String name);
+	MapEntryApi mapLong(String propertyName);
 
-	MapEntryApi mapFloat(String name);
+	MapEntryApi mapFloat(String propertyName);
 	
-	MapEntryApi mapDouble(String name);
+	MapEntryApi mapDouble(String propertyName);
 	
-	MapEntryApi mapBoolean(String name);
+	MapEntryApi mapBoolean(String propertyName);
 	
-	MapEntryApi mapObject(String name, Class<?> objectType);
+	MapEntryApi mapDate(String propertyName);
 	
-	MapEntryApi mapCollection(String name, Class<?> collectionType, Class<?> componentType);
+	MapEntryApi mapInstant(String propertyName);
+
+	MapEntryApi mapObject(String propertyName, Class<?> objectType);
 	
-	MapEntryApi mapReference(String name, Class<?> projectionType);
+	MapEntryApi mapCollection(String propertyName, Class<?> collectionType, Class<?> componentType);
 	
-	MapEntryApi mapReference(String name, String projectionName);
+	MapEntryApi mapReference(String propertyName, Class<?> projectionType);
 	
-	MapEntryApi mapReference(String name, Class<?> collectionType, Class<?> projectionType);
+	MapEntryApi mapReference(String propertyName, String projectionName);
 	
-	MapEntryApi mapReference(String name, Class<?> collectionType, String projectionName);
+	MapEntryApi mapReference(String propertyName, Class<?> collectionType, Class<?> projectionType);
+	
+	MapEntryApi mapReference(String propertyName, Class<?> collectionType, String projectionName);
 
 }

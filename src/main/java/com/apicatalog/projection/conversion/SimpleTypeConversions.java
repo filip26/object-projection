@@ -17,6 +17,7 @@ public final class SimpleTypeConversions {
 		if (source == Double.class) return fromDouble(target);
 		if (source == Boolean.class) return fromBoolean(target);
 		if (source == Instant.class) return fromInstant(target);
+		if (source == Date.class) return fromDate(target);
 				
 		return fromObject(target);
 	}
@@ -97,6 +98,13 @@ public final class SimpleTypeConversions {
   
 		if (target == Long.class) return o -> ((Instant)o).toEpochMilli();
 		if (target == Date.class) return o -> Date.from((Instant)o);
+
+		return fromObject(target);
+	}
+
+	static final Conversion<Object, Object> fromDate(final Class<?> target) {
+		  
+		if (target == Instant.class) return o -> ((Date)o).toInstant();
 
 		return fromObject(target);
 	}
