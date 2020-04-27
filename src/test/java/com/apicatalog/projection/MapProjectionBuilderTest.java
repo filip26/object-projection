@@ -302,5 +302,42 @@ public class MapProjectionBuilderTest {
 		Assert.assertEquals(object.doubleValue, map2.get("d1"));
 	}
 
+	@Test
+	public void test6e() throws ProjectionError, ExtractionError {
+		
+		Registry registry = Registry.newInstance();
+		
+		final Projection<Map<String, Object>> projection1 = 
+				Projection
+					.hashMap("p1")
+						.mapLong("i1").source(BasicTypes.class, "integerValue")
+						.mapDouble("d1").source(BasicTypes.class, "doubleValue")
+						.build(registry);
+
+		Assert.assertNotNull(projection1);
+		
+		final Projection<Map<String, Object>> projection2 = 
+				Projection
+					.hashMap()
+						.mapReference("p", "p1").provided()
+						.build(registry);
+		
+		Assert.assertNotNull(projection2);
+
+		Map<String, Object> map1 = new HashMap<>();
+		
+		Map<String, Object> map2 = new HashMap<>();
+		map2.put("i1", 352452l);
+		map2.put("d1", 2.323d);
+		
+		map1.put("p", map2);
+				
+		BasicTypes object1 = projection2.extract(map1, BasicTypes.class).orElse(null);
+		
+		Assert.assertNotNull(object1);
+		Assert.assertEquals(Integer.valueOf(((Long)map2.get("i1")).intValue()), object1.integerValue);
+		Assert.assertEquals(map2.get("d1"), object1.doubleValue);
+	}
+
 
 }
