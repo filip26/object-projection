@@ -1,9 +1,9 @@
 package com.apicatalog.projection.api;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 
 public interface BuilderApi<P> {
 
-	Projection<P> build(ProjectionRegistry registry) throws ProjectionError;
+	Projection<P> build(Registry registry) throws ProjectionError;
 }

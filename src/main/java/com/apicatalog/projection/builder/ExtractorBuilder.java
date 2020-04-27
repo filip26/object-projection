@@ -2,10 +2,11 @@ package com.apicatalog.projection.builder;
 
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.property.target.CollectionExtractor;
 import com.apicatalog.projection.property.target.ObjectExtractor;
@@ -19,8 +20,8 @@ public final class ExtractorBuilder {
 	
 	Getter getter;
 	
-	boolean reference;
-		
+	String targetProjectionName; 
+
 	protected ExtractorBuilder() {
 	}
 	
@@ -28,33 +29,37 @@ public final class ExtractorBuilder {
 		return new ExtractorBuilder();
 	}
 		
-	public Optional<TargetExtractor> build(ProjectionRegistry registry) {
+	public Optional<TargetExtractor> build(Registry registry) {
 		
 		if (getter == null) {
 			return Optional.empty();
 		}
 
-		if (reference) {
+		if (StringUtils.isNotBlank(targetProjectionName)) {
 			if (getter.getType().isCollection()) {
-				return collection(getter.getType().getComponentType().getCanonicalName(), registry);
+				return collection(targetProjectionName, registry);
 			}
 			if (getter.getType().isArray()) {
-				return collection(getter.getType().getType().getComponentType().getCanonicalName(), registry);
+				return collection(targetProjectionName, registry);
 			}
 			
-			return object(getter.getType().getType().getCanonicalName(), registry);
+			return object(targetProjectionName, registry);
 		}
 
 		return Optional.empty();
 	}
 	
-	public ExtractorBuilder getter(Getter getter, boolean reference) {
+	public ExtractorBuilder getter(Getter getter) {
 		this.getter = getter;
-		this.reference = reference;
 		return this;
 	}
-	
-	final Optional<TargetExtractor> collection(final String projectionName, final ProjectionRegistry registry) {
+
+	public ExtractorBuilder targetProjection(String targetProjectionName) {
+		this.targetProjectionName = targetProjectionName;
+		return this;
+	}
+
+	final Optional<TargetExtractor> collection(final String projectionName, final Registry registry) {
 		
 		final CollectionExtractor extractor = new CollectionExtractor(getter.getType(), projectionName);
 		
@@ -63,7 +68,7 @@ public final class ExtractorBuilder {
 		return Optional.of(extractor);		
 	}
 
-	final Optional<TargetExtractor> object(final String projectionName, final ProjectionRegistry registry) {
+	final Optional<TargetExtractor> object(final String projectionName, final Registry registry) {
 		
 		final ObjectExtractor extractor = new ObjectExtractor(projectionName);
 		

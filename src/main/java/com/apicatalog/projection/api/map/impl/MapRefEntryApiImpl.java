@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.api.map.MapArraySourceApi;
@@ -22,30 +23,27 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
-public final class MapEntryApiImpl extends MapProjectionApiWrapper implements MapEntryApi, MapEntryBuildApi {
+public final class MapRefEntryApiImpl extends MapProjectionApiWrapper implements MapEntryApi, MapEntryBuildApi {
 	
-	final Logger logger = LoggerFactory.getLogger(MapEntryApiImpl.class);
+	final Logger logger = LoggerFactory.getLogger(MapRefEntryApiImpl.class);
 
 	final String name;
 	
-	final Class<?> type;
+	final String projectionName;
 	
-	final Class<?> componentType;
-	
-	final boolean reference;
+	final Class<?> collectionType;
 	
 	AbstractValueProviderApi valueProvider;
 
-	protected MapEntryApiImpl(final MapProjectionBuilderApi projectionBuilder, final String name, final Class<?> type, boolean reference) {
-		this(projectionBuilder, name, type, null, reference);
+	protected MapRefEntryApiImpl(final MapProjectionBuilderApi projectionBuilder, final String name, final String projectionName) {
+		this(projectionBuilder, name, null, projectionName);
 	}
 	
-	protected MapEntryApiImpl(final MapProjectionBuilderApi projectionBuilder, final String name, final Class<?> collectionType, final Class<?> componentType, boolean reference) {
+	protected MapRefEntryApiImpl(final MapProjectionBuilderApi projectionBuilder, final String name, final Class<?> collectionType, final String projectionName) {
 		super(projectionBuilder);
 		this.name = name;
-		this.type = collectionType;
-		this.componentType = componentType;
-		this.reference = reference;
+		this.collectionType = collectionType;
+		this.projectionName = projectionName;
 	}
 
 	@Override
@@ -67,7 +65,7 @@ public final class MapEntryApiImpl extends MapProjectionApiWrapper implements Ma
 					// use the same name if source property name is not present
 					StringUtils.isNotBlank(sourceProperty) ? sourceProperty : name
 					);
-
+		
 		this.valueProvider = sourcePropertyApi;
 		
 		return sourcePropertyApi;
@@ -81,8 +79,7 @@ public final class MapEntryApiImpl extends MapProjectionApiWrapper implements Ma
 		}
 		
 		final MapArraySourceApiImpl sourcesPropertyApi = 
-				new MapArraySourceApiImpl(projectionBuilder, name);
-//TODO						.targetReference(targetReference);
+				new MapArraySourceApiImpl(projectionBuilder, name);;
 		
 		this.valueProvider = sourcesPropertyApi;
 		
@@ -102,9 +99,7 @@ public final class MapEntryApiImpl extends MapProjectionApiWrapper implements Ma
 		}
 		
 		final MapProvidedApiImpl providedPropertyApi = 
-				new MapProvidedApiImpl(projectionBuilder, StringUtils.isNotBlank(qualifier) ? qualifier : null)
-//						.targetReference(targetReference);
-					;
+				new MapProvidedApiImpl(projectionBuilder, StringUtils.isNotBlank(qualifier) ? qualifier : null);
 		
 		this.valueProvider = providedPropertyApi;
 		
@@ -130,13 +125,24 @@ public final class MapEntryApiImpl extends MapProjectionApiWrapper implements Ma
 			return Optional.empty();
 		}
 		
-		final ObjectType targetType = ObjectType.of(type, componentType);
+		final Projection<?> ref = registry.get(projectionName);
+		
+		if (ref == null) {
+			throw new ProjectionError("Projection " + projectionName + " is not present.");
+		}
+		
+		final ObjectType targetType = 
+				collectionType != null 
+					? ObjectType.of(collectionType, ref.getType())
+					: ObjectType.of(ref.getType())
+					;
 
 		// extract getter
 		final Getter targetGetter = MapEntryGetter.from(name, targetType);
 
 		return valueProvider
 					.targetGetter(targetGetter)
+					.targetProjection(projectionName)
 					.buildyReader(registry)
 					;
 	}
@@ -147,13 +153,24 @@ public final class MapEntryApiImpl extends MapProjectionApiWrapper implements Ma
 			return Optional.empty();
 		}
 
-		final ObjectType targetType = ObjectType.of(type, componentType);
+		final Projection<?> ref = registry.get(projectionName);
+		
+		if (ref == null) {
+			throw new ProjectionError("Projection " + projectionName + " is not present.");
+		}
+		
+		final ObjectType targetType = 
+				collectionType != null 
+					? ObjectType.of(collectionType, ref.getType())
+					: ObjectType.of(ref.getType())
+					;
 
 		// extract setter
 		final Setter targetSetter = MapEntrySetter.from(name, targetType);
 
 		return valueProvider
 					.targetSetter(targetSetter)
+					.targetProjection(projectionName)
 					.buildyWriter(registry)
 					;		
 	}

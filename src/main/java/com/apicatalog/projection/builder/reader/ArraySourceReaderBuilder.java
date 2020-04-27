@@ -29,7 +29,7 @@ public final class ArraySourceReaderBuilder {
 	
 	ObjectType targetType;
 	
-	boolean targetReference;
+	String targetProjectionName;
 	
 	protected ArraySourceReaderBuilder() {
 		this.optional = false;
@@ -60,7 +60,7 @@ public final class ArraySourceReaderBuilder {
 			}
 
 			for (final SingleSourceReaderBuilder sourceReaderBuilder : sourceReaders) {
-				sourceReaderBuilder.targetType(sourceTargetType, targetReference).build(typeConversions).ifPresent(sources::add);				
+				sourceReaderBuilder.targetType(sourceTargetType).targetProjection(targetProjectionName).build(typeConversions).ifPresent(sources::add);				
 			}
 			
 			// set sources
@@ -94,9 +94,13 @@ public final class ArraySourceReaderBuilder {
 		return this;
 	}
 
-	public ArraySourceReaderBuilder targetType(final ObjectType targetType, final boolean targetReference) {
+	public ArraySourceReaderBuilder targetType(final ObjectType targetType) {
 		this.targetType = targetType;
-		this.targetReference = targetReference;
+		return this;
+	}
+	
+	public ArraySourceReaderBuilder targetProjection(final String targetProjection) {
+		this.targetProjectionName = targetProjection;
 		return this;
 	}
 
@@ -138,7 +142,7 @@ public final class ArraySourceReaderBuilder {
 			}
 		}
 		
-		targetType = SingleSourceReaderBuilder.getSourceTargetType(sourceType, targetType, targetReference);
+		targetType = SingleSourceReaderBuilder.getSourceTargetType(sourceType, targetType, targetProjectionName);
 		
 		// implicit conversion
 		typeConversions.get(

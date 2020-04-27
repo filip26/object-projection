@@ -8,7 +8,7 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.api.LambdaConversionApi;
 import com.apicatalog.projection.api.ProjectionError;
@@ -45,7 +45,7 @@ public final class SingleSourceApiImpl<P> extends AbstractValueProviderApi<P> im
 	Getter targetGetter;
 	Setter targetSetter;
 	
-	boolean targetReference;
+	String targetProjectionName;
 	
 	protected SingleSourceApiImpl(final ProjectionApiImpl<P> projectionBuilder, final Class<?> sourceObjectClass, final String sourcePropertyName) {
 		this.projectionBuilder = projectionBuilder;
@@ -130,12 +130,12 @@ public final class SingleSourceApiImpl<P> extends AbstractValueProviderApi<P> im
 	}
 	
 	@Override
-	public Projection<P> build(final ProjectionRegistry factory) throws ProjectionError {
+	public Projection<P> build(final Registry factory) throws ProjectionError {
 		return projectionBuilder.build(factory);
 	}
 
 	@Override
-	protected Optional<PropertyReader> buildyReader(final ProjectionRegistry registry) throws ProjectionError {
+	protected Optional<PropertyReader> buildyReader(final Registry registry) throws ProjectionError {
 			
 		final Collection<ConverterMapping> converters = new ArrayList<>(conversions.size()*2);
 		
@@ -154,7 +154,8 @@ public final class SingleSourceApiImpl<P> extends AbstractValueProviderApi<P> im
 	
 			return SourcePropertyReaderBuilder.newInstance()
 						.sourceWriter(sourceWriterBuilder)
-						.target(targetGetter, targetReference)
+						.target(targetGetter)
+						.targetProjection(targetProjectionName)
 						.build(registry).map(PropertyReader.class::cast);
 			
 		} catch (ObjectError e) {
@@ -164,7 +165,7 @@ public final class SingleSourceApiImpl<P> extends AbstractValueProviderApi<P> im
 	}
 	
 	@Override
-	protected Optional<PropertyWriter> buildyWriter(final ProjectionRegistry registry) throws ProjectionError {
+	protected Optional<PropertyWriter> buildyWriter(final Registry registry) throws ProjectionError {
 
 		final Collection<ConverterMapping> converters = new ArrayList<>(conversions.size()*2);
 		
@@ -181,7 +182,8 @@ public final class SingleSourceApiImpl<P> extends AbstractValueProviderApi<P> im
 			final Optional<SourceReader> sourceReader = 
 						sourceReaderBuilder
 							.getter(sourceGetter)
-							.targetType(targetSetter.getType(), targetReference)
+							.targetType(targetSetter.getType())
+							.targetProjection(targetProjectionName)
 							.build(registry.getTypeConversions())
 								.map(SourceReader.class::cast);
 		
@@ -191,7 +193,8 @@ public final class SingleSourceApiImpl<P> extends AbstractValueProviderApi<P> im
 	
 			return Optional.ofNullable(SourcePropertyWriterBuilder.newInstance()
 						.sourceReader(sourceReader.get())
-						.target(targetSetter, targetReference)
+						.target(targetSetter)
+						.targetProjection(targetProjectionName)
 						.build(registry)).map(PropertyWriter.class::cast);
 			
 		} catch (ObjectError e) {
@@ -212,8 +215,8 @@ public final class SingleSourceApiImpl<P> extends AbstractValueProviderApi<P> im
 	}
 	
 	@Override
-	protected SingleSourceApiImpl<P> targetReference(final boolean targetReference) {
-		this.targetReference = targetReference;
+	protected SingleSourceApiImpl<P> targetProjection(final String targetProjectionName) {
+		this.targetProjectionName = targetProjectionName;
 		return this;		
 	}	
 }

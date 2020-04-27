@@ -2,7 +2,7 @@ package com.apicatalog.projection.api.object.impl;
 
 import java.util.Optional;
 
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.builder.writer.ConstantWriterBuilder;
 import com.apicatalog.projection.object.getter.Getter;
@@ -10,7 +10,7 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
-public class ConstantPropertyApi<P> extends AbstractValueProviderApi<P> {
+public final class ConstantPropertyApi<P> extends AbstractValueProviderApi<P> {
 	
 	final ProjectionApiImpl<P> projectionBuilder;
 	
@@ -18,26 +18,26 @@ public class ConstantPropertyApi<P> extends AbstractValueProviderApi<P> {
 	
 	Setter targetSetter;
 	
-	boolean targetReference;
+	String targetProjectionName;
 
-	protected ConstantPropertyApi(final ProjectionApiImpl<P> projectionBuilder, String[] constants) {
+	protected ConstantPropertyApi(final ProjectionApiImpl<P> projectionBuilder, final String[] constants) {
 		this.projectionBuilder = projectionBuilder;
 		this.constants = constants;
 	}
 	
 	@Override
-	public AbstractValueProviderApi<P> targetGetter(Getter targetGetter) {
+	public AbstractValueProviderApi<P> targetGetter(final Getter targetGetter) {
 		return this;
 	}
 
 	@Override
-	public AbstractValueProviderApi<P> targetReference(boolean targetReference) {
-		this.targetReference = targetReference;
+	public AbstractValueProviderApi<P> targetProjection(final String targetProjectionName) {
+		this.targetProjectionName = targetProjectionName;
 		return this;
 	}
 
 	@Override
-	public Optional<PropertyReader> buildyReader(ProjectionRegistry registry) {
+	public Optional<PropertyReader> buildyReader(Registry registry) {
 		return Optional.empty();
 	}
 
@@ -48,14 +48,13 @@ public class ConstantPropertyApi<P> extends AbstractValueProviderApi<P> {
 	}
 
 	@Override
-	protected Optional<PropertyWriter> buildyWriter(final ProjectionRegistry registry) throws ProjectionError {
+	protected Optional<PropertyWriter> buildyWriter(final Registry registry) throws ProjectionError {
 		return ConstantWriterBuilder.newInstance()
 					.constants(constants)
-					.targetSetter(targetSetter, targetReference)
+					.targetSetter(targetSetter)
+					.targetProjection(targetProjectionName)
 					.build(registry)
 					.map(PropertyWriter.class::cast)
 					;
 	}
-
-	
 }

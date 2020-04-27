@@ -10,5 +10,7 @@ public interface Builder<T> {
 
 	Optional<T> build(TypeConversions typeConverters) throws ProjectionError;
 	
-	Builder<T> targetType(ObjectType targetType, boolean targetReference);
+	Builder<T> targetType(ObjectType targetType);
+	
+	Builder<T> targetProjection(String targetProjectionName);
 }

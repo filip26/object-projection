@@ -2,10 +2,11 @@ package com.apicatalog.projection.builder.writer;
 
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.builder.ComposerBuilder;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyWriter;
@@ -18,7 +19,7 @@ public final class ProvidedPropertyWriterBuilder {
 
 	Setter targetSetter;
 	
-	boolean targetReference;
+	String targetProjectionName;
 	
 	String qualifier;
 	
@@ -32,13 +33,13 @@ public final class ProvidedPropertyWriterBuilder {
 		return new ProvidedPropertyWriterBuilder();
 	}
 	
-	public Optional<PropertyWriter> build(ProjectionRegistry registry) {
+	public Optional<PropertyWriter> build(Registry registry) {
 
 		if (targetSetter == null) {
 			return Optional.empty();
 		}
 
-		if (targetReference && !targetSetter.getType().isCollection() && !targetSetter.getType().isArray()) {
+		if (StringUtils.isNotBlank(targetProjectionName) && !targetSetter.getType().isCollection() && !targetSetter.getType().isArray()) {
 			return buildReference(registry);
 		}
 
@@ -53,7 +54,8 @@ public final class ProvidedPropertyWriterBuilder {
 		
 		ComposerBuilder
 			.newInstance()
-				.setter(targetSetter, targetReference)
+				.setter(targetSetter)
+				.targetProjection(targetProjectionName)
 				.build(registry)
 			.ifPresent(property::setComposer);
 		
@@ -61,18 +63,19 @@ public final class ProvidedPropertyWriterBuilder {
 	}
 	
 
-	Optional<PropertyWriter> buildReference(ProjectionRegistry registry) {
-		
-		final ProvidedProjectionPropertyWriter property = new ProvidedProjectionPropertyWriter(targetSetter.getType().getType().getCanonicalName());
+	Optional<PropertyWriter> buildReference(Registry registry) {
+
+		final ProvidedProjectionPropertyWriter property = new ProvidedProjectionPropertyWriter(targetProjectionName);
 
 		property.setTargetSetter(targetSetter);
 		
+
 		// set qualifier
 		property.setObjectQualifier(qualifier);
 
 		property.setOptional(optional);
 
-		registry.request(targetSetter.getType().getType().getCanonicalName(), property::setProjection);
+		registry.request(targetProjectionName, property::setProjection);
 		
 		return Optional.of(property);
 	}
@@ -92,9 +95,8 @@ public final class ProvidedPropertyWriterBuilder {
 		return this;
 	}
 
-	public ProvidedPropertyWriterBuilder targetReference(boolean reference) {
-		this.targetReference = reference;
+	public ProvidedPropertyWriterBuilder targetProjection(final String projectionName) {
+		this.targetProjectionName = projectionName;
 		return this;
 	}
-
 }

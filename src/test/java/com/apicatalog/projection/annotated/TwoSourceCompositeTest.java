@@ -7,7 +7,7 @@ import org.junit.Test;
 import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.ExtractionError;
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.BasicTypes;
@@ -20,7 +20,7 @@ public class TwoSourceCompositeTest {
 
 	@Before
 	public void setup() throws CompositionError, ProjectionError {
-		projection = Projection.scan(CompositeTo.class).build(ProjectionRegistry.newInstance());
+		projection = Projection.scan(CompositeTo.class).build(Registry.newInstance());
 	}	
 	
     @Test

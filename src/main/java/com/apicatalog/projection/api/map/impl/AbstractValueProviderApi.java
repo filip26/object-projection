@@ -2,7 +2,7 @@ package com.apicatalog.projection.api.map.impl;
 
 import java.util.Optional;
 
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.api.map.MapProjectionBuilderApi;
 import com.apicatalog.projection.object.getter.Getter;
@@ -20,10 +20,10 @@ abstract class AbstractValueProviderApi extends MapProjectionApiWrapper {
 	
 	protected abstract AbstractValueProviderApi targetSetter(Setter targetSetter);
 
-	protected abstract AbstractValueProviderApi targetReference(boolean targetReference);
+	protected abstract AbstractValueProviderApi targetProjection(String targetProjectionName);
 
-	protected abstract Optional<PropertyReader> buildyReader(ProjectionRegistry registry) throws ProjectionError;
+	protected abstract Optional<PropertyReader> buildyReader(Registry registry) throws ProjectionError;
 	
-	protected abstract Optional<PropertyWriter> buildyWriter(ProjectionRegistry registry) throws ProjectionError;
+	protected abstract Optional<PropertyWriter> buildyWriter(Registry registry) throws ProjectionError;
 
 }

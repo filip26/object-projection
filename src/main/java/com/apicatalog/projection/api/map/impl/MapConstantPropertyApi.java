@@ -2,7 +2,7 @@ package com.apicatalog.projection.api.map.impl;
 
 import java.util.Optional;
 
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.api.map.MapProjectionBuilderApi;
 import com.apicatalog.projection.builder.writer.ConstantWriterBuilder;
@@ -11,13 +11,13 @@ import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.PropertyReader;
 import com.apicatalog.projection.property.PropertyWriter;
 
-public class MapConstantPropertyApi extends AbstractValueProviderApi {
+public final class MapConstantPropertyApi extends AbstractValueProviderApi {
 	
 	final String[] constants; 
 	
 	Setter targetSetter;
 	
-	boolean targetReference;
+	String targetProjectionName;
 
 	protected MapConstantPropertyApi(final MapProjectionBuilderApi projectionBuilder, String[] constants) {
 		super(projectionBuilder);
@@ -25,13 +25,13 @@ public class MapConstantPropertyApi extends AbstractValueProviderApi {
 	}
 	
 	@Override
-	protected AbstractValueProviderApi targetGetter(Getter targetGetter) {
+	protected AbstractValueProviderApi targetGetter(final Getter targetGetter) {
 		return this;
 	}
 
 	@Override
-	protected AbstractValueProviderApi targetReference(boolean targetReference) {
-		this.targetReference = targetReference;
+	protected AbstractValueProviderApi targetProjection(final String targetProjectionName) {
+		this.targetProjectionName = targetProjectionName;
 		return this;
 	}
 
@@ -42,15 +42,16 @@ public class MapConstantPropertyApi extends AbstractValueProviderApi {
 	}
 
 	@Override
-	protected Optional<PropertyReader> buildyReader(ProjectionRegistry registry) {
+	protected Optional<PropertyReader> buildyReader(Registry registry) {
 		return Optional.empty();
 	}
 
 	@Override
-	protected Optional<PropertyWriter> buildyWriter(final ProjectionRegistry registry) throws ProjectionError {
+	protected Optional<PropertyWriter> buildyWriter(final Registry registry) throws ProjectionError {
 		return ConstantWriterBuilder.newInstance()
 					.constants(constants)
-					.targetSetter(targetSetter, targetReference)
+					.targetSetter(targetSetter)
+					.targetProjection(targetProjectionName)
 					.build(registry)
 					.map(PropertyWriter.class::cast)
 					;

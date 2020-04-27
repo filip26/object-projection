@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.builder.Builder;
 import com.apicatalog.projection.builder.ExtractorBuilder;
@@ -23,7 +23,7 @@ public final class SourcePropertyReaderBuilder {
 	
 	Getter targetGetter;
 	
-	boolean targetReference;
+	String targetProjectionName;
 	
 	protected SourcePropertyReaderBuilder() {
 	}
@@ -32,7 +32,7 @@ public final class SourcePropertyReaderBuilder {
 		return new SourcePropertyReaderBuilder();
 	}
 			
-	public Optional<SourcePropertyReader> build(final ProjectionRegistry registry) throws ProjectionError {
+	public Optional<SourcePropertyReader> build(final Registry registry) throws ProjectionError {
 
 		if (targetGetter == null) {
 			logger.warn("Target getter is missing. Skipping source.");
@@ -45,7 +45,7 @@ public final class SourcePropertyReaderBuilder {
 		}
 
 		final Optional<SourceWriter> sourceWriter = sourceWriterBuilder
-							.targetType(targetGetter.getType(), targetReference)
+							.targetType(targetGetter.getType()).targetProjection(targetProjectionName)
 							.build(registry.getTypeConversions());
 		
 		if (sourceWriter.isEmpty()) {
@@ -56,11 +56,12 @@ public final class SourcePropertyReaderBuilder {
 		final SourcePropertyReader sourcePropertyReader = SourcePropertyReader.newInstance(sourceWriter.get(), targetGetter);
 			  
 		ExtractorBuilder.newInstance()
-			.getter(targetGetter, targetReference)
+			.getter(targetGetter)
+			.targetProjection(targetProjectionName)
 			.build(registry)
 			.ifPresent(e -> {
 					sourcePropertyReader.setExtractor(e);
-					sourceWriterBuilder.targetType(targetGetter.getType(), targetReference);
+					sourceWriterBuilder.targetType(targetGetter.getType()).targetProjection(targetProjectionName);
 				});		
 
 		return Optional.of(sourcePropertyReader);
@@ -71,9 +72,14 @@ public final class SourcePropertyReaderBuilder {
 		return this;
 	}
 
-	public SourcePropertyReaderBuilder target(Getter getter, boolean reference) {
+	public SourcePropertyReaderBuilder target(final Getter getter) {
 		this.targetGetter = getter;
-		this.targetReference = reference;
 		return this;
 	}
+	
+	public SourcePropertyReaderBuilder targetProjection(final String projectionName) {
+		this.targetProjectionName = projectionName;
+		return this;
+	}
+
 }

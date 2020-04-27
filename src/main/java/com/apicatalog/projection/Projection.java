@@ -45,7 +45,7 @@ public interface Projection<P> {
 	static <P> BuilderApi<P> scan(final Class<P> projectionType) {
 		return new BuilderApi<P>() {
 			@Override
-			public Projection<P> build(ProjectionRegistry registry) throws ProjectionError {
+			public Projection<P> build(Registry registry) throws ProjectionError {
 
 				Projection<P> projection = registry.getMapper().getProjectionOf(projectionType);
 				

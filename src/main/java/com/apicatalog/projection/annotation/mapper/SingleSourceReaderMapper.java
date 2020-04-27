@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.annotation.Conversion;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.api.ProjectionError;
@@ -31,9 +31,9 @@ final class SingleSourceReaderMapper {
 	
 	static final String SOURCE_IS_MISSING = "Source is missing. Property {} is ignored."; 
 	
-	final ProjectionRegistry registry;
+	final Registry registry;
 	
-	public SingleSourceReaderMapper(final ProjectionRegistry registry) {
+	public SingleSourceReaderMapper(final Registry registry) {
 		this.registry = registry;
 	}
 	
@@ -43,8 +43,6 @@ final class SingleSourceReaderMapper {
 		
 		final Getter targetGetter = FieldGetter.from(field, ObjectUtils.getTypeOf(field));
 		
-		final boolean targetReference = PropertyReaderMapper.isReference(targetGetter.getType());
-
 		final Optional<SingleSourceWriterBuilder> sourceWriterBuilder = 
 					getSingleSourceWriter( 
 						sourceAnnotation,
@@ -55,11 +53,15 @@ final class SingleSourceReaderMapper {
 		if (sourceWriterBuilder.isEmpty()) {
 			return Optional.empty();			
 		}
-				
-		return SourcePropertyReaderBuilder.newInstance()
-					.sourceWriter(sourceWriterBuilder.get())
-					.target(targetGetter, targetReference)						
-					.build(registry);
+		
+		final SourcePropertyReaderBuilder sourcePropertyReaderBuilder = 
+					SourcePropertyReaderBuilder.newInstance()
+						.sourceWriter(sourceWriterBuilder.get())
+						.target(targetGetter);
+
+		PropertyReaderMapper.getProjectionName(targetGetter.getType()).ifPresent(sourcePropertyReaderBuilder::targetProjection);
+
+		return sourcePropertyReaderBuilder.build(registry);
 	}
 
 	Optional<SingleSourceWriterBuilder> getSingleSourceWriter(final Source sourceAnnotation, final String fieldName, final Class<?> defaultSourceClass) throws ProjectionError {

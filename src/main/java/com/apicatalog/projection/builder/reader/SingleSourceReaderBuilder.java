@@ -40,7 +40,7 @@ public final class SingleSourceReaderBuilder {
 	
 	ObjectType targetType;
 	
-	boolean targetReference;
+	String targetProjectionName;
 
 	protected SingleSourceReaderBuilder() {
 		this.mode = AccessMode.READ_ONLY;
@@ -122,11 +122,15 @@ public final class SingleSourceReaderBuilder {
 		return this;
 	}
 	
-	public SingleSourceReaderBuilder targetType(final ObjectType targetType, final boolean targetReference) {
+	public SingleSourceReaderBuilder targetType(final ObjectType targetType) {
 		this.targetType= targetType;
-		this.targetReference = targetReference;
 		return this;
 	}	
+	
+	public SingleSourceReaderBuilder targetProjection(final String projectionName) {
+		this.targetProjectionName = projectionName;
+		return this;
+	}
 	
 	final void buildChain(final SingleSourceReader source, final TypeConversions typeConversions) throws ConversionNotFound {
 
@@ -165,7 +169,7 @@ public final class SingleSourceReaderBuilder {
 			}
 		}
 		
-		targetType = getSourceTargetType(sourceType, targetType, targetReference);
+		targetType = getSourceTargetType(sourceType, targetType, targetProjectionName);
 		
 		// implicit conversion
 		typeConversions.get(
@@ -180,9 +184,10 @@ public final class SingleSourceReaderBuilder {
 		source.setType(targetType);
 	}
 	
-	public static final ObjectType getSourceTargetType(final ObjectType sourceType, final ObjectType targetType, final boolean targetReference) {
+	public static final ObjectType getSourceTargetType(final ObjectType sourceType, final ObjectType targetType, final String targeProjectionName) {
 		
-		if (targetReference) {
+		if (StringUtils.isNotBlank(targeProjectionName)) {
+			//FIXME ?!?!?
 			if (targetType.isCollection()) {
 				
 				if (sourceType.isCollection()) {

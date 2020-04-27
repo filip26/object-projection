@@ -8,7 +8,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.api.ProjectionError;
@@ -26,11 +26,11 @@ final class ArraySourceReaderMapper {
 	
 	static final String SOURCE_IS_MISSING = "Source is missing. Property {} is ignored."; 
 	
-	final ProjectionRegistry registry;
+	final Registry registry;
 	
 	final SingleSourceReaderMapper singleSourceMapper;
 	
-	public ArraySourceReaderMapper(final ProjectionRegistry registry) {
+	public ArraySourceReaderMapper(final Registry registry) {
 		this.registry = registry;
 		this.singleSourceMapper = new SingleSourceReaderMapper(registry);
 	}
@@ -41,8 +41,6 @@ final class ArraySourceReaderMapper {
 
 		final Getter targetGetter = FieldGetter.from(field, ObjectUtils.getTypeOf(field));
 		
-		final boolean targetReference = PropertyReaderMapper.isReference(targetGetter.getType());
-
 		final Optional<ArraySourceWriterBuilder> arraySourceWriterBuilder = 
 					getArraySourceWriter(
 							sourcesAnnotation, 
@@ -55,10 +53,14 @@ final class ArraySourceReaderMapper {
 			return Optional.empty();
 		}
 		
-		return SourcePropertyReaderBuilder.newInstance()
-				.sourceWriter(arraySourceWriterBuilder.get())
-				.target(targetGetter, targetReference)
-				.build(registry).map(PropertyReader.class::cast);
+		final SourcePropertyReaderBuilder builder = 
+					SourcePropertyReaderBuilder.newInstance()
+						.sourceWriter(arraySourceWriterBuilder.get())
+						.target(targetGetter);
+
+		PropertyReaderMapper.getProjectionName(targetGetter.getType()).ifPresent(builder::targetProjection);
+		
+		return builder.build(registry).map(PropertyReader.class::cast);
 	}
 	
 	Optional<ArraySourceWriterBuilder> getArraySourceWriter(final Sources sourcesAnnotation, final String fieldName, final Class<?> defaultSourceObjectClass) throws ProjectionError {

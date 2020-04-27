@@ -8,7 +8,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.annotation.Source;
 import com.apicatalog.projection.annotation.Sources;
 import com.apicatalog.projection.api.ProjectionError;
@@ -28,11 +28,11 @@ final class ArraySourceWriterMapper {
 	
 	static final String SOURCE_IS_MISSING = "Source is missing. Property {} is ignored."; 
 	
-	final ProjectionRegistry registry;
+	final Registry registry;
 	
 	final SingleSourceWriterMapper singleSourceMapper;
 	
-	public ArraySourceWriterMapper(final ProjectionRegistry registry) {
+	public ArraySourceWriterMapper(final Registry registry) {
 		this.registry = registry;
 		this.singleSourceMapper = new SingleSourceWriterMapper(registry);
 	}
@@ -43,14 +43,14 @@ final class ArraySourceWriterMapper {
 
 		final Setter targetSetter = FieldSetter.from(field, ObjectUtils.getTypeOf(field));
 
-		final boolean targetReference = PropertyReaderMapper.isReference(targetSetter.getType());
-		
+		final Optional<String> targetProjectionName = PropertyReaderMapper.getProjectionName(targetSetter.getType()); 
+
 		final Optional<ArraySourceReader> arraySourceReader = 
 					getArraySourceReader(
 							sourcesAnnotation, 
 							field.getName(), 
 							targetSetter.getType(),
-							targetReference,
+							targetProjectionName.orElse(null),
 							defaultSourceClass
 							);
 
@@ -59,13 +59,17 @@ final class ArraySourceWriterMapper {
 			return Optional.empty();
 		}
 		
-		return Optional.ofNullable(SourcePropertyWriterBuilder.newInstance()
+		final SourcePropertyWriterBuilder builder = 
+				SourcePropertyWriterBuilder.newInstance()
 					.sourceReader(arraySourceReader.get())
-					.target(targetSetter, targetReference)
-					.build(registry)).map(PropertyWriter.class::cast);
+					.target(targetSetter);
+		
+		targetProjectionName.ifPresent(builder::targetProjection);
+		
+		return Optional.ofNullable(builder.build(registry)).map(PropertyWriter.class::cast);
 	}
 	
-	Optional<ArraySourceReader> getArraySourceReader(final Sources sourcesAnnotation, final String fieldName, final ObjectType targetType, final boolean targetReference, final Class<?> defaultSourceObjectClass) throws ProjectionError {
+	Optional<ArraySourceReader> getArraySourceReader(final Sources sourcesAnnotation, final String fieldName, final ObjectType targetType, final String targetProjectionName, final Class<?> defaultSourceObjectClass) throws ProjectionError {
 		
 		final Collection<SingleSourceReaderBuilder> sources = new ArrayList<>(sourcesAnnotation.value().length);
 		
@@ -80,11 +84,12 @@ final class ArraySourceWriterMapper {
 			return Optional.empty();
 		}
 
-		return 
+		return
 			ArraySourceReaderBuilder.newInstance()
 				.optional(sourcesAnnotation.optional())
 				.sources(sources)
-				.targetType(targetType, targetReference)
+				.targetType(targetType)
+				.targetProjection(targetProjectionName)
 				.converters(SingleSourceReaderMapper.getConverterMapping(sourcesAnnotation.map()))	// set conversions to apply
 				.build(registry.getTypeConversions());
 			

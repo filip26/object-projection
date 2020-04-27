@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.apicatalog.projection.CompositionError;
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.SimpleObject;
@@ -18,11 +18,11 @@ import com.apicatalog.projection.source.SourceObject;
 
 public class ProvidedRefArrayTest {
 
-	ProjectionRegistry projections;
+	Registry projections;
 	
 	@Before
 	public void setup() throws CompositionError, ProjectionError {
-		projections = ProjectionRegistry.newInstance();		
+		projections = Registry.newInstance();		
 		
 		projections
 			.register(ProvidedRefArrayTo.class)

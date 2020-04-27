@@ -7,12 +7,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import com.apicatalog.projection.annotation.mapper.ProjectionMapper;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.conversion.TypeConversions;
 
-public final class ProjectionRegistry {
+public final class Registry {
 
 	final ProjectionMapper mapper;
 	final TypeConversions typeConversions;
@@ -21,15 +22,15 @@ public final class ProjectionRegistry {
 	
 	final Map<String, Collection<Consumer<Projection<?>>>> consumers;
 	
-	protected ProjectionRegistry(final Map<String, Projection<?>> index) {
+	protected Registry(final Map<String, Projection<?>> index) {
 		this.index = index;
 		this.mapper = new ProjectionMapper(this);
 		this.typeConversions = new TypeConversions();
 		this.consumers = new HashMap<>(48);
 	}
 
-	public static final ProjectionRegistry newInstance() {
-		return new ProjectionRegistry(new LinkedHashMap<>());
+	public static final Registry newInstance() {
+		return new Registry(new LinkedHashMap<>());
 	}
 	
 	public <P> Projection<P> get(final Class<P> projectionClass) {
@@ -41,7 +42,7 @@ public final class ProjectionRegistry {
 		return (Projection<P>) index.get(name);
 	}
 	
-	public ProjectionRegistry register(final Projection<?> projection) {
+	public Registry register(final Projection<?> projection) {
 		if (projection == null) {
 			throw new IllegalArgumentException();
 		}
@@ -58,7 +59,7 @@ public final class ProjectionRegistry {
 		return this;
 	}
 
-	public ProjectionRegistry register(final Class<?> annotatedProjectionType) throws ProjectionError {
+	public Registry register(final Class<?> annotatedProjectionType) throws ProjectionError {
 		if (annotatedProjectionType == null) {
 			throw new IllegalArgumentException();
 		}
@@ -84,5 +85,10 @@ public final class ProjectionRegistry {
 		}
 		
 		consumers.computeIfAbsent(projectionName, x -> new ArrayList<>()).add(consumer);
-	}	
+	}
+	
+	public Stream<Projection<?>> stream() {
+		return index.values().stream();
+	}
+	
 }

@@ -30,7 +30,7 @@ public final class ArraySourceWriterBuilder implements Builder<SourceWriter> {
 	
 	ObjectType targetType;
 	
-	boolean targetReference;
+	String targetProjectionName;
 	
 	protected ArraySourceWriterBuilder() {
 		this.optional = false;
@@ -75,7 +75,7 @@ public final class ArraySourceWriterBuilder implements Builder<SourceWriter> {
 			}
 
 			for (final SingleSourceWriterBuilder sourceWriterBuilder : sourceWriters) {
-				sourceWriterBuilder.targetType(sourceTargetType, targetReference).build(typeConversions).ifPresent(sources::add);				
+				sourceWriterBuilder.targetType(sourceTargetType).targetProjection(targetProjectionName).build(typeConversions).ifPresent(sources::add);				
 			}
 			
 			// set sources
@@ -106,9 +106,13 @@ public final class ArraySourceWriterBuilder implements Builder<SourceWriter> {
 		return this;
 	}
 
-	public ArraySourceWriterBuilder targetType(ObjectType targetType, boolean targetReference) {
+	public ArraySourceWriterBuilder targetType(ObjectType targetType) {
 		this.targetType = targetType;
-		this.targetReference = targetReference;
+		return this;
+	}
+	
+	public ArraySourceWriterBuilder targetProjection(final String projectionName) {
+		this.targetProjectionName = projectionName;
 		return this;
 	}
 
@@ -120,7 +124,7 @@ public final class ArraySourceWriterBuilder implements Builder<SourceWriter> {
 
 			final ConverterMapping[] mapping = converters.toArray(new ConverterMapping[0]);
 
-			targetType = SingleSourceWriterBuilder.getSourceTargetType(targetType, targetReference, mapping[mapping.length - 1].getTargetType());
+			targetType = SingleSourceWriterBuilder.getSourceTargetType(targetType, targetProjectionName, mapping[mapping.length - 1].getTargetType());
 	
 			typeConversions.get(
 					targetType,
@@ -151,7 +155,7 @@ public final class ArraySourceWriterBuilder implements Builder<SourceWriter> {
 			targetType = mapping[0].getSourceType();
 			
 		} else {
-			targetType = SingleSourceWriterBuilder.getSourceTargetType(targetType, targetReference, ObjectType.of(Object[].class));						
+			targetType = SingleSourceWriterBuilder.getSourceTargetType(targetType, targetProjectionName, ObjectType.of(Object[].class));						
 		}
 
 		// implicit conversion

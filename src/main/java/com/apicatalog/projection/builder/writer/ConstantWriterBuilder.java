@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.conversion.Conversion;
 import com.apicatalog.projection.conversion.ConversionNotFound;
@@ -24,7 +25,7 @@ public final class ConstantWriterBuilder {
 	
 	Setter targetSetter;
 	
-	boolean targetReference;
+	String targetProjectionName;
 	
 	protected ConstantWriterBuilder() {
 	}
@@ -33,17 +34,20 @@ public final class ConstantWriterBuilder {
 		return new ConstantWriterBuilder();
 	}
 	
-	public Optional<ConstantPropertyWriter> build(final ProjectionRegistry registry) throws ProjectionError {
+	public Optional<ConstantPropertyWriter> build(final Registry registry) throws ProjectionError {
 		
 		final ConstantPropertyWriter property = new ConstantPropertyWriter();
 		
 		ObjectType sourceTargetType = targetSetter.getType();
 		
-		if (targetReference) {
+		if (StringUtils.isNotBlank(targetProjectionName)) {
+			
 			if (targetSetter.getType().isCollection()) {
 				sourceTargetType = ObjectType.of(targetSetter.getType().getType(), Object.class);
+				
 			} else if (targetSetter.getType().isArray()) {
 				sourceTargetType = ObjectType.of(Object[].class);
+				
 			} else {
 				sourceTargetType = ObjectType.of(Object.class);
 			}
@@ -86,9 +90,13 @@ public final class ConstantWriterBuilder {
 		return conversions;
 	}
 	
-	public ConstantWriterBuilder targetSetter(final Setter targetSetter, final boolean reference) {
+	public ConstantWriterBuilder targetSetter(final Setter targetSetter) {
 		this.targetSetter = targetSetter;
-		this.targetReference = reference;
+		return this;
+	}
+	
+	public ConstantWriterBuilder targetProjection(final String targetProjectionName) {
+		this.targetProjectionName = targetProjectionName;
 		return this;
 	}
 	

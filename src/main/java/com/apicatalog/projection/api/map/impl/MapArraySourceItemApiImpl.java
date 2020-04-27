@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.api.LambdaConversionApi;
 import com.apicatalog.projection.api.ProjectionError;
@@ -196,7 +196,7 @@ public final class MapArraySourceItemApiImpl extends MapProjectionApiWrapper imp
 	}
 
 	@Override
-	public Projection<Map<String, Object>> build(ProjectionRegistry registry) throws ProjectionError {
+	public Projection<Map<String, Object>> build(Registry registry) throws ProjectionError {
 		return projectionBuilder.build(registry);
 	}
 }

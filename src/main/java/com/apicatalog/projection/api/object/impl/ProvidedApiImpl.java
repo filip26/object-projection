@@ -3,7 +3,7 @@ package com.apicatalog.projection.api.object.impl;
 import java.util.Optional;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.api.object.ObjectPropertyApi;
 import com.apicatalog.projection.api.object.ObjectProvidedApi;
@@ -23,7 +23,7 @@ public final class ProvidedApiImpl<P> extends AbstractValueProviderApi<P> implem
 	Getter targetGetter;
 	Setter targetSetter;
 	
-	boolean targetReference;
+	String targetProjectionName;
 	
 	boolean optional;
 	
@@ -54,30 +54,30 @@ public final class ProvidedApiImpl<P> extends AbstractValueProviderApi<P> implem
 		return projectionBuilder.map(propertyName, reference);
 	}
 
-	public Projection<P> build(final ProjectionRegistry registry) throws ProjectionError {
+	public Projection<P> build(final Registry registry) throws ProjectionError {
 		return projectionBuilder.build(registry);
 	}	
 	
 	@Override
-	protected Optional<PropertyReader> buildyReader(final ProjectionRegistry registry) throws ProjectionError {
+	protected Optional<PropertyReader> buildyReader(final Registry registry) throws ProjectionError {
 		return ProvidedPropertyReaderBuilder
 						.newInstance()
 							.qualifier(qualifier)
 							.optional(optional)
 							.targetGetter(targetGetter)
-							.targetReference(targetReference)
+							.targetProjection(targetProjectionName)
 							.build(registry)
 								.map(PropertyReader.class::cast);
 	}
 
 	@Override
-	protected Optional<PropertyWriter> buildyWriter(final ProjectionRegistry registry) throws ProjectionError {
+	protected Optional<PropertyWriter> buildyWriter(final Registry registry) throws ProjectionError {
 		return ProvidedPropertyWriterBuilder
 						.newInstance()
 							.qualifier(qualifier)
 							.optional(optional)
 							.targetSetter(targetSetter)
-							.targetReference(targetReference)
+							.targetProjection(targetProjectionName)
 							.build(registry)
 								.map(PropertyWriter.class::cast);
 	}
@@ -95,8 +95,8 @@ public final class ProvidedApiImpl<P> extends AbstractValueProviderApi<P> implem
 	}
 	
 	@Override
-	protected ProvidedApiImpl<P> targetReference(final boolean reference) {
-		this.targetReference = reference;
+	protected ProvidedApiImpl<P> targetProjection(final String targetProjectionName) {
+		this.targetProjectionName = targetProjectionName;
 		return this;
 	}
 }

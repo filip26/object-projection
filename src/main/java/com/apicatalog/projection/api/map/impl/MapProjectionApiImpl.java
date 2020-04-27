@@ -7,7 +7,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.api.map.MapEntryApi;
 import com.apicatalog.projection.api.map.MapProjectionApi;
@@ -18,7 +18,7 @@ import com.apicatalog.projection.property.PropertyWriter;
 
 public final class MapProjectionApiImpl implements MapProjectionBuilderApi {
 	
-	final List<MapEntryApiImpl> entries;
+	final List<MapEntryBuildApi> entries;
 	
 	final String projectionName;
 	
@@ -63,14 +63,14 @@ public final class MapProjectionApiImpl implements MapProjectionBuilderApi {
 
 	@Override
 	public MapEntryApi mapObject(String name, Class<?> objectType) {
-		final MapEntryApiImpl propertyBuilder = new MapEntryApiImpl(this, name, objectType);
+		final MapEntryApiImpl propertyBuilder = new MapEntryApiImpl(this, name, objectType, false);
 		entries.add(propertyBuilder);
 		return propertyBuilder;		
 	}
 
 	@Override
 	public MapEntryApi mapCollection(String name, Class<?> collectionType, Class<?> componentType) {
-		final MapEntryApiImpl propertyBuilder = new MapEntryApiImpl(this, name, collectionType, componentType);
+		final MapEntryApiImpl propertyBuilder = new MapEntryApiImpl(this, name, collectionType, componentType, false);
 		entries.add(propertyBuilder);
 		return propertyBuilder;
 	}
@@ -82,8 +82,9 @@ public final class MapProjectionApiImpl implements MapProjectionBuilderApi {
 
 	@Override
 	public MapEntryApi mapReference(String name, String projectionName) {
-		// TODO Auto-generated method stub
-		return null;
+		final MapRefEntryApiImpl propertyBuilder = new MapRefEntryApiImpl(this, name, projectionName);
+		entries.add(propertyBuilder);
+		return propertyBuilder;		
 	}
 
 	@Override
@@ -93,17 +94,18 @@ public final class MapProjectionApiImpl implements MapProjectionBuilderApi {
 
 	@Override
 	public MapEntryApi mapReference(String name, Class<?> collectionType, String projectionName) {
-		// TODO Auto-generated method stub
-		return null;
+		final MapRefEntryApiImpl propertyBuilder = new MapRefEntryApiImpl(this, name, collectionType, projectionName);
+		entries.add(propertyBuilder);
+		return propertyBuilder;		
 	}
 	
 	@Override
-	public Projection<Map<String, Object>> build(final ProjectionRegistry factory) throws ProjectionError {
+	public Projection<Map<String, Object>> build(final Registry factory) throws ProjectionError {
 
 		final List<PropertyReader> readers = new ArrayList<>(); 
 		final List<PropertyWriter> writers = new ArrayList<>();
 		
-		for (final MapEntryApiImpl entry : entries) {
+		for (final MapEntryBuildApi entry : entries) {
 			entry
 					.buildReader(factory)
 					.ifPresent(readers::add);

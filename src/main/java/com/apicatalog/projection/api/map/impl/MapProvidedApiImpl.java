@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.api.map.MapProjectionBuilderApi;
 import com.apicatalog.projection.api.map.MapProvidedApi;
@@ -22,7 +22,7 @@ public final class MapProvidedApiImpl extends AbstractValueProviderApi implement
 	Getter targetGetter;
 	Setter targetSetter;
 	
-	boolean targetReference;
+	String targetProjectionName;
 	
 	boolean optional;
 	
@@ -44,25 +44,25 @@ public final class MapProvidedApiImpl extends AbstractValueProviderApi implement
 	}
 	
 	@Override
-	protected Optional<PropertyReader> buildyReader(final ProjectionRegistry registry) throws ProjectionError {
+	protected Optional<PropertyReader> buildyReader(final Registry registry) throws ProjectionError {
 		return ProvidedPropertyReaderBuilder
 						.newInstance()
 							.qualifier(qualifier)
 							.optional(optional)
 							.targetGetter(targetGetter)
-							.targetReference(targetReference)
+							.targetProjection(targetProjectionName)
 							.build(registry)
 								.map(PropertyReader.class::cast);
 	}
 
 	@Override
-	protected Optional<PropertyWriter> buildyWriter(final ProjectionRegistry registry) throws ProjectionError {
+	protected Optional<PropertyWriter> buildyWriter(final Registry registry) throws ProjectionError {
 		return ProvidedPropertyWriterBuilder
 						.newInstance()
 							.qualifier(qualifier)
 							.optional(optional)
 							.targetSetter(targetSetter)
-							.targetReference(targetReference)
+							.targetProjection(targetProjectionName)
 							.build(registry)
 								.map(PropertyWriter.class::cast);
 	}
@@ -80,13 +80,13 @@ public final class MapProvidedApiImpl extends AbstractValueProviderApi implement
 	}
 	
 	@Override
-	protected MapProvidedApiImpl targetReference(final boolean reference) {
-		this.targetReference = reference;
+	protected MapProvidedApiImpl targetProjection(final String targetProjectionName) {
+		this.targetProjectionName = targetProjectionName;
 		return this;
 	}
 
 	@Override
-	public Projection<Map<String, Object>> build(ProjectionRegistry registry) throws ProjectionError {
+	public Projection<Map<String, Object>> build(Registry registry) throws ProjectionError {
 		return projectionBuilder.build(registry);
 	}
 }

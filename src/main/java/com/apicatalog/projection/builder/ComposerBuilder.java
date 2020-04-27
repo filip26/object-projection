@@ -2,10 +2,11 @@ package com.apicatalog.projection.builder;
 
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.object.setter.Setter;
 import com.apicatalog.projection.property.target.CollectionComposer;
 import com.apicatalog.projection.property.target.ObjectComposer;
@@ -19,7 +20,7 @@ public final class ComposerBuilder {
 
 	Setter setter;
 
-	boolean reference;
+	String targetProjectionName;
 		
 	protected ComposerBuilder() {
 	}
@@ -28,47 +29,46 @@ public final class ComposerBuilder {
 		return new ComposerBuilder();
 	}
 		
-	public Optional<TargetComposer> build(ProjectionRegistry registry) {
+	public Optional<TargetComposer> build(Registry registry) {
 
 		if (setter == null) {
 			return Optional.empty();
 		}
 
-		if (reference) {
-			if (setter.getType().isCollection()) {
+		if (StringUtils.isNotBlank(targetProjectionName)) {			
+			if (setter.getType().isCollection() || setter.getType().isArray()) {
 				
-				return collection(setter.getType().getComponentType().getCanonicalName(), registry);
-				
-			}
-			if (setter.getType().isArray()) {
-				
-				return collection(setter.getType().getType().getComponentType().getCanonicalName(), registry);
+				return collection(targetProjectionName, registry);
 			}
 
-			return object(setter.getType().getType().getCanonicalName(), registry);
+			return object(targetProjectionName, registry);
 		}
 		return Optional.empty();
 	}
 	
-	public ComposerBuilder setter(Setter setter, boolean reference) {
+	public ComposerBuilder setter(final Setter setter) {
 		this.setter = setter;
-		this.reference = reference;
 		return this;
 	}
 	
-	final Optional<TargetComposer> collection(final String projectionName, final ProjectionRegistry registry) {
+	public ComposerBuilder targetProjection(final String targetProjectionName) {
+		this.targetProjectionName = targetProjectionName;
+		return this;
+	}
+	
+	final Optional<TargetComposer> collection(final String projectionName, final Registry registry) {
 		
 		final CollectionComposer composer = new CollectionComposer(setter.getType(), projectionName);
-		
+
 		registry.request(projectionName, composer::setProjection);
 		
 		return Optional.of(composer);		
 	}
 	
-	final Optional<TargetComposer> object(final String projectionName, final ProjectionRegistry registry) {
+	final Optional<TargetComposer> object(final String projectionName, final Registry registry) {
 		
 		final ObjectComposer composer = new ObjectComposer(projectionName);
-		
+
 		registry.request(projectionName, composer::setProjection);
 		
 		return Optional.of(composer);		

@@ -2,10 +2,11 @@ package com.apicatalog.projection.builder.reader;
 
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.builder.ExtractorBuilder;
 import com.apicatalog.projection.object.getter.Getter;
 import com.apicatalog.projection.property.PropertyReader;
@@ -18,7 +19,7 @@ public final class ProvidedPropertyReaderBuilder {
 
 	Getter targetGetter;
 	
-	boolean targetReference;
+	String targetProjectionName;
 	
 	String qualifier;
 	
@@ -32,13 +33,13 @@ public final class ProvidedPropertyReaderBuilder {
 		return new ProvidedPropertyReaderBuilder();
 	}
 	
-	public Optional<PropertyReader> build(ProjectionRegistry registry) {
+	public Optional<PropertyReader> build(Registry registry) {
 
 		if (targetGetter == null) {
 			return Optional.empty();
 		}
 
-		if (targetReference && !targetGetter.getType().isCollection() && !targetGetter.getType().isArray()) {
+		if (StringUtils.isNotBlank(targetProjectionName) && !targetGetter.getType().isCollection() && !targetGetter.getType().isArray()) {
 			return buildReference(registry);
 		}
 		
@@ -51,7 +52,8 @@ public final class ProvidedPropertyReaderBuilder {
 		
 		ExtractorBuilder
 			.newInstance()
-				.getter(targetGetter, targetReference)
+				.getter(targetGetter)
+				.targetProjection(targetProjectionName)
 				.build(registry)
 			.ifPresent(property::setExtractor);
 		
@@ -59,9 +61,9 @@ public final class ProvidedPropertyReaderBuilder {
 	}
 	
 
-	Optional<PropertyReader> buildReference(ProjectionRegistry registry) {
+	Optional<PropertyReader> buildReference(Registry registry) {
 		
-		final ProvidedProjectionPropertyReader property = new ProvidedProjectionPropertyReader(targetGetter.getType().getType().getCanonicalName());
+		final ProvidedProjectionPropertyReader property = new ProvidedProjectionPropertyReader(targetProjectionName);
 
 		property.setTargetGetter(targetGetter);
 
@@ -70,7 +72,7 @@ public final class ProvidedPropertyReaderBuilder {
 
 		property.setOptional(optional);
 
-		registry.request(targetGetter.getType().getType().getCanonicalName(), property::setProjection);
+		registry.request(targetProjectionName, property::setProjection);
 		
 		return Optional.of(property);
 	}
@@ -90,9 +92,8 @@ public final class ProvidedPropertyReaderBuilder {
 		return this;
 	}
 
-	public ProvidedPropertyReaderBuilder targetReference(boolean reference) {
-		this.targetReference = reference;
+	public ProvidedPropertyReaderBuilder targetProjection(final String projectionName) {
+		this.targetProjectionName = projectionName;
 		return this;
 	}
-
 }

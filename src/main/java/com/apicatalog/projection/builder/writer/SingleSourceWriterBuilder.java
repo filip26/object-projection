@@ -42,7 +42,7 @@ public final class SingleSourceWriterBuilder implements Builder<SourceWriter> {
 	
 	ObjectType targetType;
 	
-	boolean targetReference;
+	String targetProjectionName;
 
 	protected SingleSourceWriterBuilder() {
 		this.mode = AccessMode.WRITE_ONLY;
@@ -132,11 +132,15 @@ public final class SingleSourceWriterBuilder implements Builder<SourceWriter> {
 		return this;
 	}
 	
-	public SingleSourceWriterBuilder targetType(ObjectType targetType, boolean targetReference) {
+	public SingleSourceWriterBuilder targetType(ObjectType targetType) {
 		this.targetType= targetType;
-		this.targetReference = targetReference;
 		return this;
 	}	
+	
+	public SingleSourceWriterBuilder targetProjection(final String projectionName) {
+		this.targetProjectionName = projectionName;
+		return this;
+	}
 	
 	final void buildChain(final SingleSourceWriter source, final TypeConversions typeConversions) throws ConversionNotFound {
 
@@ -146,7 +150,7 @@ public final class SingleSourceWriterBuilder implements Builder<SourceWriter> {
 		
 			final ConverterMapping[] mapping = converters.toArray(new ConverterMapping[0]); 
 	
-			targetType = getSourceTargetType(targetType, targetReference, mapping[mapping.length - 1].getTargetType());
+			targetType = getSourceTargetType(targetType, targetProjectionName, mapping[mapping.length - 1].getTargetType());
 			
 			typeConversions.get(
 					targetType,
@@ -176,7 +180,7 @@ public final class SingleSourceWriterBuilder implements Builder<SourceWriter> {
 			
 		} else {
 			
-			targetType = getSourceTargetType(targetType, targetReference, sourceSetter.getType());			
+			targetType = getSourceTargetType(targetType, targetProjectionName, sourceSetter.getType());			
 		}
 		
 		// implicit conversion
@@ -193,9 +197,10 @@ public final class SingleSourceWriterBuilder implements Builder<SourceWriter> {
 
 	}
 	
-	public static final ObjectType getSourceTargetType(final ObjectType sourceType, final boolean sourceReference, final ObjectType targetType) {
+	public static final ObjectType getSourceTargetType(final ObjectType sourceType, final String sourceProjectionName, final ObjectType targetType) {
 		
-		if (sourceReference) {
+		if (StringUtils.isNotBlank(sourceProjectionName)) {
+			//FIXME
 			if (sourceType.isCollection()) {
 				
 				if (targetType.isCollection()) {

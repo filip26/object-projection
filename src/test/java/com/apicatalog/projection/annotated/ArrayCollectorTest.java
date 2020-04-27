@@ -10,7 +10,7 @@ import org.junit.Test;
 import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.ExtractionError;
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.BasicTypes;
@@ -22,7 +22,7 @@ public class ArrayCollectorTest {
 	
 	@Before
 	public void setup() throws CompositionError, ProjectionError {
-		projection = Projection.scan(ArrayCollectorTo.class).build(ProjectionRegistry.newInstance());		
+		projection = Projection.scan(ArrayCollectorTo.class).build(Registry.newInstance());		
 	}
 	
     @Test

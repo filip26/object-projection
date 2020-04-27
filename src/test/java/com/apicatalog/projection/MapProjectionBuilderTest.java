@@ -10,6 +10,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.apicatalog.projection.api.ProjectionError;
+import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.objects.SimpleObject;
 import com.apicatalog.projection.source.SourceObject;
 
@@ -23,7 +24,7 @@ public class MapProjectionBuilderTest {
 						.mapString("s1").source(SimpleObject.class)
 						.mapInteger("i1").source(SimpleObject.class)
 					
-						.build(ProjectionRegistry.newInstance());
+						.build(Registry.newInstance());
 		
 		Assert.assertNotNull(projection);
 
@@ -48,7 +49,7 @@ public class MapProjectionBuilderTest {
 						.mapInteger("i1").source(SimpleObject.class)
 						.mapString("s1").source(SimpleObject.class)
 						
-						.build(ProjectionRegistry.newInstance());
+						.build(Registry.newInstance());
 		
 		Assert.assertNotNull(projection);
 
@@ -71,7 +72,7 @@ public class MapProjectionBuilderTest {
 						.mapString("s1").source(SimpleObject.class, "i1")
 						.mapInteger("i1").source(SimpleObject.class, "s1")
 					
-						.build(ProjectionRegistry.newInstance());
+						.build(Registry.newInstance());
 		
 		Assert.assertNotNull(projection);
 
@@ -95,7 +96,7 @@ public class MapProjectionBuilderTest {
 						.mapInteger("i1").source(SimpleObject.class, "s1")
 						.mapString("s1").source(SimpleObject.class, "i1")
 						
-						.build(ProjectionRegistry.newInstance());
+						.build(Registry.newInstance());
 		
 		Assert.assertNotNull(projection);
 
@@ -117,7 +118,7 @@ public class MapProjectionBuilderTest {
 					.hashMap("p1")
 						.mapLong("i1").constant("12345")
 					
-						.build(ProjectionRegistry.newInstance());
+						.build(Registry.newInstance());
 		
 		Assert.assertNotNull(projection);
 
@@ -134,7 +135,7 @@ public class MapProjectionBuilderTest {
 					.hashMap()
 						.mapLong("i1").constant("12345")
 					
-						.build(ProjectionRegistry.newInstance());
+						.build(Registry.newInstance());
 		
 		Assert.assertNotNull(projection);
 
@@ -157,7 +158,7 @@ public class MapProjectionBuilderTest {
 						.mapBoolean("b1").provided()
 						.mapBoolean("b2").provided("b2")
 					
-						.build(ProjectionRegistry.newInstance());
+						.build(Registry.newInstance());
 		
 		Assert.assertNotNull(projection);
 
@@ -178,7 +179,7 @@ public class MapProjectionBuilderTest {
 						.mapBoolean("b1").provided()
 						.mapBoolean("b2").provided("b2")
 					
-						.build(ProjectionRegistry.newInstance());
+						.build(Registry.newInstance());
 		
 		Assert.assertNotNull(projection);
 		
@@ -207,7 +208,7 @@ public class MapProjectionBuilderTest {
 									.conversion(Integer.class, Integer.class)
 										.forward(i -> i + 100)
 
-						.build(ProjectionRegistry.newInstance());
+						.build(Registry.newInstance());
 		
 		Assert.assertNotNull(projection);
 
@@ -244,7 +245,7 @@ public class MapProjectionBuilderTest {
 									.conversion(Integer.class, Integer.class)
 										.backward(i -> i - 100)
 					
-						.build(ProjectionRegistry.newInstance());
+						.build(Registry.newInstance());
 		
 		Assert.assertNotNull(projection);
 
@@ -261,5 +262,45 @@ public class MapProjectionBuilderTest {
 		Assert.assertEquals(Integer.valueOf(123456 - 100), o1.i1);
 		Assert.assertEquals("abcdef", o1.s1);
 	}
+
+	@Test
+	public void test6c() throws ProjectionError, CompositionError {
+		
+		Registry registry = Registry.newInstance();
+		
+		final Projection<Map<String, Object>> projection1 = 
+				Projection
+					.hashMap("p1")
+						.mapLong("i1").source(BasicTypes.class, "integerValue")
+						.mapDouble("d1").source(BasicTypes.class, "doubleValue")
+						.build(registry);
+
+		Assert.assertNotNull(projection1);
+		
+		final Projection<Map<String, Object>> projection2 = 
+				Projection
+					.hashMap()
+						.mapReference("p", "p1").provided()
+						.build(registry);
+		
+		Assert.assertNotNull(projection2);
+
+		BasicTypes object = new BasicTypes();
+		object.integerValue = 123;
+		object.doubleValue = 0.98d;
+		
+		Map<String, Object> map1 = projection2.compose(object);
+		
+		Assert.assertNotNull(map1);;
+		Assert.assertNotNull(map1.get("p"));
+		Assert.assertTrue(Map.class.isInstance(map1.get("p")));
+		
+		@SuppressWarnings("unchecked")
+		Map<String, Object> map2 = (Map<String, Object>) map1.get("p"); 
+		
+		Assert.assertEquals(Long.valueOf(object.integerValue), map2.get("i1"));
+		Assert.assertEquals(object.doubleValue, map2.get("d1"));
+	}
+
 
 }

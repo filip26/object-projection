@@ -4,19 +4,19 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.annotation.mapper.ProjectionMapper;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.objects.SimpleObject;
 
 public class ProjectionMapperTest {
 
-	ProjectionRegistry projections;
+	Registry projections;
 	ProjectionMapper mapper;
 	
 	@Before
 	public void setup() {
-		projections = ProjectionRegistry.newInstance();
+		projections = Registry.newInstance();
 		mapper = projections.getMapper();
 	}
 

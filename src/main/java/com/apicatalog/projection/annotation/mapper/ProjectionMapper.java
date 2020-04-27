@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.impl.ObjectProjection;
 import com.apicatalog.projection.property.PropertyReader;
@@ -19,16 +19,16 @@ public final class ProjectionMapper {
 
 	final Logger logger = LoggerFactory.getLogger(ProjectionMapper.class);
 
-	final ProjectionRegistry factory;
+	final Registry factory;
 	
 	final PropertyReaderMapper propertyReaderMapper;
 	final PropertyWriterMapper propertyWriterMapper;
 
-	public ProjectionMapper(final ProjectionRegistry registry) {
+	public ProjectionMapper(final Registry registry) {
 		this(registry, new PropertyReaderMapper(registry), new PropertyWriterMapper(registry));
 	}
 
-	public ProjectionMapper(final ProjectionRegistry factory, final PropertyReaderMapper propertyReaderMapper, final PropertyWriterMapper propertyWriterMapper) {
+	public ProjectionMapper(final Registry factory, final PropertyReaderMapper propertyReaderMapper, final PropertyWriterMapper propertyWriterMapper) {
 		this.factory = factory;
 		this.propertyReaderMapper = propertyReaderMapper;
 		this.propertyWriterMapper = propertyWriterMapper;

@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.annotation.AccessMode;
 import com.apicatalog.projection.api.LambdaConversionApi;
 import com.apicatalog.projection.api.ProjectionError;
@@ -90,7 +90,7 @@ public final class ArraySourceItemApiImpl<P> implements ObjectArraySourceItemApi
 	}
 	
 	@Override
-	public Projection<P> build(final ProjectionRegistry factory) throws ProjectionError {
+	public Projection<P> build(final Registry factory) throws ProjectionError {
 		return projectionBuilder.build(factory);
 	}
 

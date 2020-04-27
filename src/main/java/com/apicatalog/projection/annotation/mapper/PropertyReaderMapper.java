@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.annotation.Constant;
 import com.apicatalog.projection.annotation.Projection;
 import com.apicatalog.projection.annotation.Provided;
@@ -28,12 +28,12 @@ final class PropertyReaderMapper {
 
 	final Logger logger = LoggerFactory.getLogger(PropertyReaderMapper.class);
 	
-	final ProjectionRegistry registry;
+	final Registry registry;
 	
 	final SingleSourceReaderMapper singleSourceMapper;
 	final ArraySourceReaderMapper arraySourceMapper;
 	
-	public PropertyReaderMapper(final ProjectionRegistry registry) {
+	public PropertyReaderMapper(final Registry registry) {
 		this.registry = registry;
 
 		this.singleSourceMapper = new SingleSourceReaderMapper(registry);
@@ -83,17 +83,22 @@ final class PropertyReaderMapper {
 
 		final Getter targetGetter = FieldGetter.from(field, ObjectUtils.getTypeOf(field));
 		
-		final boolean targetReference = PropertyReaderMapper.isReference(targetGetter.getType());
-
+		final SingleSourceWriterBuilder singleSourceWriterBuilder = 
+					SingleSourceWriterBuilder.newInstance()
+						.objectClass(defaultSourceClass)
+						.optional(true)
+						.targetType(targetGetter.getType());
+		
+		Optional<String> projectionName = PropertyReaderMapper.getProjectionName(targetGetter.getType());
+		
+		projectionName.ifPresent(singleSourceWriterBuilder::targetProjection);
+		
 		final Optional<SourceWriter> sourceWriter =  
 				singleSourceMapper
 					.getSingleSourceWriter(
 						defaultSourceClass, 
 						field.getName(),
-						SingleSourceWriterBuilder.newInstance()
-							.objectClass(defaultSourceClass)
-							.optional(true)
-							.targetType(targetGetter.getType(), targetReference)
+						singleSourceWriterBuilder
 						)
 					.build(registry.getTypeConversions());
 				
@@ -103,10 +108,13 @@ final class PropertyReaderMapper {
 		
 		final SourcePropertyReader sourcePropertyReader = SourcePropertyReader.newInstance(sourceWriter.get(), targetGetter);
   
-		ExtractorBuilder.newInstance()
-			.getter(targetGetter, targetReference)
-			.build(registry)
-			.ifPresent(sourcePropertyReader::setExtractor);
+		final ExtractorBuilder extractorBuilder = 
+				ExtractorBuilder.newInstance()
+					.getter(targetGetter);
+		
+		projectionName.ifPresent(extractorBuilder::targetProjection);
+		
+		extractorBuilder.build(registry).ifPresent(sourcePropertyReader::setExtractor);
 			
 		return Optional.of(sourcePropertyReader);	
 	}
@@ -117,18 +125,36 @@ final class PropertyReaderMapper {
 			
 		final Getter targetGetter = FieldGetter.from(field, ObjectUtils.getTypeOf(field));
 		
-		return ProvidedPropertyReaderBuilder.newInstance()
+		final ProvidedPropertyReaderBuilder builder = ProvidedPropertyReaderBuilder.newInstance()
 					.optional(provided.optional())
 					.qualifier(provided.name())
-					.targetGetter(targetGetter)
-					.targetReference(isReference(targetGetter.getType()))
-					.build(registry);
+					.targetGetter(targetGetter);
+		
+		getProjectionName(targetGetter.getType()).ifPresent(builder::targetProjection);
+		
+		return builder.build(registry);
 	}				
 	
-	protected static final boolean isReference(final ObjectType objectType) {
-		return (objectType.isCollection() && objectType.getComponentType().isAnnotationPresent(Projection.class))
-				|| (objectType.isArray() &&  objectType.getType().getComponentType().isAnnotationPresent(Projection.class))
-				|| objectType.getType().isAnnotationPresent(Projection.class)
-				;		
-	}	
+//	protected static final boolean isReference(final ObjectType objectType) {
+//		return (objectType.isCollection() && objectType.getComponentType().isAnnotationPresent(Projection.class))
+//				|| (objectType.isArray() &&  objectType.getType().getComponentType().isAnnotationPresent(Projection.class))
+//				|| objectType.getType().isAnnotationPresent(Projection.class)
+//				;		
+//	}
+	
+	protected static final Optional<String> getProjectionName(final ObjectType objectType) {
+		if (objectType.isCollection() && objectType.getComponentType().isAnnotationPresent(Projection.class)) {
+			return Optional.of(objectType.getComponentType().getCanonicalName());
+		}
+		
+		if ((objectType.isArray() &&  objectType.getType().getComponentType().isAnnotationPresent(Projection.class))) {
+			return Optional.of(objectType.getType().getComponentType().getCanonicalName());			
+		}
+		
+		if (objectType.getType().isAnnotationPresent(Projection.class)) {
+			return Optional.of(objectType.getType().getCanonicalName());
+		}
+		
+		return Optional.empty();
+	}
 }

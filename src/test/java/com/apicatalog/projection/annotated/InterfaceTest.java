@@ -7,7 +7,7 @@ import org.junit.Test;
 import com.apicatalog.projection.CompositionError;
 import com.apicatalog.projection.ExtractionError;
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.converter.ConverterError;
 import com.apicatalog.projection.objects.Interface1;
@@ -20,7 +20,7 @@ public class InterfaceTest {
 	
 	@Before
 	public void setup() throws CompositionError, ProjectionError {
-		projection = Projection.scan(Interface1To.class).build(ProjectionRegistry.newInstance());
+		projection = Projection.scan(Interface1To.class).build(Registry.newInstance());
 	}
 	
     @Test

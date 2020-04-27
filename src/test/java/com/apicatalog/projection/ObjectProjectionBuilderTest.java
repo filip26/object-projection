@@ -34,7 +34,7 @@ public class ObjectProjectionBuilderTest {
 					.map("i1").source(SimpleObject.class)
 					.map("s1").source(SimpleObject.class)
 					
-					.build(ProjectionRegistry.newInstance());
+					.build(Registry.newInstance());
 		
 		Assert.assertNotNull(projection);
 
@@ -74,7 +74,7 @@ public class ObjectProjectionBuilderTest {
 					.map("i1").source(SimpleObject.class)
 					.map("s1").source(SimpleObject.class)
 					
-					.build(ProjectionRegistry.newInstance());
+					.build(Registry.newInstance());
 		
 		Assert.assertNotNull(projection);
 
@@ -97,7 +97,7 @@ public class ObjectProjectionBuilderTest {
 					.map("i1").source(SimpleObject.class, "s1")
 					.map("s1").source(SimpleObject.class, "i1")
 					
-					.build(ProjectionRegistry.newInstance());
+					.build(Registry.newInstance());
 		
 		Assert.assertNotNull(projection);
 
@@ -121,7 +121,7 @@ public class ObjectProjectionBuilderTest {
 					.map("i1").source(SimpleObject.class, "s1")
 					.map("s1").source(SimpleObject.class, "i1")
 					
-					.build(ProjectionRegistry.newInstance());
+					.build(Registry.newInstance());
 		
 		Assert.assertNotNull(projection);
 
@@ -149,7 +149,7 @@ public class ObjectProjectionBuilderTest {
 								
 					.map("i1").source(SimpleObject.class)
 					
-					.build(ProjectionRegistry.newInstance());
+					.build(Registry.newInstance());
 
 		Assert.assertNotNull(projection);
 
@@ -174,7 +174,7 @@ public class ObjectProjectionBuilderTest {
 								
 					.map("i1").source(SimpleObject.class)
 					
-					.build(ProjectionRegistry.newInstance());
+					.build(Registry.newInstance());
 
 		Assert.assertNotNull(projection);
 
@@ -191,7 +191,7 @@ public class ObjectProjectionBuilderTest {
 	@Test
 	public void test5c1() throws ProjectionError, CompositionError {
 		
-		ProjectionRegistry registry = ProjectionRegistry.newInstance();
+		Registry registry = Registry.newInstance();
 		
 		Projection<Object1To> projection1 =
 				Projection
@@ -235,7 +235,7 @@ public class ObjectProjectionBuilderTest {
 	@Test
 	public void test5e1() throws ProjectionError, ExtractionError {
 		
-		ProjectionRegistry registry = ProjectionRegistry.newInstance();
+		Registry registry = Registry.newInstance();
 		
 		Projection<Object1To> projection1 =
 				Projection
@@ -278,7 +278,7 @@ public class ObjectProjectionBuilderTest {
 	@Test
 	public void test5c2() throws ProjectionError, CompositionError {
 		
-		ProjectionRegistry registry = ProjectionRegistry.newInstance();
+		Registry registry = Registry.newInstance();
 
 		Projection<Object1To> projection1 =
 				Projection
@@ -321,7 +321,7 @@ public class ObjectProjectionBuilderTest {
 					
 					.map("id").constant("StringContant")
 					
-					.build(ProjectionRegistry.newInstance());
+					.build(Registry.newInstance());
 		
 		Assert.assertNotNull(projection);
 		
@@ -347,7 +347,7 @@ public class ObjectProjectionBuilderTest {
 								.conversion(Prefix.class, "1")
 								.conversion(Suffix.class, "2")
 						
-					.build(ProjectionRegistry.newInstance());
+					.build(Registry.newInstance());
 		
 		Assert.assertNotNull(projection);
 		
@@ -366,7 +366,7 @@ public class ObjectProjectionBuilderTest {
 		final Projection<SimpleObjectTo> projection = 
 				Projection
 					.bind(SimpleObjectTo.class)					
-					.build(ProjectionRegistry.newInstance());
+					.build(Registry.newInstance());
 		
 		Assert.assertNull(projection);
 	}
@@ -374,7 +374,7 @@ public class ObjectProjectionBuilderTest {
 	@Test
 	public void test9() throws ProjectionError, CompositionError {
 		
-		ProjectionRegistry registry = ProjectionRegistry.newInstance();
+		Registry registry = Registry.newInstance();
 		
 		Projection<Object1To> projection1 =
 				ProjectionApiImpl
@@ -416,7 +416,7 @@ public class ObjectProjectionBuilderTest {
 	@Test
 	public void test10() throws ProjectionError, CompositionError {
 		
-		ProjectionRegistry registry = ProjectionRegistry.newInstance();
+		Registry registry = Registry.newInstance();
 		
 		Projection<Object1To> projection1 =
 				Projection
@@ -458,7 +458,7 @@ public class ObjectProjectionBuilderTest {
 	@Test
 	public void test11() throws ProjectionError, CompositionError {
 		
-		ProjectionRegistry registry = ProjectionRegistry.newInstance();
+		Registry registry = Registry.newInstance();
 		
 		Projection<Object1To> projection1 =
 				Projection
@@ -503,7 +503,7 @@ public class ObjectProjectionBuilderTest {
 	@Test
 	public void test12() throws ProjectionError, CompositionError {
 		
-		ProjectionRegistry registry = ProjectionRegistry.newInstance();
+		Registry registry = Registry.newInstance();
 		
 		Projection<UriTo> projection =
 				Projection
@@ -530,7 +530,7 @@ public class ObjectProjectionBuilderTest {
 	@Test
 	public void test13() throws ProjectionError, ExtractionError {
 		
-		ProjectionRegistry registry = ProjectionRegistry.newInstance();
+		Registry registry = Registry.newInstance();
 		
 		Assert.assertNotNull( 
 				Projection
@@ -584,7 +584,7 @@ public class ObjectProjectionBuilderTest {
 									
 							.source(SimpleObject.class, "i1")
 					
-					.build(ProjectionRegistry.newInstance());
+					.build(Registry.newInstance());
 		
 		Assert.assertNotNull(projection);
 

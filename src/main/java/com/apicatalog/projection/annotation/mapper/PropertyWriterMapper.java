@@ -8,7 +8,7 @@ import java.util.stream.IntStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.annotation.Constant;
 import com.apicatalog.projection.annotation.Provided;
 import com.apicatalog.projection.annotation.Source;
@@ -30,12 +30,12 @@ final class PropertyWriterMapper {
 
 	final Logger logger = LoggerFactory.getLogger(PropertyWriterMapper.class);
 	
-	final ProjectionRegistry registry;
+	final Registry registry;
 	
 	final SingleSourceWriterMapper singleSourceMapper;
 	final ArraySourceWriterMapper arraySourceMapper;
 	
-	public PropertyWriterMapper(final ProjectionRegistry registry) {
+	public PropertyWriterMapper(final Registry registry) {
 		this.registry = registry;
 
 		this.singleSourceMapper = new SingleSourceWriterMapper(registry);
@@ -96,17 +96,22 @@ final class PropertyWriterMapper {
 
 		final Setter targetSetter = FieldSetter.from(field, ObjectUtils.getTypeOf(field));
 
-		final boolean targetReference = PropertyReaderMapper.isReference(targetSetter.getType());
+		final Optional<String> targetProjectionName = PropertyReaderMapper.getProjectionName(targetSetter.getType());
 
+		final SingleSourceReaderBuilder singleSourceReaderBuilder =
+				SingleSourceReaderBuilder.newInstance()
+					.objectClass(defaultSourceClass)
+					.optional(true)
+					.targetType(targetSetter.getType());
+		
+		targetProjectionName.ifPresent(singleSourceReaderBuilder::targetProjection);
+		
 		final Optional<SingleSourceReader> sourceReader = 
 				singleSourceMapper
 					.getSingleSourceReader(
 						defaultSourceClass, 
 						field.getName(),
-						SingleSourceReaderBuilder.newInstance()
-							.objectClass(defaultSourceClass)
-							.optional(true)
-							.targetType(targetSetter.getType(), targetReference)
+						singleSourceReaderBuilder
 						)
 					.build(registry.getTypeConversions());
 		
@@ -116,10 +121,11 @@ final class PropertyWriterMapper {
 		
 		final SourcePropertyWriter sourcePropertyWriter = SourcePropertyWriter.newInstance(sourceReader.get(), targetSetter); 
 				  
-		ComposerBuilder.newInstance()
-				.setter(targetSetter, targetReference)
-				.build(registry)
-				.ifPresent(sourcePropertyWriter::setComposer);
+		final ComposerBuilder composerBuilder = ComposerBuilder.newInstance().setter(targetSetter);
+				
+		targetProjectionName.ifPresent(composerBuilder::targetProjection);
+				
+		composerBuilder.build(registry).ifPresent(sourcePropertyWriter::setComposer);
 	
 		return Optional.of(sourcePropertyWriter);			
 	}
@@ -130,12 +136,15 @@ final class PropertyWriterMapper {
 			
 		final Setter targetSetter = FieldSetter.from(field, ObjectUtils.getTypeOf(field));
 
-		return ProvidedPropertyWriterBuilder.newInstance()
+		final ProvidedPropertyWriterBuilder providedPropertyWriterBuilder =
+				ProvidedPropertyWriterBuilder.newInstance()
 					.optional(provided.optional())
 					.qualifier(provided.name())
-					.targetSetter(targetSetter)
-					.targetReference(PropertyReaderMapper.isReference(targetSetter.getType()))
-					.build(registry);		
+					.targetSetter(targetSetter);
+		
+		PropertyReaderMapper.getProjectionName(targetSetter.getType()).ifPresent(providedPropertyWriterBuilder::targetProjection);
+		
+		return providedPropertyWriterBuilder.build(registry);
 	}				
 
 	Optional<PropertyWriter> getConstantProperty(final Field field) throws ProjectionError {
@@ -144,10 +153,14 @@ final class PropertyWriterMapper {
 		
 		final Setter targetSetter = FieldSetter.from(field, ObjectUtils.getTypeOf(field));
 		
-		return ConstantWriterBuilder
+		final ConstantWriterBuilder constantWriterBuilder = ConstantWriterBuilder
 					.newInstance()
 					.constants(constant.value())
-					.targetSetter(targetSetter, PropertyReaderMapper.isReference(targetSetter.getType()))
-					.build(registry).map(PropertyWriter.class::cast);
+					.targetSetter(targetSetter);
+				
+		
+		PropertyReaderMapper.getProjectionName(targetSetter.getType()).ifPresent(constantWriterBuilder::targetProjection);
+		
+		return constantWriterBuilder.build(registry).map(PropertyWriter.class::cast);
 	}	
 }

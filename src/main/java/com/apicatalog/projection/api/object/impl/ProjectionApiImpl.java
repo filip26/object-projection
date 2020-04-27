@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.apicatalog.projection.Projection;
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.api.object.ObjectProjectionApi;
 import com.apicatalog.projection.api.object.ObjectPropertyApi;
@@ -42,7 +42,7 @@ public final class ProjectionApiImpl<P> implements ObjectProjectionApi<P> {
 	}
 	
 	@Override
-	public Projection<P> build(final ProjectionRegistry factory) throws ProjectionError {
+	public Projection<P> build(final Registry factory) throws ProjectionError {
 
 		final List<PropertyReader> readers = new ArrayList<>(); 
 		final List<PropertyWriter> writers = new ArrayList<>();

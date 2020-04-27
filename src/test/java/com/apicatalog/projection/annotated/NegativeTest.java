@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.projections.invalid.ConstantConversionErrorTo;
 import com.apicatalog.projection.projections.invalid.EmptyTo;
@@ -16,11 +16,11 @@ import com.apicatalog.projection.projections.invalid.UnmappableSourcesPropertyTo
 
 public class NegativeTest {
 
-	ProjectionRegistry registry;
+	Registry registry;
 	
 	@Before
 	public void setup() {
-		registry = ProjectionRegistry.newInstance();
+		registry = Registry.newInstance();
 	}
 	
     @Test

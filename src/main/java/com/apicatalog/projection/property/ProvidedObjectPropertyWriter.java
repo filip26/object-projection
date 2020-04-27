@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apicatalog.projection.CompositionError;
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.context.CompositionContext;
 import com.apicatalog.projection.context.ProjectionStack;
 import com.apicatalog.projection.conversion.Conversion;
@@ -26,7 +26,7 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 
 	final Logger logger = LoggerFactory.getLogger(ProvidedObjectPropertyWriter.class);
 
-	final ProjectionRegistry registry;
+	final Registry registry;
 	
 	Setter targetSetter;
 	
@@ -38,7 +38,7 @@ public class ProvidedObjectPropertyWriter implements PropertyWriter {
 	
 	boolean optional;	
 	
-	public ProvidedObjectPropertyWriter(final ProjectionRegistry registry) {
+	public ProvidedObjectPropertyWriter(final Registry registry) {
 		this.registry = registry;
 	}
 	

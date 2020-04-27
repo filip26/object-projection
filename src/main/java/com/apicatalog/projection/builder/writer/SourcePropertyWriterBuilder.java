@@ -3,7 +3,7 @@ package com.apicatalog.projection.builder.writer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.ProjectionRegistry;
+import com.apicatalog.projection.Registry;
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.builder.ComposerBuilder;
 import com.apicatalog.projection.object.setter.Setter;
@@ -20,7 +20,7 @@ public final class SourcePropertyWriterBuilder {
 	
 	Setter targetSetter;
 	
-	boolean targetReference;
+	String targetProjectionName;
 
 	protected SourcePropertyWriterBuilder() {
 	}
@@ -29,7 +29,7 @@ public final class SourcePropertyWriterBuilder {
 		return new SourcePropertyWriterBuilder();
 	}
 			
-	public SourcePropertyWriter build(final ProjectionRegistry registry) throws ProjectionError {
+	public SourcePropertyWriter build(final Registry registry) throws ProjectionError {
 
 		if (targetSetter == null) {
 			throw new ProjectionError("Target setter is missing.");
@@ -43,21 +43,26 @@ public final class SourcePropertyWriterBuilder {
 		final SourcePropertyWriter sourcePropertyWriter = SourcePropertyWriter.newInstance(sourceReader, targetSetter);
 		  
 		ComposerBuilder.newInstance()
-			.setter(targetSetter, targetReference)
+			.setter(targetSetter)
+			.targetProjection(targetProjectionName)
 			.build(registry)
 			.ifPresent(sourcePropertyWriter::setComposer);
 
 		return sourcePropertyWriter;		
 	}
 
-	public SourcePropertyWriterBuilder sourceReader(SourceReader sourceReader) {
+	public SourcePropertyWriterBuilder sourceReader(final SourceReader sourceReader) {
 		this.sourceReader = sourceReader;
 		return this;
 	}
 
-	public SourcePropertyWriterBuilder target(Setter setter, boolean reference) {
+	public SourcePropertyWriterBuilder target(final Setter setter) {
 		this.targetSetter = setter;
-		this.targetReference = reference;
+		return this;
+	}
+	
+	public SourcePropertyWriterBuilder targetProjection(final String projectionName) {
+		this.targetProjectionName = projectionName;
 		return this;
 	}
 }
