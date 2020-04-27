@@ -187,7 +187,6 @@ public final class SingleSourceReaderBuilder {
 	public static final ObjectType getSourceTargetType(final ObjectType sourceType, final ObjectType targetType, final String targeProjectionName) {
 		
 		if (StringUtils.isNotBlank(targeProjectionName)) {
-			//FIXME ?!?!?
 			if (targetType.isCollection()) {
 				
 				if (sourceType.isCollection()) {

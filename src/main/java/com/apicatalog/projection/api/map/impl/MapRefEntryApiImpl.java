@@ -79,7 +79,7 @@ public final class MapRefEntryApiImpl extends MapProjectionApiWrapper implements
 		}
 		
 		final MapArraySourceApiImpl sourcesPropertyApi = 
-				new MapArraySourceApiImpl(projectionBuilder, name);;
+				new MapArraySourceApiImpl(projectionBuilder, name);
 		
 		this.valueProvider = sourcesPropertyApi;
 		

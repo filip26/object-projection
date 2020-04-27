@@ -200,7 +200,6 @@ public final class SingleSourceWriterBuilder implements Builder<SourceWriter> {
 	public static final ObjectType getSourceTargetType(final ObjectType sourceType, final String sourceProjectionName, final ObjectType targetType) {
 		
 		if (StringUtils.isNotBlank(sourceProjectionName)) {
-			//FIXME
 			if (sourceType.isCollection()) {
 				
 				if (targetType.isCollection()) {

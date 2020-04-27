@@ -87,8 +87,9 @@ public final class Registry {
 		consumers.computeIfAbsent(projectionName, x -> new ArrayList<>()).add(consumer);
 	}
 	
-	public Stream<Projection<?>> stream() {
-		return index.values().stream();
+	@SuppressWarnings("unchecked")
+	public Stream<Projection<Object>> stream() {
+		return index.values().stream().map(o -> (Projection<Object>)o);
 	}
 	
 }

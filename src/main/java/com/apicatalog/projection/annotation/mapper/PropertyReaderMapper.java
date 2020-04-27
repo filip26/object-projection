@@ -135,13 +135,6 @@ final class PropertyReaderMapper {
 		return builder.build(registry);
 	}				
 	
-//	protected static final boolean isReference(final ObjectType objectType) {
-//		return (objectType.isCollection() && objectType.getComponentType().isAnnotationPresent(Projection.class))
-//				|| (objectType.isArray() &&  objectType.getType().getComponentType().isAnnotationPresent(Projection.class))
-//				|| objectType.getType().isAnnotationPresent(Projection.class)
-//				;		
-//	}
-	
 	protected static final Optional<String> getProjectionName(final ObjectType objectType) {
 		if (objectType.isCollection() && objectType.getComponentType().isAnnotationPresent(Projection.class)) {
 			return Optional.of(objectType.getComponentType().getCanonicalName());
