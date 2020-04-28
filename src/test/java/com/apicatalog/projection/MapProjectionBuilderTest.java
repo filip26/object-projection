@@ -429,6 +429,50 @@ public class MapProjectionBuilderTest {
 		Map<String, Object> imap = items.iterator().next();
 		
 		Assert.assertEquals(object.instantValue, imap.get("instantValue"));
+	}
+	
+	@Test
+	public void test8e() throws ProjectionError, ExtractionError {
 		
+		Registry registry = Registry.newInstance();
+		
+		final Projection<Map<String, Object>> projection1 = 
+				Projection
+					.hashMap("p1")
+						.mapDate("dateValue").source(BasicTypes.class)
+						.build(registry);
+
+		Assert.assertNotNull(projection1);
+		
+		final Projection<Map<String, Object>> projection2 = 
+				Projection
+					.hashMap()
+						.mapReference("c1", ArrayList.class, "p1").provided("items")
+						.build(registry);
+		
+		Assert.assertNotNull(projection2);
+
+		Map<String, Object> item1 = new HashMap<>();
+		item1.put("dateValue", new Date());
+
+		Map<String, Object> item2 = new HashMap<>();
+		item2.put("dateValue", new Date());
+
+		ArrayList<Map<String, Object>> items = new ArrayList<>();
+		items.add(item1);
+		items.add(item2);
+		
+		Map<String, Object> to = new HashMap<>();
+		to.put("c1", items);
+		
+		Collection<BasicTypes> objects = projection2.extractCollection(to, "items", BasicTypes.class).orElse(null);
+
+		Assert.assertNotNull(objects);
+		Assert.assertEquals(2, objects.size());
+
+		BasicTypes[] array = objects.toArray(BasicTypes[]::new);
+		
+		Assert.assertEquals(item1.get("dateValue"), array[0].dateValue);
+		Assert.assertEquals(item2.get("dateValue"), array[1].dateValue);
 	}
 }
