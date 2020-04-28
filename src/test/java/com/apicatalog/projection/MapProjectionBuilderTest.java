@@ -42,7 +42,6 @@ public class MapProjectionBuilderTest {
 		Assert.assertEquals(object1.i1, map.get("i1"));
 	}
 	
-
 	@Test
 	public void test1e() throws ProjectionError, ExtractionError {
 		
