@@ -2,6 +2,7 @@ package com.apicatalog.projection;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -388,5 +389,46 @@ public class MapProjectionBuilderTest {
 		Assert.assertNotNull(object1);
 		Assert.assertEquals(Float.valueOf((String)map.get("s1")), object1.floatValue);
 		Assert.assertEquals(((Date)map.get("d1")).toInstant(), object1.instantValue);
+	}
+	
+	@Test
+	public void test8c() throws ProjectionError, CompositionError {
+		
+		Registry registry = Registry.newInstance();
+		
+		final Projection<Map<String, Object>> projection1 = 
+				Projection
+					.hashMap("p1")
+						.mapInstant("instantValue").source(BasicTypes.class)
+						.build(registry);
+
+		Assert.assertNotNull(projection1);
+		
+		final Projection<Map<String, Object>> projection2 = 
+				Projection
+					.hashMap()
+						.mapReference("c1", ArrayList.class, "p1").provided("items")
+						.build(registry);
+		
+		Assert.assertNotNull(projection2);
+
+		BasicTypes object = new BasicTypes();
+		object.instantValue = Instant.now();
+		
+		Map<String, Object> map1 = projection2.compose(SourceObject.of("items", Arrays.asList(new BasicTypes[] { object })));
+		
+		Assert.assertNotNull(map1);;
+		Assert.assertNotNull(map1.get("c1"));
+		Assert.assertTrue(Collection.class.isInstance(map1.get("c1")));
+		
+		@SuppressWarnings("unchecked")
+		Collection<Map<String, Object>> items = (Collection<Map<String, Object>>) map1.get("c1"); 
+		
+		Assert.assertEquals(1, items.size());
+
+		Map<String, Object> imap = items.iterator().next();
+		
+		Assert.assertEquals(object.instantValue, imap.get("instantValue"));
+		
 	}
 }

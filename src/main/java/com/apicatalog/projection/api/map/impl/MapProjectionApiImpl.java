@@ -75,14 +75,14 @@ public final class MapProjectionApiImpl implements MapProjectionBuilderApi {
 	
 	@Override
 	public MapEntryApi mapObject(String name, Class<?> objectType) {
-		final MapEntryApiImpl propertyBuilder = new MapEntryApiImpl(this, name, objectType, false);
+		final MapEntryApiImpl propertyBuilder = new MapEntryApiImpl(this, name, objectType);
 		entries.add(propertyBuilder);
 		return propertyBuilder;		
 	}
 
 	@Override
 	public MapEntryApi mapCollection(String name, Class<?> collectionType, Class<?> componentType) {
-		final MapEntryApiImpl propertyBuilder = new MapEntryApiImpl(this, name, collectionType, componentType, false);
+		final MapEntryApiImpl propertyBuilder = new MapEntryApiImpl(this, name, collectionType, componentType);
 		entries.add(propertyBuilder);
 		return propertyBuilder;
 	}

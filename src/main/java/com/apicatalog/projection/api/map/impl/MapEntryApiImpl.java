@@ -32,20 +32,17 @@ public final class MapEntryApiImpl extends MapProjectionApiWrapper implements Ma
 	
 	final Class<?> componentType;
 	
-	final boolean reference;
-	
 	AbstractValueProviderApi valueProvider;
 
-	protected MapEntryApiImpl(final MapProjectionBuilderApi projectionBuilder, final String name, final Class<?> type, boolean reference) {
-		this(projectionBuilder, name, type, null, reference);
+	protected MapEntryApiImpl(final MapProjectionBuilderApi projectionBuilder, final String name, final Class<?> type) {
+		this(projectionBuilder, name, type, null);
 	}
 	
-	protected MapEntryApiImpl(final MapProjectionBuilderApi projectionBuilder, final String name, final Class<?> collectionType, final Class<?> componentType, boolean reference) {
+	protected MapEntryApiImpl(final MapProjectionBuilderApi projectionBuilder, final String name, final Class<?> collectionType, final Class<?> componentType) {
 		super(projectionBuilder);
 		this.name = name;
 		this.type = collectionType;
 		this.componentType = componentType;
-		this.reference = reference;
 	}
 
 	@Override
