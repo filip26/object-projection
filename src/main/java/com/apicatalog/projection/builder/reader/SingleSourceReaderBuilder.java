@@ -1,5 +1,6 @@
 package com.apicatalog.projection.builder.reader;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -185,8 +186,9 @@ public final class SingleSourceReaderBuilder {
 	}
 	
 	public static final ObjectType getSourceTargetType(final ObjectType sourceType, final ObjectType targetType, final String targeProjectionName) {
-		
+
 		if (StringUtils.isNotBlank(targeProjectionName)) {
+
 			if (targetType.isCollection()) {
 				
 				if (sourceType.isCollection()) {
@@ -200,11 +202,19 @@ public final class SingleSourceReaderBuilder {
 				}
 				
 			} else if (targetType.isArray()) {
-
-				//TODO
+				
+				if (sourceType.isCollection()) {
+					return ObjectType.of(typeToArrayType(sourceType.getComponentType()));
+					
+				} else if (sourceType.isArray()) {
+					return ObjectType.of(typeToArrayType(sourceType.getType().getComponentType()));
+					
+				} else {
+					return ObjectType.of(typeToArrayType(sourceType.getType()));
+				}
 
 			} else {
-
+				
 				if (sourceType.isCollection()) {
 					return ObjectType.of(sourceType.getComponentType());
 					
@@ -220,6 +230,10 @@ public final class SingleSourceReaderBuilder {
 		return targetType;
 	}
 
+	static final Class<?> typeToArrayType(Class<?> type) {
+		return Array.newInstance(type, 0).getClass();
+	}
+	
 	public ObjectType targetType() {
 		return targetType;
 	}

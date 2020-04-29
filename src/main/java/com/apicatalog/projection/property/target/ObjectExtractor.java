@@ -5,8 +5,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ExtractionError;
+import com.apicatalog.projection.Projection;
 import com.apicatalog.projection.ProjectionExtractor;
 import com.apicatalog.projection.context.ExtractionContext;
 import com.apicatalog.projection.object.ObjectType;

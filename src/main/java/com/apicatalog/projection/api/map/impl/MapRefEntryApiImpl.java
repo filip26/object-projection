@@ -1,5 +1,6 @@
 package com.apicatalog.projection.api.map.impl;
 
+import java.lang.reflect.Array;
 import java.util.Optional;
 
 import com.apicatalog.projection.Projection;
@@ -21,14 +22,20 @@ public final class MapRefEntryApiImpl extends AbstractMapEntryApi implements Map
 	
 	final Class<?> collectionType;
 	
-	protected MapRefEntryApiImpl(final MapProjectionBuilderApi projectionBuilder, final String name, final String projectionName) {
-		this(projectionBuilder, name, null, projectionName);
+	final boolean isArray;
+	
+	protected MapRefEntryApiImpl(final MapProjectionBuilderApi projectionBuilder, final String name, final String projectionName, boolean isArray) {
+		super(projectionBuilder, name);
+		this.collectionType = null;
+		this.projectionName = projectionName;
+		this.isArray = isArray;
 	}
 	
 	protected MapRefEntryApiImpl(final MapProjectionBuilderApi projectionBuilder, final String name, final Class<?> collectionType, final String projectionName) {
 		super(projectionBuilder, name);
 		this.collectionType = collectionType;
 		this.projectionName = projectionName;
+		this.isArray = false;
 	}
 
 	@Override
@@ -43,11 +50,17 @@ public final class MapRefEntryApiImpl extends AbstractMapEntryApi implements Map
 		if (ref == null) {
 			throw new ProjectionError("Projection " + projectionName + " is not present.");
 		}
+
+		Class<?> objectType = ref.getType();
 		
+		if (isArray) {
+			objectType = Array.newInstance(objectType, 0).getClass();
+		}
+
 		final ObjectType targetType = 
 				collectionType != null 
 					? ObjectType.of(collectionType, ref.getType())
-					: ObjectType.of(ref.getType())
+					: ObjectType.of(objectType)
 					;
 
 		// extract getter
@@ -66,17 +79,23 @@ public final class MapRefEntryApiImpl extends AbstractMapEntryApi implements Map
 		if (valueProvider == null) {
 			return Optional.empty();
 		}
-
+		
 		final Projection<?> ref = registry.get(projectionName);
 		
 		if (ref == null) {
 			throw new ProjectionError("Projection " + projectionName + " is not present.");
 		}
 		
+		Class<?> objectType = ref.getType();
+		
+		if (isArray) {
+			objectType = Array.newInstance(objectType, 0).getClass();
+		}
+		
 		final ObjectType targetType = 
 				collectionType != null 
 					? ObjectType.of(collectionType, ref.getType())
-					: ObjectType.of(ref.getType())
+					: ObjectType.of(objectType)
 					;
 
 		// extract setter

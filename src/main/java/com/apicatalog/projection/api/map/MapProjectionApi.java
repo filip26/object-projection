@@ -18,16 +18,20 @@ public interface MapProjectionApi {
 	
 	MapEntryApi mapInstant(String propertyName);
 
-	MapEntryApi mapObject(String propertyName, Class<?> objectType);
-	
+	MapEntryApi map(String propertyName, Class<?> objectType);
+
 	MapEntryApi mapCollection(String propertyName, Class<?> collectionType, Class<?> componentType);
 	
-	MapEntryApi mapReference(String propertyName, Class<?> projectionType);
+	MapEntryApi ref(String propertyName, Class<?> projectionType);
 	
-	MapEntryApi mapReference(String propertyName, String projectionName);
+	MapEntryApi ref(String propertyName, String projectionName);
+
+	MapEntryApi refArray(String propertyName, Class<?> projectionType);
 	
-	MapEntryApi mapReference(String propertyName, Class<?> collectionType, Class<?> projectionType);
+	MapEntryApi refArray(String propertyName, String projectionName);
 	
-	MapEntryApi mapReference(String propertyName, Class<?> collectionType, String projectionName);
+	MapEntryApi refCollection(String propertyName, Class<?> collectionType, Class<?> projectionType);
+	
+	MapEntryApi refCollection(String propertyName, Class<?> collectionType, String projectionName);
 
 }

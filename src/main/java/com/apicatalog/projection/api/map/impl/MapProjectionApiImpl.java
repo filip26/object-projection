@@ -35,46 +35,46 @@ public final class MapProjectionApiImpl implements MapProjectionBuilderApi {
 
 	@Override
 	public MapEntryApi mapString(String name) {
-		return mapObject(name, String.class);
+		return map(name, String.class);
 	}
 
 	@Override
 	public MapEntryApi mapInteger(String name) {
-		return mapObject(name, Integer.class);
+		return map(name, Integer.class);
 	}
 
 	@Override
 	public MapEntryApi mapLong(String name) {
-		return mapObject(name, Long.class);
+		return map(name, Long.class);
 	}
 
 	@Override
 	public MapEntryApi mapFloat(String name) {
-		return mapObject(name, Float.class);
+		return map(name, Float.class);
 	}
 
 	@Override
 	public MapEntryApi mapDouble(String name) {
-		return mapObject(name, Double.class);
+		return map(name, Double.class);
 	}
 
 	@Override
 	public MapEntryApi mapBoolean(String name) {
-		return mapObject(name, Boolean.class);
+		return map(name, Boolean.class);
 	}
 
 	@Override
 	public MapEntryApi mapDate(String propertyName) {
-		return mapObject(propertyName, Date.class);
+		return map(propertyName, Date.class);
 	}
 
 	@Override
 	public MapEntryApi mapInstant(String propertyName) {
-		return mapObject(propertyName, Instant.class);
+		return map(propertyName, Instant.class);
 	}
 	
 	@Override
-	public MapEntryApi mapObject(String name, Class<?> objectType) {
+	public MapEntryApi map(String name, Class<?> objectType) {
 		final MapEntryApiImpl propertyBuilder = new MapEntryApiImpl(this, name, objectType);
 		entries.add(propertyBuilder);
 		return propertyBuilder;		
@@ -88,24 +88,36 @@ public final class MapProjectionApiImpl implements MapProjectionBuilderApi {
 	}
 
 	@Override
-	public MapEntryApi mapReference(String name, Class<?> projectionType) {
-		return mapReference(name, projectionType.getCanonicalName());
+	public MapEntryApi ref(String name, Class<?> projectionType) {
+		return ref(name, projectionType.getCanonicalName());
 	}
 
 	@Override
-	public MapEntryApi mapReference(String name, String projectionName) {
-		final MapRefEntryApiImpl propertyBuilder = new MapRefEntryApiImpl(this, name, projectionName);
+	public MapEntryApi ref(String name, String projectionName) {
+		final MapRefEntryApiImpl propertyBuilder = new MapRefEntryApiImpl(this, name, projectionName, false);
 		entries.add(propertyBuilder);
 		return propertyBuilder;		
 	}
 
 	@Override
-	public MapEntryApi mapReference(String name, Class<?> collectionType, Class<?> projectionType) {
-		return mapReference(name, collectionType, projectionType.getCanonicalName());
+	public MapEntryApi refArray(String name, Class<?> projectionType) {
+		return refArray(name, projectionType.getCanonicalName());
 	}
 
 	@Override
-	public MapEntryApi mapReference(String name, Class<?> collectionType, String projectionName) {
+	public MapEntryApi refArray(String name, String projectionName) {
+		final MapRefEntryApiImpl propertyBuilder = new MapRefEntryApiImpl(this, name, projectionName, true);
+		entries.add(propertyBuilder);
+		return propertyBuilder;		
+	}
+
+	@Override
+	public MapEntryApi refCollection(String name, Class<?> collectionType, Class<?> projectionType) {
+		return refCollection(name, collectionType, projectionType.getCanonicalName());
+	}
+
+	@Override
+	public MapEntryApi refCollection(String name, Class<?> collectionType, String projectionName) {
 		final MapRefEntryApiImpl propertyBuilder = new MapRefEntryApiImpl(this, name, collectionType, projectionName);
 		entries.add(propertyBuilder);
 		return propertyBuilder;		

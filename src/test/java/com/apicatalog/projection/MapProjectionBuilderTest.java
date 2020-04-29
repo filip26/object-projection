@@ -16,6 +16,7 @@ import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.objects.ObjectsCollection;
 import com.apicatalog.projection.objects.SimpleObject;
+import com.apicatalog.projection.projections.BasicTypesTo;
 import com.apicatalog.projection.source.SourceObject;
 
 public class MapProjectionBuilderTest {
@@ -283,7 +284,7 @@ public class MapProjectionBuilderTest {
 		final Projection<Map<String, Object>> projection2 = 
 				Projection
 					.hashMap()
-						.mapReference("p", "p1").provided()
+						.ref("p", "p1").provided()
 						.build(registry);
 		
 		Assert.assertNotNull(projection2);
@@ -322,7 +323,7 @@ public class MapProjectionBuilderTest {
 		final Projection<Map<String, Object>> projection2 = 
 				Projection
 					.hashMap()
-						.mapReference("p", "p1").provided()
+						.ref("p", "p1").provided()
 						.build(registry);
 		
 		Assert.assertNotNull(projection2);
@@ -407,7 +408,7 @@ public class MapProjectionBuilderTest {
 		final Projection<Map<String, Object>> projection2 = 
 				Projection
 					.hashMap()
-						.mapReference("c1", ArrayList.class, "p1").provided("items")
+						.refCollection("c1", ArrayList.class, "p1").provided("items")
 						.build(registry);
 		
 		Assert.assertNotNull(projection2);
@@ -447,7 +448,7 @@ public class MapProjectionBuilderTest {
 		final Projection<Map<String, Object>> projection2 = 
 				Projection
 					.hashMap()
-						.mapReference("c1", ArrayList.class, "p1").provided("items")
+						.refCollection("c1", ArrayList.class, "p1").provided("items")
 						.build(registry);
 		
 		Assert.assertNotNull(projection2);
@@ -493,7 +494,7 @@ public class MapProjectionBuilderTest {
 		final Projection<Map<String, Object>> projection2 = 
 				Projection
 					.hashMap()
-						.mapReference("c1", ArrayList.class, "p1").source(ObjectsCollection.class, "items")
+						.refCollection("c1", ArrayList.class, "p1").source(ObjectsCollection.class, "items")
 						.build(registry);
 		
 		Assert.assertNotNull(projection2);
@@ -550,7 +551,7 @@ public class MapProjectionBuilderTest {
 		final Projection<Map<String, Object>> projection2 = 
 				Projection
 					.hashMap()
-						.mapReference("c1", ArrayList.class, "p1").source(ObjectsCollection.class, "items")
+						.refCollection("c1", ArrayList.class, "p1").source(ObjectsCollection.class, "items")
 						.build(registry);
 		
 		Assert.assertNotNull(projection2);
@@ -580,4 +581,55 @@ public class MapProjectionBuilderTest {
 		Assert.assertEquals(item2.get("longValue"), array[1].longValue);
 	}
 
+	@Test
+	public void test10c() throws ProjectionError, CompositionError {
+		
+		Registry registry = Registry.newInstance();
+		
+		final Projection<BasicTypesTo> projection1 = 
+				Projection
+					.scan(BasicTypesTo.class)
+					.build(registry);
+
+		Assert.assertNotNull(projection1);
+		
+		final Projection<Map<String, Object>> projection2 = 
+				Projection
+					.hashMap()
+						.refArray("array1", BasicTypesTo.class).source(ObjectsCollection.class, "items")
+						.build(registry);
+		
+		Assert.assertNotNull(projection2);
+
+		BasicTypes object1 = new BasicTypes();
+		object1.integerValue = 12;
+		object1.longValue = 34l;
+
+		BasicTypes object2 = new BasicTypes();
+		object2.integerValue = 56;
+		object2.longValue = 76l;
+		
+		ObjectsCollection collection = new ObjectsCollection();
+		collection.items = Arrays.asList(new BasicTypes[] { object1, object2});
+		
+		Map<String, Object> map1 = projection2.compose(collection);
+		
+		Assert.assertNotNull(map1);;
+		Assert.assertNotNull(map1.get("array1"));
+		Assert.assertTrue(map1.get("array1").getClass().isArray());
+		
+		BasicTypesTo[] items = (BasicTypesTo[]) map1.get("array1"); 
+		
+		Assert.assertEquals(2, items.length);
+
+		BasicTypesTo imap1 = items[0];
+		
+		Assert.assertEquals(object1.integerValue, imap1.integerValue);
+		Assert.assertEquals(object1.longValue, imap1.longValue);
+		
+		BasicTypesTo imap2 = items[1];
+		
+		Assert.assertEquals(object2.integerValue, imap2.integerValue);
+		Assert.assertEquals(object2.longValue, imap2.longValue);
+	}
 }
