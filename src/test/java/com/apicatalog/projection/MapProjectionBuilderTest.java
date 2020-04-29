@@ -14,7 +14,9 @@ import org.junit.Test;
 
 import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.objects.BasicTypes;
+import com.apicatalog.projection.objects.ObjectsCollection;
 import com.apicatalog.projection.objects.SimpleObject;
+import com.apicatalog.projection.projections.BasicTypesTo;
 import com.apicatalog.projection.source.SourceObject;
 
 public class MapProjectionBuilderTest {
@@ -473,5 +475,62 @@ public class MapProjectionBuilderTest {
 		
 		Assert.assertEquals(item1.get("dateValue"), array[0].dateValue);
 		Assert.assertEquals(item2.get("dateValue"), array[1].dateValue);
+	}
+	
+	@Test
+	public void test9c() throws ProjectionError, CompositionError {
+		
+		Registry registry = Registry.newInstance();
+		
+		final Projection<Map<String, Object>> projection1 = 
+				Projection
+					.hashMap("p1")
+						.mapLong("longValue").source(BasicTypes.class)
+						.mapInteger("integerValue").source(BasicTypes.class)
+						.build(registry);
+
+		Assert.assertNotNull(projection1);
+		
+		final Projection<Map<String, Object>> projection2 = 
+				Projection
+					.hashMap()
+						.mapReference("c1", ArrayList.class, "p1").source(ObjectsCollection.class, "items")
+						.build(registry);
+		
+		Assert.assertNotNull(projection2);
+
+		BasicTypes object1 = new BasicTypes();
+		object1.integerValue = 12;
+		object1.longValue = 34l;
+
+		BasicTypes object2 = new BasicTypes();
+		object2.integerValue = 56;
+		object2.longValue = 76l;
+		
+		ObjectsCollection collection = new ObjectsCollection();
+		collection.items = Arrays.asList(new BasicTypes[] { object1, object2});
+		
+		Map<String, Object> map1 = projection2.compose(collection);
+		
+		Assert.assertNotNull(map1);;
+		Assert.assertNotNull(map1.get("c1"));
+		Assert.assertTrue(Collection.class.isInstance(map1.get("c1")));
+		
+		@SuppressWarnings("unchecked")
+		Collection<Map<String, Object>> items = (Collection<Map<String, Object>>) map1.get("c1"); 
+		
+		Assert.assertEquals(2, items.size());
+
+		Iterator<Map<String, Object>> it = items.iterator();
+		
+		Map<String, Object> imap1 = it.next();
+		
+		Assert.assertEquals(object1.integerValue, imap1.get("integerValue"));
+		Assert.assertEquals(object1.longValue, imap1.get("longValue"));
+		
+		Map<String, Object> imap2 = it.next();
+		
+		Assert.assertEquals(object2.integerValue, imap2.get("integerValue"));
+		Assert.assertEquals(object2.longValue, imap2.get("longValue"));
 	}
 }
