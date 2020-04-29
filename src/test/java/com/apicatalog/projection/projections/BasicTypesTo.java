@@ -24,4 +24,6 @@ public class BasicTypesTo {
 	@Source(type=BasicTypes.class)
 	public Double doubleValue;
 
+	@Source(type=BasicTypes.class)
+	public Integer integerValue;
 }

@@ -1,5 +1,6 @@
 package com.apicatalog.projection.builder.writer;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -200,6 +201,7 @@ public final class SingleSourceWriterBuilder implements Builder<SourceWriter> {
 	public static final ObjectType getSourceTargetType(final ObjectType sourceType, final String sourceProjectionName, final ObjectType targetType) {
 		
 		if (StringUtils.isNotBlank(sourceProjectionName)) {
+			
 			if (sourceType.isCollection()) {
 				
 				if (targetType.isCollection()) {
@@ -213,8 +215,17 @@ public final class SingleSourceWriterBuilder implements Builder<SourceWriter> {
 				}
 				
 			} else if (sourceType.isArray()) {
-					//TODO
+				
+				if (targetType.isCollection()) {
+					return ObjectType.of(typeToArrayType(targetType.getComponentType()));
 					
+				} else if (targetType.isArray()) {
+					return ObjectType.of(typeToArrayType(targetType.getType().getComponentType()));
+
+				} else {
+					return ObjectType.of(typeToArrayType(targetType.getType()));
+				}
+				
 			} else {
 
 				if (targetType.isCollection()) {
@@ -231,4 +242,9 @@ public final class SingleSourceWriterBuilder implements Builder<SourceWriter> {
 		}
 		return sourceType;
 	}
+	
+	static final Class<?> typeToArrayType(Class<?> type) {
+		return Array.newInstance(type, 0).getClass();
+	}
+
 }

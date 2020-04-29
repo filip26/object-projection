@@ -53,8 +53,8 @@ public class MapProjectionApiWrapper implements MapProjectionApi {
 	}
 	
 	@Override
-	public MapEntryApi mapObject(String name, Class<?> objectType) {
-		return projectionBuilder.mapObject(name, objectType);
+	public MapEntryApi map(String name, Class<?> objectType) {
+		return projectionBuilder.map(name, objectType);
 	}
 	
 	@Override
@@ -63,22 +63,32 @@ public class MapProjectionApiWrapper implements MapProjectionApi {
 	}
 	
 	@Override
-	public MapEntryApi mapReference(String name, Class<?> projectionType) {
-		return projectionBuilder.mapReference(name, projectionType);
+	public MapEntryApi ref(String name, Class<?> projectionType) {
+		return projectionBuilder.ref(name, projectionType);
 	}
 	
 	@Override
-	public MapEntryApi mapReference(String name, String projectionName) {
-		return projectionBuilder.mapReference(name, projectionName);
+	public MapEntryApi ref(String name, String projectionName) {
+		return projectionBuilder.ref(name, projectionName);
 	}
 	
 	@Override
-	public MapEntryApi mapReference(String name, Class<?> collectionType, Class<?> projectionType) {
-		return projectionBuilder.mapReference(name, collectionType, projectionType);
+	public MapEntryApi refArray(String propertyName, Class<?> projectionType) {
+		return projectionBuilder.refArray(propertyName, projectionType);
+	}
+
+	@Override
+	public MapEntryApi refArray(String propertyName, String projectionName) {
+		return projectionBuilder.refArray(propertyName, projectionName);
 	}
 	
 	@Override
-	public MapEntryApi mapReference(String name, Class<?> collectionType, String projectionName) {
-		return projectionBuilder.mapReference(name,  collectionType, projectionName);
+	public MapEntryApi refCollection(String name, Class<?> collectionType, Class<?> projectionType) {
+		return projectionBuilder.refCollection(name, collectionType, projectionType);
+	}
+	
+	@Override
+	public MapEntryApi refCollection(String name, Class<?> collectionType, String projectionName) {
+		return projectionBuilder.refCollection(name,  collectionType, projectionName);
 	}
 }
