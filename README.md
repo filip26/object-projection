@@ -1,5 +1,7 @@
 # Object Projection
 
+![Java CI with Maven](https://github.com/filip26/object-projection/workflows/Java%20CI%20with%20Maven/badge.svg)
+
 ```javascript
 Projection
       .bind(EmployeeTo.class)
