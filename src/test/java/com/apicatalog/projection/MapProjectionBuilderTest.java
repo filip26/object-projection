@@ -16,7 +16,6 @@ import com.apicatalog.projection.api.ProjectionError;
 import com.apicatalog.projection.objects.BasicTypes;
 import com.apicatalog.projection.objects.ObjectsCollection;
 import com.apicatalog.projection.objects.SimpleObject;
-import com.apicatalog.projection.projections.BasicTypesTo;
 import com.apicatalog.projection.source.SourceObject;
 
 public class MapProjectionBuilderTest {
