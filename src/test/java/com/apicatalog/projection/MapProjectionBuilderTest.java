@@ -533,4 +533,52 @@ public class MapProjectionBuilderTest {
 		Assert.assertEquals(object2.integerValue, imap2.get("integerValue"));
 		Assert.assertEquals(object2.longValue, imap2.get("longValue"));
 	}
+	
+	@Test
+	public void test9e() throws ProjectionError, ExtractionError {
+		
+		Registry registry = Registry.newInstance();
+		
+		final Projection<Map<String, Object>> projection1 = 
+				Projection
+					.hashMap("p1")
+						.mapLong("longValue").source(BasicTypes.class)
+						.mapInteger("integerValue").source(BasicTypes.class)
+						.build(registry);
+
+		Assert.assertNotNull(projection1);
+		
+		final Projection<Map<String, Object>> projection2 = 
+				Projection
+					.hashMap()
+						.mapReference("c1", ArrayList.class, "p1").source(ObjectsCollection.class, "items")
+						.build(registry);
+		
+		Assert.assertNotNull(projection2);
+
+		Map<String, Object> item1 = new HashMap<>();
+		item1.put("longValue", 456l);
+
+		Map<String, Object> item2 = new HashMap<>();
+		item2.put("longValue", 789l);
+
+		ArrayList<Map<String, Object>> items = new ArrayList<>();
+		items.add(item1);
+		items.add(item2);
+		
+		Map<String, Object> to = new HashMap<>();
+		to.put("c1", items);
+		
+		ObjectsCollection object = projection2.extract(to, ObjectsCollection.class).orElse(null);
+
+		Assert.assertNotNull(object);
+		Assert.assertNotNull(object.items);
+		Assert.assertEquals(2, object.items.size());
+
+		BasicTypes[] array = object.items.toArray(BasicTypes[]::new);
+		
+		Assert.assertEquals(item1.get("longValue"), array[0].longValue);
+		Assert.assertEquals(item2.get("longValue"), array[1].longValue);
+	}
+
 }
