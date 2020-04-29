@@ -1,6 +1,8 @@
 # Object Projection
 
 ![Java CI with Maven](https://github.com/filip26/object-projection/workflows/Java%20CI%20with%20Maven/badge.svg)
+[![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/filip26/object-projection.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/filip26/object-projection/context:java)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ```javascript
 Projection
