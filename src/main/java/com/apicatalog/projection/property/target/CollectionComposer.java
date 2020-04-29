@@ -33,7 +33,7 @@ public final class CollectionComposer implements TargetComposer {
 	public Optional<Object> compose(final ProjectionStack stack, final Object object, final CompositionContext context) throws CompositionError {
 	
 		if (logger.isDebugEnabled()) {
-			logger.debug("Compose {} to {}, depth = {}, reference = true, collection = true", object.getClass().getSimpleName(), targetType, stack.length());
+			logger.debug("Compose {} to {}, depth = {}, reference = true, collection = true", object != null ? object.getClass().getSimpleName() : null, targetType, stack.length());
 		}
 
 		if (object == null) {
