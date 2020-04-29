@@ -36,7 +36,7 @@ public class RecordTo {
               @Source(type=Repository.class, property = "id"),
               },
       map = @Conversion(
-              type = URLTemplate.class,
+              type = URITemplate.class,
               value = "https://www.example.org/{username}/{repositoryId}"
               )
       )
