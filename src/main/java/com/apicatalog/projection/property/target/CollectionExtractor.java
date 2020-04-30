@@ -57,14 +57,24 @@ public final class CollectionExtractor implements TargetExtractor {
 			
 		final Collection<Object> collection = new ArrayList<>();
 
-		final Class<?> componentClass = sourceType.getComponentType();
-				
+		Class<?> componentType = null;
+		
+		if (sourceType.isCollection()) {
+			componentType = sourceType.getComponentType();
+			
+		} else if (sourceType.isArray()) {
+			componentType = sourceType.getType().getComponentType();
+			
+		} else {
+			throw new IllegalStateException();
+		}
+		
 		// extract objects from each projection in the collection
 		for (final Object item : sourceCollection) {
 			
-			extractor.extract(item, context.accept(null, componentClass, null));
+			extractor.extract(item, context.accept(null, componentType, null));
 			
-			context.remove(null, componentClass, null).ifPresent(collection::add);
+			context.remove(null, componentType, null).ifPresent(collection::add);
 		}
 
 		if (targetType.isCollection()) {
@@ -72,7 +82,7 @@ public final class CollectionExtractor implements TargetExtractor {
 		}
 		
 		if (targetType.isArray()) {
-			return Optional.of(typedArray(collection.toArray(), targetType.getType().getComponentType()));
+			return Optional.of(typedArray(collection.toArray(), componentType));
 		}
 		
 		throw new IllegalStateException();
