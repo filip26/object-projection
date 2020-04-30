@@ -26,10 +26,16 @@ public final class SourceType {
 	}
 
 	public static SourceType of(final Class<?> type, final Class<?> componentType) {
+		if (type == null) {
+			throw new IllegalArgumentException();
+		}
 		return new SourceType(null, type, componentType);
 	}
 
 	public static SourceType of(final String qualifier, final Class<?> type, final Class<?> componentType) {
+		if (type == null) {
+			throw new IllegalArgumentException();
+		}
 		return new SourceType(qualifier, type, componentType);
 	}
 	

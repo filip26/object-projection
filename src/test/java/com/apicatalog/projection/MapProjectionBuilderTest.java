@@ -632,4 +632,56 @@ public class MapProjectionBuilderTest {
 		Assert.assertEquals(object2.integerValue, imap2.integerValue);
 		Assert.assertEquals(object2.longValue, imap2.longValue);
 	}
+	
+	@Test
+	public void test10e() throws ProjectionError, ExtractionError {
+		
+		Registry registry = Registry.newInstance();
+		
+		final Projection<BasicTypesTo> projection1 = 
+				Projection
+					.scan(BasicTypesTo.class)
+					.build(registry);
+
+		Assert.assertNotNull(projection1);
+		
+		final Projection<Map<String, Object>> projection2 = 
+				Projection
+					.hashMap()
+						.refArray("array1", BasicTypesTo.class).source(ObjectsCollection.class, "items")
+						.build(registry);
+		
+		Assert.assertNotNull(projection2);
+
+		Map<String, Object> map = new HashMap<>();
+
+		BasicTypesTo to1 = new BasicTypesTo();
+		to1.integerValue = 12;
+		to1.longValue = 34l;
+
+		BasicTypesTo to2 = new BasicTypesTo();
+		to2.integerValue = 56;
+		to2.longValue = 76l;
+
+		map.put("array1", Arrays.asList(new BasicTypesTo[] { to1, to2}));
+		
+		ObjectsCollection collection = projection2.extract(map, ObjectsCollection.class).orElse(null);
+
+		Assert.assertNotNull(collection);
+		Assert.assertNotNull(collection.items);
+		
+		Assert.assertEquals(2, collection.items.size());
+
+		Iterator<BasicTypes> it = collection.items.iterator();
+		
+		BasicTypes object1 = it.next();
+		
+		Assert.assertEquals(to1.integerValue, object1.integerValue);
+		Assert.assertEquals(to1.longValue, object1.longValue);
+		
+		BasicTypes object2 = it.next();
+		
+		Assert.assertEquals(to2.integerValue, object2.integerValue);
+		Assert.assertEquals(to2.longValue, object2.longValue);
+	}
 }
