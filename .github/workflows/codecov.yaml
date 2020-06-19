@@ -24,6 +24,5 @@ jobs:
       with:
         file: ./target/site/jacoco/jacoco.xml
         flags: unittests
-        env_vars: OS,JAVA
         name: codecov-umbrella
         fail_ci_if_error: true
