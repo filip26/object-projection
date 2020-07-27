@@ -18,7 +18,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	  
-		<apache.commons-text.version>1.8</apache.commons-text.version>
+		<apache.commons-text.version>1.9</apache.commons-text.version>
 		<junit.version>4.13</junit.version>
 		
 	</properties>
