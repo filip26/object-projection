@@ -19,7 +19,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	  
 		<apache.commons-text.version>1.9</apache.commons-text.version>
-		<junit.version>4.13</junit.version>
+		<junit.version>4.13.1</junit.version>
 		
 	</properties>
 
